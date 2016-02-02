@@ -1,0 +1,62 @@
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'Segoe MDL2 Assets';
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+
+  display: inline;
+  width: auto;
+  height: auto;
+  /*line-height: normal;*/
+  vertical-align: baseline;
+  background-image: none;
+  background-position: 0% 0%;
+  background-repeat: repeat;
+  margin-top: 0;
+}
+
+.icon-add:before {
+  content: "\E109";
+}
+.icon-cancel:before {
+  content: "\E10A";
+}
+.icon-start:before {
+  content: "\E8A9";
+}  
+.icon-home:before {
+  content: "\E10F";
+}
+.icon-person::before {
+  content: '\E13D';
+}
+.icon-req-list::before {
+  content: '\E1EF';
+}
+.icon-month:before {
+  content: "\E163";
+}
+.icon-settings:before {
+  content: "\E115";
+}
+.icon-chevron-right:before {
+  content: '\E0AB';
+}
+.icon-chevron-left:before {
+  content: '\E0A6';
+}
+.icon-tag:before {
+  content: "\E1CB";
+}
+.icon-photo:before {
+  content: "\E114";
+}
+.icon-search:before {
+  content: "\E094";
+}
+.icon-deal:before {
+  content: "\E81E";
+}
+

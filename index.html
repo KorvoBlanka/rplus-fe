@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>R+</title>
+
+    <link type="text/css" rel="stylesheet" href="css/common_classes.css">
+    <link type="text/css" rel="stylesheet" href="css/fonts.css">
+    <link type="text/css" rel="stylesheet" href="css/icons.css">
+    <link type="text/css" rel="stylesheet" href="css/common_colors.css">
+
+    <style>
+      body {
+        font-family: Segoe UI;
+        font-weight: 400;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+
+    </style>
+
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="node_modules/angular2-google-maps/bundles/angular2-google-maps.js"></script>
+
+    <!-- пока сделаем так -->
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <script>
+      System.config({
+        packages: {        
+          app: {
+            format: 'register',
+            defaultExtension: 'js'
+          }
+        }
+      });
+
+      //google.charts.load("current", {packages:["corechart", "timeline"], callback: function () {console.log('yay! google is here!')});
+      google.load('visualization', '1.0', { 'packages': ['corechart', 'timeline'], callback: function () {console.log('yay! google is here!')} });
+
+      System.import('app/boot').then(null, console.error.bind(console));
+    </script>
+  </head>
+
+  <body>
+    <rplus-app>Loading R+...</rplus-app>
+  </body>
+</html>

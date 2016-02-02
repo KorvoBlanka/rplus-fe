@@ -25,6 +25,6 @@ export class UITab {
 
   selectTab() {
     this.active = true;
-    this.tabSelect.emit(this);  
+    this.tabSelect.emit(this);
   }
 }

@@ -7,13 +7,13 @@ import {Tab} from '../../class/tab';
 import {Realty} from '../../class/realty';
 
 import {RealtyDigestComponent} from '../realty-digest.component';
-import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
 
 @Component({
     selector: 'tab-list-realty',
     inputs: ['tab'],
-    directives: [ANGULAR2_GOOGLE_MAPS_DIRECTIVES, RealtyDigestComponent],
+    directives: [GoogleMapComponent, GoogleMapMarkerComponent, RealtyDigestComponent],
     template: `
       <div class="tab-button fixed-button" (click)="toggleLeftPane()">
         <span [ngClass]="{'icon-chevron-right': pane_hidden, 'icon-chevron-left': !pane_hidden}"></span>
@@ -28,20 +28,20 @@ import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
           </div>
         </div>
         <div class="work-area" [style.width.px]="map_width">
-          <sebm-google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
+          <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
             <t *ngFor="#r of realtys">
-            <sebm-google-map-marker 
+            <google-map-marker
  	            *ngIf="r._source.location"
-              (markerClick)="markerClick(r)"
+              (click)="markerClick(r)"
               [latitude]="parseFloat(r._source.location.lat)"
               [longitude]="parseFloat(r._source.location.lon)"
-              [label]="r._source.type"></sebm-google-map-marker>
+              [info_str]="r._source.description"></google-map-marker>
             </t>
-          </sebm-google-map>
+          </google-map>
         </div>
       </div>
     `,
-    styles: [` 
+    styles: [`
 
       reaty-digest:nth-child(odd) {
         /*background: #f0f0f0;*/
@@ -146,8 +146,9 @@ export class TabListRealtyComponent {
         this.calcSize();
     }
 
-    markerClick(v: any) {
-        console.log('marker click');
+    markerClick(r: any) {
+        r.selected = true;
+        // scroll to object ???
     }
 
     select(r: Realty) {

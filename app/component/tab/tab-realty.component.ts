@@ -25,13 +25,13 @@ import {UIBarChart} from '../ui/ui-bar-chart.component';
 import {RealtyDigestComponent} from '../realty-digest.component';
 import {RequestDigestComponent} from '../request-digest.component';
 import {HistoryDigestComponent} from '../history-digest.component';
-import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
+import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
 
 @Component({
     selector: 'tab-realty',
     inputs: ['tab'],
-    directives: [ANGULAR2_GOOGLE_MAPS_DIRECTIVES, RealtyDigestComponent, RequestDigestComponent, HistoryDigestComponent, UISelect, UICarousel, UITagBlock, UITabs, UITab, UIPieChart, UILineChart, UIBarChart],
+    directives: [RealtyDigestComponent, RequestDigestComponent, HistoryDigestComponent, GoogleMapComponent, GoogleMapMarkerComponent, UISelect, UICarousel, UITagBlock, UITabs, UITab, UIPieChart, UILineChart, UIBarChart],
     template: `
 
       <div class="tab-button fixed-button" (click)="toggleLeftPane()">
@@ -44,7 +44,7 @@ import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
 
         <div class="pane" [hidden]="pane_hidden" [style.width.px]="pane_width">
           <div class="header">
-            
+
           </div>
           <div class="realty-prop" [style.height]="pane_height">
 
@@ -367,7 +367,7 @@ import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
                   <span class="view-label pull-left">Площадь</span>
                   <span class="view-value"> {{ _source.sqare_total }} </span>
                 </div>
-        
+
                 <div class="view-group">
                   <span class="view-label pull-left">Балкон</span>
                   <span class="view-value"></span>
@@ -411,7 +411,7 @@ import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
                 <div class="view-group">
                   <span class="icon-photo"> Фотографии</span>
                 </div>
-                <ui-carousel 
+                <ui-carousel
                   [photos] = "_source.photos"
                 >
                 </ui-carousel>
@@ -428,18 +428,18 @@ import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
           <ui-tabs
             [header_mode]="!pane_hidden"
           >
-            <ui-tab 
+            <ui-tab
               [title]="'Карта'"
             >
-              <sebm-google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                <sebm-google-map-marker 
-                   *ngIf="realty._source.location"
-                  (markerClick)="markerClick(realty)"
+              <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
+                <google-map-marker
+                  *ngIf="realty._source.location"
+                  (click)="log($event)"
                   [latitude]="parseFloat(realty._source.location.lat)"
                   [longitude]="parseFloat(realty._source.location.lon)"
-                  [label]="">
-                </sebm-google-map-marker>
-              </sebm-google-map>
+                  [info_str]="">
+                </google-map-marker>
+              </google-map>
             </ui-tab>
 
             <ui-tab
@@ -467,15 +467,17 @@ import {ANGULAR2_GOOGLE_MAPS_DIRECTIVES} from 'angular2-google-maps/core';
                   </div>
                 </div>
               </div>
-              <sebm-google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                <sebm-google-map-marker 
-                   *ngIf="realty._source.location"
+              <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
+                <google-map-marker
+                  *ngIf="realty._source.location"
                   (markerClick)="markerClick(realty)"
                   [latitude]="parseFloat(realty._source.location.lat)"
                   [longitude]="parseFloat(realty._source.location.lon)"
-                  [label]="">
-                </sebm-google-map-marker>
-              </sebm-google-map>
+                  [info_str]=""
+                  [icon_id]="1"
+                >
+                </google-map-marker>
+              </google-map>
             </ui-tab>
             <ui-tab
               [title]="'Заявки'"

@@ -22,15 +22,24 @@ System.register(['angular2/core'], function(exports_1) {
                     this.latitude = 0;
                     this.longitude = 0;
                     this.zoom = 8;
+                    this.id = Math.round(Math.random() * 1000);
+                    this.counter = 0;
                     this.container = elem.nativeElement.querySelector('.map-wrapper');
                 }
                 GoogleMapComponent.prototype.ngOnInit = function () {
-                    var _this = this;
-                    this.map = new google.maps.Map(this.container, {
-                        center: { lat: this.latitude, lng: this.longitude },
+                    var opts = {
+                        center: new google.maps.LatLng(this.latitude, this.longitude),
                         zoom: this.zoom
+                    };
+                    this.map = new google.maps.Map(this.container, opts);
+                    var _this = this;
+                    this.map.addListener('mouseover', function () {
+                        var t = this.getBounds();
+                        if (t.getSouthWest().equals(t.getNorthEast())) {
+                            console.log(_this.id + ' resize !');
+                            google.maps.event.trigger(this, 'resize');
+                        }
                     });
-                    setTimeout(function () { google.maps.event.trigger(_this.map, 'resize'), 10; });
                 };
                 GoogleMapComponent.prototype.ngOnChanges = function () {
                     if (this.map) {
@@ -56,6 +65,7 @@ System.register(['angular2/core'], function(exports_1) {
                     this.longitude = 0;
                     this.info_str = '';
                     this.icon_id = 0;
+                    this.is_selected = false;
                     this.click = new core_2.EventEmitter();
                     this.map = parent.map;
                 }
@@ -70,19 +80,31 @@ System.register(['angular2/core'], function(exports_1) {
                         ico = icons[this.icon_id - 1];
                     }
                     this.marker = new google.maps.Marker({
-                        icon: ico,
-                        position: new google.maps.LatLng(this.latitude, this.longitude),
                         map: this.map,
-                        title: ''
+                        position: new google.maps.LatLng(this.latitude, this.longitude),
+                        title: '',
+                        icon: ico,
+                        animation: google.maps.Animation.DROP
                     });
                     this.infowindow = new google.maps.InfoWindow({
                         content: '<div>' + this.info_str + '</div>'
                     });
                     var _this = this;
                     this.marker.addListener('click', function () {
-                        _this.infowindow.open(_this.map, _this.marker);
                         _this.click.emit(_this);
                     });
+                };
+                GoogleMapMarkerComponent.prototype.ngOnChanges = function () {
+                    if (this.marker) {
+                        if (this.is_selected) {
+                            this.marker.setAnimation(google.maps.Animation.BOUNCE);
+                            this.infowindow.open(this.map, this.marker);
+                        }
+                        else {
+                            this.marker.setAnimation(null);
+                            this.infowindow.close();
+                        }
+                    }
                 };
                 __decorate([
                     core_2.Output(), 
@@ -91,7 +113,7 @@ System.register(['angular2/core'], function(exports_1) {
                 GoogleMapMarkerComponent = __decorate([
                     core_1.Component({
                         selector: 'google-map-marker',
-                        inputs: ['latitude', 'longitude', 'info_str', 'icon_id'],
+                        inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
                         template: "",
                         styles: [""],
                         directives: [],

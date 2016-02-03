@@ -468,6 +468,18 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 </div>
               </div>
               <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
+
+                <t *ngFor="#r of similar_realty">
+                <google-map-marker
+     	            *ngIf="r._source.location"
+                  (click)="markerClick(r)"
+                  [is_selected]="r.selected"
+                  [latitude]="parseFloat(r._source.location.lat)"
+                  [longitude]="parseFloat(r._source.location.lon)"
+                  [info_str]="getRealtyDigest(r)">
+                </google-map-marker>
+                </t>
+
                 <google-map-marker
                   *ngIf="realty._source.location"
                   (markerClick)="markerClick(realty)"
@@ -862,5 +874,16 @@ export class TabRealtyComponent {
       if (e.keyCode == 13) {
         this.sim_search();
       }
+    }
+
+    markerClick(r: Realty) {
+      console.log('markerClick');
+      console.log(r);
+      r.selected = !r.selected;
+      // scroll to object ???
+    }
+
+    getRealtyDigest(r: Realty) {
+      return Realty.getDigest(r);
     }
 }

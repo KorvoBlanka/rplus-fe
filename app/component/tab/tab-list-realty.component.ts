@@ -1,4 +1,7 @@
-import {Component} from 'angular2/core';
+import {
+  Component,
+  ElementRef
+} from 'angular2/core';
 
 import {RealtyService} from '../../service/realty.service';
 import {ConfigService} from '../../service/config.service';
@@ -22,8 +25,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         <div class="pane" [hidden]="pane_hidden" [style.width.px]="pane_width">
           <div class="header">
           </div>
-          <div class="digest-list" [style.height]="pane_height" (scroll)="scroll($event)">
-            <reaty-digest *ngFor="#realty of realtys" [realty]="realty" (click)="select(realty)">
+          <div class="digest-list"
+            (scroll)="scroll($event)"
+            [attr.scrollTop]="scroll_pos"
+            [style.height]="pane_height"
+          >
+            <reaty-digest *ngFor="#realty of realtys"
+              [realty]="realty"
+              (click)="select(realty)">
             </reaty-digest>
           </div>
         </div>
@@ -33,9 +42,11 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             <google-map-marker
  	            *ngIf="r._source.location"
               (click)="markerClick(r)"
+              [is_selected]="r.selected"
               [latitude]="parseFloat(r._source.location.lat)"
               [longitude]="parseFloat(r._source.location.lon)"
-              [info_str]="r._source.description"></google-map-marker>
+              [info_str]="getRealtyDigest(r)">
+            </google-map-marker>
             </t>
           </google-map>
         </div>
@@ -105,12 +116,17 @@ export class TabListRealtyComponent {
     page: number = 1;
 
     to: number;
+    list: HTMLElement;
+    scroll_pos: number;
+
 
     parseFloat(v: any) {
       return parseFloat(v);
     }
 
-    constructor(private _realtyService: RealtyService, private _configService: ConfigService) { }
+    constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
+      this.list = _elem.nativeElement.querySelector('.digest-list');
+    }
 
     ngOnInit() {
         var c = this._configService.getConfig();
@@ -132,39 +148,50 @@ export class TabListRealtyComponent {
 
 
     calcSize() {
-        if (this.pane_hidden) {
-            this.pane_width = 0;
-        } else {
-            this.pane_width = 420;
-        }
-        this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
-        this.pane_height = document.body.clientHeight - 31;
+      if (this.pane_hidden) {
+        this.pane_width = 0;
+      } else {
+        this.pane_width = 420;
+      }
+      this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
+      this.pane_height = document.body.clientHeight - 31;
     }
 
     toggleLeftPane() {
-        this.pane_hidden = !this.pane_hidden;
-        this.calcSize();
-    }
-
-    markerClick(r: any) {
-        r.selected = true;
-        // scroll to object ???
+      this.pane_hidden = !this.pane_hidden;
+      this.calcSize();
     }
 
     select(r: Realty) {
-        if (r._source.location) {
-            this.lat = r._source.location.lat;
-            this.lon = r._source.location.lon;
-        }
+      if (r._source.location) {
+        this.lat = r._source.location.lat;
+        this.lon = r._source.location.lon;
+      }
     }
 
     scroll(e) {
-        if (e.currentTarget.scrollTop + this.pane_height >= e.currentTarget.scrollHeight) {
-            this.page ++;
-            var r = this._realtyService.getRealty(this.page, 10);
-            for (var i = 0; i < r.length; i++) {
-                this.realtys.push(r[i])
-            }
+      if (e.currentTarget.scrollTop + this.pane_height >= e.currentTarget.scrollHeight) {
+        this.page ++;
+        var r = this._realtyService.getRealty(this.page, 10);
+        for (var i = 0; i < r.length; i++) {
+          this.realtys.push(r[i])
         }
+      }
+    }
+
+    markerClick(r: Realty) {
+      console.log('markerClick');
+      console.log(r);
+      r.selected = !r.selected;
+      // scroll to object !?
+      // let get dirty!
+      if (r.selected) {
+        var e :Element = this.list.querySelector('#r' + r._id);
+        this.list.scrollTop = e.offsetTop - e.clientHeight;
+      }
+    }
+
+    getRealtyDigest(r: Realty) {
+      return Realty.getDigest(r);
     }
 }

@@ -32,19 +32,28 @@ export class GoogleMapComponent {
   longitude: number = 0;
   zoom: number = 8;
 
-  map_height: number;
+  id: number = Math.round(Math.random() * 1000);
+  counter: number = 0;
 
   constructor(elem: ElementRef, renderer: Renderer) {
     this.container = elem.nativeElement.querySelector('.map-wrapper');
   }
 
   ngOnInit() {
-    this.map = new google.maps.Map(this.container, {
-        center: {lat: this.latitude, lng: this.longitude},
+    var opts: google.maps.MapOptions = {
+        center: new google.maps.LatLng(this.latitude, this.longitude),
         zoom: this.zoom
-    });
+    };
+    this.map = new google.maps.Map(this.container, opts);
 
-    setTimeout(() => { google.maps.event.trigger(this.map, 'resize'), 10 });
+    var _this = this;
+    this.map.addListener('mouseover', function() {
+      var t = this.getBounds();
+      if (t.getSouthWest().equals(t.getNorthEast())) {
+        console.log(_this.id + ' resize !');
+        google.maps.event.trigger(this, 'resize');
+      }
+    });
   }
 
   ngOnChanges() {
@@ -52,35 +61,35 @@ export class GoogleMapComponent {
       this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
     }
   }
-
 }
 
 
 @Component({
   selector: 'google-map-marker',
-  inputs: ['latitude', 'longitude', 'info_str', 'icon_id'],
+  inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
   template: ``,
   styles: [``],
   directives: [],
 })
 
 export class GoogleMapMarkerComponent {
-  map: any;
-  marker: any;
-  infowindow: any;
+  map: google.maps.Map;
+  marker: google.maps.Marker;
+  infowindow: google.maps.InfoWindow;
 
   latitude: number = 0;
   longitude: number = 0;
   info_str: string = '';
   icon_id: number = 0;
+  is_selected: boolean = false;
 
   @Output() click: EventEmitter<any> = new EventEmitter();
 
   constructor(parent: GoogleMapComponent) { this.map = parent.map; }
 
   ngOnInit() {
-    var ico = null;
-    var icons: any[] = [
+    var ico: google.maps.Icon = null;
+    var icons: google.maps.Icon[] = [
         { url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', },
         { url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', },
         { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', },
@@ -91,10 +100,11 @@ export class GoogleMapMarkerComponent {
     }
 
     this.marker = new google.maps.Marker({
-      icon: ico,
-      position: new google.maps.LatLng(this.latitude, this.longitude),
       map: this.map,
-      title: ''
+      position: new google.maps.LatLng(this.latitude, this.longitude),
+      title: '',
+      icon: ico,
+      animation: google.maps.Animation.DROP
     });
 
     this.infowindow = new google.maps.InfoWindow({
@@ -103,9 +113,19 @@ export class GoogleMapMarkerComponent {
 
     var _this = this;
     this.marker.addListener('click', function() {
-      _this.infowindow.open(_this.map, _this.marker);
       _this.click.emit(_this);
     });
   }
 
+  ngOnChanges() {
+    if (this.marker) {
+      if (this.is_selected) {
+        this.marker.setAnimation(google.maps.Animation.BOUNCE);
+        this.infowindow.open(this.map, this.marker);
+      } else {
+        this.marker.setAnimation(null);
+        this.infowindow.close();
+      }
+    }
+  }
 }

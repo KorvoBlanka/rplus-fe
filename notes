@@ -1,1 +1,5 @@
 https://sites.google.com/site/gmapsdevelopment/
+
+make pipe for realty.getDigest and formatDateTime
+
+attr.scrollTop is not working, blya. Temporary use direct access to DOM

@@ -12,7 +12,7 @@ import {UITag} from './ui/ui-tag.component'
   inputs: ['realty', 'compact'],
 
   template: `
-    <div class="billet" 
+    <div class="billet" data-id="r{{realty._id}}"
       [class.selected]="realty.selected"
       (click)="select()"
       (dblclick)="open()"

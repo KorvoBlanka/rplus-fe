@@ -1,4 +1,5 @@
 System.register(['angular2/core'], function(exports_1) {
+    "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,12 +18,15 @@ System.register(['angular2/core'], function(exports_1) {
             }],
         execute: function() {
             UIBarChart = (function () {
-                function UIBarChart(elem, renderer) {
+                function UIBarChart(_elem, renderer) {
+                    this._elem = _elem;
                     this.data = [];
                     //renderer.setElementClass(elem, 'wtf-class', true);
-                    this.container = elem.nativeElement.querySelector('.ui-bar-chart');
                 }
                 UIBarChart.prototype.ngOnChanges = function () {
+                    if (!this.container) {
+                        this.container = this._elem.nativeElement.querySelector('.ui-bar-chart');
+                    }
                     this.draw();
                 };
                 UIBarChart.prototype.draw = function () {
@@ -48,7 +52,7 @@ System.register(['angular2/core'], function(exports_1) {
                     __metadata('design:paramtypes', [core_1.ElementRef, core_1.Renderer])
                 ], UIBarChart);
                 return UIBarChart;
-            })();
+            }());
             exports_1("UIBarChart", UIBarChart);
         }
     }

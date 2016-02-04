@@ -1,4 +1,5 @@
-System.register(['angular2/core'], function(exports_1) {
+System.register(['angular2/core', '../class/concavehull'], function(exports_1) {
+    "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,56 +9,130 @@ System.register(['angular2/core'], function(exports_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, core_2;
+    var core_1, core_2, concavehull_1;
     var GoogleMapComponent, GoogleMapMarkerComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
                 core_2 = core_1_1;
+            },
+            function (concavehull_1_1) {
+                concavehull_1 = concavehull_1_1;
             }],
         execute: function() {
             GoogleMapComponent = (function () {
-                function GoogleMapComponent(elem, renderer) {
+                function GoogleMapComponent(_elem) {
+                    this._elem = _elem;
                     this.latitude = 0;
                     this.longitude = 0;
                     this.zoom = 8;
                     this.id = Math.round(Math.random() * 1000);
-                    this.counter = 0;
-                    this.container = elem.nativeElement.querySelector('.map-wrapper');
+                    this.draw_allowed = false;
+                    this.is_drawing = false;
+                    this.polygone = new google.maps.Polygon();
+                    this.drawFinished = new core_2.EventEmitter();
                 }
                 GoogleMapComponent.prototype.ngOnInit = function () {
+                    this.container = this._elem.nativeElement.querySelector('.map-wrapper');
                     var opts = {
                         center: new google.maps.LatLng(this.latitude, this.longitude),
-                        zoom: this.zoom
+                        zoom: this.zoom,
+                        disableDefaultUI: true
                     };
                     this.map = new google.maps.Map(this.container, opts);
+                    this.initDrawer();
+                };
+                GoogleMapComponent.prototype.ngOnChanges = function (changes) {
+                    if (!this.map)
+                        return;
+                    for (var p_name in changes) {
+                        var prop = changes[p_name];
+                        switch (p_name) {
+                            case 'latitude':
+                            case 'longitude':
+                                this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+                                break;
+                            case 'draw_allowed':
+                                if (!this.draw_allowed) {
+                                    this.polygone.setMap(null);
+                                }
+                                break;
+                        }
+                    }
+                };
+                GoogleMapComponent.prototype.ngAfterViewChecked = function () {
+                    if (this.container.clientWidth != this.p_w) {
+                        this.p_w = this.container.clientWidth;
+                        google.maps.event.trigger(this.map, 'resize');
+                    }
+                };
+                GoogleMapComponent.prototype.initDrawer = function () {
                     var _this = this;
-                    this.map.addListener('mouseover', function () {
-                        var t = this.getBounds();
-                        if (t.getSouthWest().equals(t.getNorthEast())) {
-                            console.log(_this.id + ' resize !');
-                            google.maps.event.trigger(this, 'resize');
+                    google.maps.event.addListener(this.map, 'mousemove', function (e) {
+                        if (_this.is_drawing == true) {
+                            _this.polyline.getPath().push(e.latLng);
+                        }
+                    });
+                    google.maps.event.addListener(this.map, 'mousedown', function () {
+                        if (_this.draw_allowed) {
+                            _this.map.setOptions({ draggable: false });
+                            _this.is_drawing = true;
+                            if (_this.polyline) {
+                                _this.polyline.setMap(null);
+                            }
+                            _this.polyline = new google.maps.Polyline({
+                                clickable: false,
+                                strokeColor: "#062141",
+                                strokeOpacity: 0.8,
+                                strokeWeight: 2,
+                                map: _this.map
+                            });
+                        }
+                    });
+                    google.maps.event.addListener(this.map, 'mouseup', function () {
+                        _this.is_drawing = false;
+                        _this.map.setOptions({ draggable: true });
+                        if (_this.draw_allowed) {
+                            _this.draw_allowed = false;
+                            var pa = [];
+                            _this.polyline.getPath().forEach(function forEach(ll) {
+                                pa.push({ lat: ll.lat(), lng: ll.lng() });
+                            });
+                            var ch = new concavehull_1.ConcaveHull(pa, 2000).getLatLngs();
+                            console.log(ch);
+                            _this.polygone = new google.maps.Polygon({
+                                paths: ch,
+                                strokeColor: "#062141",
+                                strokeOpacity: 0.8,
+                                strokeWeight: 2,
+                                fillColor: "#062141",
+                                fillOpacity: 0.35,
+                                editable: true,
+                                geodesic: false,
+                                map: _this.map,
+                            });
+                            _this.drawFinished.emit(ch);
+                            _this.polyline.setMap(null);
                         }
                     });
                 };
-                GoogleMapComponent.prototype.ngOnChanges = function () {
-                    if (this.map) {
-                        this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
-                    }
-                };
+                __decorate([
+                    core_2.Output(), 
+                    __metadata('design:type', core_2.EventEmitter)
+                ], GoogleMapComponent.prototype, "drawFinished", void 0);
                 GoogleMapComponent = __decorate([
                     core_1.Component({
                         selector: 'google-map',
-                        inputs: ['latitude', 'longitude', 'zoom'],
-                        template: "\n    <div class=\"map-wrapper\">\n      <ng-content></ng-content>\n    </div>\n  ",
-                        styles: ["\n    .map-wrapper {\n      height: 100%;\n      width: 100%;\n    }\n  "],
+                        inputs: ['latitude', 'longitude', 'zoom', 'draw_allowed'],
+                        template: "\n  <div class=\"map-wrapper\">\n  <ng-content></ng-content>\n  </div>\n  ",
+                        styles: ["\n    .map-wrapper {\n      height: 100%;\n      width: 100%;\n    }\n    "],
                         directives: [],
                     }), 
-                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.Renderer])
+                    __metadata('design:paramtypes', [core_1.ElementRef])
                 ], GoogleMapComponent);
                 return GoogleMapComponent;
-            })();
+            }());
             exports_1("GoogleMapComponent", GoogleMapComponent);
             GoogleMapMarkerComponent = (function () {
                 function GoogleMapMarkerComponent(parent) {
@@ -121,7 +196,7 @@ System.register(['angular2/core'], function(exports_1) {
                     __metadata('design:paramtypes', [GoogleMapComponent])
                 ], GoogleMapMarkerComponent);
                 return GoogleMapMarkerComponent;
-            })();
+            }());
             exports_1("GoogleMapMarkerComponent", GoogleMapMarkerComponent);
         }
     }

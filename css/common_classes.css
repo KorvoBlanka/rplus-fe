@@ -62,6 +62,16 @@
   color: #666;
 }
 
+.tab-button {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  font-size: 12px !important;
+  cursor: pointer;
+  color: #666;
+}
+
 .line-clamp {
   display: block;
   display: -webkit-box;
@@ -130,10 +140,10 @@ input:focus {
   outline: none !important;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 textarea:focus {

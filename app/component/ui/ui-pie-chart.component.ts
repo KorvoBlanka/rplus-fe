@@ -22,14 +22,16 @@ export class UIPieChart {
     public title: string;
     public data: any[];
     container: any;
-    constructor(elem: ElementRef, renderer: Renderer) {
+
+    constructor(private _elem: ElementRef) {
         this.data = [];
-        //renderer.setElementClass(elem, 'wtf-class', true);
-        this.container = elem.nativeElement.querySelector('.ui-pie-chart');
     }
 
     ngOnChanges() {
-        this.draw();
+      if (!this.container) {
+        this.container = this._elem.nativeElement.querySelector('.ui-pie-chart');
+      }
+      this.draw();
     }
 
     draw() {

@@ -22,13 +22,16 @@ export class UILineChart {
     public data: any[];
     container: any;
 
-    constructor(elem: ElementRef) {
+    constructor(private _elem: ElementRef) {
         this.data = [];
-        this.container = elem.nativeElement.querySelector('.ui-line-chart');
     }
 
     ngOnChanges() {
-        this.draw();
+      if (!this.container) {
+        this.container = this._elem.nativeElement.querySelector('.ui-line-chart');
+      }
+      console
+      this.draw();
     }
 
     draw() {

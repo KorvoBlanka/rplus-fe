@@ -1,4 +1,5 @@
 System.register(['angular2/core'], function(exports_1) {
+    "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,12 +18,14 @@ System.register(['angular2/core'], function(exports_1) {
             }],
         execute: function() {
             UIPieChart = (function () {
-                function UIPieChart(elem, renderer) {
+                function UIPieChart(_elem) {
+                    this._elem = _elem;
                     this.data = [];
-                    //renderer.setElementClass(elem, 'wtf-class', true);
-                    this.container = elem.nativeElement.querySelector('.ui-pie-chart');
                 }
                 UIPieChart.prototype.ngOnChanges = function () {
+                    if (!this.container) {
+                        this.container = this._elem.nativeElement.querySelector('.ui-pie-chart');
+                    }
                     this.draw();
                 };
                 UIPieChart.prototype.draw = function () {
@@ -47,10 +50,10 @@ System.register(['angular2/core'], function(exports_1) {
                         template: "\n    <div class=\"ui-pie-chart\">\n    </div>\n  ",
                         styles: ["\n    .class {\n\n    }\n  "]
                     }), 
-                    __metadata('design:paramtypes', [core_1.ElementRef, core_1.Renderer])
+                    __metadata('design:paramtypes', [core_1.ElementRef])
                 ], UIPieChart);
                 return UIPieChart;
-            })();
+            }());
             exports_1("UIPieChart", UIPieChart);
         }
     }

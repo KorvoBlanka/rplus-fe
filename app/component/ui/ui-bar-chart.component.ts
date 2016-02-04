@@ -22,13 +22,15 @@ export class UIBarChart {
   public title: string;
   public data: any[];
   container: any;
-  constructor(elem: ElementRef, renderer: Renderer) {
+  constructor(private _elem: ElementRef, renderer: Renderer) {
     this.data = [];
     //renderer.setElementClass(elem, 'wtf-class', true);
-    this.container = elem.nativeElement.querySelector('.ui-bar-chart');
   }
 
   ngOnChanges() {
+    if (!this.container) {
+      this.container = this._elem.nativeElement.querySelector('.ui-bar-chart');
+    }
     this.draw();
   }
 

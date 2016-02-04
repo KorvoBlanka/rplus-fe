@@ -6,19 +6,14 @@ import {Output, EventEmitter} from 'angular2/core';
   inputs: ['values', 'value'],
   template: `
     <div class="ui-select">
-
       <div class="dropdown-toggle" (window:click)="hide()" (click)="toggleHidden($event)"> {{ value.text }} </div>
-
       <ul class="dropdown-menu pull-right" [hidden]="hidden">
-
         <li *ngFor="#v of values"
           [class.selected]="v === value"
           (click)="select(v)">
           <label> {{ v.text }} </label>
         </li>
-
       </ul>
-
     </div>
   `,
   styles: [`
@@ -99,8 +94,8 @@ export class UISelect {
     select(v: any) {
         this.value = v;
         this.hide();
-        
+
         this.valueChange.emit(v);    // из за этого эмита не срабатывает [class.selected]="v === value"
-    } 
+    }
 
 }

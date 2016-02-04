@@ -1,5 +1,39 @@
 https://sites.google.com/site/gmapsdevelopment/
+http://bluejamesbond.github.io/CharacterMap/
 
+
+
+
+
+
+
+разгрести css"ку, сделать выбор активного цвета
 make pipe for realty.getDigest and formatDateTime
 
 attr.scrollTop is not working, blya. Temporary use direct access to DOM
+
+заявки | кол-во кликов | прогресс
+возможность выбрать ежедневник для синхронизации
+
+
+
+#
+Тип
+Город
+Адрес
+Комнаты
+Планировка
+Материал
+Этаж
+Площадь
+Импорт
+Предложение
+Контакт
+Цена
+Цена 2м
+MLS
+Агент
+Добавлено
+Назначено
+Изменено
+Актуально

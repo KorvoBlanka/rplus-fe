@@ -40,7 +40,7 @@ System.register(['angular2/core', './ui-tab.component'], function(exports_1) {
                 };
                 __decorate([
                     core_1.ContentChildren(ui_tab_component_1.UITab), 
-                    __metadata('design:type', core_1.QueryList)
+                    __metadata('design:type', (typeof (_a = typeof core_1.QueryList !== 'undefined' && core_1.QueryList) === 'function' && _a) || Object)
                 ], UITabs.prototype, "tabs", void 0);
                 UITabs = __decorate([
                     core_1.Component({
@@ -52,6 +52,7 @@ System.register(['angular2/core', './ui-tab.component'], function(exports_1) {
                     __metadata('design:paramtypes', [])
                 ], UITabs);
                 return UITabs;
+                var _a;
             })();
             exports_1("UITabs", UITabs);
         }

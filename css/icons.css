@@ -49,12 +49,28 @@
   content: "\E115";
 }
 
-.icon-chevron-right:before {
+.icon-arrow-right:before {
   content: '\E0AB';
 }
 
-.icon-chevron-left:before {
+.icon-arrow-left:before {
   content: '\E0A6';
+}
+
+.icon-arrow-up:before {
+  content: '\E110';
+}
+
+.icon-arrow-down:before {
+  content: '\E1FD';
+}
+
+.icon-chevron-up:before {
+  content: '\E010';
+}
+
+.icon-chevron-down:before {
+  content: '\E011';
 }
 
 .icon-tag:before {
@@ -87,4 +103,22 @@
 
 .icon-square:before {
   content: "\E8A9";
+}
+
+.icon-check:before {
+  content: "\E001";
+}
+
+.icon-none:before {
+  content: "\FFFD";
+  opacity: 0;
+}
+
+
+.icon-raw:before {
+  content: "\E8A9";
+}
+
+.icon-work:before {
+  content: "\E001";
 }

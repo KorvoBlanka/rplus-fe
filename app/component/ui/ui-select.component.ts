@@ -3,9 +3,9 @@ import {Output, EventEmitter} from 'angular2/core';
 
 @Component({
   selector: 'ui-select',
-  inputs: ['values', 'value'],
+  inputs: ['values', 'value', 'e_style'],
   template: `
-    <div class="ui-select">
+    <div class="ui-select" [class.inline]="e_style == 'inline'">
       <div class="dropdown-toggle" (window:click)="hide()" (click)="toggleHidden($event)"> {{ value.text }} </div>
       <ul class="dropdown-menu pull-right" [hidden]="hidden">
         <li *ngFor="#v of values"
@@ -67,12 +67,23 @@ import {Output, EventEmitter} from 'angular2/core';
       background-color: #004f8a;
       color: #fff;
     }
+
+    .inline {
+      width: 120px;
+      display: inline-block;
+    }
+
+    .inline > .dropdown-toggle {
+      font-weight: 200;
+      font-size: 14;
+    }
   `]
 })
 
 export class UISelect {
     public values: Array<any>;
     public value: any;
+    public e_style: string;
 
     trick: boolean = false;
     hidden: boolean = true;
@@ -82,6 +93,8 @@ export class UISelect {
     toggleHidden(e) {
         this.hidden = !this.hidden;
         this.trick = true;
+
+        console.log(this.e_style);
     }
 
     hide() {

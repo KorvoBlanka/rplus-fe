@@ -58,7 +58,7 @@ System.register(['angular2/core'], function(exports_1) {
                 };
                 __decorate([
                     core_2.Output(), 
-                    __metadata('design:type', (typeof (_a = typeof core_2.EventEmitter !== 'undefined' && core_2.EventEmitter) === 'function' && _a) || Object)
+                    __metadata('design:type', core_2.EventEmitter)
                 ], UITagBlock.prototype, "valueChange", void 0);
                 UITagBlock = __decorate([
                     core_1.Component({
@@ -70,7 +70,6 @@ System.register(['angular2/core'], function(exports_1) {
                     __metadata('design:paramtypes', [])
                 ], UITagBlock);
                 return UITagBlock;
-                var _a;
             })();
             exports_1("UITagBlock", UITagBlock);
         }

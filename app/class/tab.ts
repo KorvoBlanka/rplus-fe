@@ -7,14 +7,14 @@ export class Tab {
   tab_sys: any;
 
   constructor(tab_sys, type, args) {
-      this.header = '^_^';
+      this.header = 'Loading...';
       this.type = type;
       this.tab_sys = tab_sys;
       this.args = args;
   }
 
   reborn(type, args) {
-      this.header = '^_^';
+      this.header = 'Loading...';
       this.type = type;
       this.args = args;
   }

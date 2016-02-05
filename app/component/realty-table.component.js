@@ -33,6 +33,59 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                     this._realtyService = _realtyService;
                     this.content_height = 600;
                     this.page = 0;
+                    this.fields = [
+                        { id: 'status', label: '#', visible: true, sort: 0, val: function (r) { return r._source.state_code; } },
+                        { id: 'photo', label: 'Фото', visible: true, sort: 0, val: function (r) { return r._source.main_photo_thumbnail; } },
+                        { id: 'type', label: 'Тип', visible: true, sort: 0, val: function (r) { return r._source.type; } },
+                        { id: 'city', label: 'Город', visible: false, sort: 0, val: function (r) { return r._source.city; } },
+                        { id: 'address', label: 'Адрес', visible: true, sort: 0, val: function (r) { return r._source.addr_str; } },
+                        { id: 'rooms', label: 'Комнаты', visible: true, sort: 0, val: function (r) {
+                                var res = '';
+                                if (r._source.rooms_offer_count) {
+                                    res = r._source.rooms_offer_count;
+                                }
+                                if (r._source.rooms_count) {
+                                    if (res)
+                                        res += '/';
+                                    res += r._source.rooms_count;
+                                }
+                                return res;
+                            } },
+                        { id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: function (r) { return r._source.ap_scheme; } },
+                        { id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: function (r) { return r._source.house_type; } },
+                        { id: 'floors', label: 'Этаж', visible: true, sort: 0, val: function (r) {
+                                var res = '';
+                                if (r._source.floor) {
+                                    res = r._source.floor;
+                                }
+                                if (r._source.floors_count) {
+                                    if (res)
+                                        res += '/';
+                                    res += r._source.floors_count;
+                                }
+                                return res;
+                            } },
+                        { id: 'squares', label: 'Площадь', visible: true, sort: 0, val: function (r) {
+                                return r._source.square_total;
+                            } },
+                        { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: function (r) { return r._source.media; } },
+                        { id: 'mediator', label: 'Предложение', visible: false, sort: 0, val: function (r) { return '~'; } },
+                        { id: 'contact', label: 'Контакт', visible: true, sort: 0, val: function (r) { return '~'; } },
+                        { id: 'price', label: 'Цена', visible: true, sort: 0, val: function (r) { return r._source.price; } },
+                        { id: 'price_sq', label: 'Цена м2', visible: false, sort: 0, val: function (r) {
+                                if (r._source.price && r._source.sqare_total) {
+                                    return (r._source.price / r._source.sqare_total) + '';
+                                }
+                                return '';
+                            } },
+                        { id: 'mls', label: 'MLS', visible: false, sort: 0, val: function (r) { return ''; } },
+                        { id: 'agent', label: 'Агент', visible: true, sort: 0, val: function (r) { return '~'; } },
+                        { id: 'manager', label: 'Менеджер', visible: false, sort: 0, val: function (r) { return '~'; } },
+                        { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: function (r) { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm'); } },
+                        { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: function (r) { return moment(r._source.assign_date * 1000).format('DD.MM.YY hh:mm'); } },
+                        { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: function (r) { return moment(r._source.change_date * 1000).format('DD.MM.YY hh:mm'); } },
+                        { id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: function (r) { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm'); } }
+                    ];
                 }
                 ;
                 RealtyTableComponent.prototype.ngOnInit = function () {
@@ -53,20 +106,45 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                 RealtyTableComponent.prototype.click = function (r) {
                     r.selected = !r.selected;
                 };
+                RealtyTableComponent.prototype.theader_contextmenu = function (e) {
+                    var _this = this;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this._hubService.shared_var['cm_px'] = e.pageX;
+                    this._hubService.shared_var['cm_py'] = e.pageY;
+                    this._hubService.shared_var['cm_hidden'] = false;
+                    var items = [];
+                    this.fields.forEach(function (f) {
+                        items.push({ class: "entry_cb", disabled: false, value: f.visible, label: f.label, callback: function () { _this.toggle_visibility(f.id); } });
+                    });
+                    this._hubService.shared_var['cm_items'] = items;
+                };
+                RealtyTableComponent.prototype.toggle_visibility = function (field_id) {
+                    this.fields.forEach(function (f) {
+                        if (f.id == field_id) {
+                            f.visible = !f.visible;
+                        }
+                    });
+                };
                 RealtyTableComponent.prototype.dblclick = function (r) {
                     r.selected = true;
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     tab_sys.addTab('realty', { realty: r });
                 };
                 RealtyTableComponent.prototype.calcSize = function () {
-                    this.content_height = document.body.clientHeight - 31 - 115;
+                    this.content_height = document.body.clientHeight - 115;
+                };
+                RealtyTableComponent.prototype.toggleSort = function (f) {
+                    f.sort++;
+                    if (f.sort > 2)
+                        f.sort = 0;
                 };
                 RealtyTableComponent = __decorate([
                     core_1.Component({
                         selector: 'realty-table',
                         inputs: ['realty'],
-                        template: "\n    <div class=\"table-wrapper\" (window:resize)=\"onResize($event)\">\n\n        <table class=\"table table-striped fixed_headers\">\n          <thead>\n            <tr>\n              <th>\n                #\n              </th>\n              <th>\n                \u0422\u0438\u043F\n              </th>\n              <th hidden>\n                \u0413\u043E\u0440\u043E\u0434\n              </th>\n              <th>\n                \u0410\u0434\u0440\u0435\u0441\n              </th>\n              <th>\n                \u041A\u043E\u043C\u043D\u0430\u0442\u044B\n              </th>\n              <th>\n                \u041F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u043A\u0430\n              </th>\n              <th>\n                \u041C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\n              </th>\n              <th>\n                \u042D\u0442\u0430\u0436\n              </th>\n              <th>\n                \u041F\u043B\u043E\u0449\u0430\u0434\u044C\n              </th>\n              <th hidden>\n                \u0418\u043C\u043F\u043E\u0440\u0442\n              </th>\n              <th hidden>\n                \u041F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0435\n              </th>\n              <th>\n                \u041A\u043E\u043D\u0442\u0430\u043A\u0442\n              </th>\n              <th>\n                \u0426\u0435\u043D\u0430\n              </th>\n              <th hidden>\n                \u0426\u0435\u043D\u0430 2\u043C\n              </th>\n              <th hidden>\n                MLS\n              </th>\n              <th>\n                \u0410\u0433\u0435\u043D\u0442\n              </th>\n              <th>\n                \u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u043E\n              </th>\n              <th>\n                \u041D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u043E\n              </th>\n              <th>\n                \u0418\u0437\u043C\u0435\u043D\u0435\u043D\u043E\n              </th>\n              <th>\n                \u0410\u043A\u0442\u0443\u0430\u043B\u044C\u043D\u043E\n              </th>\n            </tr>\n          </thead>\n          <tbody\n            [style.height]=\"content_height\"\n            (scroll)=\"scroll($event)\"\n            >\n            <tr *ngFor=\"#r of realty\"\n              [class.selected]=\"r.selected\"\n              (click)=\"click(r)\"\n              (dblclick)=\"dblclick(r)\"\n              >\n              <td>\n                <span class=\"icon-square\"></span>\n              </td>\n              <td>\n                {{ r._source.type }}\n              </td>\n              <td hidden>\n                {{ r._source.city }}\n              </td>\n              <td>\n                {{ r._source.addr_str }}\n              </td>\n              <td>\n                {{ r._source.rooms_count }}\n              </td>\n              <td>\n                {{ r._source.ap_scheme }}\n              </td>\n              <td>\n                {{ r._source.house_type }}\n              </td>\n              <td>\n                {{ r._source.floor }}\n              </td>\n              <td>\n                {{ r._source.sqare_total }}\n              </td>\n              <td hidden>\n                -- import --\n              </td>\n              <td hidden>\n                -- ??? --\n              </td>\n              <td>\n                -- \u043A\u043E\u043D\u0442\u0430\u043A\u0442 --\n              </td>\n              <td>\n                {{ r._source.price }}\n              </td>\n              <td hidden>\n                -- \u0446\u0435\u043D\u0430 \u0437\u0430 \u043C2 --\n              </td>\n              <td hidden>\n                -- MLS --\n              </td>\n              <td>\n                -- \u0430\u0433\u0435\u043D\u0442 --\n              </td>\n              <td>\n                {{ r._source.add_date | formatDate }}\n              </td>\n              <td>\n                {{ r._source.assign_date | formatDate }}\n              </td>\n              <td>\n                {{ r._source.change_date | formatDate }}\n              </td>\n              <td>\n                {{ r._source.last_seen_date | formatDate }}\n              </td>\n            </tr>\n          </tbody>\n        </table>\n\n    </div>\n  ",
-                        styles: ["\n    .table-wrapper {\n      padding-top: 115px;\n      height: 100%;\n      width: 100%;\n    }\n\n    .table {\n      width: 100%;\n    }\n\n    .table > tbody {\n      font-weight: 200;\n    }\n\n    .table > theader th {\n      font-weight: 600;\n    }\n\n    .table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {\n        background-color: #f9f9f9;\n    }\n\n    .table > tbody > tr.selected > td {\n      color: #fff;\n      background-color: #3366cc;\n    }\n\n    .fixed_headers {\n      table-layout: fixed;\n      border-collapse: collapse;\n    }\n\n    .fixed_headers thead {\n      background-color: #333333;\n      color: #fdfdfd;\n    }\n    .fixed_headers thead tr {\n      display: block;\n      position: relative;\n    }\n    .fixed_headers tbody {\n      display: block;\n      overflow: auto;\n      width: 100%;\n      height: 600px;\n    }\n    .fixed_headers th {\n\n    }\n    .fixed_headers th,\n    .fixed_headers td {\n      padding: 5px;\n      text-align: left;\n    }\n\n    .fixed_headers td:nth-child(1),\n    .fixed_headers th:nth-child(1) {\n      width: 24px;\n    }\n    .fixed_headers td:nth-child(2),\n    .fixed_headers th:nth-child(2) {\n      /* \u0442\u0438\u043F */\n      width: 110px;\n    }\n    .fixed_headers td:nth-child(3),\n    .fixed_headers th:nth-child(3) {\n      /* \u0433\u043E\u0440\u043E\u0434 */\n      width: 100px;\n    }\n    .fixed_headers td:nth-child(4),\n    .fixed_headers th:nth-child(4) {\n      /* \u0430\u0434\u0440\u0435\u0441 */\n      width: 200px;\n    }\n    .fixed_headers td:nth-child(5),\n    .fixed_headers th:nth-child(5) {\n      /* \u043A\u043E\u043C\u043D\u0430\u0442\u044B */\n      width: 80px;\n    }\n    .fixed_headers td:nth-child(6),\n    .fixed_headers th:nth-child(6) {\n      /* \u043F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u043A\u0430 */\n      width: 125px;\n    }\n    .fixed_headers td:nth-child(7),\n    .fixed_headers th:nth-child(7) {\n      /* \u043F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u043A\u0430 */\n      width: 125px;\n    }\n    .fixed_headers td:nth-child(8),\n    .fixed_headers th:nth-child(8) {\n      /* \u044D\u0442\u0430\u0436 */\n      width: 50px;\n    }\n    .fixed_headers td:nth-child(9),\n    .fixed_headers th:nth-child(9) {\n      /* \u043F\u043B\u043E\u0449\u0430\u0434\u044C */\n      width: 75px;\n    }\n    .fixed_headers td:nth-child(10),\n    .fixed_headers th:nth-child(10) {\n      /* \u0438\u043C\u043F\u043E\u0440\u0442 */\n      width: 120px;\n    }\n    .fixed_headers td:nth-child(11),\n    .fixed_headers th:nth-child(11) {\n      /* \u0438\u043C\u043F\u043E\u0440\u0442 */\n      width: 120px;\n    }\n    .fixed_headers td:nth-child(12),\n    .fixed_headers th:nth-child(12) {\n      /* \u043A\u043E\u043D\u0442\u0430\u043A\u0442 */\n      width: 120px;\n    }\n    .fixed_headers td:nth-child(13),\n    .fixed_headers th:nth-child(13) {\n      /* \u0446\u0435\u043D\u0430 */\n      width: 80px;\n    }\n    .fixed_headers td:nth-child(14),\n    .fixed_headers th:nth-child(14) {\n      /* \u0446\u0435\u043D\u0430 \u043C2 */\n      width: 80px;\n    }\n    .fixed_headers td:nth-child(15),\n    .fixed_headers th:nth-child(15) {\n      /* MLS */\n      width: 80px;\n    }\n    .fixed_headers td:nth-child(16),\n    .fixed_headers th:nth-child(16) {\n      /* \u0410\u0433\u0435\u043D\u0442 */\n      width: 120px;\n    }\n    .fixed_headers td:nth-child(16),\n    .fixed_headers th:nth-child(16) {\n      /* \u0410\u0433\u0435\u043D\u0442 */\n      width: 120px;\n    }\n    .fixed_headers td:nth-child(17),\n    .fixed_headers th:nth-child(17) {\n      /* \u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u043E */\n      width: 100px;\n    }\n    .fixed_headers td:nth-child(18),\n    .fixed_headers th:nth-child(18) {\n      /* \u041D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u043E */\n      width: 100px;\n    }\n    .fixed_headers td:nth-child(19),\n    .fixed_headers th:nth-child(19) {\n      /* \u0418\u0437\u043C\u0435\u043D\u0435\u043D\u043E */\n      width: 100px;\n    }\n    .fixed_headers td:nth-child(20),\n    .fixed_headers th:nth-child(20) {\n      /* \u0410\u043A\u0442\u0443\u0430\u043B\u044C\u043D\u043E */\n      width: 100px;\n    }\n\n  "],
+                        template: "\n    <div class=\"realty-table-wrapper\" (window:resize)=\"onResize($event)\">\n      <div class=\"scroll-wrapper\" [style.height]=\"content_height\">\n        <table class=\"table table-striped\">\n          <thead\n            (contextmenu)=\"theader_contextmenu($event)\"\n            >\n            <tr>\n              <th *ngFor=\"#f of fields\"\n                [hidden]=\"!f.visible\"\n                [style.width.xx]=\"f.width\"\n                (click)=\"toggleSort(f)\"\n                >\n                {{ f.label }}\n                <span *ngIf=\"f.sort==0\" class=\"icon-none\">\n                </span>\n                <span *ngIf=\"f.sort==1\" class=\"icon-chevron-up\">\n                </span>\n                <span *ngIf=\"f.sort==2\" class=\"icon-chevron-down\">\n                </span>\n              </th>\n            </tr>\n          </thead>\n          <tbody\n            (scroll)=\"scroll($event)\"\n            >\n            <tr *ngFor=\"#r of realty\"\n              [class.selected]=\"r.selected\"\n              (click)=\"click(r)\"\n              (dblclick)=\"dblclick(r)\"\n              >\n              <td *ngFor=\"#f of fields\"\n                [hidden]=\"!f.visible\"\n                [style.width.xx]=\"f.width\"\n              >\n                <span *ngIf=\"f.id=='status'\" class=\"icon-{{ f.val(r) }}\">\n                </span>\n                <span *ngIf=\"f.id=='photo' && r._source.main_photo_thumbnail\" class=\"icon-photo\">\n                </span>\n                <span *ngIf=\"f.id!='status' && f.id!='photo'\">\n                {{ f.val(r) }}\n                </span>\n              </td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </div>\n  ",
+                        styles: ["\n    .realty-table-wrapper {\n      padding-top: 115px;\n      height: 100%;\n      width: 100%;\n    }\n\n    .scroll-wrapper {\n      overflow: auto;\n    }\n\n    .table {\n      width: 100%;\n      font-size: 14;\n      border-collapse: collapse;\n    }\n\n    .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {\n      padding: 5px;\n      font-weight: 200;\n      text-align: left;\n      vertical-align: top;\n      border-top: 1px solid #ddd;\n    }\n\n    .table>thead>tr>th, .table>thead>tr>td {\n      font-weight: 400;\n      border-bottom: 1px solid #ddd;\n      white-space: nowrap;\n\n      -webkit-touch-callout: none;\n      -webkit-user-select: none;\n      -khtml-user-select: none;\n      -moz-user-select: none;\n      -ms-user-select: none;\n      user-select: none;\n\n      cursor: pointer;\n    }\n\n    .table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {\n        background-color: #f9f9f9;\n    }\n\n    .table > tbody > tr.selected > td {\n      color: #fff;\n      background-color: #3366cc;\n    }\n\n  "],
                         pipes: [format_date_pipe_1.FormatDatePipe]
                     }), 
                     __metadata('design:paramtypes', [core_1.ElementRef, hub_service_1.HubService, realty_service_1.RealtyService])

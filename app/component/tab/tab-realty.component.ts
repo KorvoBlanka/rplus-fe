@@ -1,5 +1,7 @@
 import {Component} from 'angular2/core';
 
+
+import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
 import {RealtyService} from '../../service/realty.service';
 import {RequestService} from '../../service/request.service';
@@ -35,7 +37,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     template: `
 
       <div class="tab-button fixed-button" (click)="toggleLeftPane()">
-        <span [ngClass]="{'icon-chevron-right': pane_hidden, 'icon-chevron-left': !pane_hidden}"></span>
+        <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
       </div>
 
       <div class="realty" (window:resize)="onResize($event)">
@@ -446,9 +448,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               [title]="'Похожие объекты'"
               (tabSelect)="similarObjSelected()"
             >
-              <!-- сильное колдунство, св-во right получаем аж из tab_sys -->
+              <!-- сильное колдунство, св-во right получаем из HubService -->
               <!-- TODO: сделать это отдельным компонентом -->
-              <div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="tab.tab_sys.n_width">
+              <div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
                 <div style="width: 330px; background-color: #fff;">
                   <div class="header">
                     <input type="text" style="width: 280px; margin-left: 10px; border: none;"
@@ -477,6 +479,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   [latitude]="parseFloat(r._source.location.lat)"
                   [longitude]="parseFloat(r._source.location.lon)"
                   [info_str]="getRealtyDigest(r)">
+                  [icon_id]="1"
                 </google-map-marker>
                 </t>
 
@@ -486,7 +489,6 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   [latitude]="parseFloat(realty._source.location.lat)"
                   [longitude]="parseFloat(realty._source.location.lon)"
                   [info_str]=""
-                  [icon_id]="1"
                 >
                 </google-map-marker>
               </google-map>
@@ -781,7 +783,7 @@ export class TabRealtyComponent {
         return parseFloat(v);
     }
 
-    constructor(private _configService: ConfigService, private _realtyService: RealtyService, private _requestService: RequestService, private _taskService: TaskService, private _analysisService: AnalysisService, private _historyService: HistoryService) { }
+    constructor(private _hubService: HubService, private _configService: ConfigService, private _realtyService: RealtyService, private _requestService: RequestService, private _taskService: TaskService, private _analysisService: AnalysisService, private _historyService: HistoryService) { }
 
     ngOnInit() {
         this.realty = this.tab.args.realty;

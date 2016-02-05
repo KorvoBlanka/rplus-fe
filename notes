@@ -8,9 +8,10 @@ http://bluejamesbond.github.io/CharacterMap/
 
 
 разгрести css"ку, сделать выбор активного цвета
-make pipe for realty.getDigest and formatDateTime
+сделать pipe realty.getDigest
 
-attr.scrollTop is not working, blya. Temporary use direct access to DOM
+attr.scrollTop не работает ??? может потом починят
+
 
 заявки | кол-во кликов | прогресс
 возможность выбрать ежедневник для синхронизации
@@ -19,6 +20,7 @@ attr.scrollTop is not working, blya. Temporary use direct access to DOM
 
 #
 Тип
+Фото
 Город
 Адрес
 Комнаты

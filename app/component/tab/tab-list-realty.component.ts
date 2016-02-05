@@ -9,6 +9,8 @@ import {ConfigService} from '../../service/config.service';
 import {Tab} from '../../class/tab';
 import {Realty} from '../../class/realty';
 
+import {UISelect} from '../ui/ui-select.component';
+
 import {RealtyDigestComponent} from '../realty-digest.component';
 import {RealtyTableComponent} from '../realty-table.component';
 import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
@@ -17,7 +19,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 @Component({
   selector: 'tab-list-realty',
   inputs: ['tab'],
-  directives: [GoogleMapComponent, GoogleMapMarkerComponent, RealtyDigestComponent, RealtyTableComponent],
+  directives: [GoogleMapComponent, GoogleMapMarkerComponent, RealtyDigestComponent, RealtyTableComponent, UISelect],
   template: `
 
   <div class="search-form">
@@ -26,16 +28,46 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
-      <a (click)="toggleDraw()" [hidden]="table_mode">
-        <span
-          [ngClass]="{'icon-cancel': map_draw_allowed, 'icon-edit': !map_draw_allowed}"
-          ></span>
-      </a>
-      <a (click)="toggleMode()">
-        <span
-          [ngClass]="{'icon-globus': table_mode, 'icon-table': !table_mode}"
-          ></span>
-      </a>
+
+      <ui-select class="view-value edit-value"
+        [values] = "[
+          {id: 0, text: 'Все'},
+          {id: 1, text: 'Не активен'},
+          {id: 2, text: 'Активен'},
+          {id: 3, text: 'В работе'},
+          {id: 4, text: 'Приостановлен'},
+          {id: 5, text: 'Архив'}
+        ]"
+        [value]="{id: 0, text: 'Все'}"
+        [e_style]="'inline'"
+      >
+      </ui-select>
+
+      <ui-select class="view-value edit-value"
+        [values] = "[
+          {id: 1, text: 'Агент 1_1'},
+          {id: 2, text: 'Агент 1_2'},
+          {id: 3, text: 'Агент 1_3'},
+          {id: 4, text: 'Агент 1_4'},
+          {id: 5, text: 'Агент 1_5'}
+        ]"
+        [value]="{id: 0, text: 'Агент 1_1'}"
+        [e_style]="'inline'"
+      >
+      </ui-select>
+
+      <div class="pull-right">
+        <a (click)="toggleDraw()" [hidden]="table_mode">
+          <span
+            [ngClass]="{'icon-cancel': map_draw_allowed, 'icon-edit': !map_draw_allowed}"
+            ></span>
+        </a>
+        <a (click)="toggleMode()">
+          <span
+            [ngClass]="{'icon-globus': table_mode, 'icon-table': !table_mode}"
+            ></span>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -46,7 +78,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
   </realty-table>
 
   <div class="tab-button fixed-button" (click)="toggleLeftPane()">
-    <span [ngClass]="{'icon-chevron-right': pane_hidden, 'icon-chevron-left': !pane_hidden}"></span>
+    <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
   </div>
 
   <div class="list-realty"

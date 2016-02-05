@@ -1,4 +1,4 @@
-System.register(['angular2/core', './component/tab-system.component', './component/notebook.component'], function(exports_1) {
+System.register(['angular2/core', './service/hub.service', './component/tab-system.component', './component/notebook.component', './component/context-menu.component'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,35 +8,45 @@ System.register(['angular2/core', './component/tab-system.component', './compone
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, tab_system_component_1, notebook_component_1;
+    var core_1, hub_service_1, tab_system_component_1, notebook_component_1, context_menu_component_1;
     var AppComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
+            function (hub_service_1_1) {
+                hub_service_1 = hub_service_1_1;
+            },
             function (tab_system_component_1_1) {
                 tab_system_component_1 = tab_system_component_1_1;
             },
             function (notebook_component_1_1) {
                 notebook_component_1 = notebook_component_1_1;
+            },
+            function (context_menu_component_1_1) {
+                context_menu_component_1 = context_menu_component_1_1;
             }],
         execute: function() {
             AppComponent = (function () {
-                function AppComponent() {
-                    this.n_width = 30;
+                function AppComponent(_hubService) {
+                    this._hubService = _hubService;
+                    this._hubService.shared_var['cm_hidden'] = true;
                 }
-                AppComponent.prototype.notebookWidthChange = function (e) {
-                    this.n_width = e.value;
+                AppComponent.prototype.contextmenu = function (e) {
+                    this._hubService.shared_var['cm_hidden'] = true;
+                };
+                AppComponent.prototype.click = function (e) {
+                    this._hubService.shared_var['cm_hidden'] = true;
                 };
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'rplus-app',
-                        template: "\n       <tab-system\n         [n_width]=\"n_width\"\n       ></tab-system>\n       <notebook\n         (widthChange)=\"notebookWidthChange($event)\"\n       ></notebook>\n     ",
+                        template: "\n    <div\n     (contextmenu)=\"contextmenu($event)\"\n     (click)=\"click($event)\"\n    >\n      <context-menu\n        [pos_x]=\"_hubService.shared_var['cm_px']\"\n        [pos_y]=\"_hubService.shared_var['cm_py']\"\n        [hidden]=\"_hubService.shared_var['cm_hidden']\"\n        [items]=\"_hubService.shared_var['cm_items']\"\n      >\n      </context-menu>\n      <tab-system></tab-system>\n      <notebook></notebook>\n    </div>\n  ",
                         styles: [""],
-                        directives: [tab_system_component_1.TabSystemComponent, notebook_component_1.NotebookComponent],
+                        directives: [tab_system_component_1.TabSystemComponent, notebook_component_1.NotebookComponent, context_menu_component_1.ContextMenuComponent],
                     }), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [hub_service_1.HubService])
                 ], AppComponent);
                 return AppComponent;
             })();

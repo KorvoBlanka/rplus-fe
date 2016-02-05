@@ -6,8 +6,8 @@ import {Component} from 'angular2/core';
   template: `
     <div class="ui-carousel">
 
-      <a class="slide-left" style="color: white; display: block;" href="#" (click)="slideLeft()"><span class="icon-chevron-left"></span></a>
-      <a class="slide-right" style="color: white; display: block;" href="#" (click)="slideRight()"><span class="icon-chevron-right"></span></a>
+      <a class="slide-left" style="color: white; display: block;" href="#" (click)="slideLeft()"><span class="icon-arrow-left"></span></a>
+      <a class="slide-right" style="color: white; display: block;" href="#" (click)="slideRight()"><span class="icon-arrow-right"></span></a>
 
       <div class="ribbon" [style.left]="slider_pos" [style.transition-duration]="tr_duration">
 
@@ -27,7 +27,7 @@ import {Component} from 'angular2/core';
     }
 
     .ui-carousel {
-      position: relative;     
+      position: relative;
       height: 100px;
       overflow: hidden;
       margin: 0 -5px;

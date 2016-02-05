@@ -16,75 +16,29 @@ import {Realty} from '../class/realty';
   inputs: ['realty'],
 
   template: `
-    <div class="table-wrapper" (window:resize)="onResize($event)">
-
-        <table class="table table-striped fixed_headers">
-          <thead>
+    <div class="realty-table-wrapper" (window:resize)="onResize($event)">
+      <div class="scroll-wrapper" [style.height]="content_height">
+        <table class="table table-striped">
+          <thead
+            (contextmenu)="theader_contextmenu($event)"
+            >
             <tr>
-              <th>
-                #
-              </th>
-              <th>
-                Тип
-              </th>
-              <th hidden>
-                Город
-              </th>
-              <th>
-                Адрес
-              </th>
-              <th>
-                Комнаты
-              </th>
-              <th>
-                Планировка
-              </th>
-              <th>
-                Материал
-              </th>
-              <th>
-                Этаж
-              </th>
-              <th>
-                Площадь
-              </th>
-              <th hidden>
-                Импорт
-              </th>
-              <th hidden>
-                Предложение
-              </th>
-              <th>
-                Контакт
-              </th>
-              <th>
-                Цена
-              </th>
-              <th hidden>
-                Цена 2м
-              </th>
-              <th hidden>
-                MLS
-              </th>
-              <th>
-                Агент
-              </th>
-              <th>
-                Добавлено
-              </th>
-              <th>
-                Назначено
-              </th>
-              <th>
-                Изменено
-              </th>
-              <th>
-                Актуально
+              <th *ngFor="#f of fields"
+                [hidden]="!f.visible"
+                [style.width.xx]="f.width"
+                (click)="toggleSort(f)"
+                >
+                {{ f.label }}
+                <span *ngIf="f.sort==0" class="icon-none">
+                </span>
+                <span *ngIf="f.sort==1" class="icon-chevron-up">
+                </span>
+                <span *ngIf="f.sort==2" class="icon-chevron-down">
+                </span>
               </th>
             </tr>
           </thead>
           <tbody
-            [style.height]="content_height"
             (scroll)="scroll($event)"
             >
             <tr *ngFor="#r of realty"
@@ -92,89 +46,62 @@ import {Realty} from '../class/realty';
               (click)="click(r)"
               (dblclick)="dblclick(r)"
               >
-              <td>
-                <span class="icon-square"></span>
-              </td>
-              <td>
-                {{ r._source.type }}
-              </td>
-              <td hidden>
-                {{ r._source.city }}
-              </td>
-              <td>
-                {{ r._source.addr_str }}
-              </td>
-              <td>
-                {{ r._source.rooms_count }}
-              </td>
-              <td>
-                {{ r._source.ap_scheme }}
-              </td>
-              <td>
-                {{ r._source.house_type }}
-              </td>
-              <td>
-                {{ r._source.floor }}
-              </td>
-              <td>
-                {{ r._source.sqare_total }}
-              </td>
-              <td hidden>
-                -- import --
-              </td>
-              <td hidden>
-                -- ??? --
-              </td>
-              <td>
-                -- контакт --
-              </td>
-              <td>
-                {{ r._source.price }}
-              </td>
-              <td hidden>
-                -- цена за м2 --
-              </td>
-              <td hidden>
-                -- MLS --
-              </td>
-              <td>
-                -- агент --
-              </td>
-              <td>
-                {{ r._source.add_date | formatDate }}
-              </td>
-              <td>
-                {{ r._source.assign_date | formatDate }}
-              </td>
-              <td>
-                {{ r._source.change_date | formatDate }}
-              </td>
-              <td>
-                {{ r._source.last_seen_date | formatDate }}
+              <td *ngFor="#f of fields"
+                [hidden]="!f.visible"
+                [style.width.xx]="f.width"
+              >
+                <span *ngIf="f.id=='status'" class="icon-{{ f.val(r) }}">
+                </span>
+                <span *ngIf="f.id=='photo' && r._source.main_photo_thumbnail" class="icon-photo">
+                </span>
+                <span *ngIf="f.id!='status' && f.id!='photo'">
+                {{ f.val(r) }}
+                </span>
               </td>
             </tr>
           </tbody>
         </table>
-
+      </div>
     </div>
   `,
   styles: [`
-    .table-wrapper {
+    .realty-table-wrapper {
       padding-top: 115px;
       height: 100%;
       width: 100%;
     }
 
+    .scroll-wrapper {
+      overflow: auto;
+    }
+
     .table {
       width: 100%;
+      font-size: 14;
+      border-collapse: collapse;
     }
 
-    .table > tbody {
+    .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+      padding: 5px;
       font-weight: 200;
+      text-align: left;
+      vertical-align: top;
+      border-top: 1px solid #ddd;
     }
 
-    .table > theader th {
-      font-weight: 600;
+    .table>thead>tr>th, .table>thead>tr>td {
+      font-weight: 400;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      cursor: pointer;
     }
 
     .table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {
@@ -184,139 +111,6 @@ import {Realty} from '../class/realty';
     .table > tbody > tr.selected > td {
       color: #fff;
       background-color: #3366cc;
-    }
-
-    .fixed_headers {
-      table-layout: fixed;
-      border-collapse: collapse;
-    }
-
-    .fixed_headers thead {
-      background-color: #333333;
-      color: #fdfdfd;
-    }
-    .fixed_headers thead tr {
-      display: block;
-      position: relative;
-    }
-    .fixed_headers tbody {
-      display: block;
-      overflow: auto;
-      width: 100%;
-      height: 600px;
-    }
-    .fixed_headers th {
-
-    }
-    .fixed_headers th,
-    .fixed_headers td {
-      padding: 5px;
-      text-align: left;
-    }
-
-    .fixed_headers td:nth-child(1),
-    .fixed_headers th:nth-child(1) {
-      width: 24px;
-    }
-    .fixed_headers td:nth-child(2),
-    .fixed_headers th:nth-child(2) {
-      /* тип */
-      width: 110px;
-    }
-    .fixed_headers td:nth-child(3),
-    .fixed_headers th:nth-child(3) {
-      /* город */
-      width: 100px;
-    }
-    .fixed_headers td:nth-child(4),
-    .fixed_headers th:nth-child(4) {
-      /* адрес */
-      width: 200px;
-    }
-    .fixed_headers td:nth-child(5),
-    .fixed_headers th:nth-child(5) {
-      /* комнаты */
-      width: 80px;
-    }
-    .fixed_headers td:nth-child(6),
-    .fixed_headers th:nth-child(6) {
-      /* планировка */
-      width: 125px;
-    }
-    .fixed_headers td:nth-child(7),
-    .fixed_headers th:nth-child(7) {
-      /* планировка */
-      width: 125px;
-    }
-    .fixed_headers td:nth-child(8),
-    .fixed_headers th:nth-child(8) {
-      /* этаж */
-      width: 50px;
-    }
-    .fixed_headers td:nth-child(9),
-    .fixed_headers th:nth-child(9) {
-      /* площадь */
-      width: 75px;
-    }
-    .fixed_headers td:nth-child(10),
-    .fixed_headers th:nth-child(10) {
-      /* импорт */
-      width: 120px;
-    }
-    .fixed_headers td:nth-child(11),
-    .fixed_headers th:nth-child(11) {
-      /* импорт */
-      width: 120px;
-    }
-    .fixed_headers td:nth-child(12),
-    .fixed_headers th:nth-child(12) {
-      /* контакт */
-      width: 120px;
-    }
-    .fixed_headers td:nth-child(13),
-    .fixed_headers th:nth-child(13) {
-      /* цена */
-      width: 80px;
-    }
-    .fixed_headers td:nth-child(14),
-    .fixed_headers th:nth-child(14) {
-      /* цена м2 */
-      width: 80px;
-    }
-    .fixed_headers td:nth-child(15),
-    .fixed_headers th:nth-child(15) {
-      /* MLS */
-      width: 80px;
-    }
-    .fixed_headers td:nth-child(16),
-    .fixed_headers th:nth-child(16) {
-      /* Агент */
-      width: 120px;
-    }
-    .fixed_headers td:nth-child(16),
-    .fixed_headers th:nth-child(16) {
-      /* Агент */
-      width: 120px;
-    }
-    .fixed_headers td:nth-child(17),
-    .fixed_headers th:nth-child(17) {
-      /* Добавлено */
-      width: 100px;
-    }
-    .fixed_headers td:nth-child(18),
-    .fixed_headers th:nth-child(18) {
-      /* Назначено */
-      width: 100px;
-    }
-    .fixed_headers td:nth-child(19),
-    .fixed_headers th:nth-child(19) {
-      /* Изменено */
-      width: 100px;
-    }
-    .fixed_headers td:nth-child(20),
-    .fixed_headers th:nth-child(20) {
-      /* Актуально */
-      width: 100px;
     }
 
   `],
@@ -329,6 +123,59 @@ export class RealtyTableComponent {
     content_height: number = 600;
     page: number = 0;
     to: any;
+
+    private fields = [
+      { id: 'status', label: '#', visible: true, sort: 0, val: (r: Realty) => { return r._source.state_code; } },
+      { id: 'photo', label: 'Фото', visible: true, sort: 0, val: (r: Realty) => { return r._source.main_photo_thumbnail; } },
+      { id: 'type', label: 'Тип', visible: true, sort: 0, val: (r: Realty) => { return r._source.type; } },
+      { id: 'city', label: 'Город', visible: false, sort: 0, val: (r: Realty) => { return r._source.city; } },
+      { id: 'address', label: 'Адрес', visible: true, sort: 0, val: (r: Realty) => { return r._source.addr_str; } },
+      { id: 'rooms', label: 'Комнаты', visible: true, sort: 0, val: (r: Realty) => {
+        var res = '';
+        if (r._source.rooms_offer_count) {
+          res = r._source.rooms_offer_count;
+        }
+        if (r._source.rooms_count) {
+          if (res) res += '/'
+          res += r._source.rooms_count;
+        }
+        return res;
+      } },
+      { id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: (r: Realty) => { return r._source.ap_scheme; } },
+      { id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: (r: Realty) => { return r._source.house_type; } },
+      { id: 'floors', label: 'Этаж', visible: true, sort: 0, val: (r: Realty) => {
+        var res = '';
+        if (r._source.floor) {
+          res = r._source.floor;
+        }
+        if (r._source.floors_count) {
+          if (res) res += '/'
+          res += r._source.floors_count;
+        }
+        return res;
+      } },
+      { id: 'squares', label: 'Площадь', visible: true, sort: 0, val: (r: Realty) => {
+
+        return r._source.square_total; 
+      } },
+      { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: (r: Realty) => { return r._source.media; } },
+      { id: 'mediator', label: 'Предложение', visible: false, sort: 0, val: (r: Realty) => { return '~' } },
+      { id: 'contact', label: 'Контакт', visible: true, sort: 0, val: (r: Realty) => { return '~' } },
+      { id: 'price', label: 'Цена', visible: true, sort: 0, val: (r: Realty) => { return r._source.price; } },
+      { id: 'price_sq', label: 'Цена м2', visible: false, sort: 0, val: (r: Realty) => {
+        if (r._source.price && r._source.sqare_total) {
+          return (r._source.price / r._source.sqare_total) + '';
+        }
+        return '';
+      } },
+      { id: 'mls', label: 'MLS', visible: false, sort: 0, val: (r: Realty) => { return '' } },
+      { id: 'agent', label: 'Агент', visible: true, sort: 0, val: (r: Realty) => { return '~' } },
+      { id: 'manager', label: 'Менеджер', visible: false, sort: 0, val: (r: Realty) => { return '~' } },
+      { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: (r: Realty) => { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm') } },
+      { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: (r: Realty) => { return moment(r._source.assign_date * 1000).format('DD.MM.YY hh:mm') } },
+      { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: (r: Realty) => { return moment(r._source.change_date * 1000).format('DD.MM.YY hh:mm') } },
+      { id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: (r: Realty) => { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm') } }
+    ];
 
     constructor(private _elem: ElementRef, private _hubService: HubService, private _realtyService: RealtyService) {};
 
@@ -354,6 +201,32 @@ export class RealtyTableComponent {
       r.selected = !r.selected;
     }
 
+    theader_contextmenu(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this._hubService.shared_var['cm_px'] = e.pageX;
+      this._hubService.shared_var['cm_py'] = e.pageY;
+      this._hubService.shared_var['cm_hidden'] = false;
+
+      let items = [];
+
+      this.fields.forEach(f => {
+        items.push(
+          {class: "entry_cb", disabled: false, value: f.visible, label: f.label, callback: () => {this.toggle_visibility(f.id)}}
+        );
+      })
+
+      this._hubService.shared_var['cm_items'] = items;
+    }
+
+    toggle_visibility(field_id: string) {
+      this.fields.forEach(f => {
+        if (f.id == field_id) {
+          f.visible = !f.visible;
+        }
+      });
+    }
+
     dblclick(r: Realty) {
       r.selected = true;
       var tab_sys = this._hubService.getProperty('tab_sys');
@@ -361,6 +234,11 @@ export class RealtyTableComponent {
     }
 
     calcSize() {
-      this.content_height = document.body.clientHeight - 31 - 115;
+      this.content_height = document.body.clientHeight - 115;
+    }
+
+    toggleSort(f) {
+      f.sort ++;
+      if (f.sort > 2) f.sort = 0;
     }
 }

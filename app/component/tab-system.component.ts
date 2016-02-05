@@ -42,10 +42,10 @@ import {TabRootComponent} from './tab/tab-root.component';
     }
     .tab-list {
       position: absolute;
-      float: left;
+      top: 0;
+      left: 0;
       height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
       background-color: #ccc;
     }
     .tab {
@@ -102,63 +102,63 @@ import {TabRootComponent} from './tab/tab-root.component';
 })
 
 export class TabSystemComponent {
-    public n_width: number;
-    public selected_tab: Tab;
-    public tabs: Tab[] = [];
-    public tab_height = 0;
-    public vt_height = 0;
-    to: number;
+  public n_width: number;
+  public selected_tab: Tab;
+  public tabs: Tab[] = [];
+  public tab_height = 0;
+  public vt_height = 0;
+  to: any;
 
-    constructor(private _hubService: HubService) {
-      _hubService.setProperty('tab_sys', this);
-    };
+  constructor(private _hubService: HubService) {
+    _hubService.setProperty('tab_sys', this);
+  };
 
-    ngAfterContentInit() {
+  ngAfterContentInit() {
+    this.addTab('main', {});
+  }
+
+  calcTabHeight() {
+    var nominal_height = 160;
+    var minimal_height = 60;
+    var h = document.body.clientHeight - (31 * 2);  // - 2 buttons
+    this.tab_height = (h - this.tabs.length) / this.tabs.length;
+
+    if (this.tab_height > nominal_height) this.tab_height = nominal_height;
+    if (this.tab_height < minimal_height) this.tab_height = minimal_height;
+
+    this.vt_height = this.tab_height - 60;
+  }
+
+  selectTab(tab: Tab) {
+    this.selected_tab = tab;
+  }
+
+  addTab(type, args) {
+    if (this.tabs.length < 10) {
+      var new_tab = new Tab(this, type, args);
+      this.tabs.push(new_tab);
+
+      this.calcTabHeight();
+      this.selected_tab = new_tab;
+    }
+  }
+
+  closeTab(tab: Tab) {
+    var idx = this.tabs.indexOf(tab);
+    this.tabs.splice(idx, 1);
+
+    if (this.tabs.length == 0) {
       this.addTab('main', {});
+    } else {
+      if(this.selected_tab == tab) {
+        this.selected_tab = this.tabs[idx ? (idx - 1) : 0];
+      }
     }
 
-    calcTabHeight() {
-        var nominal_height = 160;
-        var minimal_height = 60;
-        var h = document.body.clientHeight - (31 * 2);  // - 2 buttons
-        this.tab_height = (h - this.tabs.length) / this.tabs.length;
+    clearTimeout(this.to);
+    this.to = setTimeout(() => {
+      this.calcTabHeight();
+    }, 500);
 
-        if (this.tab_height > nominal_height) this.tab_height = nominal_height;
-        if (this.tab_height < minimal_height) this.tab_height = minimal_height;
-
-        this.vt_height = this.tab_height - 60;
-    }
-
-    selectTab(tab: Tab) {
-        this.selected_tab = tab;
-    }
-
-    addTab(type, args) {
-        if (this.tabs.length < 10) {
-            var new_tab = new Tab(this, type, args);
-            this.tabs.push(new_tab);
-
-            this.calcTabHeight();
-            this.selected_tab = new_tab;
-        }
-    }
-
-    closeTab(tab: Tab) {
-        var idx = this.tabs.indexOf(tab);
-        this.tabs.splice(idx, 1);
-
-        if (this.tabs.length == 0) {
-            this.addTab('main', {});
-        } else {
-            if(this.selected_tab == tab) {
-                this.selected_tab = this.tabs[idx ? (idx - 1) : 0];
-            }
-        }
-
-        clearTimeout(this.to);
-        this.to = setTimeout(() => {
-            this.calcTabHeight();
-        }, 500);
-
-    }
+  }
 }

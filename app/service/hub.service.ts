@@ -3,15 +3,17 @@ import {Injectable} from 'angular2/core';
 @Injectable()
 export class HubService {
 
-    getProperty(name: string) {
-        return stash[name];
-    }
+  public shared_var = {};
 
-    setProperty(name: string, val: any) {
-        stash[name] = val;
-    }
-}
-
-var stash = {
+  private stash = {
     some_prop: 'some_val',
+  }
+
+  getProperty(name: string) {
+    return this.stash[name];
+  }
+
+  setProperty(name: string, val: any) {
+    this.stash[name] = val;
+  }
 }

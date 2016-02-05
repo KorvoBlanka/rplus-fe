@@ -1,5 +1,6 @@
-import {Component} from 'angular2/core';
-import {Output, EventEmitter} from 'angular2/core';
+import {Component, Output, EventEmitter} from 'angular2/core';
+
+import {HubService} from '../service/hub.service';
 
 @Component({
   selector: 'notebook',
@@ -8,7 +9,7 @@ import {Output, EventEmitter} from 'angular2/core';
       <div class="border-stripe">
         <div class="header">
           <div class="tab-button" (click)="toggleNotebook()">
-            <span [ngClass]="{'icon-chevron-left': hidden, 'icon-chevron-right': !hidden}"></span>
+            <span [ngClass]="{'icon-arrow-left': hidden, 'icon-arrow-right': !hidden}"></span>
           </div>
         </div>
       </div>
@@ -72,6 +73,10 @@ export class NotebookComponent {
 
     @Output() widthChange: EventEmitter<any> = new EventEmitter();
 
+    constructor(private _hubService: HubService) {
+      this._hubService.shared_var['nb_width'] = 30;
+    }
+
     toggleNotebook() {
         this.hidden = !this.hidden;
         this.emitWidth();
@@ -90,6 +95,7 @@ export class NotebookComponent {
                 w += 371;
             }
         }
+        this._hubService.shared_var['nb_width'] = w;
         this.widthChange.emit( { value: w } );
     }
 }

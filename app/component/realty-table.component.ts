@@ -156,7 +156,7 @@ export class RealtyTableComponent {
       } },
       { id: 'squares', label: 'Площадь', visible: true, sort: 0, val: (r: Realty) => {
 
-        return r._source.square_total; 
+        return r._source.square_total;
       } },
       { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: (r: Realty) => { return r._source.media; } },
       { id: 'mediator', label: 'Предложение', visible: false, sort: 0, val: (r: Realty) => { return '~' } },
@@ -171,6 +171,11 @@ export class RealtyTableComponent {
       { id: 'mls', label: 'MLS', visible: false, sort: 0, val: (r: Realty) => { return '' } },
       { id: 'agent', label: 'Агент', visible: true, sort: 0, val: (r: Realty) => { return '~' } },
       { id: 'manager', label: 'Менеджер', visible: false, sort: 0, val: (r: Realty) => { return '~' } },
+
+      { id: 'reqests', label: 'Заявки', visible: false, sort: 0, val: (r: Realty) => { return '10' } },
+      { id: 'click_count', label: 'Кол-во кликов', visible: false, sort: 0, val: (r: Realty) => { return '100' } },
+      { id: 'progress', label: 'Прогресс', visible: false, sort: 0, val: (r: Realty) => { return '50%' } },
+
       { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: (r: Realty) => { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm') } },
       { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: (r: Realty) => { return moment(r._source.assign_date * 1000).format('DD.MM.YY hh:mm') } },
       { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: (r: Realty) => { return moment(r._source.change_date * 1000).format('DD.MM.YY hh:mm') } },

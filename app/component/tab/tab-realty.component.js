@@ -1,5 +1,4 @@
 System.register(['angular2/core', '../../service/hub.service', '../../service/config.service', '../../service/realty.service', '../../service/request.service', '../../service/task.service', '../../service/history.service', '../../service/analysis.service', '../../class/realty', '../ui/ui-select.component', '../ui/ui-carousel.component', '../ui/ui-tag-block.component', '../ui/ui-tabs.component', '../ui/ui-tab.component', '../ui/ui-pie-chart.component', '../ui/ui-line-chart.component', '../ui/ui-bar-chart.component', '../realty-digest.component', '../request-digest.component', '../history-digest.component', '../google-map.component'], function(exports_1) {
-    "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -79,6 +78,7 @@ System.register(['angular2/core', '../../service/hub.service', '../../service/co
         execute: function() {
             TabRealtyComponent = (function () {
                 function TabRealtyComponent(_hubService, _configService, _realtyService, _requestService, _taskService, _analysisService, _historyService) {
+                    var _this = this;
                     this._hubService = _hubService;
                     this._configService = _configService;
                     this._realtyService = _realtyService;
@@ -95,6 +95,7 @@ System.register(['angular2/core', '../../service/hub.service', '../../service/co
                     this.ch2_data = [];
                     this.ch3_data = [];
                     this.ch4_data = [];
+                    setTimeout(function () { _this.tab.header = 'realty ' + _this.realty._id; });
                 }
                 TabRealtyComponent.prototype.log = function (e) {
                     console.log(e);
@@ -109,11 +110,7 @@ System.register(['angular2/core', '../../service/hub.service', '../../service/co
                         this.lat = parseFloat(this.realty._source.location.lat);
                         this.lon = parseFloat(this.realty._source.location.lon);
                     }
-                };
-                TabRealtyComponent.prototype.ngAfterContentInit = function () {
-                    var _this = this;
                     this.calcSize();
-                    setTimeout(function () { _this.tab.header = 'realty ' + _this.realty._id; });
                 };
                 TabRealtyComponent.prototype.onResize = function (e) {
                     this.calcSize();
@@ -198,7 +195,7 @@ System.register(['angular2/core', '../../service/hub.service', '../../service/co
                     __metadata('design:paramtypes', [hub_service_1.HubService, config_service_1.ConfigService, realty_service_1.RealtyService, request_service_1.RequestService, task_service_1.TaskService, analysis_service_1.AnalysisService, history_service_1.HistoryService])
                 ], TabRealtyComponent);
                 return TabRealtyComponent;
-            }());
+            })();
             exports_1("TabRealtyComponent", TabRealtyComponent);
         }
     }

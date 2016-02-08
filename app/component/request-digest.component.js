@@ -1,4 +1,4 @@
-System.register(['angular2/core', '../service/hub.service', '../service/task.service'], function(exports_1) {
+System.register(['angular2/core', '../service/hub.service', '../service/task.service', '../class/task'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,7 +8,7 @@ System.register(['angular2/core', '../service/hub.service', '../service/task.ser
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, hub_service_1, task_service_1;
+    var core_1, hub_service_1, task_service_1, task_1;
     var RequestDigestComponent;
     return {
         setters:[
@@ -20,6 +20,9 @@ System.register(['angular2/core', '../service/hub.service', '../service/task.ser
             },
             function (task_service_1_1) {
                 task_service_1 = task_service_1_1;
+            },
+            function (task_1_1) {
+                task_1 = task_1_1;
             }],
         execute: function() {
             RequestDigestComponent = (function () {
@@ -51,18 +54,7 @@ System.register(['angular2/core', '../service/hub.service', '../service/task.ser
                     clearTimeout(this.to);
                 };
                 RequestDigestComponent.prototype.getResultText = function () {
-                    switch (this.task.result_id) {
-                        case (0): {
-                            return 'Выполняется';
-                        }
-                        case (1): {
-                            return 'Успешно';
-                        }
-                        case (2): {
-                            return 'Не успешно';
-                        }
-                    }
-                    return '???';
+                    return task_1.Task.getResultText(this.task);
                 };
                 RequestDigestComponent = __decorate([
                     core_1.Component({

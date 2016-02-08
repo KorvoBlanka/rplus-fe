@@ -1,5 +1,6 @@
 import {
   Component,
+  ChangeDetectionStrategy,
   Renderer,
   ElementRef,
   SimpleChange
@@ -9,6 +10,7 @@ import {Output, EventEmitter} from 'angular2/core';
 import {ConcaveHull} from '../class/concavehull';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'google-map',
   inputs: ['latitude', 'longitude', 'zoom', 'draw_allowed'],
   template: `
@@ -148,6 +150,7 @@ import {ConcaveHull} from '../class/concavehull';
 
 
   @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map-marker',
     inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
     template: ``,

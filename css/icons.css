@@ -109,6 +109,14 @@
   content: "\E001";
 }
 
+.icon-triangle-down:before {
+  content: "\E813";
+}
+
+.icon-circle:before {
+  content: "\E91F";
+}
+
 .icon-none:before {
   content: "\FFFD";
   opacity: 0;

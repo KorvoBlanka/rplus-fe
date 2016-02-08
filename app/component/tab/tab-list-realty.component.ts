@@ -1,5 +1,6 @@
 import {
   Component,
+  ChangeDetectionStrategy,
   ElementRef
 } from 'angular2/core';
 
@@ -9,7 +10,7 @@ import {ConfigService} from '../../service/config.service';
 import {Tab} from '../../class/tab';
 import {Realty} from '../../class/realty';
 
-import {UISelect} from '../ui/ui-select.component';
+import {UISelect, UISelectConfig} from '../ui/ui-select.component';
 
 import {RealtyDigestComponent} from '../realty-digest.component';
 import {RealtyTableComponent} from '../realty-table.component';
@@ -17,44 +18,83 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'tab-list-realty',
   inputs: ['tab'],
   directives: [GoogleMapComponent, GoogleMapMarkerComponent, RealtyDigestComponent, RealtyTableComponent, UISelect],
   template: `
 
-  <div class="search-form">
+  <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
       <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
 
-      <ui-select class="view-value edit-value"
-        [values] = "[
-          {id: 0, text: 'Все'},
-          {id: 1, text: 'Не активен'},
-          {id: 2, text: 'Активен'},
-          {id: 3, text: 'В работе'},
-          {id: 4, text: 'Приостановлен'},
-          {id: 5, text: 'Архив'}
-        ]"
-        [value]="{id: 0, text: 'Все'}"
-        [e_style]="'inline'"
-      >
-      </ui-select>
+      <div class="inline-select">
+        <ui-select class="view-value edit-value"
+          [values] = "[
+            {id: 0, text: 'Все'},
+            {id: 1, text: 'Не активен'},
+            {id: 2, text: 'Активен'},
+            {id: 3, text: 'В работе'},
+            {id: 4, text: 'Приостановлен'},
+            {id: 5, text: 'Архив'}
+          ]"
+          [value]="{id: 0, text: 'Все'}"
+          [config]="{icon: 'icon-square', draw_arrow: true}"
+        >
+        </ui-select>
+      </div>
+      <div class="inline-select">
+        <ui-select class="view-value edit-value"
+          [values] = "[
+            {id: 1, text: 'Агент 1_1'},
+            {id: 2, text: 'Агент 1_2'},
+            {id: 3, text: 'Агент 1_3'},
+            {id: 4, text: 'Агент 1_4'},
+            {id: 5, text: 'Агент 1_5'}
+          ]"
+          [value]="{id: 0, text: 'Агент 1_1'}"
+          [config]="{icon: 'icon-person', draw_arrow: true}"
+        >
+        </ui-select>
+      </div>
 
-      <ui-select class="view-value edit-value"
-        [values] = "[
-          {id: 1, text: 'Агент 1_1'},
-          {id: 2, text: 'Агент 1_2'},
-          {id: 3, text: 'Агент 1_3'},
-          {id: 4, text: 'Агент 1_4'},
-          {id: 5, text: 'Агент 1_5'}
-        ]"
-        [value]="{id: 0, text: 'Агент 1_1'}"
-        [e_style]="'inline'"
-      >
-      </ui-select>
+      <div class="inline-select">
+        <ui-select class="view-value edit-value"
+          [values] = "[
+            {id: 0, text: 'Все'},
+            {id: 1, icon: 'icon-circle tag-red', text: 'Красный'},
+            {id: 2, icon: 'icon-circle tag-orange', text: 'Оранжевый'},
+            {id: 3, icon: 'icon-circle tag-yellow', text: 'Желтый'},
+            {id: 4, icon: 'icon-circle tag-green', text: 'Зеленый'},
+            {id: 5, icon: 'icon-circle tag-blue', text: 'Голубой'},
+            {id: 6, icon: 'icon-circle tag-violet', text: 'Лиловый'},
+            {id: 7, icon: 'icon-circle tag-gray', text: 'Серый'}
+          ]"
+          [value]="{id: 0, text: 'Все'}"
+          [config]="{icon: 'icon-tag', draw_arrow: true}"
+        >
+        </ui-select>
+      </div>
+
+      <div class="inline-select">
+        <ui-select class="view-value edit-value"
+          [values] = "[
+            {id: 1, text: '1 день'},
+            {id: 2, text: '3 дня'},
+            {id: 3, text: 'Неделя'},
+            {id: 4, text: '2 недели'},
+            {id: 5, text: 'Месяц'},
+            {id: 6, text: '3 месяца'},
+            {id: 7, text: 'Все'}
+          ]"
+          [value]="{id: 0, text: '3 месяца'}"
+          [config]="{icon: 'icon-month', draw_arrow: true}"
+        >
+        </ui-select>
+      </div>
 
       <div class="pull-right">
         <a (click)="toggleDraw()" [hidden]="table_mode">
@@ -133,6 +173,10 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       border: 1px solid #eee;
     }
 
+    .search-form.table-mode {
+      border: 1px solid #fff;
+    }
+
     .tool-box {
       height: 30px;
       margin: 0 12px;
@@ -170,6 +214,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       top: 0;
       left: 0;
     }
+
+    .inline-select {
+      display: inline-block;
+      height: 20px;
+      padding: 0 15px;
+      font-size: 14;
+      color: #666;
+    }
     `]
   })
 
@@ -199,7 +251,10 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       return parseFloat(v);
     }
 
-    constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {}
+    constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
+      this.realtys = this._realtyService.getRealty(1, 32);
+      setTimeout(() => { this.tab.header = 'realty list'; });
+    }
 
     ngOnInit() {
       this.list = this._elem.nativeElement.querySelector('.digest-list');
@@ -208,12 +263,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       this.lon = c.map.lon;
       this.zoom = c.map.zoom;
 
-      this.realtys = this._realtyService.getRealty(1, 32);
       this.calcSize();
-    }
-
-    ngAfterContentInit() {
-      setTimeout(() => { this.tab.header = 'realty list'; });
     }
 
     onResize(e) {

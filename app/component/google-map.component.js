@@ -122,6 +122,7 @@ System.register(['angular2/core', '../class/concavehull'], function(exports_1) {
                 ], GoogleMapComponent.prototype, "drawFinished", void 0);
                 GoogleMapComponent = __decorate([
                     core_1.Component({
+                        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
                         selector: 'google-map',
                         inputs: ['latitude', 'longitude', 'zoom', 'draw_allowed'],
                         template: "\n  <div class=\"map-wrapper\">\n  <ng-content></ng-content>\n  </div>\n  ",
@@ -186,6 +187,7 @@ System.register(['angular2/core', '../class/concavehull'], function(exports_1) {
                 ], GoogleMapMarkerComponent.prototype, "click", void 0);
                 GoogleMapMarkerComponent = __decorate([
                     core_1.Component({
+                        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
                         selector: 'google-map-marker',
                         inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
                         template: "",

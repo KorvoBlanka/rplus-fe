@@ -8,7 +8,7 @@ import {Tab} from '../../class/tab';
       <div class="tile-board" style="wi">
         <div class="tile-group">
 
-          <div class="tile bg-darkBlue fg-white" (click)="clickTile()">
+          <div class="tile bg-darkBlue fg-white" (click)="turn_to('list_realty')">
             <div class="tile-content iconic">
                 <span class="icon icon-home"></span>
             </div>
@@ -22,7 +22,7 @@ import {Tab} from '../../class/tab';
             <span class="tile-label">Недвижимость - Продажа</span>
           </div>
 
-          <div class="tile bg-indigo fg-white">
+          <div class="tile bg-indigo fg-white" (click)="turn_to('list_person')">
             <div class="tile-content iconic">
                 <span class="icon icon-person"></span>
             </div>
@@ -84,11 +84,11 @@ import {Tab} from '../../class/tab';
 export class TabMainComponent {
     public tab: Tab;
 
-    clickTile() {
-        this.tab.reborn('list_realty', {});
+    turn_to(tab_type: string) {
+        this.tab.reborn(tab_type, {});
     }
 
-    ngAfterContentInit() {
+    constructor() {
         setTimeout(() => { this.tab.header = 'new tab'; });
     }
 }

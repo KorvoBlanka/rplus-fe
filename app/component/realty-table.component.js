@@ -1,5 +1,4 @@
 System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.service', '../service/realty.service'], function(exports_1) {
-    "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -153,7 +152,7 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                     __metadata('design:paramtypes', [core_1.ElementRef, hub_service_1.HubService, realty_service_1.RealtyService])
                 ], RealtyTableComponent);
                 return RealtyTableComponent;
-            }());
+            })();
             exports_1("RealtyTableComponent", RealtyTableComponent);
         }
     }

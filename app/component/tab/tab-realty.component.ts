@@ -783,7 +783,9 @@ export class TabRealtyComponent {
         return parseFloat(v);
     }
 
-    constructor(private _hubService: HubService, private _configService: ConfigService, private _realtyService: RealtyService, private _requestService: RequestService, private _taskService: TaskService, private _analysisService: AnalysisService, private _historyService: HistoryService) { }
+    constructor(private _hubService: HubService, private _configService: ConfigService, private _realtyService: RealtyService, private _requestService: RequestService, private _taskService: TaskService, private _analysisService: AnalysisService, private _historyService: HistoryService) {
+      setTimeout(() => { this.tab.header = 'realty ' + this.realty._id; });
+    }
 
     ngOnInit() {
         this.realty = this.tab.args.realty;
@@ -793,11 +795,8 @@ export class TabRealtyComponent {
             this.lat = parseFloat(this.realty._source.location.lat);
             this.lon = parseFloat(this.realty._source.location.lon);
         }
-    }
 
-    ngAfterContentInit() {
         this.calcSize();
-        setTimeout(() => { this.tab.header = 'realty ' + this.realty._id; });
     }
 
     onResize(e) {

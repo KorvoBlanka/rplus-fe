@@ -3,15 +3,20 @@ import {Output, EventEmitter} from 'angular2/core';
 
 @Component({
   selector: 'ui-select',
-  inputs: ['values', 'value', 'e_style'],
+  inputs: ['values', 'value', 'config'],
   template: `
-    <div class="ui-select" [class.inline]="e_style == 'inline'">
-      <div class="dropdown-toggle" (window:click)="hide()" (click)="toggleHidden($event)"> {{ value.text }} </div>
+    <div class="ui-select">
+      <div class="dropdown-toggle" (window:click)="hide()" (click)="toggleHidden($event)">
+        <span *ngIf="config?.icon" class="{{ config?.icon }}"></span>
+       {{ value.text }}
+        <span *ngIf="config?.draw_arrow" class="icon-triangle-down"></span>
+      </div>
       <ul class="dropdown-menu pull-right" [hidden]="hidden">
         <li *ngFor="#v of values"
           [class.selected]="v === value"
-          (click)="select(v)">
-          <label> {{ v.text }} </label>
+          (click)="select(v)"
+        >
+          <label><span *ngIf="v?.icon" class="{{ v?.icon }}"></span> {{ v.text }} </label>
         </li>
       </ul>
     </div>
@@ -43,8 +48,12 @@ import {Output, EventEmitter} from 'angular2/core';
 
     .dropdown-toggle {
       display: inline-block;
-      width: 100%;
+      /*width: 100%;*/
       height: 100%;
+
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
 
       text-align: right;
 
@@ -60,11 +69,11 @@ import {Output, EventEmitter} from 'angular2/core';
         color: #333;
         white-space: nowrap;
     }
-    .dropdown-menu>li>label:hover {
+    .dropdown-menu>li:hover {
       background-color: #efefef;
     }
     .dropdown-menu>li.selected>label {
-      background-color: #004f8a;
+      background-color: #3366CC;
       color: #fff;
     }
 
@@ -81,34 +90,43 @@ import {Output, EventEmitter} from 'angular2/core';
 })
 
 export class UISelect {
-    public values: Array<any>;
-    public value: any;
-    public e_style: string;
+  public values: Array<any>;
+  public value: any;
+  public config: UISelectConfig;
 
-    trick: boolean = false;
-    hidden: boolean = true;
+  trick: boolean = false;
+  hidden: boolean = true;
 
-    @Output() valueChange: EventEmitter<any> = new EventEmitter();
+  @Output() valueChange: EventEmitter<any> = new EventEmitter();
 
-    toggleHidden(e) {
-        this.hidden = !this.hidden;
-        this.trick = true;
+  toggleHidden(e: MouseEvent) {
+    this.hidden = !this.hidden;
+    this.trick = true;
+  }
 
-        console.log(this.e_style);
+  hide() {
+    if (!this.trick) {
+        this.hidden = true;
     }
+    this.trick = false;
+  }
 
-    hide() {
-        if (!this.trick) {
-            this.hidden = true;
-        }
-        this.trick = false;
-    }
+  select(v: any) {
+    this.value = v;
+    this.hide();
 
-    select(v: any) {
-        this.value = v;
-        this.hide();
+    this.valueChange.emit(v);
+  }
 
-        this.valueChange.emit(v);    // из за этого эмита не срабатывает [class.selected]="v === value"
-    }
+}
 
+export interface UISelectOption {
+  label: string,
+  value: any,
+}
+
+export interface UISelectConfig {
+  icon_class: string,
+
+  draw_arrow: boolean
 }

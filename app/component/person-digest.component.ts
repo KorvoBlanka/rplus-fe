@@ -1,17 +1,20 @@
 import {Component} from 'angular2/core';
 
+import {FormatDatePipe} from '../pipe/format-date.pipe';
+
 import {HubService} from '../service/hub.service'
 import {TaskService} from '../service/task.service'
 
-import {Request} from '../class/request';
+import {Person} from '../class/person';
 import {Task} from '../class/task';
 
 @Component({
-  selector: 'request-digest',
-  inputs: ['request'],
+  selector: 'person-digest',
+  inputs: ['person'],
+  pipes: [FormatDatePipe],
   template: `
     <div class="billet"
-      [class.selected]="request.selected"
+      [class.selected]="person.selected"
       (click)="select()"
       (dblclick)="open()"
       (touchstart)="tstart()"
@@ -19,15 +22,15 @@ import {Task} from '../class/task';
     >
 
       <div style="display: flex; justify-content: space-between;">
-        <span>Заявка {{ request._id }}</span>
-        <span>11.11.15 11:29</span>
+        <span>Контакт {{ person.id }}</span>
+        <span>{{ person.change_date | formatDate }} / {{ person.add_date | formatDate }}</span>
       </div>
 
       <table style="width: 100%;">
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header">Запрос:</span><span style="font-weight: 400;"> {{ request._source.req_text }} </span>
+              <span class="entry-header">Имя:</span><span style="font-weight: 400;"> {{ person.name }} </span>
             </td>
             <td width="33%">
               <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#">Какой Какойтович</a>
@@ -38,7 +41,7 @@ import {Task} from '../class/task';
           </tr>
           <tr>
             <td>
-              <span class="entry-header">Контакт:</span> <a href="#">Петр 4212749444</a>
+              <span class="entry-header">Телефон:</span> {{ person.phone[0].s }}
             </td>
             <td></td>
             <td>
@@ -47,7 +50,7 @@ import {Task} from '../class/task';
           </tr>
           <tr>
             <td>
-              <span class="entry-header">Стадия:</span> Первичный контакт
+              <span class="entry-header">e-mail:</span> {{ person.email[0].s }}
             </td>
             <td></td>
             <td>
@@ -114,8 +117,8 @@ import {Task} from '../class/task';
   `]
 })
 
-export class RequestDigestComponent {
-  public request: Request;
+export class PersonDigestComponent {
+  public person: Person;
   result_text: string;
   task: Task;
   to: any;
@@ -128,13 +131,13 @@ export class RequestDigestComponent {
   }
 
   select() {
-    this.request.selected = !this.request.selected;
+    this.person.selected = !this.person.selected;
   }
 
   open() {
-    this.request.selected = true;
+    this.person.selected = true;
     var tab_sys = this._hubService.getProperty('tab_sys');
-    tab_sys.addTab('request', { request: this.request });
+    tab_sys.addTab('person', { person: this.person });
   }
 
   tstart() {

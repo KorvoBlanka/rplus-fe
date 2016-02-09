@@ -26,9 +26,14 @@ var ORGANISATIONS: Organisation[] = [
   {
     id: 0,
     name: 'Частное лицо',
+    add_date: 0,
+    change_date: 0,
   },
   {
     id: 1,
     name: 'Агенство 1',
+
+    add_date: 1000000000,
+    change_date: 1300000000,
   },
 ];

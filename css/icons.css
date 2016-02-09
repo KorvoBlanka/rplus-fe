@@ -117,6 +117,14 @@
   content: "\E91F";
 }
 
+.icon-contact:before {
+  content: "\E1D4";
+}
+
+.icon-organisation:before {
+  content: "\E72D";
+}
+
 .icon-none:before {
   content: "\FFFD";
   opacity: 0;

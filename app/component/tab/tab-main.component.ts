@@ -22,14 +22,7 @@ import {Tab} from '../../class/tab';
             <span class="tile-label">Недвижимость - Продажа</span>
           </div>
 
-          <div class="tile bg-indigo fg-white" (click)="turn_to('list_person')">
-            <div class="tile-content iconic">
-                <span class="icon icon-person"></span>
-            </div>
-            <span class="tile-label">Список контактов</span>
-          </div>
-
-          <div class="tile bg-green fg-white">
+          <div class="tile bg-green fg-white" (click)="turn_to('list_request')">
             <div class="tile-content iconic">
                 <span class="icon icon-req-list"></span>
             </div>
@@ -48,6 +41,20 @@ import {Tab} from '../../class/tab';
                 <span class="icon icon-deal"></span>
             </div>
             <span class="tile-label">Договоры</span>
+          </div>
+
+          <div class="tile bg-indigo fg-white" (click)="turn_to('list_person')">
+            <div class="tile-content iconic">
+                <span class="icon icon-contact"></span>
+            </div>
+            <span class="tile-label">Список контактов</span>
+          </div>
+
+          <div class="tile bg-teal fg-white" (click)="turn_to('list_organisation')">
+            <div class="tile-content iconic">
+                <span class="icon icon-organisation"></span>
+            </div>
+            <span class="tile-label">Организации</span>
           </div>
 
           <div class="tile bg-teal fg-white">

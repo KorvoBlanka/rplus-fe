@@ -3,20 +3,20 @@ import {Output, EventEmitter} from 'angular2/core';
 
 @Component({
   selector: 'ui-select',
-  inputs: ['values', 'value', 'config'],
+  inputs: ['values', 'label', 'config'],
   template: `
     <div class="ui-select">
       <div class="dropdown-toggle" (window:click)="hide()" (click)="toggleHidden($event)">
         <span *ngIf="config?.icon" class="{{ config?.icon }}"></span>
-       {{ value.text }}
+       {{ label }}
         <span *ngIf="config?.draw_arrow" class="icon-triangle-down"></span>
       </div>
       <ul class="dropdown-menu pull-right" [hidden]="hidden">
         <li *ngFor="#v of values"
-          [class.selected]="v === value"
+          [class.selected]="v.label === label"
           (click)="select(v)"
         >
-          <label><span *ngIf="v?.icon" class="{{ v?.icon }}"></span> {{ v.text }} </label>
+          <label><span *ngIf="v?.icon" class="{{ v?.icon }}"></span> {{ v.label }} </label>
         </li>
       </ul>
     </div>
@@ -48,7 +48,7 @@ import {Output, EventEmitter} from 'angular2/core';
 
     .dropdown-toggle {
       display: inline-block;
-      /*width: 100%;*/
+      width: 100%;
       height: 100%;
 
       max-width: 200px;
@@ -91,7 +91,7 @@ import {Output, EventEmitter} from 'angular2/core';
 
 export class UISelect {
   public values: Array<any>;
-  public value: any;
+  public label: any;
   public config: UISelectConfig;
 
   trick: boolean = false;
@@ -112,10 +112,10 @@ export class UISelect {
   }
 
   select(v: any) {
-    this.value = v;
+    this.label = v.label;
     this.hide();
 
-    this.valueChange.emit(v);
+    this.valueChange.emit({val: v.val});
   }
 
 }

@@ -1,8 +1,8 @@
 import {Component} from 'angular2/core';
 
-import {HubService} from '../service/hub.service'
+import {HubService} from '../../service/hub.service'
 
-import {HistoryRecord} from '../class/historyRecord';
+import {HistoryRecord} from '../../class/historyRecord';
 
 @Component({
   selector: 'history-digest',

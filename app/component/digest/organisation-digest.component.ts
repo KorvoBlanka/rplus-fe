@@ -1,17 +1,19 @@
 import {Component} from 'angular2/core';
 
-import {HubService} from '../service/hub.service'
-import {TaskService} from '../service/task.service'
+import {FormatDatePipe} from '../../pipe/format-date.pipe';
 
-import {Request} from '../class/request';
-import {Task} from '../class/task';
+import {HubService} from '../../service/hub.service';
+
+import {Organisation} from '../../class/organisation';
+
 
 @Component({
-  selector: 'request-digest',
-  inputs: ['request'],
+  selector: 'organisation-digest',
+  inputs: ['organisation'],
+  pipes: [FormatDatePipe],
   template: `
     <div class="billet"
-      [class.selected]="request.selected"
+      [class.selected]="organisation.selected"
       (click)="select()"
       (dblclick)="open()"
       (touchstart)="tstart()"
@@ -19,39 +21,41 @@ import {Task} from '../class/task';
     >
 
       <div style="display: flex; justify-content: space-between;">
-        <span>Заявка {{ request._id }}</span>
-        <span>11.11.15 11:29</span>
+        <span>Организация {{ organisation.id }}
+          <span class="billet-label">{{ organisation.name }}</span>
+        </span>
+        <span>{{ organisation.change_date | formatDate }} / {{ organisation.add_date | formatDate }}</span>
       </div>
 
       <table style="width: 100%;">
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header">Запрос:</span><span style="font-weight: 400;"> {{ request._source.req_text }} </span>
+              <span class="entry-header">Название:</span><span style="font-weight: 400;"> {{ organisation.name }} </span>
             </td>
             <td width="33%">
-              <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#">Какой Какойтович</a>
+              <span class="entry-header" style="width: 105px;"></span>
             </td>
             <td width="33%">
-              <span class="entry-header">Задача:</span> {{ task.type }}
+              <span class="entry-header"></span>
             </td>
           </tr>
           <tr>
             <td>
-              <span class="entry-header">Контакт:</span> <a href="#">Петр 4212749444</a>
+              <span class="entry-header"></span>
             </td>
             <td></td>
             <td>
-              <span class="entry-header">Результат:</span> <span [class.badge-gray]="task.result_id == 0" [class.badge-green]="task.result_id == 1" [class.badge-red]="task.result_id == 2">{{ result_text }}</span>
+              <span class="entry-header"></span>
             </td>
           </tr>
           <tr>
             <td>
-              <span class="entry-header">Стадия:</span> Первичный контакт
+              <span class="entry-header"></span>
             </td>
             <td></td>
             <td>
-              <span class="entry-header" style="width: 90px;">Комментарий:</span><span class="line-clamp line-clamp-2" style="font-style: italic;"> {{ task.comment }} </span>
+              <span class="entry-header" style="width: 90px;"></span>
             </td>
           </tr>
         </tbody>
@@ -74,6 +78,15 @@ import {Task} from '../class/task';
 
       padding: 10px 20px;
     }
+
+    .billet-label {
+      font-weight: 400;
+      color:  #666;
+      font-size: 17;
+      white-space: nowrap;
+      margin-left: 50px;
+    }
+
     .billet.selected {
       background-color: #157ad3;
       color: #fff !important;
@@ -86,7 +99,7 @@ import {Task} from '../class/task';
 
     .entry-header {
       display: inline-block;
-      width: 80px;
+      width: 90px;
       color: #aaa;
     }
 
@@ -114,27 +127,23 @@ import {Task} from '../class/task';
   `]
 })
 
-export class RequestDigestComponent {
-  public request: Request;
-  result_text: string;
-  task: Task;
+export class OrganisationDigestComponent {
+  public organisation: Organisation;
+
   to: any;
 
-  constructor(private _hubService: HubService, private _taskService: TaskService) { };
+  constructor(private _hubService: HubService) { };
 
-  ngOnInit() {
-    this.task = this._taskService.getRandomTasks();
-    this.result_text = this.getResultText();
-  }
+  ngOnInit() {}
 
   select() {
-    this.request.selected = !this.request.selected;
+    this.organisation.selected = !this.organisation.selected;
   }
 
   open() {
-    this.request.selected = true;
+    this.organisation.selected = true;
     var tab_sys = this._hubService.getProperty('tab_sys');
-    tab_sys.addTab('request', { request: this.request });
+    tab_sys.addTab('organisation', { person: this.organisation });
   }
 
   tstart() {
@@ -148,7 +157,4 @@ export class RequestDigestComponent {
     clearTimeout(this.to);
   }
 
-  getResultText() {
-    return Task.getResultText(this.task);
-  }
 }

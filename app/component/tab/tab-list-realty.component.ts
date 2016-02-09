@@ -12,7 +12,7 @@ import {Realty} from '../../class/realty';
 
 import {UISelect, UISelectConfig} from '../ui/ui-select.component';
 
-import {RealtyDigestComponent} from '../realty-digest.component';
+import {RealtyDigestComponent} from '../digest/realty-digest.component';
 import {RealtyTableComponent} from '../realty-table.component';
 import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
@@ -31,71 +31,70 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     </div>
     <div class="tool-box">
 
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {id: 0, text: 'Все'},
-            {id: 1, text: 'Не активен'},
-            {id: 2, text: 'Активен'},
-            {id: 3, text: 'В работе'},
-            {id: 4, text: 'Приостановлен'},
-            {id: 5, text: 'Архив'}
-          ]"
-          [value]="{id: 0, text: 'Все'}"
-          [config]="{icon: 'icon-square', draw_arrow: true}"
-        >
-        </ui-select>
+      <div class="pull-left">
+        <div class="inline-select">
+          <ui-select class="view-value edit-value"
+            [values] = "[
+              {val: 0, label: 'Все'},
+              {val: 1, label: 'Не активен'},
+              {val: 2, label: 'Активен'},
+              {val: 3, label: 'В работе'},
+              {val: 4, label: 'Приостановлен'},
+              {val: 5, label: 'Архив'}
+            ]"
+            [label]="'Все'"
+            [config]="{icon: 'icon-square', draw_arrow: true}"
+          >
+          </ui-select>
+        </div>
+        <div class="inline-select">
+          <ui-select class="view-value edit-value"
+            [values] = "[
+              {val: 1, label: 'Агент 1_1'},
+              {val: 2, label: 'Агент 1_2'},
+              {val: 3, label: 'Агент 1_3'},
+              {val: 4, label: 'Агент 1_4'},
+              {val: 5, label: 'Агент 1_5'}
+            ]"
+            [label]="'Агент 1_1'"
+            [config]="{icon: 'icon-person', draw_arrow: true}"
+          >
+          </ui-select>
+        </div>
+        <div class="inline-select">
+          <ui-select class="view-value edit-value"
+            [values] = "[
+              {val: 0, label: 'Все'},
+              {val: 1, label: 'Красный', icon: 'icon-circle tag-red'},
+              {val: 2, label: 'Оранжевый', icon: 'icon-circle tag-orange'},
+              {val: 3, label: 'Желтый', icon: 'icon-circle tag-yellow'},
+              {val: 4, label: 'Зеленый', icon: 'icon-circle tag-green'},
+              {val: 5, label: 'Голубой', icon: 'icon-circle tag-blue'},
+              {val: 6, label: 'Лиловый', icon: 'icon-circle tag-violet'},
+              {val: 7, label: 'Серый', icon: 'icon-circle tag-gray'}
+            ]"
+            [label]="'Все'"
+            [config]="{icon: 'icon-tag', draw_arrow: true}"
+          >
+          </ui-select>
+        </div>
+        <div class="inline-select">
+          <ui-select class="view-value edit-value"
+            [values] = "[
+              {val: 1, label: '1 день'},
+              {val: 2, label: '3 дня'},
+              {val: 3, label: 'Неделя'},
+              {val: 4, label: '2 недели'},
+              {val: 5, label: 'Месяц'},
+              {val: 6, label: '3 месяца'},
+              {val: 7, label: 'Все'}
+            ]"
+            [label]="'3 месяца'"
+            [config]="{icon: 'icon-month', draw_arrow: true}"
+          >
+          </ui-select>
+        </div>
       </div>
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {id: 1, text: 'Агент 1_1'},
-            {id: 2, text: 'Агент 1_2'},
-            {id: 3, text: 'Агент 1_3'},
-            {id: 4, text: 'Агент 1_4'},
-            {id: 5, text: 'Агент 1_5'}
-          ]"
-          [value]="{id: 0, text: 'Агент 1_1'}"
-          [config]="{icon: 'icon-person', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
-
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {id: 0, text: 'Все'},
-            {id: 1, icon: 'icon-circle tag-red', text: 'Красный'},
-            {id: 2, icon: 'icon-circle tag-orange', text: 'Оранжевый'},
-            {id: 3, icon: 'icon-circle tag-yellow', text: 'Желтый'},
-            {id: 4, icon: 'icon-circle tag-green', text: 'Зеленый'},
-            {id: 5, icon: 'icon-circle tag-blue', text: 'Голубой'},
-            {id: 6, icon: 'icon-circle tag-violet', text: 'Лиловый'},
-            {id: 7, icon: 'icon-circle tag-gray', text: 'Серый'}
-          ]"
-          [value]="{id: 0, text: 'Все'}"
-          [config]="{icon: 'icon-tag', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
-
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {id: 1, text: '1 день'},
-            {id: 2, text: '3 дня'},
-            {id: 3, text: 'Неделя'},
-            {id: 4, text: '2 недели'},
-            {id: 5, text: 'Месяц'},
-            {id: 6, text: '3 месяца'},
-            {id: 7, text: 'Все'}
-          ]"
-          [value]="{id: 0, text: '3 месяца'}"
-          [config]="{icon: 'icon-month', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
-
       <div class="pull-right">
         <a (click)="toggleDraw()" [hidden]="table_mode">
           <span
@@ -121,7 +120,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
   </div>
 
-  <div class="list-realty"
+  <div class="realty-list"
     [hidden]="table_mode"
     (window:resize)="onResize($event)"
     >
@@ -129,7 +128,6 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       <div class="header"></div>
       <div class="digest-list"
         (scroll)="scroll($event)"
-        [attr.scrollTop]="scroll_pos"
         [style.height]="pane_height"
         >
         <reaty-digest *ngFor="#realty of realtys"
@@ -188,7 +186,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       margin-bottom: 8px;
     }
 
-    .list-realty {
+    .realty-list {
       position: relative;
     }
 
@@ -244,7 +242,6 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     to: number;
     list: HTMLElement;
-    scroll_pos: number;
 
 
     parseFloat(v: any) {
@@ -307,7 +304,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     }
 
     scroll(e) {
-      if (e.currentTarget.scrollTop + this.pane_height >= e.currentTarget.scrollHeight) {
+      if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
         this.page ++;
         var r = this._realtyService.getRealty(this.page, 10);
         for (var i = 0; i < r.length; i++) {

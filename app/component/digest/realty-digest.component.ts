@@ -1,10 +1,10 @@
 import {Component} from 'angular2/core';
 
-import {HubService} from '../service/hub.service'
+import {HubService} from '../../service/hub.service'
 
-import {Realty} from '../class/realty';
+import {Realty} from '../../class/realty';
 
-import {UITag} from './ui/ui-tag.component'
+import {UITag} from '../ui/ui-tag.component'
 
 
 @Component({

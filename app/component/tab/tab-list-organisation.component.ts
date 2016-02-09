@@ -1,21 +1,19 @@
-import {
-  Component,
-} from 'angular2/core';
+import {Component} from 'angular2/core';
 
 import {ConfigService} from '../../service/config.service';
-import {PersonService} from '../../service/person.service';
+import {OrganisationService} from '../../service/organisation.service';
 
 import {Tab} from '../../class/tab';
-import {Person} from '../../class/person';
+import {Organisation} from '../../class/organisation';
 
 import {UISelect} from '../ui/ui-select.component';
 
-import {PersonDigestComponent} from '../digest/person-digest.component';
+import {OrganisationDigestComponent} from '../digest/organisation-digest.component';
 
 @Component({
-  selector: 'tab-list-person',
+  selector: 'tab-list-organisation',
   inputs: ['tab'],
-  directives: [PersonDigestComponent, UISelect],
+  directives: [OrganisationDigestComponent, UISelect],
   template: `
 
   <div class="search-form" [class.table-mode]="table_mode">
@@ -24,21 +22,6 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
-
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {val: 1, label: 'Агент 1_1'},
-            {val: 2, label: 'Агент 1_2'},
-            {val: 3, label: 'Агент 1_3'},
-            {val: 4, label: 'Агент 1_4'},
-            {val: 5, label: 'Агент 1_5'}
-          ]"
-          [label]="'Агент 1_1'"
-          [config]="{icon: 'icon-person', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
 
       <div class="inline-select">
         <ui-select class="view-value edit-value"
@@ -84,13 +67,14 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
     </div>
   </div>
 
-  <div class="person-list-wrapper">
+  <div class="organisation-list-wrapper">
     <div class="scroll-wrapper">
 
-          <person-digest *ngFor="#p of persons"
-            [person]="p"
+          <organisation-digest
+            *ngFor="#o of organisations"
+            [organisation]="o"
           >
-          </person-digest>
+          </organisation-digest>
 
     </div>
   </div>
@@ -117,7 +101,7 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
       margin-bottom: 8px;
     }
 
-    .person-list-wrapper {
+    .organisation-list-wrapper {
       padding-top: 25px;
       max-width: 1200px;
       margin: 0 auto;
@@ -137,26 +121,27 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
       font-size: 14;
       color: #666;
     }
+
   `]
 })
 
-  export class TabListPersonComponent {
+  export class TabListOrganisationComponent {
     public tab: Tab;
 
-    persons: Person[] = [];
+    organisations: Organisation[] = [];
     page: number = 1;
 
-    constructor(private _configService: ConfigService, private _personService: PersonService) {
-      this.persons = this._personService.getPersonList(1, 32);
-      setTimeout(() => { this.tab.header = 'person list'; });
+    constructor(private _configService: ConfigService, private _organisationService: OrganisationService) {
+      this.organisations = this._organisationService.getOrganisationList(1, 32);
+      setTimeout(() => { this.tab.header = 'organisation list'; });
     }
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
         this.page ++;
-        var r = this._personService.getPersonList(this.page, 10);
+        var r = this._organisationService.getOrganisationList(this.page, 10);
         for (var i = 0; i < r.length; i++) {
-          this.persons.push(r[i])
+          this.organisations.push(r[i])
         }
       }
     }

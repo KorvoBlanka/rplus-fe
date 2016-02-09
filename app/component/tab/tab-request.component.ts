@@ -17,7 +17,7 @@ import {RealtyService} from '../../service/realty.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service'
-import {OrganisationService} from '../../service/organisation.service';
+import {PersonService} from '../../service/person.service';
 
 import {UISelect} from '../ui/ui-select.component';
 import {UICarousel} from '../ui/ui-carousel.component';
@@ -35,7 +35,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
 
 @Component({
-    selector: 'tab-person',
+    selector: 'tab-request',
     inputs: ['tab'],
     pipes: [FormatDatePipe],
     directives: [
@@ -59,7 +59,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
       </div>
 
-      <div class="person" (window:resize)="onResize($event)">
+      <div class="request" (window:resize)="onResize($event)">
 
     <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
 
@@ -67,13 +67,13 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
           <div class="header">
 
           </div>
-          <div class="person-prop" [style.height]="pane_height">
+          <div class="request-prop" [style.height]="pane_height">
 
             <div style="margin: 5px;">
 
               <div class="pull-container">
                 <div class="font-sz-2 pull-left">Источник: звонок<span class="color-g1"><a href="" target="_blank"></a></span></div>
-                <div class="font-sz-1 color-g2 pull-right"> {{ person.add_date | formatDate }} </div>
+                <div class="font-sz-1 color-g2 pull-right"> {{ request.add_date | formatDate }} </div>
               </div>
 
               <hr>
@@ -88,56 +88,76 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               <div class="edit-block" [hidden]="!edit_enabled" style="margin: 20px 10px;">
 
                 <div class="view-group">
+                  <span class="view-label">Контакт</span>
+                  <span class="view-value">{{ person.name }}</span>
+                </div>
+
+                <div class="view-group">
+                  <span class="view-label pull-left">Договор</span>
+                  <span class="view-value"> #4242421365 от 08.02.22</span>
+                </div>
+                <br>
+
+                <div class="view-group">
                   <span class="view-label">Ответственный</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'Агент 1_1'},
-                      {id: 2, text: 'Агент 1_2'},
-                      {id: 3, text: 'Агент 1_3'},
-                      {id: 4, text: 'Агент 1_4'},
-                      {id: 5, text: 'Агент 1_5'}
+                      {val: 1, label: 'Агент 1_1'},
+                      {val: 2, label: 'Агент 1_2'},
+                      {val: 3, label: 'Агент 1_3'},
+                      {val: 4, label: 'Агент 1_4'},
+                      {val: 5, label: 'Агент 1_5'}
                     ]"
-                    [value]="{id: 0, text: 'Агент 1_1'}"
+                    [label]="'Агент 1_1'"
                     (valueChange)="log($event)"
                   >
                   </ui-select>
                 </div>
 
                 <div class="view-group">
-                  <span class="view-label">Имя</span>
-                  <input type="text" class="view-value edit-value" [(ngModel)]="person.name">
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Телефон <a href="#" (click)="addPhone()"><span class="icon-add"></span></a></span>
-                  <div class="array-container">
-                    <input *ngFor="#phone of person.phone; #i = index" type="text" class="view-value edit-value" [(ngModel)]="person.phone[i].s">
-                  </div>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">e-mail <a href="#" (click)="addEmail()" ><span class="icon-add"></span></a></span>
-                  <div class="array-container">
-                    <input *ngFor="#email of person.email; #i = index" type="text" class="view-value edit-value" [(ngModel)]="person.email[i].s">
-                  </div>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Организация</span>
+                  <span class="view-label">Статус</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "organisations_opts"
-                    [label]="'Частное лицо'"
-                    (valueChange)="person.organisation=$event.val"
+                    [values] = "[
+                      {val: 1, label: 'Не активен'},
+                      {val: 2, label: 'Активен'},
+                      {val: 3, label: 'В работе'},
+                      {val: 4, label: 'Приостановлен'},
+                      {val: 5, label: 'Архив'}
+                    ]"
+                    [label]="request.state_code"
+                    (valueChange)="log($event)"
                   >
                   </ui-select>
-
                 </div>
 
+                <div class="view-group">
+                  <span class="view-label">Стадия</span>
+                  <ui-select class="view-value edit-value"
+                    [values] = "[
+                      {val: 1, label: 'Первичный контакт'},
+                      {val: 2, label: 'Заключение договора'},
+                      {val: 3, label: 'Показ'},
+                      {val: 4, label: 'Подготовка договора'},
+                      {val: 5, label: 'Принятие решения'},
+                      {val: 6, label: 'Переговоры'},
+                      {val: 7, label: 'Сделка'}
+                    ]"
+                    [label]="'Первичный контакт'"
+                    (valueChange)="log($event)"
+                  >
+                  </ui-select>
+                </div>
+
+                <br>
+                <div class="view-group">
+                  <span class="view-label">Запрос</span>
+                  <input type="text" class="view-value edit-value" [(ngModel)]="request.query_text">
+                </div>
                 <br>
 
                 <div class="view-group" style="flex-wrap: wrap;">
                   <span class="view-label">Иформация</span>
-                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="person.info" style="text-align: left;"></textarea>
+                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="request.info" style="text-align: left;"></textarea>
                 </div>
 
               </div>
@@ -148,39 +168,40 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               <div class="view-block" [hidden]="edit_enabled" style="margin: 20px 10px;">
 
                 <div class="view-group">
+                  <span class="view-label">Контакт</span>
+                  <span class="view-value">{{ person.name }}</span>
+                </div>
+
+                <div class="view-group">
+                  <span class="view-label pull-left">Договор</span>
+                  <span class="view-value"> #4242421365 от 08.02.22</span>
+                </div>
+                <br>
+
+                <div class="view-group">
                   <span class="view-label">Ответственный</span>
                   <span class="view-value"> Агент 1_1</span>
                 </div>
 
                 <div class="view-group">
-                  <span class="view-label">Имя</span>
-                  <span class="view-value"> {{ person.name }}</span>
+                  <span class="view-label">Статус</span>
+                  <span class="view-value"> Активен</span>
                 </div>
-
                 <div class="view-group">
-                  <span class="view-label pull-left">Телефон </span>
-                  <div class="array-container">
-                    <span *ngFor="#phone of person.phone" class="view-value"> {{ phone.s }} </span>
-                  </div>
+                  <span class="view-label">Стадия</span>
+                  <span class="view-value"> {{ request.state_code }} </span>
                 </div>
 
+                <br>
                 <div class="view-group">
-                  <span class="view-label pull-left">e-mail</span>
-                  <div class="array-container">
-                    <span *ngFor="#email of person.email" class="view-value"> {{ email.s }} </span>
-                  </div>
+                  <span class="view-label pull-left">Запрос</span>
+                  <span class="view-value"> {{ request.query_text }}</span>
                 </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Организация</span>
-                  <span class="view-value"> {{ person.organisation.name }}</span>
-                </div>
-
                 <br>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Информация</span>
-                  <span class="view-value" style="height: initial;"> {{ person.info }} </span>
+                  <span class="view-value" style="height: initial;"> {{ request.info }} </span>
                 </div>
 
               </div>
@@ -208,6 +229,32 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
           <ui-tabs
             [header_mode]="!pane_hidden"
           >
+            <ui-tab
+              [title]="'Область поиска'"
+            >
+
+            <div class="search-form" [class.table-mode]="table_mode">
+              <div class="search-box with-button">
+                <input type="text" class="" placeholder="">
+                <div class="search-button">Создать</div>
+              </div>
+              <div class="tool-box">
+                <div class="pull-left">
+                </div>
+                <div class="pull-right">
+                  <a (click)="toggleDraw()" [hidden]="table_mode">
+                    <span
+                      [ngClass]="{'icon-cancel': map_draw_allowed, 'icon-edit': !map_draw_allowed}"
+                      ></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+              <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
+              </google-map>
+
+            </ui-tab>
             <ui-tab
               [title]="'Предложения'"
               (tabSelect)="offersSelected()"
@@ -251,17 +298,6 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               </google-map>
             </ui-tab>
 
-            <ui-tab
-              [title]="'Заявки'"
-              (tabSelect)="requestsSelected()"
-            >
-              <div class="" style="max-width: 910px; overflow-y: scroll;" [style.height]="pane_height">
-                <request-digest *ngFor="#request of requests"
-                  [request]="request"
-                >
-                </request-digest>
-              </div>
-            </ui-tab>
             <ui-tab [title]="'Аналитика'"
               (tabSelect)="analysisSelected()"
             >
@@ -394,6 +430,55 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     `,
     styles: [`
 
+      .search-form {
+        position: absolute;
+        width: 60%;
+        /*margin-left: 27.5%;*/
+        margin-left: 2%;
+        margin-top: 10px;
+        background: #fff;
+        z-index: 1;
+        border: 1px solid #eee;
+      }
+
+      .search-form > input {
+        height: 28px;
+        width: 100%;
+      }
+
+      .with-button {
+        overflow: hidden;
+      }
+
+      .with-button > input {
+        float: left;
+        width: calc(100% - 120px);
+      }
+
+      .search-button {
+        float: right;
+        width: 120px;
+        height: 24px;
+        background-color: #3366cc;
+        color: #fff;
+        text-align: center;
+      }
+
+      .search-form.table-mode {
+        border: 1px solid #fff;
+      }
+
+      .tool-box {
+        height: 30px;
+        margin: 0 12px;
+      }
+
+      .search-box {
+        position: relative;
+        margin: 12px;
+        margin-bottom: 8px;
+      }
+
       .pane {
         float: left;
         width: 370px;
@@ -419,10 +504,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         top: 0;
         left: 0;
       }
-      .sebm-google-map-container {
-        height: 100%;
-      }
-      .realty-prop {
+
+      .request-prop {
         overflow-y: scroll;
       }
 
@@ -511,14 +594,13 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     `]
 })
 
-export class TabPersonComponent {
+export class TabRequestComponent {
     public tab: Tab;
-    public person: Person;
+    public request: Request;
 
-    public orgs: Organisation[];
-
+    person: Person;
     offers: Realty[];
-    requests: Request[];
+
     history_recs: HistoryRecord[];
 
     pane_hidden: boolean = false;
@@ -545,33 +627,11 @@ export class TabPersonComponent {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    organisations_opts = [
-      {
-        label: 'Частное лицо',
-        val: {
-          id: 0,
-          name: 'Частное лицо',
-          add_date: 0,
-          change_date: 0,
-        }
-      },
-      {
-        label: 'Агенство 1',
-        val: {
-          id: 1,
-          name: 'Агенство 1',
-
-          add_date: 1000000000,
-          change_date: 1300000000,
-        }
-      },
-    ];
-
     log(e) {
-        console.log(e);
+      console.log(e);
     }
     parseFloat(v: any) {    // сделать пайп
-        return parseFloat(v);
+      return parseFloat(v);
     }
 
     constructor(private _hubService: HubService,
@@ -581,52 +641,48 @@ export class TabPersonComponent {
         private _taskService: TaskService,
         private _analysisService: AnalysisService,
         private _historyService: HistoryService,
-        private _organisationService: OrganisationService
+        private _personService: PersonService
       ) {
-
-      this.orgs = _organisationService.getOrganisationList(1, 16);
-      setTimeout(() => { this.tab.header = 'person ' + this.person.id; });
+      setTimeout(() => { this.tab.header = 'request ' + this.person.id; });
     }
 
     ngOnInit() {
-        this.person = this.tab.args.person;
+      this.request = this.tab.args.request;
+      this.person = this._personService.getRandom();
+      this.calcSize();
 
-        this.calcSize();
+      console.log(this.request);
     }
 
     onResize(e) {
-        this.calcSize();
+      this.calcSize();
     }
 
     calcSize() {
-        if (this.pane_hidden) {
-            this.pane_width = 0;
-        } else {
-            this.pane_width = 420;
-        }
-        this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
-        this.pane_height = document.body.clientHeight - 31;
+      if (this.pane_hidden) {
+        this.pane_width = 0;
+      } else {
+        this.pane_width = 420;
+      }
+      this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
+      this.pane_height = document.body.clientHeight - 31;
     }
 
     toggleLeftPane() {
-        this.pane_hidden = !this.pane_hidden;
-        this.calcSize();
+      this.pane_hidden = !this.pane_hidden;
+      this.calcSize();
     }
 
     toggleEdit() {
-        this.edit_enabled = !this.edit_enabled;
+      this.edit_enabled = !this.edit_enabled;
     }
 
     save() {
-        this.toggleEdit();
+      this.toggleEdit();
     }
 
     offersSelected() {
-        this.getOffers(1, 16);
-    }
-
-    requestsSelected() {
-        this.requests = this._requestService.getRequest(1, 16);
+      this.getOffers(1, 16);
     }
 
     analysisSelected() {

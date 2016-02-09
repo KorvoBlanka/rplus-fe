@@ -1,20 +1,17 @@
 import {Component} from 'angular2/core';
 
-import {FormatDatePipe} from '../pipe/format-date.pipe';
+import {HubService} from '../../service/hub.service'
+import {TaskService} from '../../service/task.service'
 
-import {HubService} from '../service/hub.service'
-import {TaskService} from '../service/task.service'
-
-import {Person} from '../class/person';
-import {Task} from '../class/task';
+import {Request} from '../../class/request';
+import {Task} from '../../class/task';
 
 @Component({
-  selector: 'person-digest',
-  inputs: ['person'],
-  pipes: [FormatDatePipe],
+  selector: 'request-digest',
+  inputs: ['request'],
   template: `
     <div class="billet"
-      [class.selected]="person.selected"
+      [class.selected]="request.selected"
       (click)="select()"
       (dblclick)="open()"
       (touchstart)="tstart()"
@@ -22,39 +19,48 @@ import {Task} from '../class/task';
     >
 
       <div style="display: flex; justify-content: space-between;">
-        <span>Контакт {{ person.id }}</span>
-        <span>{{ person.change_date | formatDate }} / {{ person.add_date | formatDate }}</span>
+        <span>Заявка {{ request._id }}
+          <span class="billet-label">{{ request._source.req_text }}</span>
+        </span>
+
+        <span>11.11.15 11:29</span>
       </div>
 
       <table style="width: 100%;">
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header">Имя:</span><span style="font-weight: 400;"> {{ person.name }} </span>
-            </td>
-            <td width="33%">
-              <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#">Какой Какойтович</a>
+              <span class="entry-header" style="width: 105px;">Контакт:</span> <a href="#">Петр 4212749444</a>
             </td>
             <td width="33%">
               <span class="entry-header">Задача:</span> {{ task.type }}
             </td>
+            <td width="33%">
+              <div style="float: left; display: block;">
+                <span class="entry-header" style="width: 90px;">Комментарий:</span>
+              </div>
+              <div style="oveflow: hidden;">
+                <span class="line-clamp line-clamp-1" style="font-style: italic; line-height: normal;"> {{ task.comment }} </span>
+              </div>
+            </td>
           </tr>
           <tr>
             <td>
-              <span class="entry-header">Телефон:</span> {{ person.phone[0].s }}
+              <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#">Какой Какойтович</a>
             </td>
-            <td></td>
             <td>
               <span class="entry-header">Результат:</span> <span [class.badge-gray]="task.result_id == 0" [class.badge-green]="task.result_id == 1" [class.badge-red]="task.result_id == 2">{{ result_text }}</span>
             </td>
+            <td>
+            </td>
           </tr>
           <tr>
             <td>
-              <span class="entry-header">e-mail:</span> {{ person.email[0].s }}
+              <span class="entry-header" style="width: 105px;">Стадия:</span> Первичный контакт
             </td>
             <td></td>
             <td>
-              <span class="entry-header" style="width: 90px;">Комментарий:</span><span class="line-clamp line-clamp-2" style="font-style: italic;"> {{ task.comment }} </span>
+
             </td>
           </tr>
         </tbody>
@@ -77,6 +83,15 @@ import {Task} from '../class/task';
 
       padding: 10px 20px;
     }
+
+    .billet-label {
+      font-weight: 400;
+      color:  #666;
+      font-size: 17;
+      white-space: nowrap;
+      margin-left: 20px;
+    }
+
     .billet.selected {
       background-color: #157ad3;
       color: #fff !important;
@@ -117,8 +132,8 @@ import {Task} from '../class/task';
   `]
 })
 
-export class PersonDigestComponent {
-  public person: Person;
+export class RequestDigestComponent {
+  public request: Request;
   result_text: string;
   task: Task;
   to: any;
@@ -131,13 +146,13 @@ export class PersonDigestComponent {
   }
 
   select() {
-    this.person.selected = !this.person.selected;
+    this.request.selected = !this.request.selected;
   }
 
   open() {
-    this.person.selected = true;
+    this.request.selected = true;
     var tab_sys = this._hubService.getProperty('tab_sys');
-    tab_sys.addTab('person', { person: this.person });
+    tab_sys.addTab('request', { request: this.request });
   }
 
   tstart() {

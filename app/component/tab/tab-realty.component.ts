@@ -24,9 +24,9 @@ import {UIPieChart} from '../ui/ui-pie-chart.component';
 import {UILineChart} from '../ui/ui-line-chart.component';
 import {UIBarChart} from '../ui/ui-bar-chart.component';
 
-import {RealtyDigestComponent} from '../realty-digest.component';
-import {RequestDigestComponent} from '../request-digest.component';
-import {HistoryDigestComponent} from '../history-digest.component';
+import {RealtyDigestComponent} from '../digest/realty-digest.component';
+import {RequestDigestComponent} from '../digest/request-digest.component';
+import {HistoryDigestComponent} from '../digest/history-digest.component';
 import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
 
@@ -73,13 +73,13 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="view-label">Ответственный</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'Агент 1_1'},
-                      {id: 2, text: 'Агент 1_2'},
-                      {id: 3, text: 'Агент 1_3'},
-                      {id: 4, text: 'Агент 1_4'},
-                      {id: 5, text: 'Агент 1_5'}
+                      {val: 1, label: 'Агент 1_1'},
+                      {val: 2, label: 'Агент 1_2'},
+                      {val: 3, label: 'Агент 1_3'},
+                      {val: 4, label: 'Агент 1_4'},
+                      {val: 5, label: 'Агент 1_5'}
                     ]"
-                    [value]="{id: 0, text: 'Агент 1_1'}"
+                    [label]="'Агент 1_1'"
                     (valueChange)="log($event)"
                   >
                   </ui-select>
@@ -89,14 +89,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="view-label">Статус</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'Не активен'},
-                      {id: 2, text: 'Активен'},
-                      {id: 3, text: 'В работе'},
-                      {id: 4, text: 'Приостановлен'},
-                      {id: 5, text: 'Архив'}
+                      {val: 1, label: 'Не активен'},
+                      {val: 2, label: 'Активен'},
+                      {val: 3, label: 'В работе'},
+                      {val: 4, label: 'Приостановлен'},
+                      {val: 5, label: 'Архив'}
                     ]"
-                    [value]="{id: 0, text: _source.state_code}"
-                    (valueChange)="_source.state_code = $event.text"
+                    [label]="_source.state_code"
+                    (valueChange)="_source.state_code = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -105,15 +105,15 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="view-label">Стадия</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'Первичный контакт'},
-                      {id: 2, text: 'Заключение договора'},
-                      {id: 3, text: 'Показ'},
-                      {id: 4, text: 'Подготовка договора'},
-                      {id: 5, text: 'Принятие решения'},
-                      {id: 6, text: 'Переговоры'},
-                      {id: 7, text: 'Сделка'}
+                      {val: 1, label: 'Первичный контакт'},
+                      {val: 2, label: 'Заключение договора'},
+                      {val: 3, label: 'Показ'},
+                      {val: 4, label: 'Подготовка договора'},
+                      {val: 5, label: 'Принятие решения'},
+                      {val: 6, label: 'Переговоры'},
+                      {val: 7, label: 'Сделка'}
                     ]"
-                    [value]="{id: 0, text: 'Первичный контакт'}"
+                    [label]="'Первичный контакт'"
                     (valueChange)="log($event)"
                   >
                   </ui-select>
@@ -139,9 +139,12 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label pull-left">Предложение</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[{id: 1, text: 'Продажа'}, {id: 2, text: 'Аренда'}]"
-                    [value]="{id: 0, text: _source.offer_type_code}"
-                    (valueChange)="_source.offer_type_code = $event.text"
+                    [values] = "[
+                      {val: 1, label: 'Продажа'},
+                      {val: 2, label: 'Аренда'}
+                    ]"
+                    [label]="_source.offer_type_code"
+                    (valueChange)="_source.offer_type_code = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -149,9 +152,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label">Тип недвижимости</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[{id: 1, text: 'Комната'}, {id: 2, text: 'Квартира'}, {id: 3, text: 'Дом'}, {id: 4, text: 'Таунхаус'}]"
-                    [value]="{id: 0, text: _source.type}"
-                    (valueChange)="_source.type = $event.text"
+                    [values] = "[
+                      {val: 1, label: 'Комната'},
+                      {val: 2, label: 'Квартира'},
+                      {val: 3, label: 'Дом'},
+                      {val: 4, label: 'Таунхаус'}
+                    ]"
+                    [label]="_source.type"
+                    (valueChange)="_source.type = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -171,9 +179,16 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label">Планировка</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[{id: 1, text: 'Индивидуальная'}, {id: 2, text: 'Новая'}, {id: 3, text: 'Общежитие'}, {id: 4, text: 'Сталинка'}, {id: 5, text: 'Улучшенная'}, {id: 6, text: 'Хрущевка'}]"
-                    [value]="{id: 0, text: _source.ap_scheme}"
-                    (valueChange)="_source.ap_scheme = $event.text"
+                    [values] = "[
+                      {val: 1, label: 'Индивидуальная'},
+                      {val: 2, label: 'Новая'},
+                      {val: 3, label: 'Общежитие'},
+                      {val: 4, label: 'Сталинка'},
+                      {val: 5, label: 'Улучшенная'},
+                      {val: 6, label: 'Хрущевка'}
+                    ]"
+                    [label]="_source.ap_scheme"
+                    (valueChange)="_source.ap_scheme = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -181,9 +196,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label">Материал стен</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[{id: 1, text: 'Брус'}, {id: 2, text: 'Деревянный'}, {id: 3, text: 'Каркасно-засыпной'}, {id: 4, text: 'Кирпичный'}]"
-                    [value]="{id: 0, text: _source.house_type}"
-                    (valueChange)="_source.house_type = $event.text"
+                    [values] = "[
+                      {val: 1, label: 'Брус'},
+                      {val: 2, label: 'Деревянный'},
+                      {val: 3, label: 'Каркасно-засыпной'},
+                      {val: 4, label: 'Кирпичный'}
+                    ]"
+                    [label]="_source.house_type"
+                    (valueChange)="_source.house_type = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -197,9 +217,16 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label">Тип комнаты</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[{id: 1, text: 'Икарус'}, {id: 2, text: 'Кухня-гостинная'}, {id: 3, text: 'Раздельные'}, {id: 4, text: 'Смежно-раздельные'}, {id: 5, text: 'Смежные'}, {id: 6, text: 'Студия'}]"
-                    [value]="{id: 0, text: _source.room_scheme}"
-                    (valueChange)="_source.room_scheme = $event.text"
+                    [values] = "[
+                      {val: 1, label: 'Икарус'},
+                      {val: 2, label: 'Кухня-гостинная'},
+                      {val: 3, label: 'Раздельные'},
+                      {val: 4, label: 'Смежно-раздельные'},
+                      {val: 5, label: 'Смежные'},
+                      {val: 6, label: 'Студия'}
+                    ]"
+                    [label]="_source.room_scheme"
+                    (valueChange)="_source.room_scheme = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -223,17 +250,17 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="view-label">Балкон</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'без балкона'},
-                      {id: 2, text: 'балкон'},
-                      {id: 3, text: 'лоджия'},
-                      {id: 4, text: '2 балкона'},
-                      {id: 5, text: '2 лоджии'},
-                      {id: 6, text: 'балкон и лоджия'},
-                      {id: 7, text: 'балкон застеклен'},
-                      {id: 8, text: 'лоджия застеклена'}
+                      {val: 1, label: 'без балкона'},
+                      {val: 2, label: 'балкон'},
+                      {val: 3, label: 'лоджия'},
+                      {val: 4, label: '2 балкона'},
+                      {val: 5, label: '2 лоджии'},
+                      {val: 6, label: 'балкон и лоджия'},
+                      {val: 7, label: 'балкон застеклен'},
+                      {val: 8, label: 'лоджия застеклена'}
                     ]"
-                    [value]="{id: 0, text: _source.balcony}"
-                    (valueChange)="_source.balcony = $event.text"
+                    [label]="_source.balcony"
+                    (valueChange)="_source.balcony = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -242,17 +269,17 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="view-label">Санузел</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'без удобств'},
-                      {id: 2, text: 'туалет'},
-                      {id: 3, text: 'с удобствами'},
-                      {id: 4, text: 'душ и туалет'},
-                      {id: 5, text: '2 смежных санузла'},
-                      {id: 6, text: '2 раздельных санузла'},
-                      {id: 7, text: 'санузел совмещенный'},
-                      {id: 8, text: 'санузел раздельный'}
+                      {val: 1, label: 'без удобств'},
+                      {val: 2, label: 'туалет'},
+                      {val: 3, label: 'с удобствами'},
+                      {val: 4, label: 'душ и туалет'},
+                      {val: 5, label: '2 смежных санузла'},
+                      {val: 6, label: '2 раздельных санузла'},
+                      {val: 7, label: 'санузел совмещенный'},
+                      {val: 8, label: 'санузел раздельный'}
                     ]"
-                    [value]="{id: 0, text: _source.bathroom}"
-                    (valueChange)="_source.bathroom = $event.text"
+                    [value]="_source.bathroom"
+                    (valueChange)="_source.bathroom = $event.val"
                   >
                   </ui-select>
                 </div>
@@ -261,19 +288,18 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="view-label">Состояние</span>
                   <ui-select class="view-value edit-value"
                     [values] = "[
-                      {id: 1, text: 'социальный ремонт'},
-                      {id: 2, text: 'сделан ремонт'},
-                      {id: 3, text: 'дизайнерский ремонт'},
-                      {id: 4, text: 'требуется ремонт'},
-                      {id: 5, text: 'требуется косм. ремонт'},
-                      {id: 6, text: 'после строителей'},
-                      {id: 7, text: 'евроремонт'},
-                      {id: 8, text: 'удовлетворительное'},
-                      {id: 9, text: 'нормальное'}
-
+                      {val: 1, label: 'социальный ремонт'},
+                      {val: 2, label: 'сделан ремонт'},
+                      {val: 3, label: 'дизайнерский ремонт'},
+                      {val: 4, label: 'требуется ремонт'},
+                      {val: 5, label: 'требуется косм. ремонт'},
+                      {val: 6, label: 'после строителей'},
+                      {val: 7, label: 'евроремонт'},
+                      {val: 8, label: 'удовлетворительное'},
+                      {val: 9, label: 'нормальное'}
                     ]"
-                    [value]="{id: 0, text: _source.condition}"
-                    (valueChange)="_source.condition = $event.text"
+                    [label]="_source.condition"
+                    (valueChange)="_source.condition = $event.val"
                   >
                   </ui-select>
                 </div>

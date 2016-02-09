@@ -1,10 +1,11 @@
+import {Organisation} from './organisation';
 
 export interface Person {
   id: number,
 
   name: string,
 
-  company_id: number,
+  organisation: Organisation,
 
   agent_id: number,
 

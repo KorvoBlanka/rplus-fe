@@ -29,7 +29,6 @@ System.register(['angular2/core', '../class/concavehull'], function(exports_1) {
                     this.id = Math.round(Math.random() * 1000);
                     this.draw_allowed = false;
                     this.is_drawing = false;
-                    this.polygone = new google.maps.Polygon();
                     this.drawFinished = new core_2.EventEmitter();
                 }
                 GoogleMapComponent.prototype.ngOnInit = function () {
@@ -55,6 +54,23 @@ System.register(['angular2/core', '../class/concavehull'], function(exports_1) {
                             case 'draw_allowed':
                                 if (!this.draw_allowed) {
                                     this.polygone.setMap(null);
+                                }
+                            case 'polygone_points':
+                                if (this.polygone_points) {
+                                    this.polygone = new google.maps.Polygon({
+                                        paths: this.polygone_points,
+                                        strokeColor: "#062141",
+                                        strokeOpacity: 0.8,
+                                        strokeWeight: 2,
+                                        fillColor: "#062141",
+                                        fillOpacity: 0.35,
+                                        editable: false,
+                                        geodesic: false,
+                                        map: this.map,
+                                    });
+                                }
+                                else {
+                                    this.polygone = new google.maps.Polygon();
                                 }
                                 break;
                         }
@@ -124,7 +140,13 @@ System.register(['angular2/core', '../class/concavehull'], function(exports_1) {
                     core_1.Component({
                         changeDetection: core_1.ChangeDetectionStrategy.OnPush,
                         selector: 'google-map',
-                        inputs: ['latitude', 'longitude', 'zoom', 'draw_allowed'],
+                        inputs: [
+                            'latitude',
+                            'longitude',
+                            'zoom',
+                            'draw_allowed',
+                            'polygone_points'
+                        ],
                         template: "\n  <div class=\"map-wrapper\">\n  <ng-content></ng-content>\n  </div>\n  ",
                         styles: ["\n    .map-wrapper {\n      height: 100%;\n      width: 100%;\n    }\n    "],
                         directives: [],

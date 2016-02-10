@@ -125,7 +125,11 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     (window:resize)="onResize($event)"
     >
     <div class="pane" [hidden]="pane_hidden" [style.width.px]="pane_width">
-      <div class="header"></div>
+      <div class="header">
+        <div class="header-label">
+          {{ tab.header }}
+        </div>
+      </div>
       <div class="digest-list"
         (scroll)="scroll($event)"
         [style.height]="pane_height"
@@ -250,7 +254,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
       this.realtys = this._realtyService.getRealty(1, 32);
-      setTimeout(() => { this.tab.header = 'realty list'; });
+      setTimeout(() => { this.tab.header = 'Недвижимость'; });
     }
 
     ngOnInit() {

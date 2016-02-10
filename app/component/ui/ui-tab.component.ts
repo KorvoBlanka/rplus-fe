@@ -11,7 +11,7 @@ import {UITabs} from './ui-tabs.component';
   ],
   styles: [``],
   template: `
-    <div [hidden]="!active">
+    <div [hidden]="!active" style="position: relative;">
       <ng-content></ng-content>
     </div>
   `

@@ -59,13 +59,71 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
       </div>
 
-      <div class="request" (window:resize)="onResize($event)">
+      <div class="new-request"
+        [hidden]="!new_request"
+      >
+        <div class="search-form" [class.table-mode]="table_mode">
+          <div class="search-box with-button">
+            <input type="text" class="" placeholder="" [(ngModel)]="query_text">
+            <div class="search-button" (click)="createRequest()">Создать</div>
+          </div>
+          <div class="tool-box">
+            <div class="pull-left">
+            </div>
+            <div class="pull-right">
+              <a (click)="toggleDraw()" [hidden]="table_mode">
+                <span
+                  [ngClass]="{'icon-cancel': map_draw_allowed, 'icon-edit': !map_draw_allowed}"
+                ></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- сильное колдунство, св-во right получаем из HubService -->
+        <!-- TODO: сделать это отдельным компонентом -->
+        <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+          <div style="width: 330px; background-color: #fff;">
+            <div class="header">
+              <input type="text" style="width: 280px; margin-left: 10px; border: none;"
+                (keydown)="offer_search_keydown($event)"
+               >
+               <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
+                 (click)="offer_search()"
+               ></span>
+            </div>
+            <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="pane_height">
+              <reaty-digest *ngFor="#realty of offers"
+                [realty]="realty"
+                [compact]="true"
+               >
+              </reaty-digest>
+            </div>
+          </div>
+        </div>
+
+        <google-map
+          [latitude]="lat"
+          [longitude]="lon"
+          [zoom]="zoom"
+          [draw_allowed]="map_draw_allowed"
+          (drawFinished)="drawFinished($event)"
+        >
+        </google-map>
+      </div>
+
+      <div class="request"
+        (window:resize)="onResize($event)"
+        [hidden]="new_request"
+      >
 
     <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
 
         <div class="pane" [hidden]="pane_hidden" [style.width.px]="pane_width">
           <div class="header">
-
+            <div class="header-label">
+              {{ tab.header }}
+            </div>
           </div>
           <div class="request-prop" [style.height]="pane_height">
 
@@ -151,7 +209,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <br>
                 <div class="view-group">
                   <span class="view-label">Запрос</span>
-                  <input type="text" class="view-value edit-value" [(ngModel)]="request.query_text">
+                  <input type="text" class="view-value edit-value" readonly [(ngModel)]="request._source.req_text">
                 </div>
                 <br>
 
@@ -195,7 +253,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <br>
                 <div class="view-group">
                   <span class="view-label pull-left">Запрос</span>
-                  <span class="view-value"> {{ request.query_text }}</span>
+                  <span class="view-value"> {{ request._source.req_text }}</span>
                 </div>
                 <br>
 
@@ -230,39 +288,13 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             [header_mode]="!pane_hidden"
           >
             <ui-tab
-              [title]="'Область поиска'"
-            >
-
-            <div class="search-form" [class.table-mode]="table_mode">
-              <div class="search-box with-button">
-                <input type="text" class="" placeholder="">
-                <div class="search-button">Создать</div>
-              </div>
-              <div class="tool-box">
-                <div class="pull-left">
-                </div>
-                <div class="pull-right">
-                  <a (click)="toggleDraw()" [hidden]="table_mode">
-                    <span
-                      [ngClass]="{'icon-cancel': map_draw_allowed, 'icon-edit': !map_draw_allowed}"
-                      ></span>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-              <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-              </google-map>
-
-            </ui-tab>
-            <ui-tab
               [title]="'Предложения'"
               (tabSelect)="offersSelected()"
             >
 
               <!-- сильное колдунство, св-во right получаем из HubService -->
               <!-- TODO: сделать это отдельным компонентом -->
-              <div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+              <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
                 <div style="width: 330px; background-color: #fff;">
                   <div class="header">
                     <input type="text" style="width: 280px; margin-left: 10px; border: none;"
@@ -281,8 +313,12 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   </div>
                 </div>
               </div>
-              <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-
+              <google-map
+                [latitude]="lat"
+                [longitude]="lon"
+                [zoom]="zoom"
+                [polygone_points]="search_area"
+              >
                 <t *ngFor="#r of offers">
                 <google-map-marker
                   *ngIf="r._source.location"
@@ -432,9 +468,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
       .search-form {
         position: absolute;
-        width: 60%;
-        /*margin-left: 27.5%;*/
-        margin-left: 2%;
+        width: 50%;
+        margin-left: 25%;
         margin-top: 10px;
         background: #fff;
         z-index: 1;
@@ -462,6 +497,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         background-color: #3366cc;
         color: #fff;
         text-align: center;
+        cursor: pointer;
       }
 
       .search-form.table-mode {
@@ -603,12 +639,19 @@ export class TabRequestComponent {
 
     history_recs: HistoryRecord[];
 
+    new_request: boolean = false;
+    edit_enabled: boolean = false;
+    map_draw_allowed: boolean = false;
+
     pane_hidden: boolean = false;
     pane_height: number;
     pane_width: number;
     map_width: number;
 
-    edit_enabled: boolean = false;
+    // для нового запроса
+    search_area: any;
+    query_text: string;
+    //
 
     lat: number = 48.480007;
     lon: number = 135.054954;
@@ -643,12 +686,18 @@ export class TabRequestComponent {
         private _historyService: HistoryService,
         private _personService: PersonService
       ) {
-      setTimeout(() => { this.tab.header = 'request ' + this.person.id; });
+      setTimeout(() => { this.tab.header = 'Запрос' });
     }
 
     ngOnInit() {
       this.request = this.tab.args.request;
-      this.person = this._personService.getRandom();
+      if (!this.request) {
+        this.new_request = true;
+        this.request = this._requestService.getEmpty();
+        this.person = this.tab.args.person;
+      } else {
+        this.person = this._personService.getRandom();
+      }
       this.calcSize();
 
       console.log(this.request);
@@ -735,12 +784,22 @@ export class TabRequestComponent {
       // scroll to object ???
     }
 
-    addPhone() {
-      this.person.phone.push({s: ''});
+    drawFinished(e) {
+      console.log('draw_finished');
+      console.log(e);
+      this.search_area = e;
     }
 
-    addEmail() {
-      this.person.email.push({s: ''});
+    createRequest() {
+      this.new_request = false;
+
+      //this.request = this._requestService.getEmpty();
+
+      this.request._source.req_text = this.query_text;
+    }
+
+    toggleDraw() {
+      this.map_draw_allowed = !this.map_draw_allowed;
     }
 
     getRealtyDigest(r: Realty) {

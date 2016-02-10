@@ -25,7 +25,7 @@ System.register(['angular2/core', '../service/hub.service'], function(exports_1)
                     this.hidden = true;
                     this.event_hidden = true;
                     this.widthChange = new core_1.EventEmitter();
-                    this._hubService.shared_var['nb_width'] = 30;
+                    this._hubService.shared_var['nb_width'] = 1;
                 }
                 NotebookComponent.prototype.toggleNotebook = function () {
                     this.hidden = !this.hidden;
@@ -36,7 +36,7 @@ System.register(['angular2/core', '../service/hub.service'], function(exports_1)
                     this.emitWidth();
                 };
                 NotebookComponent.prototype.emitWidth = function () {
-                    var w = 30;
+                    var w = 1;
                     if (!this.hidden) {
                         w += 371;
                         if (!this.event_hidden) {

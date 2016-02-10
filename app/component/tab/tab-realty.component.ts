@@ -46,7 +46,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
         <div class="pane" [hidden]="pane_hidden" [style.width.px]="pane_width">
           <div class="header">
-
+            <div class="header-label">
+              {{ tab.header }}
+            </div>
           </div>
           <div class="realty-prop" [style.height]="pane_height">
 
@@ -476,7 +478,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             >
               <!-- сильное колдунство, св-во right получаем из HubService -->
               <!-- TODO: сделать это отдельным компонентом -->
-              <div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+              <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
                 <div style="width: 330px; background-color: #fff;">
                   <div class="header">
                     <input type="text" style="width: 280px; margin-left: 10px; border: none;"
@@ -810,7 +812,7 @@ export class TabRealtyComponent {
     }
 
     constructor(private _hubService: HubService, private _configService: ConfigService, private _realtyService: RealtyService, private _requestService: RequestService, private _taskService: TaskService, private _analysisService: AnalysisService, private _historyService: HistoryService) {
-      setTimeout(() => { this.tab.header = 'realty ' + this.realty._id; });
+      setTimeout(() => { this.tab.header = 'Объект' });
     }
 
     ngOnInit() {

@@ -38,7 +38,7 @@ System.register(['angular2/core'], function(exports_1) {
                             'active'
                         ],
                         styles: [""],
-                        template: "\n    <div [hidden]=\"!active\">\n      <ng-content></ng-content>\n    </div>\n  "
+                        template: "\n    <div [hidden]=\"!active\" style=\"position: relative;\">\n      <ng-content></ng-content>\n    </div>\n  "
                     }), 
                     __metadata('design:paramtypes', [])
                 ], UITab);

@@ -47,14 +47,14 @@ import {Tab} from '../../class/tab';
             <div class="tile-content iconic">
                 <span class="icon icon-contact"></span>
             </div>
-            <span class="tile-label">Список контактов</span>
+            <span class="tile-label">Контакты</span>
           </div>
 
           <div class="tile bg-teal fg-white" (click)="turn_to('list_organisation')">
             <div class="tile-content iconic">
                 <span class="icon icon-organisation"></span>
             </div>
-            <span class="tile-label">Организации</span>
+            <span class="tile-label">Контрагенты</span>
           </div>
 
           <div class="tile bg-teal fg-white">

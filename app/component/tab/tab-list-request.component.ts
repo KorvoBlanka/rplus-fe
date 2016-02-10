@@ -16,6 +16,10 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
   directives: [RequestDigestComponent, UISelect],
   template: `
 
+  <div class="header-label-abs">
+    {{ tab.header }}
+  </div>
+
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
       <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
@@ -58,23 +62,17 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
         </ui-select>
       </div>
 
-      <div class="pull-right">
-        <a (click)="addContact()">
-          <span class="icon-add"></span>
-        </a>
-      </div>
-
     </div>
   </div>
 
   <div class="request-list-wrapper">
     <div class="scroll-wrapper" (scroll)="scroll($event)">
 
-          <request-digest
-            *ngFor="#r of requests"
-            [request]="r"
-          >
-          </request-digest>
+      <request-digest
+        *ngFor="#r of requests"
+        [request]="r"
+      >
+      </request-digest>
 
     </div>
   </div>
@@ -133,7 +131,7 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
 
     constructor(private _configService: ConfigService, private _requerstService: RequestService) {
       this.requests = this._requerstService.getRequest(1, 32);
-      setTimeout(() => { this.tab.header = 'request list'; });
+      setTimeout(() => { this.tab.header = 'Заявки'; });
     }
 
     scroll(e) {

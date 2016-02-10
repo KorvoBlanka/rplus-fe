@@ -74,7 +74,7 @@ export class NotebookComponent {
     @Output() widthChange: EventEmitter<any> = new EventEmitter();
 
     constructor(private _hubService: HubService) {
-      this._hubService.shared_var['nb_width'] = 30;
+      this._hubService.shared_var['nb_width'] = 1;
     }
 
     toggleNotebook() {
@@ -88,7 +88,7 @@ export class NotebookComponent {
     }
 
     emitWidth() {
-        var w = 30;
+        var w = 1;
         if (!this.hidden) {
             w += 371;
             if (!this.event_hidden) {

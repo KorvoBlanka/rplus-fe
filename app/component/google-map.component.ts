@@ -12,7 +12,13 @@ import {ConcaveHull} from '../class/concavehull';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'google-map',
-  inputs: ['latitude', 'longitude', 'zoom', 'draw_allowed'],
+  inputs: [
+    'latitude',
+    'longitude',
+    'zoom',
+    'draw_allowed',
+    'polygone_points'
+  ],
   template: `
   <div class="map-wrapper">
   <ng-content></ng-content>
@@ -42,7 +48,8 @@ import {ConcaveHull} from '../class/concavehull';
     draw_allowed: boolean = false;
     is_drawing: boolean = false;
     polyline: google.maps.Polyline;
-    polygone: google.maps.Polygon = new google.maps.Polygon();
+    polygone_points: any[];
+    polygone: google.maps.Polygon;
 
     @Output() drawFinished: EventEmitter<any> = new EventEmitter();
 
@@ -68,13 +75,29 @@ import {ConcaveHull} from '../class/concavehull';
         switch(p_name) {
           case 'latitude':
           case 'longitude':
-          this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
-          break;
+            this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+            break;
           case 'draw_allowed':
-          if (!this.draw_allowed) {
-            this.polygone.setMap(null);
-          }
-          break;
+            if (!this.draw_allowed) {
+              this.polygone.setMap(null);
+            }
+          case 'polygone_points':
+            if (this.polygone_points) {
+              this.polygone = new google.maps.Polygon({
+                paths: this.polygone_points,
+                strokeColor: "#062141",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#062141",
+                fillOpacity: 0.35,
+                editable: false,
+                geodesic: false,
+                map: this.map,
+              });
+            } else {
+              this.polygone = new google.maps.Polygon();
+            }
+            break;
         }
       }
     }

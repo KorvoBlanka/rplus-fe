@@ -16,6 +16,10 @@ import {OrganisationDigestComponent} from '../digest/organisation-digest.compone
   directives: [OrganisationDigestComponent, UISelect],
   template: `
 
+  <div class="header-label-abs">
+    {{ tab.header }}
+  </div>
+
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
       <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
@@ -58,23 +62,21 @@ import {OrganisationDigestComponent} from '../digest/organisation-digest.compone
         </ui-select>
       </div>
 
-      <div class="pull-right">
-        <a (click)="addContact()">
-          <span class="icon-add"></span>
-        </a>
-      </div>
-
     </div>
   </div>
 
   <div class="organisation-list-wrapper">
     <div class="scroll-wrapper">
 
-          <organisation-digest
-            *ngFor="#o of organisations"
-            [organisation]="o"
-          >
-          </organisation-digest>
+      <div class="button">
+        Добавить организацию
+      </div>
+
+      <organisation-digest
+        *ngFor="#o of organisations"
+        [organisation]="o"
+      >
+      </organisation-digest>
 
     </div>
   </div>
@@ -122,6 +124,14 @@ import {OrganisationDigestComponent} from '../digest/organisation-digest.compone
       color: #666;
     }
 
+    .button {
+      text-align: center;
+      padding: 5px 15px;
+      background-color: #3366cc;
+      color: #fff;
+      cursor: pointer;
+    }
+
   `]
 })
 
@@ -133,7 +143,7 @@ import {OrganisationDigestComponent} from '../digest/organisation-digest.compone
 
     constructor(private _configService: ConfigService, private _organisationService: OrganisationService) {
       this.organisations = this._organisationService.getOrganisationList(1, 32);
-      setTimeout(() => { this.tab.header = 'organisation list'; });
+      setTimeout(() => { this.tab.header = 'Контрагенты'; });
     }
 
     scroll(e) {

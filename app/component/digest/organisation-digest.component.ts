@@ -31,7 +31,7 @@ import {Organisation} from '../../class/organisation';
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header">Название:</span><span style="font-weight: 400;"> {{ organisation.name }} </span>
+              <span class="entry-header">Адрес:</span><span style="font-weight: 400;"> {{ organisation.address }} </span>
             </td>
             <td width="33%">
               <span class="entry-header" style="width: 105px;"></span>
@@ -84,7 +84,7 @@ import {Organisation} from '../../class/organisation';
       color:  #666;
       font-size: 17;
       white-space: nowrap;
-      margin-left: 50px;
+      margin-left: 25px;
     }
 
     .billet.selected {
@@ -99,7 +99,7 @@ import {Organisation} from '../../class/organisation';
 
     .entry-header {
       display: inline-block;
-      width: 90px;
+      width: 115px;
       color: #aaa;
     }
 
@@ -143,7 +143,7 @@ export class OrganisationDigestComponent {
   open() {
     this.organisation.selected = true;
     var tab_sys = this._hubService.getProperty('tab_sys');
-    tab_sys.addTab('organisation', { person: this.organisation });
+    tab_sys.addTab('organisation', { organisation: this.organisation });
   }
 
   tstart() {

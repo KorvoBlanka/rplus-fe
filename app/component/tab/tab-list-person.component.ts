@@ -18,6 +18,10 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
   directives: [PersonDigestComponent, UISelect],
   template: `
 
+  <div class="header-label-abs">
+    {{ tab.header }}
+  </div>
+
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
       <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
@@ -75,22 +79,20 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
         </ui-select>
       </div>
 
-      <div class="pull-right">
-        <a (click)="addContact()">
-          <span class="icon-add"></span>
-        </a>
-      </div>
-
     </div>
   </div>
 
   <div class="person-list-wrapper">
     <div class="scroll-wrapper">
 
-          <person-digest *ngFor="#p of persons"
-            [person]="p"
-          >
-          </person-digest>
+      <div class="button">
+        Добавить контакт
+      </div>
+
+      <person-digest *ngFor="#p of persons"
+        [person]="p"
+      >
+      </person-digest>
 
     </div>
   </div>
@@ -137,6 +139,14 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
       font-size: 14;
       color: #666;
     }
+
+    .button {
+      text-align: center;
+      padding: 5px 15px;
+      background-color: #3366cc;
+      color: #fff;
+      cursor: pointer;
+    }
   `]
 })
 
@@ -148,7 +158,7 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
 
     constructor(private _configService: ConfigService, private _personService: PersonService) {
       this.persons = this._personService.getPersonList(1, 32);
-      setTimeout(() => { this.tab.header = 'person list'; });
+      setTimeout(() => { this.tab.header = 'Контакты'; });
     }
 
     scroll(e) {

@@ -13,11 +13,11 @@ import {HistoryRecord} from '../../class/historyRecord';
 
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
-import {RealtyService} from '../../service/realty.service';
-import {RequestService} from '../../service/request.service';
+import {OrganisationService} from '../../service/organisation.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service'
-import {OrganisationService} from '../../service/organisation.service';
+import {RealtyService} from '../../service/realty.service';
+import {PersonService} from '../../service/person.service';
 
 import {UISelect} from '../ui/ui-select.component';
 import {UICarousel} from '../ui/ui-carousel.component';
@@ -28,20 +28,20 @@ import {UIPieChart} from '../ui/ui-pie-chart.component';
 import {UILineChart} from '../ui/ui-line-chart.component';
 import {UIBarChart} from '../ui/ui-bar-chart.component';
 
-import {RealtyDigestComponent} from '../digest/realty-digest.component';
-import {RequestDigestComponent} from '../digest/request-digest.component';
 import {HistoryDigestComponent} from '../digest/history-digest.component';
+import {RealtyDigestComponent} from '../digest/realty-digest.component';
+import {PersonDigestComponent} from '../digest/person-digest.component';
 import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
 
 @Component({
-    selector: 'tab-person',
+    selector: 'tab-organisation',
     inputs: ['tab'],
     pipes: [FormatDatePipe],
     directives: [
-      RealtyDigestComponent,
-      RequestDigestComponent,
       HistoryDigestComponent,
+      RealtyDigestComponent,
+      PersonDigestComponent,
       GoogleMapComponent,
       GoogleMapMarkerComponent,
       UISelect,
@@ -59,7 +59,10 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
       </div>
 
-      <div class="person" (window:resize)="onResize($event)">
+
+      <div class="organisation"
+        (window:resize)="onResize($event)"
+      >
 
     <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
 
@@ -69,13 +72,13 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               {{ tab.header }}
             </div>
           </div>
-          <div class="person-prop" [style.height]="pane_height">
+          <div class="organisation-prop" [style.height]="pane_height">
 
             <div style="margin: 5px;">
 
               <div class="pull-container">
-                <div class="font-sz-2 pull-left">Источник: звонок<span class="color-g1"><a href="" target="_blank"></a></span></div>
-                <div class="font-sz-1 color-g2 pull-right"> {{ person.add_date | formatDate }} </div>
+                <div class="font-sz-2 pull-left">Источник: ???<span class="color-g1"><a href="" target="_blank"></a></span></div>
+                <div class="font-sz-1 color-g2 pull-right"> {{ organisation.add_date | formatDate }} </div>
               </div>
 
               <hr>
@@ -90,56 +93,20 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               <div class="edit-block" [hidden]="!edit_enabled" style="margin: 20px 10px;">
 
                 <div class="view-group">
-                  <span class="view-label">Ответственный</span>
-                  <ui-select class="view-value edit-value"
-                    [values] = "[
-                      {id: 1, text: 'Агент 1_1'},
-                      {id: 2, text: 'Агент 1_2'},
-                      {id: 3, text: 'Агент 1_3'},
-                      {id: 4, text: 'Агент 1_4'},
-                      {id: 5, text: 'Агент 1_5'}
-                    ]"
-                    [value]="{id: 0, text: 'Агент 1_1'}"
-                    (valueChange)="log($event)"
-                  >
-                  </ui-select>
+                  <span class="view-label">Название</span>
+                  <input type="text" class="view-value edit-value" [(ngModel)]="organisation.name">
                 </div>
+                <br>
 
                 <div class="view-group">
-                  <span class="view-label">Имя</span>
-                  <input type="text" class="view-value edit-value" [(ngModel)]="person.name">
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Телефон <a href="#" (click)="addPhone()"><span class="icon-add"></span></a></span>
-                  <div class="array-container">
-                    <input *ngFor="#phone of person.phone; #i = index" type="text" class="view-value edit-value" [(ngModel)]="person.phone[i].s">
-                  </div>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">e-mail <a href="#" (click)="addEmail()" ><span class="icon-add"></span></a></span>
-                  <div class="array-container">
-                    <input *ngFor="#email of person.email; #i = index" type="text" class="view-value edit-value" [(ngModel)]="person.email[i].s">
-                  </div>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Организация</span>
-                  <ui-select class="view-value edit-value"
-                    [values] = "organisations_opts"
-                    [label]="'Частное лицо'"
-                    (valueChange)="person.organisation=$event.val"
-                  >
-                  </ui-select>
-
+                  <span class="view-label">Адрес</span>
+                  <input type="text" class="view-value edit-value" [(ngModel)]="organisation.address">
                 </div>
 
                 <br>
-
                 <div class="view-group" style="flex-wrap: wrap;">
                   <span class="view-label">Иформация</span>
-                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="person.info" style="text-align: left;"></textarea>
+                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="organisation.info" style="text-align: left;"></textarea>
                 </div>
 
               </div>
@@ -150,39 +117,19 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               <div class="view-block" [hidden]="edit_enabled" style="margin: 20px 10px;">
 
                 <div class="view-group">
-                  <span class="view-label">Ответственный</span>
-                  <span class="view-value"> Агент 1_1</span>
+                  <span class="view-label pull-left">Название</span>
+                  <span class="view-value"> {{ organisation.name }}</span>
                 </div>
 
                 <div class="view-group">
-                  <span class="view-label">Имя</span>
-                  <span class="view-value"> {{ person.name }}</span>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Телефон </span>
-                  <div class="array-container">
-                    <span *ngFor="#phone of person.phone" class="view-value"> {{ phone.s }} </span>
-                  </div>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">e-mail</span>
-                  <div class="array-container">
-                    <span *ngFor="#email of person.email" class="view-value"> {{ email.s }} </span>
-                  </div>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Организация</span>
-                  <span class="view-value"> {{ person.organisation.name }}</span>
+                  <span class="view-label pull-left">Адрес</span>
+                  <span class="view-value"> {{ organisation.address }}</span>
                 </div>
 
                 <br>
-
                 <div class="view-group">
                   <span class="view-label pull-left">Информация</span>
-                  <span class="view-value" style="height: initial;"> {{ person.info }} </span>
+                  <span class="view-value" style="height: initial;"> {{ organisation.info }} </span>
                 </div>
 
               </div>
@@ -194,8 +141,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="icon-tag"> Тэги</span>
                 </div>
                 <ui-tag-block
-                  [value] = "person.tag"
-                  (valueChange) = "person.tag = $event.value"
+                  [value] = "organisation.tag"
+                  (valueChange) = "organisation.tag = $event.value"
                 ></ui-tag-block>
               </div>
 
@@ -210,17 +157,29 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
           <ui-tabs
             [header_mode]="!pane_hidden"
           >
+
+            <ui-tab
+              [title]="'Контакты'"
+              (tabSelect)="personsSelected()"
+            >
+
+              <div class="" style="margin-top: 25xp; max-width: 915px; overflow-y: scroll;" [style.height]="pane_height">
+                <div class="button" (click)="addContact()">
+                  Добавить контакт
+                </div>
+
+                <person-digest *ngFor="#p of persons"
+                  [person]="p"
+                >
+                </person-digest>
+              </div>
+
+            </ui-tab>
+
             <ui-tab
               [title]="'Предложения'"
               (tabSelect)="offersSelected()"
             >
-
-              <div class="" style="position: absolute; top: 15px; left: 15px; z-index: 1;">
-                <div class="two-way-switch">
-                  <div [class.active]="request_offer_type == 'sale'" (click)="toggleOffer('sale')">Продажа</div>
-                  <div [class.active]="request_offer_type == 'rent'" (click)="toggleOffer('rent')">Аренда</div>
-                </div>
-              </div>
 
               <!-- сильное колдунство, св-во right получаем из HubService -->
               <!-- TODO: сделать это отдельным компонентом -->
@@ -235,11 +194,6 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                      ></span>
                   </div>
                   <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="pane_height">
-
-                    <div class="button" (click)="createOffer()">
-                      Добавить предложение
-                    </div>
-
                     <reaty-digest *ngFor="#realty of offers"
                       [realty]="realty"
                       [compact]="true"
@@ -248,8 +202,12 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   </div>
                 </div>
               </div>
-              <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-
+              <google-map
+                [latitude]="lat"
+                [longitude]="lon"
+                [zoom]="zoom"
+                [polygone_points]="search_area"
+              >
                 <t *ngFor="#r of offers">
                 <google-map-marker
                   *ngIf="r._source.location"
@@ -265,28 +223,6 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               </google-map>
             </ui-tab>
 
-            <ui-tab
-              [title]="'Заявки'"
-              (tabSelect)="requestsSelected()"
-            >
-              <div class="" style="margin: 15px;">
-                <div class="two-way-switch">
-                  <div [class.active]="request_offer_type == 'sale'" (click)="toggleOffer('sale')">Продажа</div>
-                  <div [class.active]="request_offer_type == 'rent'" (click)="toggleOffer('rent')">Аренда</div>
-                </div>
-              </div>
-              <div class="" style="max-width: 910px; overflow-y: scroll; " [style.height]="pane_height">
-
-                <div class="button" (click)="createRequest()">
-                  Добавить заявку
-                </div>
-
-                <request-digest *ngFor="#request of requests"
-                  [request]="request"
-                >
-                </request-digest>
-              </div>
-            </ui-tab>
             <ui-tab [title]="'Аналитика'"
               (tabSelect)="analysisSelected()"
             >
@@ -419,6 +355,55 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     `,
     styles: [`
 
+      .search-form {
+        position: absolute;
+        width: 50%;
+        margin-left: 25%;
+        margin-top: 10px;
+        background: #fff;
+        z-index: 1;
+        border: 1px solid #eee;
+      }
+
+      .search-form > input {
+        height: 28px;
+        width: 100%;
+      }
+
+      .with-button {
+        overflow: hidden;
+      }
+
+      .with-button > input {
+        float: left;
+        width: calc(100% - 120px);
+      }
+
+      .search-button {
+        float: right;
+        width: 120px;
+        height: 24px;
+        background-color: #3366cc;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .search-form.table-mode {
+        border: 1px solid #fff;
+      }
+
+      .tool-box {
+        height: 30px;
+        margin: 0 12px;
+      }
+
+      .search-box {
+        position: relative;
+        margin: 12px;
+        margin-bottom: 8px;
+      }
+
       .pane {
         float: left;
         width: 370px;
@@ -444,10 +429,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         top: 0;
         left: 0;
       }
-      .sebm-google-map-container {
-        height: 100%;
-      }
-      .realty-prop {
+
+      .request-prop {
         overflow-y: scroll;
       }
 
@@ -534,55 +517,35 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         margin-bottom: 5px;
       }
 
-      .two-way-switch {
-        display: table;
-        border: 1px solid #3366cc;
-        cursor: pointer;
-      }
-
-      .two-way-switch > div {
-        display: table-cell;
-        width: 90px;
-        text-align: center;
-        padding: 5px 15px;
-        background-color: #fff;
-        color: #333;
-      }
-
-      .two-way-switch > div.active {
-        background-color: #3366cc;
-        color: #fff;
-      }
-
       .button {
         text-align: center;
         padding: 5px 15px;
         background-color: #3366cc;
         color: #fff;
         cursor: pointer;
-      }
 
+        margin-top: 25px;
+      }
     `]
 })
 
-export class TabPersonComponent {
+export class TabOrganisationComponent {
     public tab: Tab;
-    public person: Person;
+    public organisation: Organisation;
 
-    public orgs: Organisation[];
-
+    persons: Person[];
     offers: Realty[];
-    requests: Request[];
+
     history_recs: HistoryRecord[];
+
+    new_request: boolean = false;
+    edit_enabled: boolean = false;
 
     pane_hidden: boolean = false;
     pane_height: number;
     pane_width: number;
     map_width: number;
 
-    edit_enabled: boolean = false;
-
-    request_offer_type: string = 'sale';
 
     lat: number = 48.480007;
     lon: number = 135.054954;
@@ -601,88 +564,62 @@ export class TabPersonComponent {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    organisations_opts = [
-      {
-        label: 'Частное лицо',
-        val: {
-          id: 0,
-          name: 'Частное лицо',
-          add_date: 0,
-          change_date: 0,
-        }
-      },
-      {
-        label: 'Агенство 1',
-        val: {
-          id: 1,
-          name: 'Агенство 1',
-
-          add_date: 1000000000,
-          change_date: 1300000000,
-        }
-      },
-    ];
-
     log(e) {
-        console.log(e);
+      console.log(e);
     }
     parseFloat(v: any) {    // сделать пайп
-        return parseFloat(v);
+      return parseFloat(v);
     }
 
     constructor(private _hubService: HubService,
         private _configService: ConfigService,
         private _realtyService: RealtyService,
-        private _requestService: RequestService,
         private _taskService: TaskService,
         private _analysisService: AnalysisService,
         private _historyService: HistoryService,
-        private _organisationService: OrganisationService
+        private _personService: PersonService
       ) {
-
-      this.orgs = _organisationService.getOrganisationList(1, 16);
-      setTimeout(() => { this.tab.header = 'Контакт' });
+      setTimeout(() => { this.tab.header = 'Контрагент' });
     }
 
     ngOnInit() {
-        this.person = this.tab.args.person;
-
-        this.calcSize();
+      this.organisation = this.tab.args.organisation;
+      this.calcSize();
     }
 
     onResize(e) {
-        this.calcSize();
+      this.calcSize();
     }
 
     calcSize() {
-        if (this.pane_hidden) {
-            this.pane_width = 0;
-        } else {
-            this.pane_width = 420;
-        }
-        this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
-        this.pane_height = document.body.clientHeight - 31;
+      if (this.pane_hidden) {
+        this.pane_width = 0;
+      } else {
+        this.pane_width = 420;
+      }
+      this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
+      this.pane_height = document.body.clientHeight - 31;
     }
 
     toggleLeftPane() {
-        this.pane_hidden = !this.pane_hidden;
-        this.calcSize();
+      this.pane_hidden = !this.pane_hidden;
+      this.calcSize();
     }
 
     toggleEdit() {
-        this.edit_enabled = !this.edit_enabled;
+      this.edit_enabled = !this.edit_enabled;
     }
 
     save() {
-        this.toggleEdit();
+      this.toggleEdit();
     }
 
     offersSelected() {
-        this.getOffers(1, 16);
+      this.getOffers(1, 16);
     }
 
-    requestsSelected() {
-        this.requests = this._requestService.getRequest(1, 16);
+    personsSelected() {
+      this.getPersons(1, 32);
     }
 
     analysisSelected() {
@@ -714,6 +651,10 @@ export class TabPersonComponent {
       this.history_recs = this._historyService.getObjHistory();
     }
 
+    getPersons(page, per_page) {
+      this.persons = this._personService.getPersonList(page, per_page);
+    }
+
     getOffers(page, per_page) {
       this.offers = this._realtyService.getSimilarRealty(page, per_page);
     }
@@ -735,29 +676,10 @@ export class TabPersonComponent {
       // scroll to object ???
     }
 
-    addPhone() {
-      this.person.phone.push({s: ''});
-    }
-
-    addEmail() {
-      this.person.email.push({s: ''});
-    }
-
-    createRequest() {
+    addContact() {
       var tab_sys = this._hubService.getProperty('tab_sys');
-      tab_sys.addTab('request', { request: null, person: this.person });
+      tab_sys.addTab('person', { person: {organisation: this.organisation}, organisation: this.organisation });
     }
-
-    toggleOffer(offer_type: string) {
-      this.request_offer_type = offer_type;
-      this.requests = this._requestService.getRequest(1, 16);
-    }
-
-    createOffer() {
-      var tab_sys = this._hubService.getProperty('tab_sys');
-      tab_sys.addTab('realty', { realty: null, person: this.person });
-    }
-
 
     getRealtyDigest(r: Realty) {
       return Realty.getDigest(r);

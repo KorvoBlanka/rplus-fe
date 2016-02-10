@@ -6,6 +6,7 @@ import {TabRealtyComponent} from './tab-realty.component';
 import {TabListPersonComponent} from './tab-list-person.component';
 import {TabPersonComponent} from './tab-person.component';
 import {TabListOrganisationComponent} from './tab-list-organisation.component';
+import {TabOrganisationComponent} from './tab-organisation.component';
 import {TabListRequestComponent} from './tab-list-request.component';
 import {TabRequestComponent} from './tab-request.component';
 
@@ -20,6 +21,7 @@ import {TabRequestComponent} from './tab-request.component';
       <tab-list-person [tab]="tab" *ngSwitchWhen="'list_person'"></tab-list-person>
       <tab-person [tab]="tab" *ngSwitchWhen="'person'"></tab-person>
       <tab-list-organisation [tab]="tab" *ngSwitchWhen="'list_organisation'"></tab-list-organisation>
+      <tab-organisation [tab]="tab" *ngSwitchWhen="'organisation'"></tab-organisation>
       <tab-list-request [tab]="tab" *ngSwitchWhen="'list_request'"></tab-list-request>
       <tab-request [tab]="tab" *ngSwitchWhen="'request'"></tab-request>
       <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>
@@ -32,6 +34,7 @@ import {TabRequestComponent} from './tab-request.component';
     TabListPersonComponent,
     TabPersonComponent,
     TabListOrganisationComponent,
+    TabOrganisationComponent,
     TabListRequestComponent,
     TabRequestComponent,
   ],

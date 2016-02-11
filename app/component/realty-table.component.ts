@@ -211,7 +211,6 @@ export class RealtyTableComponent {
       e.stopPropagation();
       this._hubService.shared_var['cm_px'] = e.pageX;
       this._hubService.shared_var['cm_py'] = e.pageY;
-      this._hubService.shared_var['cm_hidden'] = false;
 
       let items = [];
 
@@ -222,6 +221,7 @@ export class RealtyTableComponent {
       })
 
       this._hubService.shared_var['cm_items'] = items;
+      this._hubService.shared_var['cm_hidden'] = false;
     }
 
     toggle_visibility(field_id: string) {

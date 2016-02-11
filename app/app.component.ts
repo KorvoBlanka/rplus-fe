@@ -5,6 +5,7 @@ import {HubService} from './service/hub.service';
 import {TabSystemComponent} from './component/tab-system.component';
 import {NotebookComponent} from './component/notebook.component';
 import {ContextMenuComponent} from './component/context-menu.component';
+import {LoginScreenComponent} from './component/login-screen.component';
 
 @Component({
   selector: 'rplus-app',
@@ -20,12 +21,13 @@ import {ContextMenuComponent} from './component/context-menu.component';
         [items]="_hubService.shared_var['cm_items']"
       >
       </context-menu>
+      <login-screen></login-screen>
       <tab-system></tab-system>
       <notebook></notebook>
     </div>
   `,
   styles:[``],
-  directives: [TabSystemComponent, NotebookComponent, ContextMenuComponent],
+  directives: [TabSystemComponent, NotebookComponent, ContextMenuComponent, LoginScreenComponent],
 })
 
 export class AppComponent {

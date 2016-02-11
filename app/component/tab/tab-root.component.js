@@ -1,4 +1,6 @@
-System.register(['angular2/core', './tab-main.component', './tab-list-realty.component', './tab-realty.component', './tab-list-person.component', './tab-person.component', './tab-list-organisation.component', './tab-organisation.component', './tab-list-request.component', './tab-request.component'], function(exports_1) {
+System.register(['angular2/core', './tab-main.component', './tab-list-realty.component', './tab-realty.component', './tab-list-person.component', './tab-person.component', './tab-list-organisation.component', './tab-organisation.component', './tab-list-request.component', './tab-request.component'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -66,7 +68,7 @@ System.register(['angular2/core', './tab-main.component', './tab-list-realty.com
                     __metadata('design:paramtypes', [])
                 ], TabRootComponent);
                 return TabRootComponent;
-            })();
+            }());
             exports_1("TabRootComponent", TabRootComponent);
         }
     }

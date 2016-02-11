@@ -16,6 +16,7 @@ import {HubService} from '../service/hub.service';
       [style.left]="pos_x"
       [style.top]="pos_y"
       [hidden]="hidden"
+      (document:click)="docClick()"
       >
       <div
         *ngFor="#i of items"
@@ -102,6 +103,10 @@ import {HubService} from '../service/hub.service';
         item.callback();
       }
 
+    }
+
+    docClick() {
+      
     }
 
     constructor() {}

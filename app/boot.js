@@ -1,4 +1,6 @@
-System.register(['angular2/platform/browser', './service/hub.service', './service/config.service', './service/realty.service', './service/request.service', './service/task.service', './service/analysis.service', './service/history.service', './service/person.service', './service/organisation.service', './app.component'], function(exports_1) {
+System.register(['angular2/platform/browser', './service/hub.service', './service/config.service', './service/realty.service', './service/request.service', './service/task.service', './service/analysis.service', './service/history.service', './service/person.service', './service/organisation.service', './app.component'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var browser_1, hub_service_1, config_service_1, realty_service_1, request_service_1, task_service_1, analysis_service_1, history_service_1, person_service_1, organisation_service_1, app_component_1;
     return {
         setters:[

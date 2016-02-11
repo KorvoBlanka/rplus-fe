@@ -1,4 +1,6 @@
-System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.service', '../service/realty.service'], function(exports_1) {
+System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.service', '../service/realty.service'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -114,12 +116,12 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                     e.stopPropagation();
                     this._hubService.shared_var['cm_px'] = e.pageX;
                     this._hubService.shared_var['cm_py'] = e.pageY;
-                    this._hubService.shared_var['cm_hidden'] = false;
                     var items = [];
                     this.fields.forEach(function (f) {
                         items.push({ class: "entry_cb", disabled: false, value: f.visible, label: f.label, callback: function () { _this.toggle_visibility(f.id); } });
                     });
                     this._hubService.shared_var['cm_items'] = items;
+                    this._hubService.shared_var['cm_hidden'] = false;
                 };
                 RealtyTableComponent.prototype.toggle_visibility = function (field_id) {
                     this.fields.forEach(function (f) {
@@ -152,7 +154,7 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                     __metadata('design:paramtypes', [core_1.ElementRef, hub_service_1.HubService, realty_service_1.RealtyService])
                 ], RealtyTableComponent);
                 return RealtyTableComponent;
-            })();
+            }());
             exports_1("RealtyTableComponent", RealtyTableComponent);
         }
     }

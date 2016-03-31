@@ -52,7 +52,7 @@ import {Realty} from '../class/realty';
               >
                 <span *ngIf="f.id=='status'" class="icon-{{ f.val(r) }}">
                 </span>
-                <span *ngIf="f.id=='photo' && r._source.main_photo_thumbnail" class="icon-photo">
+                <span *ngIf="f.id=='photo' && r.main_photo_thumbnail" class="icon-photo">
                 </span>
                 <span *ngIf="f.id!='status' && f.id!='photo'">
                 {{ f.val(r) }}
@@ -125,46 +125,46 @@ export class RealtyTableComponent {
     to: any;
 
     private fields = [
-      { id: 'status', label: '#', visible: true, sort: 0, val: (r: Realty) => { return r._source.state_code; } },
-      { id: 'photo', label: 'Фото', visible: true, sort: 0, val: (r: Realty) => { return r._source.main_photo_thumbnail; } },
-      { id: 'type', label: 'Тип', visible: true, sort: 0, val: (r: Realty) => { return r._source.type; } },
-      { id: 'city', label: 'Город', visible: false, sort: 0, val: (r: Realty) => { return r._source.city; } },
-      { id: 'address', label: 'Адрес', visible: true, sort: 0, val: (r: Realty) => { return r._source.addr_str; } },
+      { id: 'status', label: '#', visible: true, sort: 0, val: (r: Realty) => { return r.state_code; } },
+      { id: 'photo', label: 'Фото', visible: true, sort: 0, val: (r: Realty) => { return r.main_photo_thumbnail; } },
+      { id: 'type', label: 'Тип', visible: true, sort: 0, val: (r: Realty) => { return r.type_code; } },
+      { id: 'city', label: 'Город', visible: false, sort: 0, val: (r: Realty) => { return ' '; } },
+      { id: 'address', label: 'Адрес', visible: true, sort: 0, val: (r: Realty) => { return r.address; } },
       { id: 'rooms', label: 'Комнаты', visible: true, sort: 0, val: (r: Realty) => {
         var res = '';
-        if (r._source.rooms_offer_count) {
-          res = r._source.rooms_offer_count;
+        if (r.rooms_offer_count) {
+          res = r.rooms_offer_count;
         }
-        if (r._source.rooms_count) {
+        if (r.rooms_count) {
           if (res) res += '/'
-          res += r._source.rooms_count;
+          res += r.rooms_count;
         }
         return res;
       } },
-      { id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: (r: Realty) => { return r._source.ap_scheme; } },
-      { id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: (r: Realty) => { return r._source.house_type; } },
+      { id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: (r: Realty) => { return r.ap_scheme; } },
+      { id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: (r: Realty) => { return r.house_type; } },
       { id: 'floors', label: 'Этаж', visible: true, sort: 0, val: (r: Realty) => {
         var res = '';
-        if (r._source.floor) {
-          res = r._source.floor;
+        if (r.floor) {
+          res = r.floor;
         }
-        if (r._source.floors_count) {
+        if (r.floors_count) {
           if (res) res += '/'
-          res += r._source.floors_count;
+          res += r.floors_count;
         }
         return res;
       } },
       { id: 'squares', label: 'Площадь', visible: true, sort: 0, val: (r: Realty) => {
 
-        return r._source.square_total;
+        return r.square_total;
       } },
-      { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: (r: Realty) => { return r._source.media; } },
+      { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: (r: Realty) => { return r.source_media; } },
       { id: 'mediator', label: 'Предложение', visible: false, sort: 0, val: (r: Realty) => { return '~' } },
       { id: 'contact', label: 'Контакт', visible: true, sort: 0, val: (r: Realty) => { return '~' } },
-      { id: 'price', label: 'Цена', visible: true, sort: 0, val: (r: Realty) => { return r._source.price; } },
+      { id: 'price', label: 'Цена', visible: true, sort: 0, val: (r: Realty) => { return r.owner_price; } },
       { id: 'price_sq', label: 'Цена м2', visible: false, sort: 0, val: (r: Realty) => {
-        if (r._source.price && r._source.sqare_total) {
-          return (r._source.price / r._source.sqare_total) + '';
+        if (r.owner_price && r.sqare_total) {
+          return (r.owner_price / r.sqare_total) + '';
         }
         return '';
       } },
@@ -176,10 +176,10 @@ export class RealtyTableComponent {
       { id: 'click_count', label: 'Кол-во кликов', visible: false, sort: 0, val: (r: Realty) => { return '100' } },
       { id: 'progress', label: 'Прогресс', visible: false, sort: 0, val: (r: Realty) => { return '50%' } },
 
-      { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: (r: Realty) => { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm') } },
-      { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: (r: Realty) => { return moment(r._source.assign_date * 1000).format('DD.MM.YY hh:mm') } },
-      { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: (r: Realty) => { return moment(r._source.change_date * 1000).format('DD.MM.YY hh:mm') } },
-      { id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: (r: Realty) => { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm') } }
+      { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: (r: Realty) => { return moment(r.last_seen_date * 1000).format('DD.MM.YY hh:mm') } },
+      { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: (r: Realty) => { return moment(r.assign_date * 1000).format('DD.MM.YY hh:mm') } },
+      { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: (r: Realty) => { return moment(r.change_date * 1000).format('DD.MM.YY hh:mm') } },
+      { id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: (r: Realty) => { return moment(r.last_seen_date * 1000).format('DD.MM.YY hh:mm') } }
     ];
 
     constructor(private _elem: ElementRef, private _hubService: HubService, private _realtyService: RealtyService) {};
@@ -195,10 +195,13 @@ export class RealtyTableComponent {
     scroll(e) {
       if (e.currentTarget.scrollTop + this.content_height >= e.currentTarget.scrollHeight) {
         this.page ++;
-        var r = this._realtyService.getRealty(this.page, 10);
-        for (var i = 0; i < r.length; i++) {
-          this.realty.push(r[i])
-        }
+        this._realtyService.getRealty(this.page, 10).then(realty => {
+          console.log('!');
+          var r = realty;
+          for (var i = 0; i < r.length; i++) {
+            //this.realty.push(r[i])
+          }
+        });
       }
     }
 

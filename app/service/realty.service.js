@@ -1,6 +1,5 @@
-System.register(['angular2/core'], function(exports_1, context_1) {
+System.register(['angular2/core', '../class/realty', 'angular2/http'], function(exports_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,18 +9,65 @@ System.register(['angular2/core'], function(exports_1, context_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1;
+    var core_1, realty_1, http_1;
     var RealtyService, REALTY;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (realty_1_1) {
+                realty_1 = realty_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
             }],
         execute: function() {
             RealtyService = (function () {
-                function RealtyService() {
+                function RealtyService(_http) {
+                    this._http = _http;
                 }
+                ;
+                RealtyService.prototype.updateRealty = function (realty) {
+                    var _this = this;
+                    console.log('updateRealty');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/offer/update/' + realty.id;
+                        var headers = new http_1.Headers();
+                        var data_str = JSON.stringify(realty);
+                        _this._http.post(_resourceUrl, data_str, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            resolve(data);
+                            if (data.result == "OK") {
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
+                };
                 RealtyService.prototype.getRealty = function (page, per_page) {
+                    var _this = this;
+                    console.log('getRealty');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/offer/list';
+                        var headers = new http_1.Headers();
+                        _this._http.get(_resourceUrl, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            for (var i = 0; i < data.length; i++) {
+                                realty_1.Realty.normalize(data[i]);
+                                console.log(data[i]);
+                            }
+                            resolve(data);
+                            if (data.result == "OK") {
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
+                };
+                RealtyService.prototype._getRealty = function (page, per_page) {
                     if (page * per_page > REALTY.length)
                         return [];
                     var f_idx = (page - 1) * per_page;
@@ -35,7 +81,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 };
                 RealtyService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [http_1.Http])
                 ], RealtyService);
                 return RealtyService;
             }());

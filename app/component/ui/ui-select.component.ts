@@ -115,7 +115,7 @@ export class UISelect {
     this.label = v.label;
     this.hide();
 
-    this.valueChange.emit({val: v.val});
+    this.valueChange.emit({value: v});
   }
 
 }

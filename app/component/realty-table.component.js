@@ -1,6 +1,5 @@
-System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.service', '../service/realty.service'], function(exports_1, context_1) {
+System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.service', '../service/realty.service'], function(exports_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -35,47 +34,47 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                     this.content_height = 600;
                     this.page = 0;
                     this.fields = [
-                        { id: 'status', label: '#', visible: true, sort: 0, val: function (r) { return r._source.state_code; } },
-                        { id: 'photo', label: 'Фото', visible: true, sort: 0, val: function (r) { return r._source.main_photo_thumbnail; } },
-                        { id: 'type', label: 'Тип', visible: true, sort: 0, val: function (r) { return r._source.type; } },
-                        { id: 'city', label: 'Город', visible: false, sort: 0, val: function (r) { return r._source.city; } },
-                        { id: 'address', label: 'Адрес', visible: true, sort: 0, val: function (r) { return r._source.addr_str; } },
+                        { id: 'status', label: '#', visible: true, sort: 0, val: function (r) { return r.state_code; } },
+                        { id: 'photo', label: 'Фото', visible: true, sort: 0, val: function (r) { return r.main_photo_thumbnail; } },
+                        { id: 'type', label: 'Тип', visible: true, sort: 0, val: function (r) { return r.type_code; } },
+                        { id: 'city', label: 'Город', visible: false, sort: 0, val: function (r) { return ' '; } },
+                        { id: 'address', label: 'Адрес', visible: true, sort: 0, val: function (r) { return r.address; } },
                         { id: 'rooms', label: 'Комнаты', visible: true, sort: 0, val: function (r) {
                                 var res = '';
-                                if (r._source.rooms_offer_count) {
-                                    res = r._source.rooms_offer_count;
+                                if (r.rooms_offer_count) {
+                                    res = r.rooms_offer_count;
                                 }
-                                if (r._source.rooms_count) {
+                                if (r.rooms_count) {
                                     if (res)
                                         res += '/';
-                                    res += r._source.rooms_count;
+                                    res += r.rooms_count;
                                 }
                                 return res;
                             } },
-                        { id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: function (r) { return r._source.ap_scheme; } },
-                        { id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: function (r) { return r._source.house_type; } },
+                        { id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: function (r) { return r.ap_scheme; } },
+                        { id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: function (r) { return r.house_type; } },
                         { id: 'floors', label: 'Этаж', visible: true, sort: 0, val: function (r) {
                                 var res = '';
-                                if (r._source.floor) {
-                                    res = r._source.floor;
+                                if (r.floor) {
+                                    res = r.floor;
                                 }
-                                if (r._source.floors_count) {
+                                if (r.floors_count) {
                                     if (res)
                                         res += '/';
-                                    res += r._source.floors_count;
+                                    res += r.floors_count;
                                 }
                                 return res;
                             } },
                         { id: 'squares', label: 'Площадь', visible: true, sort: 0, val: function (r) {
-                                return r._source.square_total;
+                                return r.square_total;
                             } },
-                        { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: function (r) { return r._source.media; } },
+                        { id: 'import_source', label: 'Источник', visible: true, sort: 0, val: function (r) { return r.source_media; } },
                         { id: 'mediator', label: 'Предложение', visible: false, sort: 0, val: function (r) { return '~'; } },
                         { id: 'contact', label: 'Контакт', visible: true, sort: 0, val: function (r) { return '~'; } },
-                        { id: 'price', label: 'Цена', visible: true, sort: 0, val: function (r) { return r._source.price; } },
+                        { id: 'price', label: 'Цена', visible: true, sort: 0, val: function (r) { return r.owner_price; } },
                         { id: 'price_sq', label: 'Цена м2', visible: false, sort: 0, val: function (r) {
-                                if (r._source.price && r._source.sqare_total) {
-                                    return (r._source.price / r._source.sqare_total) + '';
+                                if (r.owner_price && r.sqare_total) {
+                                    return (r.owner_price / r.sqare_total) + '';
                                 }
                                 return '';
                             } },
@@ -85,10 +84,10 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                         { id: 'reqests', label: 'Заявки', visible: false, sort: 0, val: function (r) { return '10'; } },
                         { id: 'click_count', label: 'Кол-во кликов', visible: false, sort: 0, val: function (r) { return '100'; } },
                         { id: 'progress', label: 'Прогресс', visible: false, sort: 0, val: function (r) { return '50%'; } },
-                        { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: function (r) { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm'); } },
-                        { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: function (r) { return moment(r._source.assign_date * 1000).format('DD.MM.YY hh:mm'); } },
-                        { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: function (r) { return moment(r._source.change_date * 1000).format('DD.MM.YY hh:mm'); } },
-                        { id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: function (r) { return moment(r._source.last_seen_date * 1000).format('DD.MM.YY hh:mm'); } }
+                        { id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: function (r) { return moment(r.last_seen_date * 1000).format('DD.MM.YY hh:mm'); } },
+                        { id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: function (r) { return moment(r.assign_date * 1000).format('DD.MM.YY hh:mm'); } },
+                        { id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: function (r) { return moment(r.change_date * 1000).format('DD.MM.YY hh:mm'); } },
+                        { id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: function (r) { return moment(r.last_seen_date * 1000).format('DD.MM.YY hh:mm'); } }
                     ];
                 }
                 ;
@@ -101,10 +100,12 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                 RealtyTableComponent.prototype.scroll = function (e) {
                     if (e.currentTarget.scrollTop + this.content_height >= e.currentTarget.scrollHeight) {
                         this.page++;
-                        var r = this._realtyService.getRealty(this.page, 10);
-                        for (var i = 0; i < r.length; i++) {
-                            this.realty.push(r[i]);
-                        }
+                        this._realtyService.getRealty(this.page, 10).then(function (realty) {
+                            console.log('!');
+                            var r = realty;
+                            for (var i = 0; i < r.length; i++) {
+                            }
+                        });
                     }
                 };
                 RealtyTableComponent.prototype.click = function (r) {
@@ -147,7 +148,7 @@ System.register(['angular2/core', '../pipe/format-date.pipe', '../service/hub.se
                     core_1.Component({
                         selector: 'realty-table',
                         inputs: ['realty'],
-                        template: "\n    <div class=\"realty-table-wrapper\" (window:resize)=\"onResize($event)\">\n      <div class=\"scroll-wrapper\" [style.height]=\"content_height\">\n        <table class=\"table table-striped\">\n          <thead\n            (contextmenu)=\"theader_contextmenu($event)\"\n            >\n            <tr>\n              <th *ngFor=\"#f of fields\"\n                [hidden]=\"!f.visible\"\n                [style.width.xx]=\"f.width\"\n                (click)=\"toggleSort(f)\"\n                >\n                {{ f.label }}\n                <span *ngIf=\"f.sort==0\" class=\"icon-none\">\n                </span>\n                <span *ngIf=\"f.sort==1\" class=\"icon-chevron-up\">\n                </span>\n                <span *ngIf=\"f.sort==2\" class=\"icon-chevron-down\">\n                </span>\n              </th>\n            </tr>\n          </thead>\n          <tbody\n            (scroll)=\"scroll($event)\"\n            >\n            <tr *ngFor=\"#r of realty\"\n              [class.selected]=\"r.selected\"\n              (click)=\"click(r)\"\n              (dblclick)=\"dblclick(r)\"\n              >\n              <td *ngFor=\"#f of fields\"\n                [hidden]=\"!f.visible\"\n                [style.width.xx]=\"f.width\"\n              >\n                <span *ngIf=\"f.id=='status'\" class=\"icon-{{ f.val(r) }}\">\n                </span>\n                <span *ngIf=\"f.id=='photo' && r._source.main_photo_thumbnail\" class=\"icon-photo\">\n                </span>\n                <span *ngIf=\"f.id!='status' && f.id!='photo'\">\n                {{ f.val(r) }}\n                </span>\n              </td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </div>\n  ",
+                        template: "\n    <div class=\"realty-table-wrapper\" (window:resize)=\"onResize($event)\">\n      <div class=\"scroll-wrapper\" [style.height]=\"content_height\">\n        <table class=\"table table-striped\">\n          <thead\n            (contextmenu)=\"theader_contextmenu($event)\"\n            >\n            <tr>\n              <th *ngFor=\"#f of fields\"\n                [hidden]=\"!f.visible\"\n                [style.width.xx]=\"f.width\"\n                (click)=\"toggleSort(f)\"\n                >\n                {{ f.label }}\n                <span *ngIf=\"f.sort==0\" class=\"icon-none\">\n                </span>\n                <span *ngIf=\"f.sort==1\" class=\"icon-chevron-up\">\n                </span>\n                <span *ngIf=\"f.sort==2\" class=\"icon-chevron-down\">\n                </span>\n              </th>\n            </tr>\n          </thead>\n          <tbody\n            (scroll)=\"scroll($event)\"\n            >\n            <tr *ngFor=\"#r of realty\"\n              [class.selected]=\"r.selected\"\n              (click)=\"click(r)\"\n              (dblclick)=\"dblclick(r)\"\n              >\n              <td *ngFor=\"#f of fields\"\n                [hidden]=\"!f.visible\"\n                [style.width.xx]=\"f.width\"\n              >\n                <span *ngIf=\"f.id=='status'\" class=\"icon-{{ f.val(r) }}\">\n                </span>\n                <span *ngIf=\"f.id=='photo' && r.main_photo_thumbnail\" class=\"icon-photo\">\n                </span>\n                <span *ngIf=\"f.id!='status' && f.id!='photo'\">\n                {{ f.val(r) }}\n                </span>\n              </td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </div>\n  ",
                         styles: ["\n    .realty-table-wrapper {\n      padding-top: 115px;\n      height: 100%;\n      width: 100%;\n    }\n\n    .scroll-wrapper {\n      overflow: auto;\n    }\n\n    .table {\n      width: 100%;\n      font-size: 14;\n      border-collapse: collapse;\n    }\n\n    .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {\n      padding: 5px;\n      font-weight: 200;\n      text-align: left;\n      vertical-align: top;\n      border-top: 1px solid #ddd;\n    }\n\n    .table>thead>tr>th, .table>thead>tr>td {\n      font-weight: 400;\n      border-bottom: 1px solid #ddd;\n      white-space: nowrap;\n\n      -webkit-touch-callout: none;\n      -webkit-user-select: none;\n      -khtml-user-select: none;\n      -moz-user-select: none;\n      -ms-user-select: none;\n      user-select: none;\n\n      cursor: pointer;\n    }\n\n    .table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {\n        background-color: #f9f9f9;\n    }\n\n    .table > tbody > tr.selected > td {\n      color: #fff;\n      background-color: #3366cc;\n    }\n\n  "],
                         pipes: [format_date_pipe_1.FormatDatePipe]
                     }), 

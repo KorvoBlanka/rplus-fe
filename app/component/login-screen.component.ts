@@ -2,7 +2,8 @@ import {
   Component,
   ElementRef
 } from 'angular2/core';
-
+import {Http, Headers, Response} from 'angular2/http';
+import {Observable}     from 'rxjs/Observable';
 
 import {HubService} from '../service/hub.service'
 
@@ -89,10 +90,46 @@ export class LoginScreenComponent {
   public is_logged_in: boolean;
   public user_name: string;
   public password: string;
+  private _logingUrl = 'http://localhost:4567/session/login';
+  private _logoutUrl = 'http://localhost:4567/session/logout';
+
+  constructor(private _http: Http) {
+    this.is_logged_in = true;
+  }
 
   login() {
-    if (this.user_name == 'manager' && this.password == '12345') {
-      setTimeout(() => { this.is_logged_in = true; }, 850);
-    }
+    this._login();
   }
+
+  _login () {
+    var headers = new Headers();
+    var auth_header = btoa(this.user_name + ":" + this.password);
+    //headers.append('Authorization', 'Basic ' + auth_header);
+    this._http.post(this._logingUrl, "auth: " + auth_header, {
+        headers: headers
+        })
+        .map(res => res.json())
+        .subscribe(
+          data => {
+            if(data.result == "OK") {
+              this.is_logged_in = true;
+            }
+          },
+          err => console.log(err)
+        );
+  }
+
+  _logout () {
+    console.log(this._http.get(this._logoutUrl)
+                      .map(res => res.json().data)
+                      .catch(this.handleError));
+  }
+
+  private handleError (error: Response) {
+    // in a real world app, we may send the error to some remote logging infrastructure
+    // instead of just logging it to the console
+    console.error(error);
+    return Observable.throw(error.json().error || 'Server error');
+  }
+
 }

@@ -18,7 +18,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'tab-list-realty',
   inputs: ['tab'],
   directives: [GoogleMapComponent, GoogleMapMarkerComponent, RealtyDigestComponent, RealtyTableComponent, UISelect],
@@ -151,11 +151,11 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         >
         <t *ngFor="#r of realtys">
           <google-map-marker
-            *ngIf="r._source.location"
+            *ngIf="r.location"
             (click)="markerClick(r)"
             [is_selected]="r.selected"
-            [latitude]="parseFloat(r._source.location.lat)"
-            [longitude]="parseFloat(r._source.location.lon)"
+            [latitude]="parseFloat(r.location.lat)"
+            [longitude]="parseFloat(r.location.lon)"
             [info_str]="getRealtyDigest(r)"
             >
           </google-map-marker>
@@ -253,7 +253,12 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     }
 
     constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
-      this.realtys = this._realtyService.getRealty(1, 32);
+
+      this.page ++;
+      this._realtyService.getRealty(1, 32).then(realty => {
+        this.realtys = realty;
+      });
+
       setTimeout(() => { this.tab.header = 'Недвижимость'; });
     }
 
@@ -301,9 +306,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     }
 
     select(r: Realty) {
-      if (r._source.location) {
-        this.lat = r._source.location.lat;
-        this.lon = r._source.location.lon;
+      if (r.location) {
+        this.lat = r.location.lat;
+        this.lon = r.location.lon;
       }
     }
 

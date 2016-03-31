@@ -9,9 +9,11 @@ import {AnalysisService} from './service/analysis.service';
 import {HistoryService} from './service/history.service';
 import {PersonService} from './service/person.service';
 import {OrganisationService} from './service/organisation.service';
+import {HTTP_PROVIDERS} from 'angular2/http';
 
 import {AppComponent} from './app.component';
 
+import 'rxjs/Rx';
 
 bootstrap(AppComponent, [
     HubService,
@@ -22,5 +24,6 @@ bootstrap(AppComponent, [
     AnalysisService,
     HistoryService,
     PersonService,
-    OrganisationService
+    OrganisationService,
+    HTTP_PROVIDERS
 ]);

@@ -55,10 +55,10 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             <div style="margin: 5px;">
 
               <div class="pull-container">
-                <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="" target="_blank">{{ _source.media }}</a></span></div>
-                <div class="font-sz-1 color-g2 pull-right"> {{_source.last_seen_date }} </div>
+                <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="" target="_blank">{{ realty.source_media }}</a></span></div>
+                <div class="font-sz-1 color-g2 pull-right"> {{realty.last_seen_date }} </div>
               </div>
-              <div class="font-sz-2 color-g2 line-clamp line-clamp-2" style="margin: 5px 5px 0 5px;">{{ _source.source_media_text }}</div>
+              <div class="font-sz-2 color-g2 line-clamp line-clamp-2" style="margin: 5px 5px 0 5px;">{{ realty.source_media_text }}</div>
 
               <hr>
 
@@ -97,8 +97,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 4, label: 'Приостановлен'},
                       {val: 5, label: 'Архив'}
                     ]"
-                    [label]="_source.state_code"
-                    (valueChange)="_source.state_code = $event.val"
+                    [label]="realty.state_code"
+                    (valueChange)="realty.state_code = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -116,7 +116,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 7, label: 'Сделка'}
                     ]"
                     [label]="'Первичный контакт'"
-                    (valueChange)="log($event)"
+                    (valueChange)="realty.stage = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -145,8 +145,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 1, label: 'Продажа'},
                       {val: 2, label: 'Аренда'}
                     ]"
-                    [label]="_source.offer_type_code"
-                    (valueChange)="_source.offer_type_code = $event.val"
+                    [label]="realty.offer_type_code"
+                    (valueChange)="realty.offer_type_code = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -160,8 +160,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 3, label: 'Дом'},
                       {val: 4, label: 'Таунхаус'}
                     ]"
-                    [label]="_source.type"
-                    (valueChange)="_source.type = $event.val"
+                    [label]="realty.type_code"
+                    (valueChange)="realty.type_code = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -169,12 +169,12 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <div class="view-group">
                   <span class="view-label">Адрес</span>
-                  <input type="text" class="view-value edit-value" [(ngModel)]="_source.addr_str">
+                  <input type="text" class="view-value edit-value" [(ngModel)]="realty.address">
                 </div>
 
                 <div class="view-group">
                   <span class="view-label">Номер</span>
-                  <input class="view-value edit-value vv-2" [(ngModel)]="_source.house_num">/
+                  <input class="view-value edit-value vv-2">/
                   <input class="view-value edit-value vv-2">
                 </div>
 
@@ -189,8 +189,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 5, label: 'Улучшенная'},
                       {val: 6, label: 'Хрущевка'}
                     ]"
-                    [label]="_source.ap_scheme"
-                    (valueChange)="_source.ap_scheme = $event.val"
+                    [label]="realty.ap_scheme"
+                    (valueChange)="realty.ap_scheme = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -204,16 +204,16 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 3, label: 'Каркасно-засыпной'},
                       {val: 4, label: 'Кирпичный'}
                     ]"
-                    [label]="_source.house_type"
-                    (valueChange)="_source.house_type = $event.val"
+                    [label]="realty.house_type"
+                    (valueChange)="realty.house_type = $event.value.label"
                   >
                   </ui-select>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label">Количество комнат</span>
-                  <input type="number" class="view-value edit-value vv-2" [(ngModel)]="_source.rooms_offer_count">/
-                  <input type="number" class="view-value edit-value vv-2" [(ngModel)]="_source.rooms_count">
+                  <input type="number" class="view-value edit-value vv-2" [(ngModel)]="realty.rooms_offer_count">/
+                  <input type="number" class="view-value edit-value vv-2" [(ngModel)]="realty.rooms_count">
                 </div>
 
                 <div class="view-group">
@@ -227,26 +227,25 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 5, label: 'Смежные'},
                       {val: 6, label: 'Студия'}
                     ]"
-                    [label]="_source.room_scheme"
-                    (valueChange)="_source.room_scheme = $event.val"
+                    [label]="realty.room_scheme"
+                    (valueChange)="realty.room_scheme = $event.value.label"
                   >
                   </ui-select>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label">Этаж</span>
-                  <input class="view-value edit-value vv-3" [(ngModel)]="_source.floor">/
-                  <input class="view-value edit-value vv-3" [(ngModel)]="_source.floors_count">/
-                  <input class="view-value edit-value vv-3" [(ngModel)]="_source.levels_count">
+                  <input class="view-value edit-value vv-3" [(ngModel)]="realty.floor">/
+                  <input class="view-value edit-value vv-3" [(ngModel)]="realty.floors_count">/
+                  <input class="view-value edit-value vv-3" [(ngModel)]="realty.levels_count">
                 </div>
 
                 <div class="view-group">
                   <span class="view-label">Площадь</span>
-                  <input class="view-value edit-value vv-3" [(ngModel)]="_source.sqare_total">/
-                  <input class="view-value edit-value vv-3" [(ngModel)]="_source.sqare_living">/
-                  <input class="view-value edit-value vv-3" [(ngModel)]="_source.sqare_kitchen">
+                  <input class="view-value edit-value vv-3" [(ngModel)]="realty.square_total">/
+                  <input class="view-value edit-value vv-3" [(ngModel)]="realty.square_living">/
+                  <input class="view-value edit-value vv-3" [(ngModel)]="realty.square_kitchen">
                 </div>
-
 
                 <div class="view-group">
                   <span class="view-label">Балкон</span>
@@ -261,8 +260,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 7, label: 'балкон застеклен'},
                       {val: 8, label: 'лоджия застеклена'}
                     ]"
-                    [label]="_source.balcony"
-                    (valueChange)="_source.balcony = $event.val"
+                    [label]="realty.balcony"
+                    (valueChange)="realty.balcony = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -280,8 +279,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 7, label: 'санузел совмещенный'},
                       {val: 8, label: 'санузел раздельный'}
                     ]"
-                    [value]="_source.bathroom"
-                    (valueChange)="_source.bathroom = $event.val"
+                    [value]="realty.bathroom"
+                    (valueChange)="realty.bathroom = $event.value.label"
                   >
                   </ui-select>
                 </div>
@@ -300,21 +299,21 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                       {val: 8, label: 'удовлетворительное'},
                       {val: 9, label: 'нормальное'}
                     ]"
-                    [label]="_source.condition"
-                    (valueChange)="_source.condition = $event.val"
+                    [label]="realty.condition"
+                    (valueChange)="realty.condition = $event.value.label"
                   >
                   </ui-select>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label">Цена</span>
-                  <input class="view-value edit-value vv-2" [(ngModel)]="_source.owner_price">/
-                  <input class="view-value edit-value vv-2" [(ngModel)]="_source.agency_price">
+                  <input class="view-value edit-value vv-2" [(ngModel)]="realty.owner_price">/
+                  <input class="view-value edit-value vv-2" [(ngModel)]="realty.agency_price">
                 </div>
 
                 <div class="view-group" style="flex-wrap: wrap;">
                   <span class="view-label">Описание</span>
-                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="_source.description" style="text-align: left;"></textarea>
+                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="realty.description" style="text-align: left;"></textarea>
                 </div>
 
               </div>
@@ -330,11 +329,11 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 </div>
                 <div class="view-group">
                   <span class="view-label">Статус</span>
-                  <span class="view-value"> Активен</span>
+                  <span class="view-value"> {{ realty.state_code }} </span>
                 </div>
                 <div class="view-group">
                   <span class="view-label">Стадия</span>
-                  <span class="view-value"> {{ _source.state_code }} </span>
+                  <span class="view-value"> {{ realty.stage }} </span>
                 </div>
                 <div class="view-group">
                   <span class="view-label">Собственник</span>
@@ -355,72 +354,72 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <div class="view-group">
                   <span class="view-label pull-left">Предложение</span>
-                  <span class="view-value"> {{ _source.offer_type_code }} </span>
+                  <span class="view-value"> {{ realty.offer_type_code }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Тип недвижимости</span>
-                  <span class="view-value"> {{ _source.type }} </span>
+                  <span class="view-value"> {{ realty.type_code }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Адрес</span>
-                  <span class="view-value"> {{ _source.addr_str }} </span>
+                  <span class="view-value"> {{ realty.address }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Планировка</span>
-                  <span class="view-value"> {{ _source.ap_scheme }} </span>
+                  <span class="view-value"> {{ realty.ap_scheme }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Материал стен</span>
-                  <span class="view-value"> {{ _source.house_type }} </span>
+                  <span class="view-value"> {{ realty.house_type }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Количество комнат</span>
-                  <span class="view-value"> {{ _source.rooms_count }} </span>
+                  <span class="view-value"> {{ realty.rooms_count }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Тип комнат</span>
-                  <span class="view-value"></span>
+                  <span class="view-value"> {{ realty.room_scheme }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Этаж</span>
-                  <span class="view-value"> {{ _source.floor }} </span>
+                  <span class="view-value"> {{ realty.floor }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Площадь</span>
-                  <span class="view-value"> {{ _source.sqare_total }} </span>
+                  <span class="view-value"> {{ realty.sqare_total }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Балкон</span>
-                  <span class="view-value"></span>
+                  <span class="view-value"> {{ realty.balcony }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Санузел</span>
-                  <span class="view-value"></span>
+                  <span class="view-value"> {{ realty.bathroom }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Состояние</span>
-                  <span class="view-value"> {{ _source.condition }} </span>
+                  <span class="view-value"> {{ realty.condition }} </span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Цена</span>
-                  <span class="color-attention view-value"> {{ _source.owner_price }} тыс. руб.</span>
+                  <span class="color-attention view-value"> {{ realty.owner_price }} тыс. руб.</span>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">Описание</span>
-                  <span class="view-value" style="height: initial;"> {{ _source.description }} </span>
+                  <span class="view-value" style="height: initial;"> {{ realty.description }} </span>
                 </div>
 
               </div>
@@ -432,8 +431,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="icon-tag"> Тэги</span>
                 </div>
                 <ui-tag-block
-                  [value] = "_source.tag"
-                  (valueChange) = "_source.tag = $event.value"
+                  [value] = "realty.tag"
+                  (valueChange) = "realty.tag = $event.value"
                 ></ui-tag-block>
               </div>
 
@@ -442,7 +441,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="icon-photo"> Фотографии</span>
                 </div>
                 <ui-carousel
-                  [photos] = "_source.photos"
+                  [photos] = "realty.photos"
                 >
                 </ui-carousel>
               </div>
@@ -463,10 +462,10 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             >
               <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
                 <google-map-marker
-                  *ngIf="realty._source.location"
+                  *ngIf="realty.location"
                   (click)="log($event)"
-                  [latitude]="parseFloat(realty._source.location.lat)"
-                  [longitude]="parseFloat(realty._source.location.lon)"
+                  [latitude]="parseFloat(realty.location.lat)"
+                  [longitude]="parseFloat(realty.location.lon)"
                   [info_str]="">
                 </google-map-marker>
               </google-map>
@@ -501,21 +500,21 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <t *ngFor="#r of similar_realty">
                 <google-map-marker
-     	            *ngIf="r._source.location"
+     	            *ngIf="r.location"
                   (click)="markerClick(r)"
                   [is_selected]="r.selected"
-                  [latitude]="parseFloat(r._source.location.lat)"
-                  [longitude]="parseFloat(r._source.location.lon)"
+                  [latitude]="parseFloat(r.location.lat)"
+                  [longitude]="parseFloat(r.location.lon)"
                   [info_str]="getRealtyDigest(r)">
                   [icon_id]="1"
                 </google-map-marker>
                 </t>
 
                 <google-map-marker
-                  *ngIf="realty._source.location"
+                  *ngIf="realty.location"
                   (markerClick)="markerClick(realty)"
-                  [latitude]="parseFloat(realty._source.location.lat)"
-                  [longitude]="parseFloat(realty._source.location.lon)"
+                  [latitude]="parseFloat(realty.location.lat)"
+                  [longitude]="parseFloat(realty.location.lon)"
                   [info_str]=""
                 >
                 </google-map-marker>
@@ -775,7 +774,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 export class TabRealtyComponent {
     public tab: Tab;
     public realty: Realty;
-    public _source: any;
+
     similar_realty: Realty[];
     requests: Request[];
     history_recs: HistoryRecord[];
@@ -817,11 +816,10 @@ export class TabRealtyComponent {
 
     ngOnInit() {
         this.realty = this.tab.args.realty;
-        this._source = this.realty._source;
 
-        if (this.realty._source.location) {
-            this.lat = parseFloat(this.realty._source.location.lat);
-            this.lon = parseFloat(this.realty._source.location.lon);
+        if (this.realty.location) {
+            this.lat = parseFloat(this.realty.location.lat);
+            this.lon = parseFloat(this.realty.location.lon);
         }
 
         this.calcSize();
@@ -851,7 +849,10 @@ export class TabRealtyComponent {
     }
 
     save() {
+      this._realtyService.updateRealty(this.realty).then(realty => {
+        console.log(realty);
         this.toggleEdit();
+      });
     }
 
     similarObjSelected() {

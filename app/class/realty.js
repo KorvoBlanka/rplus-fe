@@ -9,8 +9,9 @@ System.register([], function(exports_1) {
                     this.selected = false;
                 }
                 Realty.normalize = function (realty) {
+                    console.log('normalize');
                     for (var f in realty) {
-                        if (realty[f] == -1) {
+                        if (realty[f] == "") {
                             realty[f] = null;
                         }
                     }

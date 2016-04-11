@@ -7,6 +7,7 @@ import {RealtyService} from '../../service/realty.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service'
+import {PhotoService} from '../../service/photo.service'
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
@@ -14,6 +15,7 @@ import {Realty} from '../../class/realty';
 import {Request} from '../../class/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
+import {Photo} from '../../class/photo';
 
 import {UISelect} from '../ui/ui-select.component';
 import {UICarousel} from '../ui/ui-carousel.component';
@@ -33,7 +35,21 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 @Component({
     selector: 'tab-realty',
     inputs: ['tab'],
-    directives: [RealtyDigestComponent, RequestDigestComponent, HistoryDigestComponent, GoogleMapComponent, GoogleMapMarkerComponent, UISelect, UICarousel, UITagBlock, UITabs, UITab, UIPieChart, UILineChart, UIBarChart],
+    directives: [
+      RealtyDigestComponent,
+      RequestDigestComponent,
+      HistoryDigestComponent,
+      GoogleMapComponent,
+      GoogleMapMarkerComponent,
+      UISelect,
+      UICarousel,
+      UITagBlock,
+      UITabs,
+      UITab,
+      UIPieChart,
+      UILineChart,
+      UIBarChart
+    ],
     template: `
 
       <div class="tab-button fixed-button" (click)="toggleLeftPane()">
@@ -441,7 +457,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <span class="icon-photo"> Фотографии</span>
                 </div>
                 <ui-carousel
-                  [photos] = "realty.photos"
+                  [photos] = "photos"
                 >
                 </ui-carousel>
               </div>
@@ -774,6 +790,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 export class TabRealtyComponent {
     public tab: Tab;
     public realty: Realty;
+    public photos: Photo[];
 
     similar_realty: Realty[];
     requests: Request[];
@@ -810,12 +827,25 @@ export class TabRealtyComponent {
         return parseFloat(v);
     }
 
-    constructor(private _hubService: HubService, private _configService: ConfigService, private _realtyService: RealtyService, private _requestService: RequestService, private _taskService: TaskService, private _analysisService: AnalysisService, private _historyService: HistoryService) {
+    constructor(
+      private _hubService: HubService,
+      private _configService: ConfigService,
+      private _realtyService: RealtyService,
+      private _requestService: RequestService,
+      private _taskService: TaskService,
+      private _analysisService: AnalysisService,
+      private _historyService: HistoryService,
+      private _photoService: PhotoService
+    ) {
       setTimeout(() => { this.tab.header = 'Объект' });
     }
 
     ngOnInit() {
         this.realty = this.tab.args.realty;
+
+        this._photoService.getPhotos(this.realty.id).then(photos => {
+          this.photos = photos;
+        });
 
         if (this.realty.location) {
             this.lat = parseFloat(this.realty.location.lat);

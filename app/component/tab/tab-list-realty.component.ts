@@ -242,7 +242,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     zoom: number;
 
     realtys: Realty[] = [];
-    page: number = 1;
+    page: number = 0;
 
     to: number;
     list: HTMLElement;
@@ -254,9 +254,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
 
-      this.page ++;
       this._realtyService.getRealty(1, 32).then(realty => {
         this.realtys = realty;
+        this.page ++;
       });
 
       setTimeout(() => { this.tab.header = 'Недвижимость'; });
@@ -314,11 +314,13 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        this.page ++;
-        var r = this._realtyService.getRealty(this.page, 10);
-        for (var i = 0; i < r.length; i++) {
-          this.realtys.push(r[i])
-        }
+        this._realtyService.getRealty(this.page, 10).then(realty => {
+          for (let i = 0; i < realty.length; i++) {
+              this.realtys.push(realty[i]);
+          }
+          this.page ++;
+        });
+
       }
     }
 

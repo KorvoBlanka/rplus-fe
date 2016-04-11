@@ -48,10 +48,10 @@ System.register(['angular2/core', '../../service/realty.service', '../../service
                     this.map_draw_allowed = false;
                     this.pane_hidden = false;
                     this.realtys = [];
-                    this.page = 1;
-                    this.page++;
+                    this.page = 0;
                     this._realtyService.getRealty(1, 32).then(function (realty) {
                         _this.realtys = realty;
+                        _this.page++;
                     });
                     setTimeout(function () { _this.tab.header = 'Недвижимость'; });
                 }
@@ -101,12 +101,14 @@ System.register(['angular2/core', '../../service/realty.service', '../../service
                     }
                 };
                 TabListRealtyComponent.prototype.scroll = function (e) {
+                    var _this = this;
                     if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-                        this.page++;
-                        var r = this._realtyService.getRealty(this.page, 10);
-                        for (var i = 0; i < r.length; i++) {
-                            this.realtys.push(r[i]);
-                        }
+                        this._realtyService.getRealty(this.page, 10).then(function (realty) {
+                            for (var i = 0; i < realty.length; i++) {
+                                _this.realtys.push(realty[i]);
+                            }
+                            _this.page++;
+                        });
                     }
                 };
                 TabListRealtyComponent.prototype.markerClick = function (r) {

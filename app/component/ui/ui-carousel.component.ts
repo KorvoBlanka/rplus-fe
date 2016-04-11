@@ -1,4 +1,5 @@
 import {Component} from 'angular2/core';
+import {Photo} from '../../class/photo';
 
 @Component({
   selector: 'ui-carousel',
@@ -13,7 +14,7 @@ import {Component} from 'angular2/core';
 
         <div *ngFor="#photo of photos" class="img-wrap pull-left" style="margin-left: 1px;">
           <div class="img-overlay" style="position: relative; display: inline-block;">
-            <img class="carousel-img" [attr.src]="photo.thumbnail_url" style="height: 100px;">
+            <img class="carousel-img" [attr.src]="photo.fileName" style="height: 100px;">
           </div>
         </div>
 
@@ -77,7 +78,7 @@ import {Component} from 'angular2/core';
 })
 
 export class UICarousel {
-  public photos: Array<any>;
+  public photos: Array<Photo>;
   public position: number = 0;
   public editable: boolean = false;
 

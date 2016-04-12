@@ -38,11 +38,14 @@ export class RealtyService {
       });
     }
 
-    getRealty(page: number, perPage: number) {
+    getRealty(page: number, perPage: number, searchQuery: string) {
       console.log('getRealty');
 
       return new Promise<Realty[]>(resolve => {
-        var _resourceUrl = 'http://localhost:4567/api/v1/offer/list?' + 'page=' + page + '&per_page=' + perPage;
+        var _resourceUrl = 'http://localhost:4567/api/v1/offer/list?'
+          + 'page=' + page
+          + '&per_page=' + perPage
+          + '&search_query=' + searchQuery;
         var headers = new Headers();
         this._http.get(_resourceUrl, {
             headers: headers

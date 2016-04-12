@@ -26,7 +26,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
-      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
+      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery" (keyup)="queryChanged($event)">
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
@@ -232,6 +232,8 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
     public table_mode: boolean = false;
     public map_draw_allowed = false;
 
+    searchQuery: String;
+
     pane_height: number;
     pane_width: number;
     map_width: number;
@@ -254,7 +256,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
 
-      this._realtyService.getRealty(1, 32).then(realty => {
+      this._realtyService.getRealty(1, 32, "").then(realty => {
         this.realtys = realty;
         this.page ++;
       });
@@ -314,7 +316,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        this._realtyService.getRealty(this.page, 10).then(realty => {
+        this._realtyService.getRealty(this.page, 10, this.searchQuery).then(realty => {
           for (let i = 0; i < realty.length; i++) {
               this.realtys.push(realty[i]);
           }
@@ -322,6 +324,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
         });
 
       }
+    }
+
+    queryChanged(e) {
+      this.page = 0;
+      this._realtyService.getRealty(this.page, 10, this.searchQuery).then(realty => {
+        this.realtys = realty;
+        this.page ++;
+      });
     }
 
     markerClick(r: Realty) {

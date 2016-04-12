@@ -27,7 +27,7 @@ import {UITag} from '../ui/ui-tag.component'
           >
           </ui-tag>
         </div>
-        <img *ngIf="!compact" src="{{ 'http://localhost:4567/photo_storage/' + realty.photo_thumbnail }}" style="height: 60px; min-width: 80px; float: left; margin: 10px;">
+        <img *ngIf="!compact" src="{{ PHOTO_STORAGE_URL + (realty.photo_thumbnail?realty.photo_thumbnail:'no_image.png') }}" style="height: 60px; min-width: 80px; float: left; margin: 10px;">
         <div class="" style="min-height: 70px; margin-left: 10px;">
           <span style="font-weight: 400;">{{ realty.type_code }}</span>, {{ realty.rooms_count }} комн., {{ realty.floor }} эт., {{ realty.sqare_total }} кв. м.<br> {{ realty.address }} <br>
           <span class="text-primary">{{ realty.owner_price }} тыс. руб.</span>, <br>
@@ -86,6 +86,7 @@ import {UITag} from '../ui/ui-tag.component'
 })
 
 export class RealtyDigestComponent {
+    PHOTO_STORAGE_URL = 'http://localhost:4567/photo_storage/';
     public realty: Realty;
     public compact: boolean = false;
     to: any;

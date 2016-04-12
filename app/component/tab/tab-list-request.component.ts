@@ -22,7 +22,7 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
 
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
-      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
+      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery">
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
@@ -125,7 +125,7 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
 
   export class TabListRequestComponent {
     public tab: Tab;
-
+    searchQuery: String;
     requests: Request[] = [];
     page: number = 1;
 

@@ -50,11 +50,14 @@ System.register(['angular2/core', '../class/realty', 'angular2/http'], function(
                         }, function (err) { return console.log(err); });
                     });
                 };
-                RealtyService.prototype.getRealty = function (page, perPage) {
+                RealtyService.prototype.getRealty = function (page, perPage, searchQuery) {
                     var _this = this;
                     console.log('getRealty');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = 'http://localhost:4567/api/v1/offer/list?' + 'page=' + page + '&per_page=' + perPage;
+                        var _resourceUrl = 'http://localhost:4567/api/v1/offer/list?'
+                            + 'page=' + page
+                            + '&per_page=' + perPage
+                            + '&search_query=' + searchQuery;
                         var headers = new http_1.Headers();
                         _this._http.get(_resourceUrl, {
                             headers: headers

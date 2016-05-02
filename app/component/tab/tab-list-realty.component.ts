@@ -26,7 +26,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
-      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery" (keyup)="queryChanged($event)">
+      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery" (keyup)="searchParamChanged($event)">
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
@@ -44,6 +44,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             ]"
             [label]="'Все'"
             [config]="{icon: 'icon-square', draw_arrow: true}"
+            (valueChange)="filter.state = $event.value.val; searchParamChanged($event);"
           >
           </ui-select>
         </div>
@@ -58,6 +59,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             ]"
             [label]="'Агент 1_1'"
             [config]="{icon: 'icon-person', draw_arrow: true}"
+            (valueChange)="filter.agent = $event.value.id; searchParamChanged($event);"
           >
           </ui-select>
         </div>
@@ -75,6 +77,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             ]"
             [label]="'Все'"
             [config]="{icon: 'icon-tag', draw_arrow: true}"
+            (valueChange)="filter.tag = $event.value.val; searchParamChanged($event);"
           >
           </ui-select>
         </div>
@@ -91,6 +94,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             ]"
             [label]="'3 месяца'"
             [config]="{icon: 'icon-month', draw_arrow: true}"
+            (valueChange)="filter.depth = $event.value.val; searchParamChanged($event);"
           >
           </ui-select>
         </div>
@@ -230,15 +234,22 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
   export class TabListRealtyComponent {
     public tab: Tab;
     public table_mode: boolean = false;
-    public map_draw_allowed = false;
 
-    searchQuery: String;
+    searchQuery: string;
+
+    filter: any = {
+      state: null,
+      agent: null,
+      tag: null,
+      depth: null,
+    }
 
     pane_height: number;
     pane_width: number;
     map_width: number;
     pane_hidden: boolean = false;
 
+    public map_draw_allowed = false;
     lat: number;
     lon: number;
     zoom: number;
@@ -256,7 +267,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     constructor(private _elem: ElementRef, private _realtyService: RealtyService, private _configService: ConfigService) {
 
-      this._realtyService.getRealty(1, 32, "").then(realty => {
+      this._realtyService.getRealty(1, 32, "{}", "").then(realty => {
         this.realtys = realty;
         this.page ++;
       });
@@ -316,7 +327,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        this._realtyService.getRealty(this.page, 10, this.searchQuery).then(realty => {
+        this._realtyService.getRealty(this.page, 10, JSON.stringify(this.filter), this.searchQuery).then(realty => {
           for (let i = 0; i < realty.length; i++) {
               this.realtys.push(realty[i]);
           }
@@ -326,9 +337,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
       }
     }
 
-    queryChanged(e) {
+    searchParamChanged(e) {
       this.page = 0;
-      this._realtyService.getRealty(this.page, 10, this.searchQuery).then(realty => {
+      this._realtyService.getRealty(this.page, 10, JSON.stringify(this.filter) ,this.searchQuery).then(realty => {
         this.realtys = realty;
         this.page ++;
       });

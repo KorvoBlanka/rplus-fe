@@ -68,7 +68,7 @@ export class Realty {
 
   selected: boolean = false;
 
-  public static normalize(realty: Realty) {
+  public static normalize_(realty: Realty) {
     console.log('normalize');
     for (var f in realty) {
       if (realty[f] == "") {

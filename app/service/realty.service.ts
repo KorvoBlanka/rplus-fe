@@ -19,7 +19,7 @@ export class RealtyService {
         // убрать из realty "selected" (ну или засунуть его таки в БД)
         delete realty["selected"];
 
-        Realty.normalize(realty);
+        //Realty.normalize(realty);
         var data_str = JSON.stringify(realty);
 
         this._http.post(_resourceUrl, data_str, {
@@ -28,9 +28,8 @@ export class RealtyService {
             .map(res => res.json())
             .subscribe(
               data => {
-                resolve(data);
-                if(data.result == "OK") {
-
+                if(data.response == "ok") {
+                  resolve(data.result);
                 }
               },
               err => console.log(err)
@@ -38,13 +37,14 @@ export class RealtyService {
       });
     }
 
-    getRealty(page: number, perPage: number, searchQuery: string) {
+    getRealty(page: number, perPage: number, filter: string, searchQuery: string) {
       console.log('getRealty');
 
       return new Promise<Realty[]>(resolve => {
         var _resourceUrl = 'http://localhost:4567/api/v1/offer/list?'
           + 'page=' + page
           + '&per_page=' + perPage
+          + '&filter=' + filter
           + '&search_query=' + searchQuery;
         var headers = new Headers();
         this._http.get(_resourceUrl, {
@@ -53,9 +53,8 @@ export class RealtyService {
             .map(res => res.json())
             .subscribe(
               data => {
-                resolve(data);
-                if(data.result == "OK") {
-
+                if(data.response == "ok") {
+                  resolve(data.result);
                 }
               },
               err => console.log(err)

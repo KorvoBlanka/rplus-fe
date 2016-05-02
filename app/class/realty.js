@@ -1,5 +1,6 @@
-System.register([], function(exports_1) {
+System.register([], function(exports_1, context_1) {
     "use strict";
+    var __moduleName = context_1 && context_1.id;
     var Realty;
     return {
         setters:[],
@@ -8,7 +9,7 @@ System.register([], function(exports_1) {
                 function Realty() {
                     this.selected = false;
                 }
-                Realty.normalize = function (realty) {
+                Realty.normalize_ = function (realty) {
                     console.log('normalize');
                     for (var f in realty) {
                         if (realty[f] == "") {

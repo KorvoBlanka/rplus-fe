@@ -1,4 +1,4 @@
-System.register(['angular2/core'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,169 +10,87 @@ System.register(['angular2/core'], function(exports_1, context_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1;
-    var PersonService, ORGANISATIONS, PERSONS;
+    var core_1, http_1;
+    var PersonService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
             }],
         execute: function() {
             PersonService = (function () {
-                function PersonService() {
+                function PersonService(_http) {
+                    this._http = _http;
                 }
-                PersonService.prototype.getPersonList = function (page, per_page) {
-                    var len = PERSONS.length;
-                    var f_idx = (page - 1) * per_page;
-                    if (f_idx >= len)
-                        return [];
-                    var l_idx = page * per_page;
-                    var itm_num = per_page;
-                    if (l_idx >= len) {
-                        itm_num = len % per_page;
-                    }
-                    return PERSONS.slice(f_idx, itm_num);
+                ;
+                PersonService.prototype.list = function (page, perPage, organisationId, searchQuery) {
+                    var _this = this;
+                    console.log('person list');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/person/list?'
+                            + 'page=' + page
+                            + '&per_page=' + perPage
+                            + '&organisation_id=' + organisationId
+                            + '&search_query=' + searchQuery;
+                        var headers = new http_1.Headers();
+                        _this._http.get(_resourceUrl, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
                 };
-                PersonService.prototype.getRandom = function () {
-                    var idx = Math.floor(Math.random() * 5.5);
-                    return PERSONS[idx];
+                PersonService.prototype.update = function (person) {
+                    var _this = this;
+                    console.log('person update');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/person/update/' + person.id;
+                        var headers = new http_1.Headers();
+                        delete person["selected"];
+                        var data_str = JSON.stringify(person);
+                        _this._http.post(_resourceUrl, data_str, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
+                };
+                PersonService.prototype.create = function (person) {
+                    var _this = this;
+                    console.log('person create');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/person/create';
+                        var headers = new http_1.Headers();
+                        var data_str = JSON.stringify(person);
+                        _this._http.post(_resourceUrl, data_str, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
                 };
                 PersonService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [http_1.Http])
                 ], PersonService);
                 return PersonService;
             }());
             exports_1("PersonService", PersonService);
-            ORGANISATIONS = [
-                {
-                    id: 0,
-                    name: 'Частное лицо',
-                },
-                {
-                    id: 1,
-                    name: 'Агенство 1',
-                },
-            ];
-            PERSONS = [
-                {
-                    id: 1,
-                    name: 'Вася',
-                    organisation: ORGANISATIONS[0],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то',
-                    add_date: 1000000000,
-                    change_date: 1000000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 2,
-                    name: 'Петя',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 3,
-                    name: 'Мария Петровна',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 4,
-                    name: 'Василий Иванович',
-                    organisation: ORGANISATIONS[0],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 5,
-                    name: 'Петр Алексеевич',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 6,
-                    name: 'Екатерина Петровна',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 7,
-                    name: 'Владимир Владимирович',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 8,
-                    name: 'Абырвалг',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-                {
-                    id: 9,
-                    name: 'Илья',
-                    organisation: ORGANISATIONS[1],
-                    agent_id: null,
-                    phone: [{ s: '9294121474' }, { s: '4212784512' }],
-                    email: [{ s: 'mail1@mail.ru' }, { s: 'mail2@mail.ru' }],
-                    info: 'че-то че-то еще',
-                    add_date: 1200000000,
-                    change_date: 1300000000,
-                    selected: false,
-                    tag: 0,
-                },
-            ];
         }
     }
 });

@@ -32,7 +32,7 @@ import {Task} from '../../class/task';
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header" style="width: 105px;">Организация:</span> {{ person.organisation.name }}
+              <span class="entry-header" style="width: 105px;">Организация:</span> {{ person.organisation_name }}
             </td>
             <td width="33%">
               <span class="entry-header">Задача:</span> {{ task.type }}
@@ -59,7 +59,7 @@ import {Task} from '../../class/task';
           </tr>
           <tr>
             <td>
-              <span class="entry-header" style="width: 105px;">Телефон:</span> {{ person.phone[0].s }}
+              <span class="entry-header" style="width: 105px;">Телефон:</span> {{ person.phone?person.phone[0].s:'' }}
             </td>
             <td></td>
             <td>

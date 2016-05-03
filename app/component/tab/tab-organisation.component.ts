@@ -106,7 +106,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <br>
                 <div class="view-group" style="flex-wrap: wrap;">
                   <span class="view-label">Иформация</span>
-                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="organisation.info" style="text-align: left;"></textarea>
+                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="organisation.description" style="text-align: left;"></textarea>
                 </div>
 
               </div>
@@ -129,7 +129,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <br>
                 <div class="view-group">
                   <span class="view-label pull-left">Информация</span>
-                  <span class="view-value" style="height: initial;"> {{ organisation.info }} </span>
+                  <span class="view-value" style="height: initial;"> {{ organisation.description }} </span>
                 </div>
 
               </div>
@@ -577,13 +577,17 @@ export class TabOrganisationComponent {
         private _taskService: TaskService,
         private _analysisService: AnalysisService,
         private _historyService: HistoryService,
-        private _personService: PersonService
+        private _personService: PersonService,
+        private _organisationService: OrganisationService
       ) {
       setTimeout(() => { this.tab.header = 'Контрагент' });
     }
 
     ngOnInit() {
       this.organisation = this.tab.args.organisation;
+      if (this.organisation.id == null) {
+        this.toggleEdit();
+      }
       this.calcSize();
     }
 
@@ -611,15 +615,24 @@ export class TabOrganisationComponent {
     }
 
     save() {
+      if (this.organisation.id == null) {
+        this._organisationService.create(this.organisation).then(org => {
+          this.organisation = org;
+        });
+      } else {
+        this._organisationService.update(this.organisation).then(org => {
+          this.organisation = org;
+        });;
+      }
       this.toggleEdit();
     }
 
     offersSelected() {
-      this.getOffers(1, 16);
+      //this.getOffers(1, 16);
     }
 
     personsSelected() {
-      this.getPersons(1, 32);
+      this.getPersons(0, 32);
     }
 
     analysisSelected() {
@@ -652,15 +665,17 @@ export class TabOrganisationComponent {
     }
 
     getPersons(page, per_page) {
-      this.persons = this._personService.getPersonList(page, per_page);
+      this._personService.list(page, per_page, this.organisation.id, "").then(persons => {
+        this.persons = persons;
+      });;
     }
 
     getOffers(page, per_page) {
-      this.offers = this._realtyService.getSimilarRealty(page, per_page);
+      //this._realtyService.getSimilarRealty(page, per_page);
     }
 
     offer_search() {
-      this.getOffers(Math.floor(Math.random() * 4), 16);
+      //this.getOffers(Math.floor(Math.random() * 4), 16);
     }
 
     offer_search_keydown(e: KeyboardEvent) {
@@ -678,7 +693,9 @@ export class TabOrganisationComponent {
 
     addContact() {
       var tab_sys = this._hubService.getProperty('tab_sys');
-      tab_sys.addTab('person', { person: {organisation: this.organisation}, organisation: this.organisation });
+      var p = new Person();
+      p.organisation_id = this.organisation.id;
+      tab_sys.addTab('person', { person: p});
     }
 
     getRealtyDigest(r: Realty) {

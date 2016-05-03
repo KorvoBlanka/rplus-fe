@@ -1,46 +1,84 @@
 import {Injectable} from 'angular2/core';
 
 import {Organisation} from '../class/organisation';
-
+import {Http, Headers, Response} from 'angular2/http';
 
 @Injectable()
 export class OrganisationService {
 
-    getOrganisationList(page: number, per_page: number) {
-        var len = ORGANISATIONS.length;
-        var f_idx = (page - 1) * per_page;
-        if (f_idx >= len) return [];
+  constructor(private _http: Http) {};
 
-        var l_idx = page * per_page;
-        var itm_num = per_page;
+  list(page: number, perPage: number, searchQuery: string) {
+    console.log('org list');
 
-        if (l_idx >= len) {
-            itm_num = len % per_page;
-        }
+    return new Promise<Organisation[]>(resolve => {
+      var _resourceUrl = 'http://localhost:4567/api/v1/organisation/list?'
+        + 'page=' + page
+        + '&per_page=' + perPage
+        + '&search_query=' + searchQuery;
+      var headers = new Headers();
+      this._http.get(_resourceUrl, {
+          headers: headers
+          })
+          .map(res => res.json())
+          .subscribe(
+            data => {
+              if(data.response == "ok") {
+                resolve(data.result);
+              }
+            },
+            err => console.log(err)
+          );
+    });
+  }
 
-        return ORGANISATIONS.slice(f_idx, itm_num);
-    }
+  update(org: Organisation) {
+    console.log('org update');
+
+    return new Promise<Organisation>(resolve => {
+      var _resourceUrl = 'http://localhost:4567/api/v1/organisation/update/' + org.id;
+      var headers = new Headers();
+
+      delete org["selected"];
+
+      var data_str = JSON.stringify(org);
+
+      this._http.post(_resourceUrl, data_str, {
+          headers: headers
+          })
+          .map(res => res.json())
+          .subscribe(
+            data => {
+              if(data.response == "ok") {
+                resolve(data.result);
+              }
+            },
+            err => console.log(err)
+          );
+    });
+  }
+
+  create(org: Organisation) {
+    console.log('org create');
+
+    return new Promise<Organisation>(resolve => {
+      var _resourceUrl = 'http://localhost:4567/api/v1/organisation/create'
+      var headers = new Headers();
+
+      var data_str = JSON.stringify(org);
+
+      this._http.post(_resourceUrl, data_str, {
+          headers: headers
+          })
+          .map(res => res.json())
+          .subscribe(
+            data => {
+              if(data.response == "ok") {
+                resolve(data.result);
+              }
+            },
+            err => console.log(err)
+          );
+    });
+  }
 }
-
-var ORGANISATIONS: Organisation[] = [
-  {
-    id: 0,
-    name: 'Частное лицо',
-    address: '',
-
-    info: '',
-
-    add_date: 0,
-    change_date: 0,
-  },
-  {
-    id: 1,
-    name: 'Агенство 1',
-    address: 'ул. Каковато 16, офис ННН',
-
-    info: 'бла-бла',
-
-    add_date: 1000000000,
-    change_date: 1300000000,
-  },
-];

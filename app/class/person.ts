@@ -1,19 +1,17 @@
-import {Organisation} from './organisation';
 
-export interface Person {
-  id: number,
+export class Person {
+  id: string;
+  organisation_id: string;
+  agent_id: string;
 
-  name: string,
+  name: string;
+  organisation_name: string;
 
-  organisation: Organisation,
-
-  agent_id: number,
-
-  phone: any[],
-  email: any[],
+  phone: any[];
+  email: any[];
 
   info: string;
 
-  add_date: number,
-  change_date: number,
+  add_date: number;
+  change_date: number;
 }

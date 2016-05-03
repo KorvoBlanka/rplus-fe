@@ -2,6 +2,7 @@ import {
   Component,
 } from 'angular2/core';
 
+import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
 import {PersonService} from '../../service/person.service';
 
@@ -85,7 +86,9 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
   <div class="person-list-wrapper">
     <div class="scroll-wrapper">
 
-      <div class="button">
+      <div class="button"
+        (click)="addPerson()"
+      >
         Добавить контакт
       </div>
 
@@ -154,21 +157,32 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
     public tab: Tab;
 
     persons: Person[] = [];
-    page: number = 1;
+    page: number = 0;
+    perPage: number = 32;
+    searchQuery: string = "";
 
-    constructor(private _configService: ConfigService, private _personService: PersonService) {
-      this.persons = this._personService.getPersonList(1, 32);
+    constructor(private _configService: ConfigService, private _hubService: HubService, private _personService: PersonService) {
+      this._personService.list(this.page, this.perPage, "", "").then(persons => {
+        this.persons = persons;
+        this.page ++;
+      });
       setTimeout(() => { this.tab.header = 'Контакты'; });
     }
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        this.page ++;
-        var r = this._personService.getPersonList(this.page, 10);
-        for (var i = 0; i < r.length; i++) {
-          this.persons.push(r[i])
-        }
+        this._personService.list(this.page, this.perPage, "", "").then(persons => {
+          for (let i = 0; i < persons.length; i++) {
+              this.persons.push(persons[i]);
+          }
+          this.page ++;
+        });
       }
+    }
+
+    addPerson() {
+      var tab_sys = this._hubService.getProperty('tab_sys');
+      tab_sys.addTab('person', { person: new Person() });
     }
 
   }

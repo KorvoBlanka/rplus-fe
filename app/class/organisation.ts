@@ -1,11 +1,11 @@
 
 export class Organisation {
-  id: number;
+  id: string;
 
   name: string;
   address: string;
 
-  info: string;
+  description: string;
 
   add_date: number;
   change_date: number;

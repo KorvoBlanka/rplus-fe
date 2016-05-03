@@ -1,4 +1,4 @@
-System.register(['angular2/core'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,54 +10,86 @@ System.register(['angular2/core'], function(exports_1, context_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1;
-    var OrganisationService, ORGANISATIONS;
+    var core_1, http_1;
+    var OrganisationService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
             }],
         execute: function() {
             OrganisationService = (function () {
-                function OrganisationService() {
+                function OrganisationService(_http) {
+                    this._http = _http;
                 }
-                OrganisationService.prototype.getOrganisationList = function (page, per_page) {
-                    var len = ORGANISATIONS.length;
-                    var f_idx = (page - 1) * per_page;
-                    if (f_idx >= len)
-                        return [];
-                    var l_idx = page * per_page;
-                    var itm_num = per_page;
-                    if (l_idx >= len) {
-                        itm_num = len % per_page;
-                    }
-                    return ORGANISATIONS.slice(f_idx, itm_num);
+                ;
+                OrganisationService.prototype.list = function (page, perPage, searchQuery) {
+                    var _this = this;
+                    console.log('org list');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/organisation/list?'
+                            + 'page=' + page
+                            + '&per_page=' + perPage
+                            + '&search_query=' + searchQuery;
+                        var headers = new http_1.Headers();
+                        _this._http.get(_resourceUrl, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
+                };
+                OrganisationService.prototype.update = function (org) {
+                    var _this = this;
+                    console.log('org update');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/organisation/update/' + org.id;
+                        var headers = new http_1.Headers();
+                        delete org["selected"];
+                        var data_str = JSON.stringify(org);
+                        _this._http.post(_resourceUrl, data_str, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
+                };
+                OrganisationService.prototype.create = function (org) {
+                    var _this = this;
+                    console.log('org create');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = 'http://localhost:4567/api/v1/organisation/create';
+                        var headers = new http_1.Headers();
+                        var data_str = JSON.stringify(org);
+                        _this._http.post(_resourceUrl, data_str, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
                 };
                 OrganisationService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [http_1.Http])
                 ], OrganisationService);
                 return OrganisationService;
             }());
             exports_1("OrganisationService", OrganisationService);
-            ORGANISATIONS = [
-                {
-                    id: 0,
-                    name: 'Частное лицо',
-                    address: '',
-                    info: '',
-                    add_date: 0,
-                    change_date: 0,
-                },
-                {
-                    id: 1,
-                    name: 'Агенство 1',
-                    address: 'ул. Каковато 16, офис ННН',
-                    info: 'бла-бла',
-                    add_date: 1000000000,
-                    change_date: 1300000000,
-                },
-            ];
         }
     }
 });

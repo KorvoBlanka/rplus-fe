@@ -16,7 +16,8 @@ import {ConfigService} from '../../service/config.service';
 import {RealtyService} from '../../service/realty.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
-import {HistoryService} from '../../service/history.service'
+import {HistoryService} from '../../service/history.service';
+import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
 
 import {UISelect} from '../ui/ui-select.component';
@@ -129,7 +130,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   <ui-select class="view-value edit-value"
                     [values] = "organisations_opts"
                     [label]="'Частное лицо'"
-                    (valueChange)="person.organisation=$event.val"
+                    (valueChange)="person.organisation_id=$event.value.val"
                   >
                   </ui-select>
 
@@ -175,7 +176,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <div class="view-group">
                   <span class="view-label pull-left">Организация</span>
-                  <span class="view-value"> {{ person.organisation.name }}</span>
+                  <span class="view-value"> {{ person.organisation_name }}</span>
                 </div>
 
                 <br>
@@ -569,7 +570,7 @@ export class TabPersonComponent {
     public tab: Tab;
     public person: Person;
 
-    public orgs: Organisation[];
+    public organisations_opts: any[] = [];
 
     offers: Realty[];
     requests: Request[];
@@ -601,28 +602,6 @@ export class TabPersonComponent {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    organisations_opts = [
-      {
-        label: 'Частное лицо',
-        val: {
-          id: 0,
-          name: 'Частное лицо',
-          add_date: 0,
-          change_date: 0,
-        }
-      },
-      {
-        label: 'Агенство 1',
-        val: {
-          id: 1,
-          name: 'Агенство 1',
-
-          add_date: 1000000000,
-          change_date: 1300000000,
-        }
-      },
-    ];
-
     log(e) {
         console.log(e);
     }
@@ -637,16 +616,25 @@ export class TabPersonComponent {
         private _taskService: TaskService,
         private _analysisService: AnalysisService,
         private _historyService: HistoryService,
+        private _personService: PersonService,
         private _organisationService: OrganisationService
       ) {
 
-      this.orgs = _organisationService.getOrganisationList(1, 16);
+      _organisationService.list(0, 100, "").then(orgs => {
+        for (let i = 0; i < orgs.length; i++) {
+          var o = orgs[i];
+          this.organisations_opts.push({
+            val: o.id,
+            label: o.name
+          });
+        }
+      });
+
       setTimeout(() => { this.tab.header = 'Контакт' });
     }
 
     ngOnInit() {
         this.person = this.tab.args.person;
-
         this.calcSize();
     }
 
@@ -670,19 +658,29 @@ export class TabPersonComponent {
     }
 
     toggleEdit() {
-        this.edit_enabled = !this.edit_enabled;
+      this.edit_enabled = !this.edit_enabled;
     }
 
     save() {
-        this.toggleEdit();
+      if (this.person.id == null) {
+        this._personService.create(this.person).then(person => {
+          this.person = person;
+          this.toggleEdit();
+        });
+      } else {
+        this._personService.update(this.person).then(person => {
+          this.person = person;
+          this.toggleEdit();
+        });
+      }
     }
 
     offersSelected() {
-        this.getOffers(1, 16);
+      this.getOffers(1, 16);
     }
 
     requestsSelected() {
-        this.requests = this._requestService.getRequest(1, 16);
+      this.requests = this._requestService.getRequest(1, 16);
     }
 
     analysisSelected() {

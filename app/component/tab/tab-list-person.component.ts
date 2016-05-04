@@ -25,7 +25,9 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
 
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
-      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;">
+      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;"
+        [(ngModel)]="searchQuery" (keyup)="searchParamChanged($event)"
+      >
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
@@ -184,5 +186,15 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
       var tab_sys = this._hubService.getProperty('tab_sys');
       tab_sys.addTab('person', { person: new Person() });
     }
+
+    searchParamChanged() {
+      this.page = 0;
+
+      this._personService.list(this.page, this.perPage, "", this.searchQuery).then(persons => {
+        this.persons = persons;
+        this.page ++;
+      });
+    }
+
 
   }

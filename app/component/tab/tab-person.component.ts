@@ -680,7 +680,9 @@ export class TabPersonComponent {
     }
 
     requestsSelected() {
-      this.requests = this._requestService.getRequest(1, 16);
+      this._requestService.list(0, 32, this.person.id, "").then(requests => {
+        this.requests = requests;
+      });
     }
 
     analysisSelected() {
@@ -743,12 +745,14 @@ export class TabPersonComponent {
 
     createRequest() {
       var tab_sys = this._hubService.getProperty('tab_sys');
-      tab_sys.addTab('request', { request: null, person: this.person });
+      var r = new Request();
+      r.person_id = this.person.id;
+      tab_sys.addTab('request', { request: r });
     }
 
     toggleOffer(offer_type: string) {
       this.request_offer_type = offer_type;
-      this.requests = this._requestService.getRequest(1, 16);
+      //this.requests = this._requestService.getRequest(1, 16);
     }
 
     createOffer() {

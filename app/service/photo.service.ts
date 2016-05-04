@@ -1,18 +1,24 @@
 import {Injectable} from 'angular2/core';
 
+import {ConfigService} from './config.service';
+
 import {Photo} from '../class/photo';
 import {Http, Headers, Response} from 'angular2/http';
 
 @Injectable()
 export class PhotoService {
 
-  constructor(private _http: Http) {};
+  RS: String = "";
+
+  constructor(private _configService: ConfigService, private _http: Http) {
+    this.RS = this._configService.getConfig().RESTServer;
+  };
 
   getPhotos(entityId: String) {
     console.log('getPhotos');
 
     return new Promise<Photo[]>(resolve => {
-    var _resourceUrl = 'http://localhost:4567/api/v1/photo/list/' + entityId;
+    var _resourceUrl = this.RS + '/api/v1/photo/list/' + entityId;
     var headers = new Headers();
     this._http.get(_resourceUrl, {
         headers: headers

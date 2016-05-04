@@ -1,10 +1,11 @@
-export interface Request {
-    _index: string,
-    _type: string,
-    _id: string,
-    _score: any,
+export class Request {
+  id: String;
 
-    _source: any;
+  agent_id: String;
+  person_id: String;
 
-    selected: boolean;
+  request: String;
+  add_date: Number;
+
+  search_area: String;
 }

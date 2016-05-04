@@ -1,18 +1,24 @@
 import {Injectable} from 'angular2/core';
 
+import {ConfigService} from './config.service';
+
 import {Organisation} from '../class/organisation';
 import {Http, Headers, Response} from 'angular2/http';
 
 @Injectable()
 export class OrganisationService {
 
-  constructor(private _http: Http) {};
+  RS: String = "";
+
+  constructor(private _configService: ConfigService, private _http: Http) {
+    this.RS = this._configService.getConfig().RESTServer;
+  };
 
   list(page: number, perPage: number, searchQuery: string) {
     console.log('org list');
 
     return new Promise<Organisation[]>(resolve => {
-      var _resourceUrl = 'http://localhost:4567/api/v1/organisation/list?'
+      var _resourceUrl = this.RS + '/api/v1/organisation/list?'
         + 'page=' + page
         + '&per_page=' + perPage
         + '&search_query=' + searchQuery;
@@ -36,7 +42,7 @@ export class OrganisationService {
     console.log('org update');
 
     return new Promise<Organisation>(resolve => {
-      var _resourceUrl = 'http://localhost:4567/api/v1/organisation/update/' + org.id;
+      var _resourceUrl = this.RS + '/api/v1/organisation/update/' + org.id;
       var headers = new Headers();
 
       delete org["selected"];
@@ -62,7 +68,7 @@ export class OrganisationService {
     console.log('org create');
 
     return new Promise<Organisation>(resolve => {
-      var _resourceUrl = 'http://localhost:4567/api/v1/organisation/create'
+      var _resourceUrl = this.RS + '/api/v1/organisation/create'
       var headers = new Headers();
 
       var data_str = JSON.stringify(org);

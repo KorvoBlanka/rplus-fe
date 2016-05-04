@@ -1,4 +1,4 @@
-System.register(['angular2/core', '../../pipe/format-date.pipe', '../../service/analysis.service', '../../class/realty', '../../service/hub.service', '../../service/config.service', '../../service/realty.service', '../../service/request.service', '../../service/task.service', '../../service/history.service', '../../service/person.service', '../../service/organisation.service', '../ui/ui-select.component', '../ui/ui-carousel.component', '../ui/ui-tag-block.component', '../ui/ui-tabs.component', '../ui/ui-tab.component', '../ui/ui-pie-chart.component', '../ui/ui-line-chart.component', '../ui/ui-bar-chart.component', '../digest/realty-digest.component', '../digest/request-digest.component', '../digest/history-digest.component', '../google-map.component'], function(exports_1, context_1) {
+System.register(['angular2/core', '../../pipe/format-date.pipe', '../../service/analysis.service', '../../class/realty', '../../class/request', '../../service/hub.service', '../../service/config.service', '../../service/realty.service', '../../service/request.service', '../../service/task.service', '../../service/history.service', '../../service/person.service', '../../service/organisation.service', '../ui/ui-select.component', '../ui/ui-carousel.component', '../ui/ui-tag-block.component', '../ui/ui-tabs.component', '../ui/ui-tab.component', '../ui/ui-pie-chart.component', '../ui/ui-line-chart.component', '../ui/ui-bar-chart.component', '../digest/realty-digest.component', '../digest/request-digest.component', '../digest/history-digest.component', '../google-map.component'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', '../../pipe/format-date.pipe', '../../service/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, format_date_pipe_1, analysis_service_1, realty_1, hub_service_1, config_service_1, realty_service_1, request_service_1, task_service_1, history_service_1, person_service_1, organisation_service_1, ui_select_component_1, ui_carousel_component_1, ui_tag_block_component_1, ui_tabs_component_1, ui_tab_component_1, ui_pie_chart_component_1, ui_line_chart_component_1, ui_bar_chart_component_1, realty_digest_component_1, request_digest_component_1, history_digest_component_1, google_map_component_1;
+    var core_1, format_date_pipe_1, analysis_service_1, realty_1, request_1, hub_service_1, config_service_1, realty_service_1, request_service_1, task_service_1, history_service_1, person_service_1, organisation_service_1, ui_select_component_1, ui_carousel_component_1, ui_tag_block_component_1, ui_tabs_component_1, ui_tab_component_1, ui_pie_chart_component_1, ui_line_chart_component_1, ui_bar_chart_component_1, realty_digest_component_1, request_digest_component_1, history_digest_component_1, google_map_component_1;
     var TabPersonComponent;
     return {
         setters:[
@@ -25,6 +25,9 @@ System.register(['angular2/core', '../../pipe/format-date.pipe', '../../service/
             },
             function (realty_1_1) {
                 realty_1 = realty_1_1;
+            },
+            function (request_1_1) {
+                request_1 = request_1_1;
             },
             function (hub_service_1_1) {
                 hub_service_1 = hub_service_1_1;
@@ -170,7 +173,10 @@ System.register(['angular2/core', '../../pipe/format-date.pipe', '../../service/
                     this.getOffers(1, 16);
                 };
                 TabPersonComponent.prototype.requestsSelected = function () {
-                    this.requests = this._requestService.getRequest(1, 16);
+                    var _this = this;
+                    this._requestService.list(0, 32, this.person.id, "").then(function (requests) {
+                        _this.requests = requests;
+                    });
                 };
                 TabPersonComponent.prototype.analysisSelected = function () {
                     var a_data = this._analysisService.getObjAnalysis();
@@ -220,11 +226,13 @@ System.register(['angular2/core', '../../pipe/format-date.pipe', '../../service/
                 };
                 TabPersonComponent.prototype.createRequest = function () {
                     var tab_sys = this._hubService.getProperty('tab_sys');
-                    tab_sys.addTab('request', { request: null, person: this.person });
+                    var r = new request_1.Request();
+                    r.person_id = this.person.id;
+                    tab_sys.addTab('request', { request: r });
                 };
                 TabPersonComponent.prototype.toggleOffer = function (offer_type) {
                     this.request_offer_type = offer_type;
-                    this.requests = this._requestService.getRequest(1, 16);
+                    //this.requests = this._requestService.getRequest(1, 16);
                 };
                 TabPersonComponent.prototype.createOffer = function () {
                     var tab_sys = this._hubService.getProperty('tab_sys');

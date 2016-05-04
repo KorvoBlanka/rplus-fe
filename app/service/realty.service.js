@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http'], function(exports_1, context_1) {
+System.register(['angular2/core', './config.service', 'angular2/http'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,32 +10,37 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1;
+    var core_1, config_service_1, http_1;
     var RealtyService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
+            function (config_service_1_1) {
+                config_service_1 = config_service_1_1;
+            },
             function (http_1_1) {
                 http_1 = http_1_1;
             }],
         execute: function() {
             RealtyService = (function () {
-                function RealtyService(_http) {
+                function RealtyService(_configService, _http) {
+                    this._configService = _configService;
                     this._http = _http;
+                    this.RS = "";
+                    this.RS = this._configService.getConfig().RESTServer;
                 }
                 ;
                 RealtyService.prototype.updateRealty = function (realty) {
                     var _this = this;
                     console.log('updateRealty');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = 'http://localhost:4567/api/v1/offer/update/' + realty.id;
+                        var _resourceUrl = _this.RS + '/api/v1/offer/update/' + realty.id;
                         var headers = new http_1.Headers();
                         // TODO
                         // убрать из realty "selected" (ну или засунуть его таки в БД)
                         delete realty["selected"];
-                        //Realty.normalize(realty);
                         var data_str = JSON.stringify(realty);
                         _this._http.post(_resourceUrl, data_str, {
                             headers: headers
@@ -52,7 +57,7 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
                     var _this = this;
                     console.log('getRealty');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = 'http://localhost:4567/api/v1/offer/list?'
+                        var _resourceUrl = _this.RS + '/api/v1/offer/list?'
                             + 'page=' + page
                             + '&per_page=' + perPage
                             + '&filter=' + filter
@@ -74,7 +79,7 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
                 };
                 RealtyService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http])
+                    __metadata('design:paramtypes', [config_service_1.ConfigService, http_1.Http])
                 ], RealtyService);
                 return RealtyService;
             }());

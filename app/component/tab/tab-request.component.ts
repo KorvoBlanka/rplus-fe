@@ -209,7 +209,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <br>
                 <div class="view-group">
                   <span class="view-label">Запрос</span>
-                  <input type="text" class="view-value edit-value" readonly [(ngModel)]="request._source.req_text">
+                  <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.request">
                 </div>
                 <br>
 
@@ -253,7 +253,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <br>
                 <div class="view-group">
                   <span class="view-label pull-left">Запрос</span>
-                  <span class="view-value"> {{ request._source.req_text }}</span>
+                  <span class="view-value"> {{ request.request }}</span>
                 </div>
                 <br>
 
@@ -321,11 +321,11 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
               >
                 <t *ngFor="#r of offers">
                 <google-map-marker
-                  *ngIf="r._source.location"
+                  *ngIf="r.location"
                   (click)="markerClick(r)"
                   [is_selected]="r.selected"
-                  [latitude]="parseFloat(r._source.location.lat)"
-                  [longitude]="parseFloat(r._source.location.lon)"
+                  [latitude]="parseFloat(r.location.lat)"
+                  [longitude]="parseFloat(r.location.lon)"
                   [info_str]="getRealtyDigest(r)">
                   [icon_id]="1"
                 </google-map-marker>
@@ -634,7 +634,7 @@ export class TabRequestComponent {
     public tab: Tab;
     public request: Request;
 
-    person: Person;
+    person: Person = new Person();
     offers: Realty[];
 
     history_recs: HistoryRecord[];
@@ -691,15 +691,15 @@ export class TabRequestComponent {
 
     ngOnInit() {
       this.request = this.tab.args.request;
-      if (!this.request) {
+      if (this.request.id == null) {
         this.new_request = true;
-        this.request = this._requestService.getEmpty();
-        this.person = this.tab.args.person;
       } else {
-        this.person = this._personService.getRandom();
-      }
-      this.calcSize();
 
+      }
+      this._personService.get(this.request.person_id).then(person => {
+        this.person = person;
+      });
+      this.calcSize();
       console.log(this.request);
     }
 
@@ -727,7 +727,17 @@ export class TabRequestComponent {
     }
 
     save() {
-      this.toggleEdit();
+      if (this.request.id == null) {
+        this._requestService.create(this.request).then(request => {
+          this.request = request;
+          this.toggleEdit();
+        });
+      } else {
+        this._requestService.update(this.request).then(request => {
+          this.request = request;
+          this.toggleEdit();
+        });
+      }
     }
 
     offersSelected() {
@@ -795,7 +805,7 @@ export class TabRequestComponent {
 
       //this.request = this._requestService.getEmpty();
 
-      this.request._source.req_text = this.query_text;
+      this.request.request = this.query_text;
     }
 
     toggleDraw() {

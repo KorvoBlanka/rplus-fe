@@ -22,7 +22,9 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
 
   <div class="search-form" [class.table-mode]="table_mode">
     <div class="search-box">
-      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery">
+      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;"
+        [(ngModel)]="searchQuery" (keyup)="searchParamChanged($event)"
+      >
       <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
     </div>
     <div class="tool-box">
@@ -127,21 +129,34 @@ import {RequestDigestComponent} from '../digest/request-digest.component';
     public tab: Tab;
     searchQuery: String;
     requests: Request[] = [];
-    page: number = 1;
+    page: number = 0;
+    perPage: number = 32;
 
     constructor(private _configService: ConfigService, private _requerstService: RequestService) {
-      this.requests = this._requerstService.getRequest(1, 32);
+      this._requerstService.list(this.page, this.perPage, "", "").then(requests => {
+        this.requests = requests;
+      });
       setTimeout(() => { this.tab.header = 'Заявки'; });
     }
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
         this.page ++;
-        var r = this._requerstService.getRequest(this.page, 10);
-        for (var i = 0; i < r.length; i++) {
-          this.requests.push(r[i])
-        }
+        this._requerstService.list(this.page, this.perPage, "", "").then(requests => {
+          for (var i = 0; i < requests.length; i++) {
+            this.requests.push(requests[i])
+          }
+        });
       }
+    }
+
+    searchParamChanged() {
+      this.page = 0;
+
+      this._requerstService.list(this.page, this.perPage, "", this.searchQuery).then(requests => {
+        this.requests = requests;
+        this.page ++;
+      });
     }
 
   }

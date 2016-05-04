@@ -33,7 +33,8 @@ System.register(['angular2/core'], function(exports_1, context_1) {
             exports_1("ConfigService", ConfigService);
             CONFIG = {
                 map: { lat: 48.480007, lon: 135.054954, zoom: 14 },
-                custom_props: { some_prop: 'some_val' }
+                RESTServer: "http://localhost:4567",
+                custom_props: { some_prop: 'some_val' },
             };
         }
     }

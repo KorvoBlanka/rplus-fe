@@ -1,9 +1,11 @@
 import {Component} from 'angular2/core';
 
 import {HubService} from '../../service/hub.service'
+import {PersonService} from '../../service/person.service'
 import {TaskService} from '../../service/task.service'
 
 import {Request} from '../../class/request';
+import {Person} from '../../class/person';
 import {Task} from '../../class/task';
 
 @Component({
@@ -20,7 +22,7 @@ import {Task} from '../../class/task';
 
       <div style="display: flex; justify-content: space-between;">
         <span>Заявка {{ request._id }}
-          <span class="billet-label">{{ request._source.req_text }}</span>
+          <span class="billet-label">{{ request.request }}</span>
         </span>
 
         <span>11.11.15 11:29</span>
@@ -30,7 +32,7 @@ import {Task} from '../../class/task';
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header" style="width: 105px;">Контакт:</span> <a href="#">Петр 4212749444</a>
+              <span class="entry-header" style="width: 105px;">Контакт:</span> <a href="#">{{ person.name }} 4212749444</a>
             </td>
             <td width="33%">
               <span class="entry-header">Задача:</span> {{ task.type }}
@@ -134,15 +136,21 @@ import {Task} from '../../class/task';
 
 export class RequestDigestComponent {
   public request: Request;
+  person: Person = new Person();
   result_text: string;
   task: Task;
   to: any;
 
-  constructor(private _hubService: HubService, private _taskService: TaskService) { };
+  constructor(private _hubService: HubService, private _taskService: TaskService, private _personService: PersonService) { };
 
   ngOnInit() {
     this.task = this._taskService.getRandomTasks();
     this.result_text = this.getResultText();
+
+    this._personService.get(this.request.person_id).then(person => {
+      this.person = person;
+    });
+
   }
 
   select() {

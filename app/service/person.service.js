@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http'], function(exports_1, context_1) {
+System.register(['angular2/core', './config.service', 'angular2/http'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,27 +10,50 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1;
+    var core_1, config_service_1, http_1;
     var PersonService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
+            function (config_service_1_1) {
+                config_service_1 = config_service_1_1;
+            },
             function (http_1_1) {
                 http_1 = http_1_1;
             }],
         execute: function() {
             PersonService = (function () {
-                function PersonService(_http) {
+                function PersonService(_configService, _http) {
+                    this._configService = _configService;
                     this._http = _http;
+                    this.RS = "";
+                    this.RS = this._configService.getConfig().RESTServer;
                 }
                 ;
+                PersonService.prototype.get = function (personId) {
+                    var _this = this;
+                    console.log('person get');
+                    return new Promise(function (resolve) {
+                        var _resourceUrl = _this.RS + '/api/v1/person/get/' + personId;
+                        var headers = new http_1.Headers();
+                        _this._http.get(_resourceUrl, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            if (data.response == "ok") {
+                                resolve(data.result);
+                            }
+                        }, function (err) { return console.log(err); });
+                    });
+                };
                 PersonService.prototype.list = function (page, perPage, organisationId, searchQuery) {
                     var _this = this;
                     console.log('person list');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = 'http://localhost:4567/api/v1/person/list?'
+                        var _resourceUrl = _this.RS + '/api/v1/person/list?'
                             + 'page=' + page
                             + '&per_page=' + perPage
                             + '&organisation_id=' + organisationId
@@ -51,7 +74,7 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
                     var _this = this;
                     console.log('person update');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = 'http://localhost:4567/api/v1/person/update/' + person.id;
+                        var _resourceUrl = _this.RS + '/api/v1/person/update/' + person.id;
                         var headers = new http_1.Headers();
                         delete person["selected"];
                         var data_str = JSON.stringify(person);
@@ -70,7 +93,7 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
                     var _this = this;
                     console.log('person create');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = 'http://localhost:4567/api/v1/person/create';
+                        var _resourceUrl = _this.RS + '/api/v1/person/create';
                         var headers = new http_1.Headers();
                         var data_str = JSON.stringify(person);
                         _this._http.post(_resourceUrl, data_str, {
@@ -86,7 +109,7 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
                 };
                 PersonService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http])
+                    __metadata('design:paramtypes', [config_service_1.ConfigService, http_1.Http])
                 ], PersonService);
                 return PersonService;
             }());

@@ -10,6 +10,9 @@ import {TabOrganisationComponent} from './tab-organisation.component';
 import {TabListRequestComponent} from './tab-list-request.component';
 import {TabRequestComponent} from './tab-request.component';
 
+import {TabListUserComponent} from './settings/tab-list-user.component';
+import {TabUserComponent} from './settings/tab-user.component';
+
 @Component({
   selector: 'tab-root',
   inputs: ['tab'],
@@ -24,6 +27,10 @@ import {TabRequestComponent} from './tab-request.component';
       <tab-organisation [tab]="tab" *ngSwitchWhen="'organisation'"></tab-organisation>
       <tab-list-request [tab]="tab" *ngSwitchWhen="'list_request'"></tab-list-request>
       <tab-request [tab]="tab" *ngSwitchWhen="'request'"></tab-request>
+
+      <tab-list-user [tab]="tab" *ngSwitchWhen="'list_users'"></tab-list-user>
+      <tab-user [tab]="tab" *ngSwitchWhen="'user'"></tab-user>
+
       <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>
     </div>
   `,
@@ -37,6 +44,8 @@ import {TabRequestComponent} from './tab-request.component';
     TabOrganisationComponent,
     TabListRequestComponent,
     TabRequestComponent,
+    TabListUserComponent,
+    TabUserComponent,
   ],
 })
 

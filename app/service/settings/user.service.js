@@ -1,4 +1,4 @@
-System.register(['angular2/core', './config.service', 'angular2/http'], function(exports_1, context_1) {
+System.register(['angular2/core', '../config.service', 'angular2/http'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -11,7 +11,7 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, config_service_1, http_1;
-    var OrganisationService;
+    var UserService;
     return {
         setters:[
             function (core_1_1) {
@@ -24,19 +24,19 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                 http_1 = http_1_1;
             }],
         execute: function() {
-            OrganisationService = (function () {
-                function OrganisationService(_configService, _http) {
+            UserService = (function () {
+                function UserService(_configService, _http) {
                     this._configService = _configService;
                     this._http = _http;
                     this.RS = "";
                     this.RS = this._configService.getConfig().RESTServer;
                 }
                 ;
-                OrganisationService.prototype.get = function (organisationId) {
+                UserService.prototype.get = function (userId) {
                     var _this = this;
-                    console.log('org get');
+                    console.log('user get');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = _this.RS + '/api/v1/organisation/get/' + organisationId;
+                        var _resourceUrl = _this.RS + '/api/v1/user/get/' + userId;
                         var headers = new http_1.Headers();
                         _this._http.get(_resourceUrl, {
                             headers: headers
@@ -49,13 +49,12 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                         }, function (err) { return console.log(err); });
                     });
                 };
-                OrganisationService.prototype.list = function (page, perPage, searchQuery) {
+                UserService.prototype.list = function (role, searchQuery) {
                     var _this = this;
-                    console.log('org list');
+                    console.log('user list');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = _this.RS + '/api/v1/organisation/list?'
-                            + 'page=' + page
-                            + '&per_page=' + perPage
+                        var _resourceUrl = _this.RS + '/api/v1/user/list?'
+                            + 'role=' + role
                             + '&search_query=' + searchQuery;
                         var headers = new http_1.Headers();
                         _this._http.get(_resourceUrl, {
@@ -69,14 +68,14 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                         }, function (err) { return console.log(err); });
                     });
                 };
-                OrganisationService.prototype.update = function (org) {
+                UserService.prototype.update = function (user) {
                     var _this = this;
-                    console.log('org update');
+                    console.log('user update');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = _this.RS + '/api/v1/organisation/update/' + org.id;
+                        var _resourceUrl = _this.RS + '/api/v1/user/update/' + user.id;
                         var headers = new http_1.Headers();
-                        delete org["selected"];
-                        var data_str = JSON.stringify(org);
+                        delete user["selected"];
+                        var data_str = JSON.stringify(user);
                         _this._http.post(_resourceUrl, data_str, {
                             headers: headers
                         })
@@ -88,13 +87,13 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                         }, function (err) { return console.log(err); });
                     });
                 };
-                OrganisationService.prototype.create = function (org) {
+                UserService.prototype.create = function (user) {
                     var _this = this;
-                    console.log('org create');
+                    console.log('user create');
                     return new Promise(function (resolve) {
-                        var _resourceUrl = _this.RS + '/api/v1/organisation/create';
+                        var _resourceUrl = _this.RS + '/api/v1/user/create';
                         var headers = new http_1.Headers();
-                        var data_str = JSON.stringify(org);
+                        var data_str = JSON.stringify(user);
                         _this._http.post(_resourceUrl, data_str, {
                             headers: headers
                         })
@@ -106,14 +105,14 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                         }, function (err) { return console.log(err); });
                     });
                 };
-                OrganisationService = __decorate([
+                UserService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [config_service_1.ConfigService, http_1.Http])
-                ], OrganisationService);
-                return OrganisationService;
+                ], UserService);
+                return UserService;
             }());
-            exports_1("OrganisationService", OrganisationService);
+            exports_1("UserService", UserService);
         }
     }
 });
-//# sourceMappingURL=organisation.service.js.map
+//# sourceMappingURL=user.service.js.map

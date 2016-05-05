@@ -38,7 +38,7 @@ import {Tab} from '../../class/tab';
 
           <div class="tile bg-ggreen fg-white">
             <div class="tile-content iconic">
-                <span class="icon icon-deal"></span>
+              <span class="icon icon-deal"></span>
             </div>
             <span class="tile-label">Договоры</span>
           </div>
@@ -62,6 +62,13 @@ import {Tab} from '../../class/tab';
                 <span class="icon icon-settings"></span>
             </div>
             <span class="tile-label">Настройки</span>
+          </div>
+
+          <div class="tile bg-teal fg-white" (click)="turn_to('list_users')">
+            <div class="tile-content iconic">
+                <span class="icon icon-user"></span>
+            </div>
+            <span class="tile-label">Пользователи</span>
           </div>
 
         </div>

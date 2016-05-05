@@ -1,4 +1,4 @@
-System.register(['angular2/core', './tab-main.component', './tab-list-realty.component', './tab-realty.component', './tab-list-person.component', './tab-person.component', './tab-list-organisation.component', './tab-organisation.component', './tab-list-request.component', './tab-request.component'], function(exports_1, context_1) {
+System.register(['angular2/core', './tab-main.component', './tab-list-realty.component', './tab-realty.component', './tab-list-person.component', './tab-person.component', './tab-list-organisation.component', './tab-organisation.component', './tab-list-request.component', './tab-request.component', './settings/tab-list-user.component', './settings/tab-user.component'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './tab-main.component', './tab-list-realty.com
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, tab_main_component_1, tab_list_realty_component_1, tab_realty_component_1, tab_list_person_component_1, tab_person_component_1, tab_list_organisation_component_1, tab_organisation_component_1, tab_list_request_component_1, tab_request_component_1;
+    var core_1, tab_main_component_1, tab_list_realty_component_1, tab_realty_component_1, tab_list_person_component_1, tab_person_component_1, tab_list_organisation_component_1, tab_organisation_component_1, tab_list_request_component_1, tab_request_component_1, tab_list_user_component_1, tab_user_component_1;
     var TabRootComponent;
     return {
         setters:[
@@ -43,6 +43,12 @@ System.register(['angular2/core', './tab-main.component', './tab-list-realty.com
             },
             function (tab_request_component_1_1) {
                 tab_request_component_1 = tab_request_component_1_1;
+            },
+            function (tab_list_user_component_1_1) {
+                tab_list_user_component_1 = tab_list_user_component_1_1;
+            },
+            function (tab_user_component_1_1) {
+                tab_user_component_1 = tab_user_component_1_1;
             }],
         execute: function() {
             TabRootComponent = (function () {
@@ -52,7 +58,7 @@ System.register(['angular2/core', './tab-main.component', './tab-list-realty.com
                     core_1.Component({
                         selector: 'tab-root',
                         inputs: ['tab'],
-                        template: "\n    <div [ngSwitch]=\"tab.type\">\n      <tab-main [tab]=\"tab\" *ngSwitchWhen=\"'main'\"></tab-main>\n      <tab-list-realty [tab]=\"tab\" *ngSwitchWhen=\"'list_realty'\"></tab-list-realty>\n      <tab-realty [tab]=\"tab\" *ngSwitchWhen=\"'realty'\"></tab-realty>\n      <tab-list-person [tab]=\"tab\" *ngSwitchWhen=\"'list_person'\"></tab-list-person>\n      <tab-person [tab]=\"tab\" *ngSwitchWhen=\"'person'\"></tab-person>\n      <tab-list-organisation [tab]=\"tab\" *ngSwitchWhen=\"'list_organisation'\"></tab-list-organisation>\n      <tab-organisation [tab]=\"tab\" *ngSwitchWhen=\"'organisation'\"></tab-organisation>\n      <tab-list-request [tab]=\"tab\" *ngSwitchWhen=\"'list_request'\"></tab-list-request>\n      <tab-request [tab]=\"tab\" *ngSwitchWhen=\"'request'\"></tab-request>\n      <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>\n    </div>\n  ",
+                        template: "\n    <div [ngSwitch]=\"tab.type\">\n      <tab-main [tab]=\"tab\" *ngSwitchWhen=\"'main'\"></tab-main>\n      <tab-list-realty [tab]=\"tab\" *ngSwitchWhen=\"'list_realty'\"></tab-list-realty>\n      <tab-realty [tab]=\"tab\" *ngSwitchWhen=\"'realty'\"></tab-realty>\n      <tab-list-person [tab]=\"tab\" *ngSwitchWhen=\"'list_person'\"></tab-list-person>\n      <tab-person [tab]=\"tab\" *ngSwitchWhen=\"'person'\"></tab-person>\n      <tab-list-organisation [tab]=\"tab\" *ngSwitchWhen=\"'list_organisation'\"></tab-list-organisation>\n      <tab-organisation [tab]=\"tab\" *ngSwitchWhen=\"'organisation'\"></tab-organisation>\n      <tab-list-request [tab]=\"tab\" *ngSwitchWhen=\"'list_request'\"></tab-list-request>\n      <tab-request [tab]=\"tab\" *ngSwitchWhen=\"'request'\"></tab-request>\n\n      <tab-list-user [tab]=\"tab\" *ngSwitchWhen=\"'list_users'\"></tab-list-user>\n      <tab-user [tab]=\"tab\" *ngSwitchWhen=\"'user'\"></tab-user>\n\n      <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>\n    </div>\n  ",
                         directives: [
                             tab_main_component_1.TabMainComponent,
                             tab_list_realty_component_1.TabListRealtyComponent,
@@ -63,6 +69,8 @@ System.register(['angular2/core', './tab-main.component', './tab-list-realty.com
                             tab_organisation_component_1.TabOrganisationComponent,
                             tab_list_request_component_1.TabListRequestComponent,
                             tab_request_component_1.TabRequestComponent,
+                            tab_list_user_component_1.TabListUserComponent,
+                            tab_user_component_1.TabUserComponent,
                         ],
                     }), 
                     __metadata('design:paramtypes', [])

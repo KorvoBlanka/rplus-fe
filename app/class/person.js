@@ -7,6 +7,8 @@ System.register([], function(exports_1, context_1) {
         execute: function() {
             Person = (function () {
                 function Person() {
+                    this.phone = [];
+                    this.email = [];
                 }
                 return Person;
             }());

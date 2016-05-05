@@ -5,10 +5,9 @@ export class Person {
   agent_id: string;
 
   name: string;
-  organisation_name: string;
 
-  phone: any[];
-  email: any[];
+  phone: string[] = [];
+  email: string[] = [];
 
   info: string;
 

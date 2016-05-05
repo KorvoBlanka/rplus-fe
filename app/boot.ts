@@ -10,6 +10,7 @@ import {HistoryService} from './service/history.service';
 import {PersonService} from './service/person.service';
 import {OrganisationService} from './service/organisation.service';
 import {PhotoService} from './service/photo.service';
+import {UserService} from './service/settings/user.service';
 import {HTTP_PROVIDERS} from 'angular2/http';
 
 import {AppComponent} from './app.component';
@@ -27,5 +28,6 @@ bootstrap(AppComponent, [
     PersonService,
     OrganisationService,
     PhotoService,
+    UserService,
     HTTP_PROVIDERS
 ]);

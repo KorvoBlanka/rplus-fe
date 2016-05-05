@@ -125,6 +125,10 @@
   content: "\E72D";
 }
 
+.icon-user:before {
+  content: "\E13D";
+}
+
 .icon-none:before {
   content: "\FFFD";
   opacity: 0;

@@ -8,6 +8,7 @@ import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service'
 import {PhotoService} from '../../service/photo.service'
+import {UserService} from '../../service/settings/user.service'
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
@@ -16,6 +17,7 @@ import {Request} from '../../class/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 import {Photo} from '../../class/photo';
+import {User} from '../../class/user';
 
 import {UISelect} from '../ui/ui-select.component';
 import {UICarousel} from '../ui/ui-carousel.component';
@@ -90,15 +92,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label">Ответственный</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[
-                      {val: 1, label: 'Агент 1_1'},
-                      {val: 2, label: 'Агент 1_2'},
-                      {val: 3, label: 'Агент 1_3'},
-                      {val: 4, label: 'Агент 1_4'},
-                      {val: 5, label: 'Агент 1_5'}
-                    ]"
-                    [label]="'Агент 1_1'"
-                    (valueChange)="log($event)"
+                    [values] = "agent_opts"
+                    [label]="agent.name"
+                    (valueChange)="agentChanged($event)"
                   >
                   </ui-select>
                 </div>
@@ -341,7 +337,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <div class="view-group">
                   <span class="view-label">Ответственный</span>
-                  <span class="view-value"> Агент 1_1</span>
+                  <span class="view-value"> {{ agent.name }} </span>
                 </div>
                 <div class="view-group">
                   <span class="view-label">Статус</span>
@@ -792,6 +788,9 @@ export class TabRealtyComponent {
     public realty: Realty;
     public photos: Photo[];
 
+    agent: User = new User();
+    agent_opts: any[] = [];
+
     similar_realty: Realty[];
     requests: Request[];
     history_recs: HistoryRecord[];
@@ -835,8 +834,20 @@ export class TabRealtyComponent {
       private _taskService: TaskService,
       private _analysisService: AnalysisService,
       private _historyService: HistoryService,
-      private _photoService: PhotoService
+      private _photoService: PhotoService,
+      private _userService: UserService
     ) {
+
+      this._userService.list("agent", "").then(agents => {
+        for (let i = 0; i < agents.length; i++) {
+          var a = agents[i];
+          this.agent_opts.push({
+            val: a.id,
+            label: a.name
+          });
+        }
+      });
+
       setTimeout(() => { this.tab.header = 'Объект' });
     }
 
@@ -850,6 +861,12 @@ export class TabRealtyComponent {
         if (this.realty.location) {
             this.lat = parseFloat(this.realty.location.lat);
             this.lon = parseFloat(this.realty.location.lon);
+        }
+
+        if (this.realty.agent_id != null) {
+          this._userService.get(this.realty.agent_id).then(agent => {
+            this.agent = agent;
+          });
         }
 
         this.calcSize();
@@ -876,6 +893,15 @@ export class TabRealtyComponent {
 
     toggleEdit() {
         this.edit_enabled = !this.edit_enabled;
+    }
+
+    agentChanged(e) {
+      this.realty.agent_id = e.value.val;
+      if (this.realty.agent_id != null) {
+        this._userService.get(this.realty.agent_id).then(agent => {
+          this.agent = agent;
+        });
+      }
     }
 
     save() {

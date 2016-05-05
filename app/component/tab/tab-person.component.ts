@@ -4,6 +4,7 @@ import {FormatDatePipe} from '../../pipe/format-date.pipe';
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
+import {User} from '../../class/user';
 import {Realty} from '../../class/realty';
 import {Person} from '../../class/person';
 import {Organisation} from '../../class/organisation';
@@ -19,6 +20,7 @@ import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service';
 import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
+import {UserService} from '../../service/settings/user.service';
 
 import {UISelect} from '../ui/ui-select.component';
 import {UICarousel} from '../ui/ui-carousel.component';
@@ -93,15 +95,9 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label">Ответственный</span>
                   <ui-select class="view-value edit-value"
-                    [values] = "[
-                      {id: 1, text: 'Агент 1_1'},
-                      {id: 2, text: 'Агент 1_2'},
-                      {id: 3, text: 'Агент 1_3'},
-                      {id: 4, text: 'Агент 1_4'},
-                      {id: 5, text: 'Агент 1_5'}
-                    ]"
-                    [value]="{id: 0, text: 'Агент 1_1'}"
-                    (valueChange)="log($event)"
+                    [values] = "agent_opts"
+                    [label]="agent.name"
+                    (valueChange)="agentChanged($event)"
                   >
                   </ui-select>
                 </div>
@@ -152,7 +148,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <div class="view-group">
                   <span class="view-label">Ответственный</span>
-                  <span class="view-value"> Агент 1_1</span>
+                  <span class="view-value"> {{ agent.name }}</span>
                 </div>
 
                 <div class="view-group">
@@ -176,7 +172,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
 
                 <div class="view-group">
                   <span class="view-label pull-left">Организация</span>
-                  <span class="view-value"> {{ person.organisation_name }}</span>
+                  <span class="view-value"> {{ organisation.name }}</span>
                 </div>
 
                 <br>
@@ -570,8 +566,11 @@ export class TabPersonComponent {
     public tab: Tab;
     public person: Person;
 
-    public organisations_opts: any[] = [];
+    organisation: Organisation = new Organisation();
+    organisations_opts: any[] = [];
+    agent_opts: any[] = [];
 
+    agent: User = new User();
     offers: Realty[];
     requests: Request[];
     history_recs: HistoryRecord[];
@@ -617,7 +616,8 @@ export class TabPersonComponent {
         private _analysisService: AnalysisService,
         private _historyService: HistoryService,
         private _personService: PersonService,
-        private _organisationService: OrganisationService
+        private _organisationService: OrganisationService,
+        private _userService: UserService
       ) {
 
       _organisationService.list(0, 100, "").then(orgs => {
@@ -630,11 +630,33 @@ export class TabPersonComponent {
         }
       });
 
+      this._userService.list("agent", "").then(agents => {
+        for (let i = 0; i < agents.length; i++) {
+          var a = agents[i];
+          this.agent_opts.push({
+            val: a.id,
+            label: a.name
+          });
+        }
+      });
+
       setTimeout(() => { this.tab.header = 'Контакт' });
     }
 
     ngOnInit() {
         this.person = this.tab.args.person;
+        if (this.person.organisation_id) {
+          this._organisationService.get(this.person.organisation_id).then(org => {
+            this.organisation = org;
+          });
+        }
+
+        if (this.person.agent_id != null) {
+          this._userService.get(this.person.agent_id).then(agent => {
+            this.agent = agent;
+          });
+        }
+
         this.calcSize();
     }
 
@@ -659,6 +681,15 @@ export class TabPersonComponent {
 
     toggleEdit() {
       this.edit_enabled = !this.edit_enabled;
+    }
+
+    agentChanged(e) {
+      this.person.agent_id = e.value.val;
+      if (this.person.agent_id != null) {
+        this._userService.get(this.person.agent_id).then(agent => {
+          this.agent = agent;
+        });
+      }
     }
 
     save() {

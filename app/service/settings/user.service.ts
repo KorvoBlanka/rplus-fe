@@ -1,12 +1,13 @@
 import {Injectable} from 'angular2/core';
 
-import {ConfigService} from './config.service';
+import {ConfigService} from '../config.service';
 
-import {Organisation} from '../class/organisation';
+import {User} from '../../class/user';
+
 import {Http, Headers, Response} from 'angular2/http';
 
 @Injectable()
-export class OrganisationService {
+export class UserService {
 
   RS: String = "";
 
@@ -14,10 +15,11 @@ export class OrganisationService {
     this.RS = this._configService.getConfig().RESTServer;
   };
 
-  get(organisationId: String) {
-    console.log('org get');
-    return new Promise<Organisation>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/organisation/get/' + organisationId;
+  get(userId: String) {
+    console.log('user get');
+
+    return new Promise<User>(resolve => {
+      var _resourceUrl = this.RS + '/api/v1/user/get/' + userId;
       var headers = new Headers();
       this._http.get(_resourceUrl, {
           headers: headers
@@ -34,13 +36,12 @@ export class OrganisationService {
     });
   }
 
-  list(page: number, perPage: number, searchQuery: string) {
-    console.log('org list');
+  list(role: string, searchQuery: string) {
+    console.log('user list');
 
-    return new Promise<Organisation[]>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/organisation/list?'
-        + 'page=' + page
-        + '&per_page=' + perPage
+    return new Promise<User[]>(resolve => {
+      var _resourceUrl = this.RS + '/api/v1/user/list?'
+        + 'role=' + role
         + '&search_query=' + searchQuery;
       var headers = new Headers();
       this._http.get(_resourceUrl, {
@@ -58,16 +59,16 @@ export class OrganisationService {
     });
   }
 
-  update(org: Organisation) {
-    console.log('org update');
+  update(user: User) {
+    console.log('user update');
 
-    return new Promise<Organisation>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/organisation/update/' + org.id;
+    return new Promise<User>(resolve => {
+      var _resourceUrl = this.RS + '/api/v1/user/update/' + user.id;
       var headers = new Headers();
 
-      delete org["selected"];
+      delete user["selected"];
 
-      var data_str = JSON.stringify(org);
+      var data_str = JSON.stringify(user);
 
       this._http.post(_resourceUrl, data_str, {
           headers: headers
@@ -84,14 +85,14 @@ export class OrganisationService {
     });
   }
 
-  create(org: Organisation) {
-    console.log('org create');
+  create(user: User) {
+    console.log('user create');
 
-    return new Promise<Organisation>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/organisation/create'
+    return new Promise<User>(resolve => {
+      var _resourceUrl = this.RS + '/api/v1/user/create'
       var headers = new Headers();
 
-      var data_str = JSON.stringify(org);
+      var data_str = JSON.stringify(user);
 
       this._http.post(_resourceUrl, data_str, {
           headers: headers

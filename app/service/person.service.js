@@ -44,7 +44,15 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                             .map(function (res) { return res.json(); })
                             .subscribe(function (data) {
                             if (data.response == "ok") {
-                                resolve(data.result);
+                                //
+                                var person = data.result;
+                                var t = [];
+                                for (var _i = 0, _a = person.phone; _i < _a.length; _i++) {
+                                    var phone = _a[_i];
+                                    t.push({ s: phone });
+                                }
+                                person.phone = t;
+                                resolve(person);
                             }
                         }, function (err) { return console.log(err); });
                     });
@@ -65,7 +73,17 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                             .map(function (res) { return res.json(); })
                             .subscribe(function (data) {
                             if (data.response == "ok") {
-                                resolve(data.result);
+                                var persons = data.result;
+                                for (var _i = 0, persons_1 = persons; _i < persons_1.length; _i++) {
+                                    var person = persons_1[_i];
+                                    var t = [];
+                                    for (var _a = 0, _b = person.phone; _a < _b.length; _a++) {
+                                        var phone = _b[_a];
+                                        t.push({ s: phone });
+                                    }
+                                    person.phone = t;
+                                }
+                                resolve(persons);
                             }
                         }, function (err) { return console.log(err); });
                     });
@@ -77,6 +95,12 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                         var _resourceUrl = _this.RS + '/api/v1/person/update/' + person.id;
                         var headers = new http_1.Headers();
                         delete person["selected"];
+                        var t = [];
+                        for (var _i = 0, _a = person.phone; _i < _a.length; _i++) {
+                            var sp = _a[_i];
+                            t.push(sp.s);
+                        }
+                        person.phone = t;
                         var data_str = JSON.stringify(person);
                         _this._http.post(_resourceUrl, data_str, {
                             headers: headers
@@ -84,7 +108,15 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                             .map(function (res) { return res.json(); })
                             .subscribe(function (data) {
                             if (data.response == "ok") {
-                                resolve(data.result);
+                                //
+                                var person = data.result;
+                                var t = [];
+                                for (var _i = 0, _a = person.phone; _i < _a.length; _i++) {
+                                    var phone = _a[_i];
+                                    t.push({ s: phone });
+                                }
+                                person.phone = t;
+                                resolve(person);
                             }
                         }, function (err) { return console.log(err); });
                     });
@@ -95,6 +127,12 @@ System.register(['angular2/core', './config.service', 'angular2/http'], function
                     return new Promise(function (resolve) {
                         var _resourceUrl = _this.RS + '/api/v1/person/create';
                         var headers = new http_1.Headers();
+                        var t = [];
+                        for (var _i = 0, _a = person.phone; _i < _a.length; _i++) {
+                            var sp = _a[_i];
+                            t.push(sp.s);
+                        }
+                        person.phone = t;
                         var data_str = JSON.stringify(person);
                         _this._http.post(_resourceUrl, data_str, {
                             headers: headers

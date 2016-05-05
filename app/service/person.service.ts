@@ -28,7 +28,16 @@ export class PersonService {
           .subscribe(
             data => {
               if(data.response == "ok") {
-                resolve(data.result);
+
+                //
+                var person: Person = data.result;
+                var t = [];
+                for(var phone of person.phone) {
+                  t.push({s: phone});
+                }
+                person.phone = t;
+
+                resolve(person);
               }
             },
             err => console.log(err)
@@ -53,7 +62,17 @@ export class PersonService {
           .subscribe(
             data => {
               if(data.response == "ok") {
-                resolve(data.result);
+
+                var persons: Person[] = data.result;
+                for(var person of persons) {
+                  var t = [];
+                  for(var phone of person.phone) {
+                    t.push({s: phone});
+                  }
+                  person.phone = t;
+                }
+
+                resolve(persons);
               }
             },
             err => console.log(err)
@@ -69,7 +88,11 @@ export class PersonService {
       var headers = new Headers();
 
       delete person["selected"];
-
+      var t: string[] = [];
+      for(var sp of person.phone) {
+        t.push(sp.s);
+      }
+      person.phone = t;
       var data_str = JSON.stringify(person);
 
       this._http.post(_resourceUrl, data_str, {
@@ -79,7 +102,16 @@ export class PersonService {
           .subscribe(
             data => {
               if(data.response == "ok") {
-                resolve(data.result);
+
+                //
+                var person: Person = data.result;
+                var t = [];
+                for(var phone of person.phone) {
+                  t.push({s: phone});
+                }
+                person.phone = t;
+
+                resolve(person);
               }
             },
             err => console.log(err)
@@ -94,6 +126,11 @@ export class PersonService {
       var _resourceUrl = this.RS + '/api/v1/person/create'
       var headers = new Headers();
 
+      var t: string[] = [];
+      for(var sp of person.phone) {
+        t.push(sp.s);
+      }
+      person.phone = t;
       var data_str = JSON.stringify(person);
 
       this._http.post(_resourceUrl, data_str, {

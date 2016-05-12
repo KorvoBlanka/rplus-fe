@@ -6,8 +6,8 @@ export class Person {
 
   name: string;
 
-  phone: string[] = [];
-  email: string[] = [];
+  phone: any[] = [];
+  email: any[] = [];
 
   info: string;
 

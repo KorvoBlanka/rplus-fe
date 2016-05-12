@@ -3,9 +3,13 @@ import {Component} from 'angular2/core';
 import {FormatDatePipe} from '../../pipe/format-date.pipe';
 
 import {HubService} from '../../service/hub.service'
+import {UserService} from '../../service/settings/user.service'
+import {OrganisationService} from '../../service/organisation.service'
 import {TaskService} from '../../service/task.service'
 
 import {Person} from '../../class/person';
+import {Organisation} from '../../class/organisation';
+import {User} from '../../class/user';
 import {Task} from '../../class/task';
 
 @Component({
@@ -32,7 +36,7 @@ import {Task} from '../../class/task';
         <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
           <tr>
             <td width="33%">
-              <span class="entry-header" style="width: 105px;">Организация:</span> {{ person.organisation_name }}
+              <span class="entry-header" style="width: 105px;">Организация:</span> {{ organisation.name }}
             </td>
             <td width="33%">
               <span class="entry-header">Задача:</span> {{ task.type }}
@@ -48,7 +52,7 @@ import {Task} from '../../class/task';
           </tr>
           <tr>
             <td>
-              <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#">Какой Какойтович</a>
+              <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#"> {{ agent.name }} </a>
             </td>
             <td>
               <span class="entry-header">Результат:</span> <span [class.badge-gray]="task.result_id == 0" [class.badge-green]="task.result_id == 1" [class.badge-red]="task.result_id == 2">{{ result_text }}</span>
@@ -59,7 +63,7 @@ import {Task} from '../../class/task';
           </tr>
           <tr>
             <td>
-              <span class="entry-header" style="width: 105px;">Телефон:</span> {{ person.phone?person.phone[0].s:'' }}
+              <span class="entry-header" style="width: 105px;">Телефон:</span> {{ person.phone[0]?person.phone[0]:'' }}
             </td>
             <td></td>
             <td>
@@ -137,14 +141,31 @@ import {Task} from '../../class/task';
 
 export class PersonDigestComponent {
   public person: Person;
+
+  organisation: Organisation = new Organisation();
+  agent: User = new User();
+
   result_text: string;
   task: Task;
   to: any;
 
-  constructor(private _hubService: HubService, private _taskService: TaskService) { };
+  constructor(private _hubService: HubService, private _userService: UserService, private _organisationService: OrganisationService, private _taskService: TaskService) { };
 
   ngOnInit() {
     this.task = this._taskService.getRandomTasks();
+
+    if (this.person.organisation_id) {
+      this._organisationService.get(this.person.organisation_id).then(org => {
+        this.organisation = org;
+      });
+    }
+
+    if (this.person.agent_id != null) {
+      this._userService.get(this.person.agent_id).then(agent => {
+        this.agent = agent;
+      });
+    }
+
     this.result_text = this.getResultText();
   }
 

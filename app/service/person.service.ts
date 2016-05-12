@@ -6,13 +6,25 @@ import {Person} from '../class/person';
 import {Organisation} from '../class/organisation';
 import {Http, Headers, Response} from 'angular2/http';
 
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
+import 'rxjs/add/operator/share';
+import 'rxjs/add/operator/map';
+
 @Injectable()
 export class PersonService {
-
   RS: String = "";
+  persons$: Observable<Person[]>;
+  private _personsObserver: Observer<Person[]>;
+  private _dataStore: {
+      persons: Person[],
+  };
 
   constructor(private _configService: ConfigService, private _http: Http) {
     this.RS = this._configService.getConfig().RESTServer;
+
+    this.persons$ = new Observable(observer => this._personsObserver = observer).share();
+    this._dataStore = { persons: [] };
   };
 
   get(personId: String) {
@@ -20,24 +32,19 @@ export class PersonService {
 
     return new Promise<Person>(resolve => {
       var _resourceUrl = this.RS + '/api/v1/person/get/' + personId;
-      var headers = new Headers();
-      this._http.get(_resourceUrl, {
-          headers: headers
-          })
-          .map(res => res.json())
-          .subscribe(
+      this._http.get(_resourceUrl)
+        .map(res => res.json()).subscribe(
             data => {
               if(data.response == "ok") {
 
-                //
-                var person: Person = data.result;
-                var t = [];
-                for(var phone of person.phone) {
-                  t.push({s: phone});
-                }
-                person.phone = t;
+                var gPerson: Person = data.result;
+                this._dataStore.persons.forEach((person, i) => {
+                  if (person.id === gPerson.id) {
+                    this._dataStore.persons[i] = gPerson;
+                  }
+                });
 
-                resolve(person);
+                resolve(gPerson);
               }
             },
             err => console.log(err)
@@ -48,103 +55,83 @@ export class PersonService {
   list(page: number, perPage: number, organisationId: string, searchQuery: string) {
     console.log('person list');
 
-    return new Promise<Person[]>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/person/list?'
-        + 'page=' + page
-        + '&per_page=' + perPage
-        + '&organisation_id=' + organisationId
-        + '&search_query=' + searchQuery;
-      var headers = new Headers();
-      this._http.get(_resourceUrl, {
-          headers: headers
-          })
-          .map(res => res.json())
-          .subscribe(
-            data => {
-              if(data.response == "ok") {
+    if (page == 0) {
+      this._dataStore.persons = [];
+    }
 
-                var persons: Person[] = data.result;
-                for(var person of persons) {
-                  var t = [];
-                  for(var phone of person.phone) {
-                    t.push({s: phone});
-                  }
-                  person.phone = t;
-                }
+    var _resourceUrl = this.RS + '/api/v1/person/list?'
+      + 'page=' + page
+      + '&per_page=' + perPage
+      + '&organisation_id=' + organisationId
+      + '&search_query=' + searchQuery;
+    this._http.get(_resourceUrl)
+      .map(res => res.json()).subscribe(
+          data => {
+            if(data.response == "ok") {
 
-                resolve(persons);
+              var res: Person[] = data.result;
+              var persons: Person[] = [];
+              for(var person of res) {
+                this._dataStore.persons.push(person);
               }
-            },
-            err => console.log(err)
-          );
-    });
+              this._personsObserver.next(this._dataStore.persons);
+            }
+          },
+          err => console.log(err)
+        );
   }
 
   update(person: Person) {
     console.log('person update');
+    console.log(person);
+
+    var _resourceUrl = this.RS + '/api/v1/person/update/' + person.id;
+
+    delete person["selected"];
+    var data_str = JSON.stringify(person);
 
     return new Promise<Person>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/person/update/' + person.id;
-      var headers = new Headers();
+      this._http.post(_resourceUrl, data_str)
+        .map(res => res.json()).subscribe(
+          data => {
+            if(data.response == "ok") {
 
-      delete person["selected"];
-      var t: string[] = [];
-      for(var sp of person.phone) {
-        t.push(sp.s);
-      }
-      person.phone = t;
-      var data_str = JSON.stringify(person);
-
-      this._http.post(_resourceUrl, data_str, {
-          headers: headers
-          })
-          .map(res => res.json())
-          .subscribe(
-            data => {
-              if(data.response == "ok") {
-
-                //
-                var person: Person = data.result;
-                var t = [];
-                for(var phone of person.phone) {
-                  t.push({s: phone});
+              var uPerson: Person = data.result;
+              this._dataStore.persons.forEach((person, i) => {
+                if (person.id === uPerson.id) {
+                  this._dataStore.persons[i] = uPerson;
+                  resolve(uPerson);
                 }
-                person.phone = t;
+              });
 
-                resolve(person);
-              }
-            },
-            err => console.log(err)
-          );
+            }
+          },
+          err => console.log(err)
+        );
     });
   }
 
   create(person: Person) {
     console.log('person create');
+    console.log(person);
+
+    var _resourceUrl = this.RS + '/api/v1/person/create'
+
+    delete person["selected"];
+    var data_str = JSON.stringify(person);
 
     return new Promise<Person>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/person/create'
-      var headers = new Headers();
-
-      var t: string[] = [];
-      for(var sp of person.phone) {
-        t.push(sp.s);
-      }
-      person.phone = t;
-      var data_str = JSON.stringify(person);
-
-      this._http.post(_resourceUrl, data_str, {
-          headers: headers
-          })
-          .map(res => res.json())
-          .subscribe(
-            data => {
-              if(data.response == "ok") {
-                resolve(data.result);
-              }
-            },
-            err => console.log(err)
-          );
+      this._http.post(_resourceUrl, data_str)
+        .map(res => res.json()).subscribe(
+          data => {
+            if(data.response == "ok") {
+              var cPerson: Person = data.result;
+              this._dataStore.persons.splice(0, 0, cPerson);
+              resolve(cPerson);
+            }
+          },
+          err => console.log(err)
+        );
     });
   }
 }

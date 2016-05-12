@@ -33,6 +33,8 @@ import {RealtyDigestComponent} from '../digest/realty-digest.component';
 import {PersonDigestComponent} from '../digest/person-digest.component';
 import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
+import {Observable} from 'rxjs/Observable';
+
 
 @Component({
     selector: 'tab-organisation',
@@ -168,7 +170,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                   Добавить контакт
                 </div>
 
-                <person-digest *ngFor="#p of persons"
+                <person-digest *ngFor="#p of persons | async"
                   [person]="p"
                 >
                 </person-digest>
@@ -533,7 +535,7 @@ export class TabOrganisationComponent {
     public tab: Tab;
     public organisation: Organisation;
 
-    persons: Person[];
+    persons: Observable<Person[]>;
     offers: Realty[];
 
     history_recs: HistoryRecord[];
@@ -588,6 +590,9 @@ export class TabOrganisationComponent {
       if (this.organisation.id == null) {
         this.toggleEdit();
       }
+
+      this.persons = this._personService.persons$;
+
       this.calcSize();
     }
 
@@ -664,10 +669,8 @@ export class TabOrganisationComponent {
       this.history_recs = this._historyService.getObjHistory();
     }
 
-    getPersons(page, per_page) {
-      this._personService.list(page, per_page, this.organisation.id, "").then(persons => {
-        this.persons = persons;
-      });;
+    getPersons(page, perPage) {
+      this._personService.list(0, perPage, this.organisation.id, "");
     }
 
     getOffers(page, per_page) {

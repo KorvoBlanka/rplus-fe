@@ -13,6 +13,9 @@ import {UISelect} from '../ui/ui-select.component';
 
 import {PersonDigestComponent} from '../digest/person-digest.component';
 
+import {Observable} from 'rxjs/Observable';
+
+
 @Component({
   selector: 'tab-list-person',
   inputs: ['tab'],
@@ -94,7 +97,7 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
         Добавить контакт
       </div>
 
-      <person-digest *ngFor="#p of persons"
+      <person-digest *ngFor="#p of persons | async"
         [person]="p"
       >
       </person-digest>
@@ -158,27 +161,23 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
   export class TabListPersonComponent {
     public tab: Tab;
 
-    persons: Person[] = [];
+    persons: Observable<Person[]>;
     page: number = 0;
     perPage: number = 32;
     searchQuery: string = "";
 
     constructor(private _configService: ConfigService, private _hubService: HubService, private _personService: PersonService) {
-      this._personService.list(this.page, this.perPage, "", "").then(persons => {
-        this.persons = persons;
-        this.page ++;
-      });
       setTimeout(() => { this.tab.header = 'Контакты'; });
+    }
+
+    ngOnInit() {
+      this.persons = this._personService.persons$;
+      this._personService.list(0, this.perPage, "", "");
     }
 
     scroll(e) {
       if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        this._personService.list(this.page, this.perPage, "", "").then(persons => {
-          for (let i = 0; i < persons.length; i++) {
-              this.persons.push(persons[i]);
-          }
-          this.page ++;
-        });
+
       }
     }
 
@@ -189,11 +188,7 @@ import {PersonDigestComponent} from '../digest/person-digest.component';
 
     searchParamChanged() {
       this.page = 0;
-
-      this._personService.list(this.page, this.perPage, "", this.searchQuery).then(persons => {
-        this.persons = persons;
-        this.page ++;
-      });
+      this._personService.list(0, this.perPage, "", this.searchQuery);
     }
 
 

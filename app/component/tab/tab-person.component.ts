@@ -77,7 +77,7 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
             <div style="margin: 5px;">
 
               <div class="pull-container">
-                <div class="font-sz-2 pull-left">Источник: звонок<span class="color-g1"><a href="" target="_blank"></a></span></div>
+                <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="" target="_blank"></a></span></div>
                 <div class="font-sz-1 color-g2 pull-right"> {{ person.add_date | formatDate }} </div>
               </div>
 
@@ -110,14 +110,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label pull-left">Телефон <a href="#" (click)="addPhone()"><span class="icon-add"></span></a></span>
                   <div class="array-container">
-                    <input *ngFor="#phone of person.phone; #i = index" type="text" class="view-value edit-value" [(ngModel)]="person.phone[i].s">
+                    <input *ngFor="#phone of _phonesTrick; #i = index" type="text" class="view-value edit-value" [(ngModel)]="_phonesTrick[i].s">
                   </div>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">e-mail <a href="#" (click)="addEmail()" ><span class="icon-add"></span></a></span>
                   <div class="array-container">
-                    <input *ngFor="#email of person.email; #i = index" type="text" class="view-value edit-value" [(ngModel)]="person.email[i].s">
+                    <input *ngFor="#email of _emailsTrick; #i = index" type="text" class="view-value edit-value" [(ngModel)]="_emailsTrick[i].s">
                   </div>
                 </div>
 
@@ -159,14 +159,14 @@ import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.compon
                 <div class="view-group">
                   <span class="view-label pull-left">Телефон </span>
                   <div class="array-container">
-                    <span *ngFor="#phone of person.phone" class="view-value"> {{ phone.s }} </span>
+                    <span *ngFor="#phone of person.phone" class="view-value"> {{ phone }} </span>
                   </div>
                 </div>
 
                 <div class="view-group">
                   <span class="view-label pull-left">e-mail</span>
                   <div class="array-container">
-                    <span *ngFor="#email of person.email" class="view-value"> {{ email.s }} </span>
+                    <span *ngFor="#email of person.email" class="view-value"> {{ email }} </span>
                   </div>
                 </div>
 
@@ -566,6 +566,9 @@ export class TabPersonComponent {
     public tab: Tab;
     public person: Person;
 
+    _phonesTrick: any = [];
+    _emailsTrick: any = [];
+
     organisation: Organisation = new Organisation();
     organisations_opts: any[] = [];
     agent_opts: any[] = [];
@@ -604,8 +607,25 @@ export class TabPersonComponent {
     log(e) {
         console.log(e);
     }
+
     parseFloat(v: any) {    // сделать пайп
         return parseFloat(v);
+    }
+
+    _wrapArray(a: string[]) {
+      var r = [];
+      for(var el of a) {
+        r.push({s: el});
+      }
+      return r;
+    }
+
+    _unwrapArray(a: any[]) {
+      var r = [];
+      for(var el of a) {
+        r.push(el.s);
+      }
+      return r;
     }
 
     constructor(private _hubService: HubService,
@@ -630,7 +650,7 @@ export class TabPersonComponent {
         }
       });
 
-      this._userService.list("agent", "").then(agents => {
+      _userService.list("agent", "").then(agents => {
         for (let i = 0; i < agents.length; i++) {
           var a = agents[i];
           this.agent_opts.push({
@@ -645,6 +665,10 @@ export class TabPersonComponent {
 
     ngOnInit() {
         this.person = this.tab.args.person;
+
+        this._phonesTrick = this._wrapArray(this.person.phone);
+        this._emailsTrick = this._wrapArray(this.person.email);
+
         if (this.person.organisation_id) {
           this._organisationService.get(this.person.organisation_id).then(org => {
             this.organisation = org;
@@ -655,6 +679,10 @@ export class TabPersonComponent {
           this._userService.get(this.person.agent_id).then(agent => {
             this.agent = agent;
           });
+        }
+
+        if (this.person.id == null) {
+          this.toggleEdit();
         }
 
         this.calcSize();
@@ -693,11 +721,16 @@ export class TabPersonComponent {
     }
 
     save() {
+
+      this.person.phone = this._unwrapArray(this._phonesTrick);
+      this.person.email = this._unwrapArray(this._emailsTrick);
+
       if (this.person.id == null) {
         this._personService.create(this.person).then(person => {
           this.person = person;
           this.toggleEdit();
         });
+
       } else {
         this._personService.update(this.person).then(person => {
           this.person = person;
@@ -767,11 +800,11 @@ export class TabPersonComponent {
     }
 
     addPhone() {
-      this.person.phone.push({s: ''});
+      this._phonesTrick.push({s: ''});
     }
 
     addEmail() {
-      this.person.email.push({s: ''});
+      this._emailsTrick.email.push({s: ''});
     }
 
     createRequest() {
@@ -790,7 +823,6 @@ export class TabPersonComponent {
       var tab_sys = this._hubService.getProperty('tab_sys');
       tab_sys.addTab('realty', { realty: null, person: this.person });
     }
-
 
     getRealtyDigest(r: Realty) {
       return Realty.getDigest(r);

@@ -1,12 +1,14 @@
-
 export class Organisation {
-  id: string;
 
-  name: string;
-  address: string;
+    id: number;
 
-  description: string;
+    name: string;
 
-  add_date: number;
-  change_date: number;
+    address: string;
+
+    description: string;
+
+    addDate: number;
+
+    changeDate: number;
 }

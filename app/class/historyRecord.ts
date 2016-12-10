@@ -7,7 +7,7 @@ export interface HistoryRecord {
     text: string;
 
     user_id: number;
-    _user_name: number;
+    _user_name: string;
 
     object_type: string;
     object_id: number;

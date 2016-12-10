@@ -3,13 +3,13 @@ export class Tab {
   key: string;
   header: string;
   type: string;
-  args = {};
-  tab_sys: any;
+  args: any;
+  tabSys: any;
 
-  constructor(tab_sys, type, args) {
+  constructor(tabSys, type, args) {
       this.header = 'Loading...';
       this.type = type;
-      this.tab_sys = tab_sys;
+      this.tabSys = tabSys;
       this.args = args;
   }
 

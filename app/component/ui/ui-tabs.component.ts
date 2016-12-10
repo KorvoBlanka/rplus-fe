@@ -1,4 +1,4 @@
-import {Component, ContentChildren, QueryList, } from 'angular2/core';
+import {Component, ContentChildren, QueryList, } from '@angular/core';
 
 import {UITab} from './ui-tab.component';
 
@@ -8,7 +8,7 @@ import {UITab} from './ui-tab.component';
   template: `
     <div class="header">
       <div class="tabs" [class.align-left]="header_mode">
-        <div *ngFor="#tab of tabs" class="tab-header" (click)="selectTab(tab)" [class.active]="tab.active">
+        <div *ngFor="let tab of tabs" class="tab-header" (click)="selectTab(tab)" [class.active]="tab.active">
           <a href="#">{{tab.title}}</a>
         </div>
       </div>

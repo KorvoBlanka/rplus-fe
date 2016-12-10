@@ -1,11 +1,10 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class AnalysisService {
     getObjAnalysis() {
         return OBJ_ANALYSIS;
     }
-
 }
 
 var OBJ_ANALYSIS = {

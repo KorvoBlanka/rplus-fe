@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {Output, EventEmitter} from 'angular2/core';
+import {Component} from '@angular/core';
+import {Output, EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'ui-tag',

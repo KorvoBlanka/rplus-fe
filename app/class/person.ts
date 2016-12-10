@@ -1,16 +1,25 @@
-
 export class Person {
-  id: string;
-  organisation_id: string;
-  agent_id: string;
 
-  name: string;
+    id: number;
 
-  phone: any[] = [];
-  email: any[] = [];
+    name: string;
 
-  info: string;
+    phones: string[];
 
-  add_date: number;
-  change_date: number;
+    emails: string[];
+
+    description: string;
+
+    addDate: string;
+
+    changeDate: number;
+
+    organisationId: number;
+
+    userId: number;
+
+    constructor () {
+        this.phones = [];
+        this.emails = [];
+    }
 }

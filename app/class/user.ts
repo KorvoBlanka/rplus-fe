@@ -1,16 +1,27 @@
-
 export class User {
-  id: string;
-  role: string = 'agent';
-  manager_id: string;
 
-  name: string;
-  photo: string;
-  phone: any[];
-  email: any[];
+    id: number;
 
-  description: string;
+    login: string;
 
-  add_date: number;
-  change_date: number;
+    password: string;
+
+    role: string;
+
+    name: string;
+
+    phones: string[];
+    emails: string[];
+
+    superiorId: number;
+
+    addDate: number;
+
+    changeDate: number;
+
+    constructor () {
+        this.role = 'AGENT';
+        this.phones = [];
+        this.emails = [];
+    }
 }

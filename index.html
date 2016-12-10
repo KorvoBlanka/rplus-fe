@@ -1,30 +1,23 @@
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>R+</title>
 
+    <link type="text/css" rel="stylesheet" href="style.css">
     <link type="text/css" rel="stylesheet" href="css/common_classes.css">
     <link type="text/css" rel="stylesheet" href="css/fonts.css">
     <link type="text/css" rel="stylesheet" href="css/icons.css">
     <link type="text/css" rel="stylesheet" href="css/common_colors.css">
     <link type="text/css" rel="stylesheet" href="css/tag_colors.css">
 
-    <style>
-      body {
-        font-family: Segoe UI;
-        font-weight: 400;
-        margin: 0;
-        overflow: hidden;
-      }
-    </style>
-
-    </style>
-
-    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <!-- 1. Load libraries -->
+    <!-- Polyfill for older browsers -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
     <script src="node_modules/systemjs/dist/system.src.js"></script>
-    <script src="node_modules/rxjs/bundles/Rx.js"></script>
-    <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
-    <script src="node_modules/angular2/bundles/http.dev.js"></script>
+    <!-- 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
 
     <!-- пока сделаем так -->
     <!-- -->
@@ -34,23 +27,18 @@
 
 
     <script>
-      //google.charts.load("current", {packages:["corechart", "timeline"], callback: function () {console.log('yay! google is here!')});
-      google.load('visualization', '1.0', { 'packages': ['corechart', 'timeline'], callback: function () {console.log('yay! google is here!')} });
+        //google.charts.load("current", {packages:["corechart", "timeline"], callback: function () {console.log('yay! google is here!')});
+        //google.load('visualization', '1.0', { 'packages': ['corechart', 'timeline'], callback: function () {console.log('yay! google is here!')} });
 
-      System.config({
-        packages: {
-          app: {
-            format: 'register',
-            defaultExtension: 'js'
-          }
-        }
-      });
-
-      System.import('app/boot').then(null, console.error.bind(console));
+        System.import('app').catch(function (err) {
+            console.error(err);
+        });
     </script>
-  </head>
+</head>
 
-  <body>
-    <rplus-app>Loading R+....</rplus-app>
-  </body>
+<body>
+<rplus-app>Loading R+....</rplus-app>
+</body>
 </html>
+
+

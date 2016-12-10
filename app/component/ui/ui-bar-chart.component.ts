@@ -2,7 +2,7 @@ import {
   Component,
   Renderer,
   ElementRef,
-} from 'angular2/core';
+} from '@angular/core';
 
 @Component({
   selector: 'ui-bar-chart',
@@ -37,7 +37,7 @@ export class UIBarChart {
   draw() {
 
     // Create the data table.
-    var data = google.visualization.arrayToDataTable(this.data);
+    //var data = google.visualization.arrayToDataTable(this.data);
 
     var options = {
       legend: { position: "none" },
@@ -47,10 +47,11 @@ export class UIBarChart {
       }
     };
 
-    var chart = new google.visualization.BarChart(this.container);
+    //var chart = new google.visualization.BarChart(this.container);
 
 
-    chart.draw(data, options);
+
+    //chart.draw(data, options);
 
   }
 

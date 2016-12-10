@@ -1,6 +1,6 @@
 import {
-  Component,
-} from 'angular2/core';
+    Component, OnInit, AfterViewInit,
+} from '@angular/core';
 
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
@@ -9,187 +9,186 @@ import {PersonService} from '../../service/person.service';
 import {Tab} from '../../class/tab';
 import {Person} from '../../class/person';
 
-import {UISelect} from '../ui/ui-select.component';
-
-import {PersonDigestComponent} from '../digest/person-digest.component';
-
 import {Observable} from 'rxjs/Observable';
+import {User} from "../../class/user";
+import {UserService} from "../../service/user.service";
 
 
 @Component({
-  selector: 'tab-list-person',
-  inputs: ['tab'],
-  directives: [PersonDigestComponent, UISelect],
-  template: `
-
-  <div class="header-label-abs">
-    {{ tab.header }}
-  </div>
-
-  <div class="search-form" [class.table-mode]="table_mode">
-    <div class="search-box">
-      <input type="text" class="" placeholder="" style="height: 28px; width: 100%;"
-        [(ngModel)]="searchQuery" (keyup)="searchParamChanged($event)"
-      >
-      <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
-    </div>
-    <div class="tool-box">
-
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {val: 1, label: 'Агент 1_1'},
-            {val: 2, label: 'Агент 1_2'},
-            {val: 3, label: 'Агент 1_3'},
-            {val: 4, label: 'Агент 1_4'},
-            {val: 5, label: 'Агент 1_5'}
-          ]"
-          [label]="'Агент 1_1'"
-          [config]="{icon: 'icon-person', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
-
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {val: 0, label: 'Все'},
-            {val: 1, label: 'Красный', icon: 'icon-circle tag-red'},
-            {val: 2, label: 'Оранжевый', icon: 'icon-circle tag-orange'},
-            {val: 3, label: 'Желтый', icon: 'icon-circle tag-yellow'},
-            {val: 4, label: 'Зеленый', icon: 'icon-circle tag-green'},
-            {val: 5, label: 'Голубой', icon: 'icon-circle tag-blue'},
-            {val: 6, label: 'Лиловый', icon: 'icon-circle tag-violet'},
-            {val: 7, label: 'Серый', icon: 'icon-circle tag-gray'}
-          ]"
-          [label]="'Все'"
-          [config]="{icon: 'icon-tag', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
-
-      <div class="inline-select">
-        <ui-select class="view-value edit-value"
-          [values] = "[
-            {val: 1, label: '1 день'},
-            {val: 2, label: '3 дня'},
-            {val: 3, label: 'Неделя'},
-            {val: 4, label: '2 недели'},
-            {val: 5, label: 'Месяц'},
-            {val: 6, label: '3 месяца'},
-            {val: 7, label: 'Все'}
-          ]"
-          [label]="'3 месяца'"
-          [config]="{icon: 'icon-month', draw_arrow: true}"
-        >
-        </ui-select>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="person-list-wrapper">
-    <div class="scroll-wrapper">
-
-      <div class="button"
-        (click)="addPerson()"
-      >
-        Добавить контакт
-      </div>
-
-      <person-digest *ngFor="#p of persons | async"
-        [person]="p"
-      >
-      </person-digest>
-
-    </div>
-  </div>
-  `,
-  styles: [`
-
-    .search-form {
-      width: 50%;
-      min-width: 800px;
-      margin: 0 auto;
-      margin-top: 10px;
-      background: #fff;
-      z-index: 1;
-    }
-
-    .tool-box {
-      height: 30px;
-      margin: 0 12px;
-    }
-
-    .search-box {
-      position: relative;
-      margin: 12px;
-      margin-bottom: 8px;
-    }
-
-    .person-list-wrapper {
-      padding-top: 25px;
-      max-width: 1200px;
-      margin: 0 auto;
-      height: 100%;
-      width: 100%;
-    }
-
-    .scroll-wrapper {
-      height: calc(100% - 115px);
-      overflow-y: auto;
-    }
-
-    .inline-select {
-      display: inline-block;
-      height: 20px;
-      padding: 0 15px;
-      font-size: 14;
-      color: #666;
-    }
-
-    .button {
-      text-align: center;
-      padding: 5px 15px;
-      background-color: #3366cc;
-      color: #fff;
-      cursor: pointer;
-    }
-  `]
+    selector: 'tab-list-person',
+    inputs: ['tab'],
+    styles: [`
+        .search-form {
+            width: 50%;
+            min-width: 800px;
+            margin: 0 auto;
+            margin-top: 10px;
+            background: #fff;
+            z-index: 1;
+        }
+    
+        .tool-box {
+            height: 30px;
+            margin: 0 12px;
+        }
+    
+        .search-box {
+            position: relative;
+            margin: 12px 12px 8px 12px;
+        }
+    
+        .person-list-wrapper {
+            padding-top: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
+            width: 100%;
+        }
+    
+        .scroll-wrapper {
+            height: calc(100% - 115px);
+            overflow-y: auto;
+        }
+    
+        .inline-select {
+            display: inline-block;
+            height: 20px;
+            padding: 0 15px;
+            font-size: 14px;
+            color: #666;
+        }
+    
+        .button {
+            text-align: center;
+            padding: 5px 15px;
+            background-color: #3366cc;
+            color: #fff;
+            cursor: pointer;
+        }
+    `],
+    template: `
+        <div class="header-label-abs">{{ tab.header }}</div>
+        <div class="search-form" [class.table-mode]="tableMode">
+            <div class="search-box">
+                <input type="text" class="" placeholder="" style="height: 28px; width: 100%;"
+                    [(ngModel)]="searchQuery" (keyup)="searchParamChanged($event)"
+                >
+                <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
+            </div>
+            <div class="tool-box">
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options] = "agentOpts"
+                        [value]="0"
+                        [config]="{icon: 'icon-person', drawArrow: true}"
+                        (onChange)="userId = $event.selected.value; searchParamChanged()"
+                    >
+                    </ui-select>
+                </div>
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options] = "[
+                            {value: 0, label: 'Все'},
+                            {value: 1, label: 'Красный', icon: 'icon-circle tag-red'},
+                            {value: 2, label: 'Оранжевый', icon: 'icon-circle tag-orange'},
+                            {value: 3, label: 'Желтый', icon: 'icon-circle tag-yellow'},
+                            {value: 4, label: 'Зеленый', icon: 'icon-circle tag-green'},
+                            {value: 5, label: 'Голубой', icon: 'icon-circle tag-blue'},
+                            {value: 6, label: 'Лиловый', icon: 'icon-circle tag-violet'},
+                            {value: 7, label: 'Серый', icon: 'icon-circle tag-gray'}
+                        ]"
+                        [value]="0"
+                        [config]="{icon: 'icon-tag', drawArrow: true}"
+                    >
+                    </ui-select>
+                </div>
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options] = "[
+                            {value: 1, label: '1 день'},
+                            {value: 2, label: '3 дня'},
+                            {value: 3, label: 'Неделя'},
+                            {value: 4, label: '2 недели'},
+                            {value: 5, label: 'Месяц'},
+                            {value: 6, label: '3 месяца'},
+                            {value: 7, label: 'Все'}
+                        ]"
+                        [value]="6"
+                        [config]="{icon: 'icon-month', drawArrow: true}"
+                    >
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="person-list-wrapper">
+            <div class="scroll-wrapper">
+                <div class="button"
+                    (click)="addPerson()"
+                >
+                Добавить контакт
+                </div>
+                <digest-person *ngFor="let p of persons | async"
+                    [person]="p"
+                >
+                </digest-person>
+            </div>
+        </div>
+    `
 })
 
-  export class TabListPersonComponent {
+export class TabListPersonComponent implements OnInit, AfterViewInit {
     public tab: Tab;
 
     persons: Observable<Person[]>;
     page: number = 0;
     perPage: number = 32;
+    userId: number;
     searchQuery: string = "";
+    agentOpts = [{
+        value: 0,
+        label: '-'
+    }];
 
-    constructor(private _configService: ConfigService, private _hubService: HubService, private _personService: PersonService) {
-      setTimeout(() => { this.tab.header = 'Контакты'; });
+    constructor(private _configService: ConfigService, private _hubService: HubService, private _personService: PersonService, private _userService: UserService) {
+        setTimeout(() => {
+            this.tab.header = 'Контакты';
+        });
     }
 
     ngOnInit() {
-      this.persons = this._personService.persons$;
-      this._personService.list(0, this.perPage, "", "");
+        this.persons = this._personService.persons$;
+        this._personService.list(0, this.perPage, null, null, "");
+
+        this._userService.list("AGENT", null, "").then(agents => {
+            for (let i = 0; i < agents.length; i++) {
+                var a = agents[i];
+                this.agentOpts.push({
+                    value: a.id,
+                    label: a.name
+                });
+            }
+        });
+    }
+
+    ngAfterViewInit() {
+
     }
 
     scroll(e) {
-      if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
 
-      }
+        }
     }
 
     addPerson() {
-      var tab_sys = this._hubService.getProperty('tab_sys');
-      tab_sys.addTab('person', { person: new Person() });
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('person', {person: new Person()});
     }
 
     searchParamChanged() {
-      this.page = 0;
-      this._personService.list(0, this.perPage, "", this.searchQuery);
+        this.page = 0;
+        this._personService.list(0, this.perPage, this.userId, null, this.searchQuery);
     }
 
 
-  }
+}

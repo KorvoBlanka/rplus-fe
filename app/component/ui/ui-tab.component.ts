@@ -1,7 +1,6 @@
-import {Component, SimpleChange} from 'angular2/core';
-import {Output, EventEmitter} from 'angular2/core';
+import {Component, SimpleChange} from '@angular/core';
+import {Output, EventEmitter} from '@angular/core';
 
-import {UITabs} from './ui-tabs.component';
 
 @Component({
   selector: 'ui-tab',

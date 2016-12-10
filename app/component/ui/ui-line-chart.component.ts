@@ -1,7 +1,8 @@
 import {
   Component,
   ElementRef,
-} from 'angular2/core';
+} from '@angular/core';
+//import {google} from "./chart/ui-chart";
 
 @Component({
   selector: 'ui-line-chart',
@@ -21,6 +22,7 @@ export class UILineChart {
     public title: string;
     public data: any[];
     container: any;
+    google: any;
 
     constructor(private _elem: ElementRef) {
         this.data = [];
@@ -37,7 +39,7 @@ export class UILineChart {
     draw() {
 
         // Create the data table.
-        var data = google.visualization.arrayToDataTable(this.data);
+        //var data = google.visualization.arrayToDataTable(this.data);
 
         // Set chart options
         var options = {
@@ -55,8 +57,8 @@ export class UILineChart {
             }
         };
 
-        var chart = new google.visualization.LineChart(this.container);
-        chart.draw(data, options);
+        //var chart = new google.visualization.LineChart(this.container);
+        //chart.draw(data, options);
 
     }
 

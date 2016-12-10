@@ -1,42 +1,13 @@
-import {Component} from 'angular2/core';
-
-import {HubService} from '../service/hub.service';
+import {Component, AfterContentInit} from '@angular/core';
 
 import {Tab} from '../class/tab';
-import {TabRootComponent} from './tab/tab-root.component';
+import {HubService} from "../service/hub.service";
+
+
 
 @Component({
-  selector: 'tab-system',
-  inputs: ['n_width'],
-  template: `
-    <div class="tab-list">
-
-      <div class="header">
-        <div class="tab-button">
-        </div>
-      </div>
-
-      <div class="tab" *ngFor="#tab of tabs"
-        [class.selected]="tab === selected_tab"
-        (click)="selectTab(tab)">
-        <div class="tab-button close-button" (click)="closeTab(tab)"><span class="icon-cancel"></span></div>
-        <div class="vertical-text-container" [style.height]="vt_height">
-          <div class="vertical-text">{{ tab.header }}</div>
-        </div>
-        <div class="tab-icon" style="display: block;"><span class="icon-start"></span></div>
-      </div>
-      <div class="tab-button" (click)="addTab('main', {})">
-        <span class="icon-add"></span>
-      </div>
-    </div>
-    <div class="tab-content">
-      <tab-root *ngFor="#tab of tabs"
-        [hidden]="tab !== selected_tab"
-        [tab]="tab">
-      </tab-root>
-    </div>
-  `,
-  styles: [`
+    selector: 'tab-system',
+    styles: [`
     .tab-content {
       margin-left: 30px;
     }
@@ -53,11 +24,11 @@ import {TabRootComponent} from './tab/tab-root.component';
       border-bottom: 1px solid #aaa;
       cursor: pointer;
     }
-
+    
     .tab:hover {
       background-color: #efefef;
     }
-
+    
     .tab.selected {
       background-color: #fff;
       border-bottom: 1px solid #fff;
@@ -97,68 +68,94 @@ import {TabRootComponent} from './tab/tab-root.component';
       height: 30px;
       border-bottom: 1px solid rgba(0,0,0,.2);
     }
-  `],
-  directives: [TabRootComponent],
+    `],
+    template: `
+    <div class="tab-list">
+    
+      <div class="header">
+        <div class="tab-button">
+        </div>
+      </div>
+    
+      <div class="tab" *ngFor="let tab of tabs"
+        [class.selected]="tab === selectedTab"
+        (click)="selectTab(tab)">
+        <div class="tab-button close-button" (click)="closeTab(tab)"><span class="icon-cancel"></span></div>
+        <div class="vertical-text-container" [style.height]="vtHeight">
+          <div class="vertical-text">{{ tab.header }}</div>
+        </div>
+        <div class="tab-icon" style="display: block;"><span class="icon-start"></span></div>
+      </div>
+      <div class="tab-button" (click)="addTab('main', {})">
+        <span class="icon-add"></span>
+      </div>
+    </div>
+    <div class="tab-content">
+      <tab-root *ngFor="let tab of tabs"
+        [hidden]="tab !== selectedTab"
+        [tab]="tab">
+      </tab-root>
+    </div>
+    `
 })
 
-export class TabSystemComponent {
-  public n_width: number;
-  public selected_tab: Tab;
-  public tabs: Tab[] = [];
-  public tab_height = 0;
-  public vt_height = 0;
-  to: any;
+export class TabSystemComponent implements AfterContentInit{
+    public selectedTab: Tab;
+    public tabs: Tab[] = [];
+    public tabHeight = 0;
+    public vtHeight = 0;
+    to: any;
 
-  constructor(private _hubService: HubService) {
-    _hubService.setProperty('tab_sys', this);
-  };
+    constructor(private _hubService: HubService) {
+        _hubService.setProperty('tab_sys', this);
+    };
 
-  ngAfterContentInit() {
-    this.addTab('main', {});
-  }
-
-  calcTabHeight() {
-    var nominal_height = 160;
-    var minimal_height = 60;
-    var h = document.body.clientHeight - (31 * 2);  // - 2 buttons
-    this.tab_height = (h - this.tabs.length) / this.tabs.length;
-
-    if (this.tab_height > nominal_height) this.tab_height = nominal_height;
-    if (this.tab_height < minimal_height) this.tab_height = minimal_height;
-
-    this.vt_height = this.tab_height - 60;
-  }
-
-  selectTab(tab: Tab) {
-    this.selected_tab = tab;
-  }
-
-  addTab(type, args) {
-    if (this.tabs.length < 10) {
-      var new_tab = new Tab(this, type, args);
-      this.tabs.push(new_tab);
-
-      this.calcTabHeight();
-      this.selected_tab = new_tab;
-    }
-  }
-
-  closeTab(tab: Tab) {
-    var idx = this.tabs.indexOf(tab);
-    this.tabs.splice(idx, 1);
-
-    if (this.tabs.length == 0) {
-      this.addTab('main', {});
-    } else {
-      if(this.selected_tab == tab) {
-        this.selected_tab = this.tabs[idx ? (idx - 1) : 0];
-      }
+    ngAfterContentInit() {
+        this.addTab('main', {});
     }
 
-    clearTimeout(this.to);
-    this.to = setTimeout(() => {
-      this.calcTabHeight();
-    }, 500);
+    calcTabHeight() {
+        var nominalHeight = 160;
+        var minimalHeight = 60;
+        var h = document.body.clientHeight - (31 * 2);  // - 2 buttons
+        this.tabHeight = (h - this.tabs.length) / this.tabs.length;
 
-  }
+        if (this.tabHeight > nominalHeight) this.tabHeight = nominalHeight;
+        if (this.tabHeight < minimalHeight) this.tabHeight = minimalHeight;
+
+        this.vtHeight = this.tabHeight - 60;
+    }
+
+    selectTab(tab: Tab) {
+        this.selectedTab = tab;
+    }
+
+    addTab(type, args) {
+        if (this.tabs.length < 10) {
+            var newTab = new Tab(this, type, args);
+            this.tabs.push(newTab);
+
+            this.calcTabHeight();
+            this.selectedTab = newTab;
+        }
+    }
+
+    closeTab(tab: Tab) {
+        var idx = this.tabs.indexOf(tab);
+        this.tabs.splice(idx, 1);
+
+        if (this.tabs.length == 0) {
+            this.addTab('main', {});
+        } else {
+            if(this.selectedTab == tab) {
+                this.selectedTab = this.tabs[idx ? (idx - 1) : 0];
+            }
+        }
+
+        clearTimeout(this.to);
+        this.to = setTimeout(() => {
+            this.calcTabHeight();
+        }, 500);
+
+    }
 }

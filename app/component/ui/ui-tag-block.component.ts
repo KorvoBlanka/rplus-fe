@@ -1,12 +1,12 @@
-import {Component} from 'angular2/core';
-import {Output, EventEmitter} from 'angular2/core';
+import {Component} from '@angular/core';
+import {Output, EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'ui-tag-block',
   inputs: ['value'],
   template: `
     <div class="ui-tag-block">
-      <div *ngFor="#tag of tags" class="tag" 
+      <div *ngFor="let tag of tags" class="tag" 
         [style.background-color]="tag.color"
         [style.border-color]="getBorderColor(tag)"
         (click)="select(tag)"

@@ -1,4 +1,5 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
+import {Http, Headers, Response} from '@angular/http';
 
 import {ConfigService} from './config.service';
 
@@ -6,7 +7,6 @@ import {Request} from '../class/request';
 import {Person} from '../class/person';
 import {Organisation} from '../class/organisation';
 
-import {Http, Headers, Response} from 'angular2/http';
 
 @Injectable()
 export class RequestService {
@@ -17,7 +17,7 @@ export class RequestService {
     this.RS = this._configService.getConfig().RESTServer;
   };
 
-  list(page: number, perPage: number, personId: string, searchQuery: string) {
+  list(page: number, perPage: number, personId: number, searchQuery: string) {
 
     console.log('request list');
 

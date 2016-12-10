@@ -2,7 +2,7 @@ import {
   Component,
   Renderer,
   ElementRef,
-} from 'angular2/core';
+} from '@angular/core';
 
 @Component({
   selector: 'ui-pie-chart',
@@ -37,7 +37,7 @@ export class UIPieChart {
     draw() {
 
         // Create the data table.
-        var data = google.visualization.arrayToDataTable(this.data);
+        //var data = google.visualization.arrayToDataTable(this.data);
 
         var options = {
             title: this.title,
@@ -48,10 +48,10 @@ export class UIPieChart {
               labeledValueText: 'value'
             }
         };
-        var chart = new google.visualization.PieChart(this.container);
+        //var chart = new google.visualization.PieChart(this.container);
 
 
-        chart.draw(data, options);
+        //chart.draw(data, options);
 
     }
 

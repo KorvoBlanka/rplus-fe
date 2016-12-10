@@ -1,9 +1,10 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
+import {Http, Headers, Response} from '@angular/http';
 
 import {ConfigService} from './config.service';
 
 import {Photo} from '../class/photo';
-import {Http, Headers, Response} from 'angular2/http';
+
 
 @Injectable()
 export class PhotoService {

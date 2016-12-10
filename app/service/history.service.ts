@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 
 import {HistoryRecord} from '../class/historyRecord';
 
@@ -26,7 +26,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: '',
@@ -44,7 +44,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'Описание',
@@ -62,7 +62,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -80,7 +80,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -98,7 +98,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -116,7 +116,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -134,7 +134,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -152,7 +152,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -170,7 +170,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -188,7 +188,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -206,7 +206,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -224,7 +224,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -242,7 +242,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -260,7 +260,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -278,7 +278,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -296,7 +296,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -314,7 +314,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -332,7 +332,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',
@@ -350,7 +350,7 @@ var OBJ_HISTORY: HistoryRecord[] = [
         user_id: 0,
         _user_name: 'Агент 1',
 
-        object_type: 'realty',
+        object_type: 'offer',
         object_id: 0,
 
         property_name: 'цена',

@@ -1,9 +1,2 @@
-System.register([], function(exports_1) {
-    "use strict";
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
+"use strict";
 //# sourceMappingURL=photo.js.map

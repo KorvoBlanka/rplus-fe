@@ -1,10 +1,8 @@
-import {Component} from 'angular2/core';
-
-import {FormatDatePipe} from '../../pipe/format-date.pipe';
+import {Component} from '@angular/core';
 
 
 import {Tab} from '../../class/tab';
-import {Realty} from '../../class/realty';
+import {Offer} from '../../class/offer';
 import {Person} from '../../class/person';
 import {Organisation} from '../../class/organisation';
 import {Request} from '../../class/request';
@@ -14,617 +12,558 @@ import {User} from '../../class/user';
 
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
-import {RealtyService} from '../../service/realty.service';
+import {OfferService} from '../../service/offer.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service'
 import {PersonService} from '../../service/person.service';
-import {UserService} from '../../service/settings/user.service';
+import {UserService} from '../../service/user.service';
 import {AnalysisService} from '../../service/analysis.service'
-
-import {UISelect} from '../ui/ui-select.component';
-import {UICarousel} from '../ui/ui-carousel.component';
-import {UITagBlock} from '../ui/ui-tag-block.component';
-import {UITabs} from '../ui/ui-tabs.component';
-import {UITab} from '../ui/ui-tab.component';
-import {UIPieChart} from '../ui/ui-pie-chart.component';
-import {UILineChart} from '../ui/ui-line-chart.component';
-import {UIBarChart} from '../ui/ui-bar-chart.component';
-
-import {RealtyDigestComponent} from '../digest/realty-digest.component';
-import {RequestDigestComponent} from '../digest/request-digest.component';
-import {HistoryDigestComponent} from '../digest/history-digest.component';
-import {GoogleMapComponent, GoogleMapMarkerComponent} from '../google-map.component';
 
 
 @Component({
     selector: 'tab-request',
     inputs: ['tab'],
-    pipes: [FormatDatePipe],
-    directives: [
-      RealtyDigestComponent,
-      RequestDigestComponent,
-      HistoryDigestComponent,
-      GoogleMapComponent,
-      GoogleMapMarkerComponent,
-      UISelect,
-      UICarousel,
-      UITagBlock,
-      UITabs,
-      UITab,
-      UIPieChart,
-      UILineChart,
-      UIBarChart
-    ],
+    styles: [`
+        .search-form {
+            position: absolute;
+            width: 50%;
+            margin-left: 25%;
+            margin-top: 10px;
+            background: #fff;
+            z-index: 1;
+            border: 1px solid #eee;
+        }
+
+        .search-form > input {
+            height: 28px;
+            width: 100%;
+        }
+
+        .with-button {
+            overflow: hidden;
+        }
+
+        .with-button > input {
+            float: left;
+            width: calc(100% - 120px);
+        }
+
+        .search-button {
+            float: right;
+            width: 120px;
+            height: 24px;
+            background-color: #3366cc;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .search-form.table-mode {
+            border: 1px solid #fff;
+        }
+
+        .tool-box {
+            height: 30px;
+            margin: 0 12px;
+        }
+
+        .search-box {
+            position: relative;
+            margin: 12px;
+            margin-bottom: 8px;
+        }
+
+        .pane {
+            float: left;
+            width: 370px;
+            height: 100%;
+            border-right: 1px solid #ccc;
+        }
+        
+        .work-area {
+            float: left;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .tab-button {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            font-size: 12px !important;
+            cursor: pointer;
+            color: #666;
+        }
+      
+        .fixed-button {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .request-prop {
+            overflow-y: scroll;
+        }
+
+        .view-group {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+      
+        .view-label {
+            white-space: nowrap;
+            color: #bbb;
+            font-size: 15px;
+        }
+        
+        .view-value {
+            width: 100%;
+            text-align: right;
+            color: #696969;
+            font-size: 15px;
+    
+            height: 19px; /* костыль */
+        }
+        
+        .edit-value {
+            width: 100%;
+            text-align: right;
+            color: #696969;
+            font-size: 15px;
+            height: 19px; /* костыль */
+            border: none !important;
+            border-bottom: 1px solid #E5E5E5 !important;
+        }
+
+        .text-value {
+            height: 3rem;
+            border: 1px solid #E5E5E5 !important;
+        }
+
+        .edit-block > .view-group {
+            margin-bottom: 26px;
+        }
+
+        .tile-x {
+            margin-right: 10px;
+            width: 150px;
+            height: 150px;
+            color: #fff;
+            position: relative;
+        }
+
+        .tile {
+            margin: 0;
+            margin-right: 10px;
+        }
+        
+        .icon {
+            line-height: 64px;
+        }
+        
+        .tile-content.iconic .icon {
+            width: 128px;
+            margin-left: -64px;
+        }
+        
+        .chart-block {
+            overflow:hidden;
+            border: 1px solid #e5e5e5;
+        }
+      
+        .chart-header {
+            width: 100%;
+            height: 30px;
+            border-bottom: 1px solid #e5e5e5;
+            line-height: 30px;
+            color: #fff;
+        }
+
+        .array-container > span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .array-container > input {
+            margin-bottom: 5px;
+        }
+    `],
     template: `
 
-      <div class="tab-button fixed-button" (click)="toggleLeftPane()">
-        <span [ngClass]="{'icon-arrow-right': pane_hidden, 'icon-arrow-left': !pane_hidden}"></span>
-      </div>
-
-      <div class="new-request"
-        [hidden]="!new_request"
-      >
-        <div class="search-form" [class.table-mode]="table_mode">
-          <div class="search-box with-button">
-            <input type="text" class="" placeholder="" [(ngModel)]="query_text">
-            <div class="search-button" (click)="createRequest()">Создать</div>
-          </div>
-          <div class="tool-box">
-            <div class="pull-left">
-            </div>
-            <div class="pull-right">
-              <a (click)="toggleDraw()" [hidden]="table_mode">
-                <span
-                  [ngClass]="{'icon-cancel': map_draw_allowed, 'icon-edit': !map_draw_allowed}"
-                ></span>
-              </a>
-            </div>
-          </div>
+        <div class="tab-button fixed-button" (click)="toggleLeftPane()">
+            <span [ngClass]="{'icon-arrow-right': paneHidden, 'icon-arrow-left': !paneHidden}"></span>
         </div>
-
-        <!-- сильное колдунство, св-во right получаем из HubService -->
-        <!-- TODO: сделать это отдельным компонентом -->
-        <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
-          <div style="width: 330px; background-color: #fff;">
-            <div class="header">
-              <input type="text" style="width: 280px; margin-left: 10px; border: none;"
-                (keydown)="offer_search_keydown($event)"
-               >
-               <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
-                 (click)="offer_search()"
-               ></span>
-            </div>
-            <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="pane_height">
-              <reaty-digest *ngFor="#realty of offers"
-                [realty]="realty"
-                [compact]="true"
-               >
-              </reaty-digest>
-            </div>
-          </div>
-        </div>
-
-        <google-map
-          [latitude]="lat"
-          [longitude]="lon"
-          [zoom]="zoom"
-          [draw_allowed]="map_draw_allowed"
-          (drawFinished)="drawFinished($event)"
+        
+        <div class="new-request"
+            [hidden]="!newRequest"
         >
-        </google-map>
-      </div>
-
-      <div class="request"
-        (window:resize)="onResize($event)"
-        [hidden]="new_request"
-      >
-
-    <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
-
-        <div class="pane" [hidden]="pane_hidden" [style.width.px]="pane_width">
-          <div class="header">
-            <div class="header-label">
-              {{ tab.header }}
+            <div class="search-form" [class.table-mode]="tableMode">
+                <div class="search-box with-button">
+                    <input type="text" class="" placeholder="" [(ngModel)]="queryText">
+                    <div class="search-button" (click)="createRequest()">Создать</div>
+                </div>
+                <div class="tool-box">
+                    <div class="pull-left">
+                    </div>
+                    <div class="pull-right">
+                        <a (click)="toggleDraw()" [hidden]="tableMode">
+                            <span
+                                [ngClass]="{'icon-cancel': mapDrawAllowed, 'icon-edit': !mapDrawAllowed}"
+                            ></span>
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="request-prop" [style.height]="pane_height">
-
-            <div style="margin: 5px;">
-
-              <div class="pull-container">
-                <div class="font-sz-2 pull-left">Источник: звонок<span class="color-g1"><a href="" target="_blank"></a></span></div>
-                <div class="font-sz-1 color-g2 pull-right"> {{ request.add_date | formatDate }} </div>
-              </div>
-
-              <hr>
-
-              <div class="pull-container" style="margin: 0 10px;">
-                <div class="pull-right" [hidden]="edit_enabled" (click)="toggleEdit()"><a href="#" >Изменить</a></div>
-                <div class="pull-right" [hidden]="!edit_enabled" (click)="save()"><a href="#" >Готово</a></div>
-              </div>
-
-          <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: НАЧАЛО -->
-
-              <div class="edit-block" [hidden]="!edit_enabled" style="margin: 20px 10px;">
-
-                <div class="view-group">
-                  <span class="view-label">Контакт</span>
-                  <span class="view-value">{{ person.name }}</span>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Договор</span>
-                  <span class="view-value"> #4242421365 от 08.02.22</span>
-                </div>
-                <br>
-
-                <div class="view-group">
-                  <span class="view-label">Ответственный</span>
-                  <ui-select class="view-value edit-value"
-                    [values] = "agent_opts"
-                    [label]="agent.name"
-                    (valueChange)="agentChanged($event)"
-                  >
-                  </ui-select>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label">Статус</span>
-                  <ui-select class="view-value edit-value"
-                    [values] = "[
-                      {val: 1, label: 'Не активен'},
-                      {val: 2, label: 'Активен'},
-                      {val: 3, label: 'В работе'},
-                      {val: 4, label: 'Приостановлен'},
-                      {val: 5, label: 'Архив'}
-                    ]"
-                    [label]="request.state_code"
-                    (valueChange)="log($event)"
-                  >
-                  </ui-select>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label">Стадия</span>
-                  <ui-select class="view-value edit-value"
-                    [values] = "[
-                      {val: 1, label: 'Первичный контакт'},
-                      {val: 2, label: 'Заключение договора'},
-                      {val: 3, label: 'Показ'},
-                      {val: 4, label: 'Подготовка договора'},
-                      {val: 5, label: 'Принятие решения'},
-                      {val: 6, label: 'Переговоры'},
-                      {val: 7, label: 'Сделка'}
-                    ]"
-                    [label]="'Первичный контакт'"
-                    (valueChange)="log($event)"
-                  >
-                  </ui-select>
-                </div>
-
-                <br>
-                <div class="view-group">
-                  <span class="view-label">Запрос</span>
-                  <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.request">
-                </div>
-                <br>
-
-                <div class="view-group" style="flex-wrap: wrap;">
-                  <span class="view-label">Иформация</span>
-                  <textarea class="view-value text-value" placeholder="" [(ngModel)]="request.info" style="text-align: left;"></textarea>
-                </div>
-
-              </div>
-
-          <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: КОНЕЦ -->
-          <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
-
-              <div class="view-block" [hidden]="edit_enabled" style="margin: 20px 10px;">
-
-                <div class="view-group">
-                  <span class="view-label">Контакт</span>
-                  <span class="view-value">{{ person.name }}</span>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Договор</span>
-                  <span class="view-value"> #4242421365 от 08.02.22</span>
-                </div>
-                <br>
-
-                <div class="view-group">
-                  <span class="view-label">Ответственный</span>
-                  <span class="view-value"> {{ agent.name }} </span>
-                </div>
-
-                <div class="view-group">
-                  <span class="view-label">Статус</span>
-                  <span class="view-value"> Активен</span>
-                </div>
-                <div class="view-group">
-                  <span class="view-label">Стадия</span>
-                  <span class="view-value"> {{ request.state_code }} </span>
-                </div>
-
-                <br>
-                <div class="view-group">
-                  <span class="view-label pull-left">Запрос</span>
-                  <span class="view-value"> {{ request.request }}</span>
-                </div>
-                <br>
-
-                <div class="view-group">
-                  <span class="view-label pull-left">Информация</span>
-                  <span class="view-value" style="height: initial;"> {{ request.info }} </span>
-                </div>
-
-              </div>
-
-          <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
-
-              <div style="margin-bottom: 20px;">
-                <div class="view-group">
-                  <span class="icon-tag"> Тэги</span>
-                </div>
-                <ui-tag-block
-                  [value] = "person.tag"
-                  (valueChange) = "person.tag = $event.value"
-                ></ui-tag-block>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-    <!-- Левая СТВОРКА: КОНЕЦ -->
-    <!-- РАБОЧАЯ ОБЛАСТЬ: НАЧАЛО -->
-
-        <div class="work-area" [style.width.px]="map_width">
-          <ui-tabs
-            [header_mode]="!pane_hidden"
-          >
-            <ui-tab
-              [title]="'Предложения'"
-              (tabSelect)="offersSelected()"
-            >
-
-              <!-- сильное колдунство, св-во right получаем из HubService -->
-              <!-- TODO: сделать это отдельным компонентом -->
-              <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+        
+            <!-- сильное колдунство, св-во right получаем из HubService -->
+            <!-- TODO: сделать это отдельным компонентом -->
+            <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
                 <div style="width: 330px; background-color: #fff;">
-                  <div class="header">
-                    <input type="text" style="width: 280px; margin-left: 10px; border: none;"
-                      (keydown)="offer_search_keydown($event)"
-                     >
-                     <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
-                       (click)="offer_search()"
-                     ></span>
-                  </div>
-                  <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="pane_height">
-                    <reaty-digest *ngFor="#realty of offers"
-                      [realty]="realty"
-                      [compact]="true"
-                     >
-                    </reaty-digest>
-                  </div>
+                    <div class="header">
+                        <input type="text" style="width: 280px; margin-left: 10px; border: none;"
+                            (keydown)="offer_search_keydown($event)"
+                        >
+                        <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
+                            (click)="offer_search()"
+                        ></span>
+                    </div>
+                    <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
+                        <digest-offer *ngFor="let offer of offers"
+                            [offer]="offer"
+                            [compact]="true"
+                        >
+                        </digest-offer>
+                    </div>
                 </div>
-              </div>
-              <google-map
+            </div>
+        
+            <google-map
                 [latitude]="lat"
                 [longitude]="lon"
                 [zoom]="zoom"
-                [polygone_points]="search_area"
-              >
-                <t *ngFor="#r of offers">
-                <google-map-marker
-                  *ngIf="r.location"
-                  (click)="markerClick(r)"
-                  [is_selected]="r.selected"
-                  [latitude]="parseFloat(r.location.lat)"
-                  [longitude]="parseFloat(r.location.lon)"
-                  [info_str]="getRealtyDigest(r)">
-                  [icon_id]="1"
-                </google-map-marker>
-                </t>
-
-              </google-map>
-            </ui-tab>
-
-            <ui-tab [title]="'Аналитика'"
-              (tabSelect)="analysisSelected()"
+                [draw_allowed]="mapDrawAllowed"
+                (drawFinished)="drawFinished($event)"
             >
-              <div class="" style="max-width: 910px; overflow-y: scroll;" [style.height]="pane_height">
-                <div style="padding: 15px;">
-                  <div class="tile bg-gred fg-white">
-                    <div class="tile-content iconic">
-                        <span class="icon">{{ ch1_data_v1 }}</span>
-                    </div>
-                    <span class="tile-label">Всего задач</span>
-                  </div>
-                  <div class="chart-block">
-                    <div class="chart-header bg-gred">
-                      <span style="margin-left: 25px;">Активность</span>
-                    </div>
-                    <div>
-                      <ui-pie-chart
-                        [title]="''"
-                        [data]="ch1_data"
-                      >
-                      </ui-pie-chart>
-                    </div>
-                  </div>
-                </div>
-
-                <div style="padding: 15px;">
-
-                  <div style="float: left; display: flex; flex-direction: column;">
-                    <div class="tile bg-gorange fg-white" style="margin-bottom: 5px;">
-                      <div class="tile-content iconic">
-                          <span class="icon" style="font-size: 48px;">{{ ch4_data_v1 }}</span>
-                      </div>
-                      <span class="tile-label">Всего объявлений</span>
-                    </div>
-                    <div class="tile bg-gorange fg-white" >
-                      <div class="tile-content iconic">
-                          <span class="icon" style="font-size: 48px;">{{ ch4_data_v2 }}</span>
-                      </div>
-                      <span class="tile-label">Потрачено руб.</span>
-                    </div>
-                  </div>
-
-                  <div class="chart-block">
-                    <div class="chart-header bg-gorange">
-                      <span style="margin-left: 25px;">Реклама</span>
-                    </div>
-                    <div>
-                      <ui-bar-chart
-                        [title]="''"
-                        [data]="ch4_data"
-                      >
-                      </ui-bar-chart>
-                    </div>
-                  </div>
-                </div>
-
-                <div style="padding: 15px;">
-                  <div class="tile bg-gblue fg-white">
-                    <div class="tile-content iconic">
-                        <span class="icon">{{ ch2_data_v1 }}</span>
-                    </div>
-                    <span class="tile-label">Всего заявок</span>
-                  </div>
-                  <div class="chart-block">
-                    <div class="chart-header bg-gblue">
-                      <span style="margin-left: 25px;">Заявки</span>
-                    </div>
-                    <div>
-                      <ui-line-chart
-                        [title]="''"
-                        [data]="ch2_data"
-                      >
-                      </ui-line-chart>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div style="padding: 15px;">
-                  <div style="float: left; display: flex; flex-direction: column;">
-                    <div class="tile bg-ggreen fg-white" style="margin-bottom: 5px;">
-                      <div class="tile-content iconic">
-                        <span class="icon">{{ ch3_data_v1 }}</span>
-                      </div>
-                      <span class="tile-label">Успешно</span>
-                    </div>
-                    <div class="tile bg-ggreen fg-white">
-                      <div class="tile-content iconic">
-                        <span class="icon">{{ ch3_data_v2 }}</span>
-                      </div>
-                      <span class="tile-label">Не успешно</span>
-                    </div>
-                  </div>
-                  <div class="chart-block">
-                    <div class="chart-header bg-ggreen">
-                      <span style="margin-left: 25px;">Показы</span>
-                    </div>
-                    <div>
-                      <ui-line-chart
-                        [title]="''"
-                        [data]="ch3_data"
-                      >
-                      </ui-line-chart>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </ui-tab>
-            <ui-tab
-              [title]="'История'"
-              (tabSelect)="historySelected()"
-            >
-
-              <div class="" style="max-width: 910px; overflow-y: scroll;" [style.height]="pane_height">
-                <history-digest *ngFor="#record of history_recs"
-                  [history_record]="record"
-                >
-                </history-digest>
-              </div>
-
-            </ui-tab>
-          </ui-tabs>
-
+            </google-map>
         </div>
 
-    <!-- РАБОЧАЯ ОБЛАСТЬ: КОНЕЦ -->
+        <div class="request"
+            (window:resize)="onResize($event)"
+            [hidden]="newRequest"
+        >
 
-      </div>
-    `,
-    styles: [`
+            <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
 
-      .search-form {
-        position: absolute;
-        width: 50%;
-        margin-left: 25%;
-        margin-top: 10px;
-        background: #fff;
-        z-index: 1;
-        border: 1px solid #eee;
-      }
+            <div class="pane" [hidden]="paneHidden" [style.width.px]="paneWidth">
+                <div class="header">
+                    <div class="header-label">{{ tab.header }}</div>
+                </div>
+                <div class="request-prop" [style.height]="paneHeight">
+                    <div style="margin: 5px;">
+                        <div class="pull-container">
+                            <div class="font-sz-2 pull-left">Источник: звонок<span class="color-g1"><a href="" target="_blank"></a></span></div>
+                            <div class="font-sz-1 color-g2 pull-right"> {{ request.add_date | formatDate }} </div>
+                        </div>
+                        <hr>
 
-      .search-form > input {
-        height: 28px;
-        width: 100%;
-      }
+                        <div class="pull-container" style="margin: 0 10px;">
+                            <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()"><a href="#" >Изменить</a></div>
+                            <div class="pull-right" [hidden]="!editEnabled" (click)="save()"><a href="#" >Готово</a></div>
+                        </div>
 
-      .with-button {
-        overflow: hidden;
-      }
+                        <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: НАЧАЛО -->
+    
+                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 20px 10px;">
+    
+                            <div class="view-group">
+                                <span class="view-label">Контакт</span>
+                                <span class="view-value">{{ person.name }}</span>
+                            </div>
+        
+                            <div class="view-group">
+                                <span class="view-label pull-left">Договор</span>
+                                <span class="view-value"> #4242421365 от 08.02.22</span>
+                            </div>
+                            <br>
+        
+                            <div class="view-group">
+                                <span class="view-label">Ответственный</span>
+                                <ui-select class="view-value edit-value"
+                                    [options] = "agentOpts"
+                                    [value]="agent.id"
+                                    (onChange)="agentChanged($event)"
+                                >
+                                </ui-select>
+                            </div>
+                            <div class="view-group">
+                                <span class="view-label">Статус</span>
+                                <ui-select class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 1, label: 'Не активен'},
+                                        {value: 2, label: 'Активен'},
+                                        {value: 3, label: 'В работе'},
+                                        {value: 4, label: 'Приостановлен'},
+                                        {value: 5, label: 'Архив'}
+                                    ]"
+                                    [value]="1"
+                                    (onChange)="log($event)"
+                                >
+                                </ui-select>
+                            </div>
+                            <div class="view-group">
+                                <span class="view-label">Стадия</span>
+                                <ui-select class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 1, label: 'Первичный контакт'},
+                                        {value: 2, label: 'Заключение договора'},
+                                        {value: 3, label: 'Показ'},
+                                        {value: 4, label: 'Подготовка договора'},
+                                        {value: 5, label: 'Принятие решения'},
+                                        {value: 6, label: 'Переговоры'},
+                                        {value: 7, label: 'Сделка'}
+                                    ]"
+                                    [value]="1"
+                                    (onChange)="log($event)"
+                                >
+                                </ui-select>
+                            </div>
+                            <br>
+                            <div class="view-group">
+                                <span class="view-label">Запрос</span>
+                                <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.request">
+                            </div>
+                            <br>
+                            <div class="view-group" style="flex-wrap: wrap;">
+                                <span class="view-label">Иформация</span>
+                                <textarea class="view-value text-value" placeholder="" [(ngModel)]="request.info" style="text-align: left;"></textarea>
+                            </div>
+                        </div>
 
-      .with-button > input {
-        float: left;
-        width: calc(100% - 120px);
-      }
+                        <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: КОНЕЦ -->
+                        <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
+    
+                        <div class="view-block" [hidden]="editEnabled" style="margin: 20px 10px;">
+                            <div class="view-group">
+                                <span class="view-label">Контакт</span>
+                                <span class="view-value">{{ person.name }}</span>
+                            </div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Договор</span>
+                                <span class="view-value"> #4242421365 от 08.02.22</span>
+                            </div>
+                            <br>
+                            <div class="view-group">
+                                <span class="view-label">Ответственный</span>
+                                <span class="view-value"> {{ agent.name }} </span>
+                            </div>
+                            <div class="view-group">
+                                <span class="view-label">Статус</span>
+                                <span class="view-value"> Активен</span>
+                            </div>
+                            <div class="view-group">
+                                <span class="view-label">Стадия</span>
+                                <span class="view-value"> {{ request.state_code }} </span>
+                            </div>
+                            <br>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Запрос</span>
+                                <span class="view-value"> {{ request.request }}</span>
+                            </div>
+                            <br>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Информация</span>
+                                <span class="view-value" style="height: initial;"> {{ request.info }} </span>
+                            </div>
+                        </div>
 
-      .search-button {
-        float: right;
-        width: 120px;
-        height: 24px;
-        background-color: #3366cc;
-        color: #fff;
-        text-align: center;
-        cursor: pointer;
-      }
+                    <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
 
-      .search-form.table-mode {
-        border: 1px solid #fff;
-      }
+                        <div style="margin-bottom: 20px;">
+                            <div class="view-group">
+                                <span class="icon-tag"> Тэги</span>
+                            </div>
+                            <ui-tag-block
+                                [value] = "person.tag"
+                                (valueChange) = "person.tag = $event.value"
+                            ></ui-tag-block>
+                        </div>
 
-      .tool-box {
-        height: 30px;
-        margin: 0 12px;
-      }
+                    </div>
+                </div>
+            </div>
 
-      .search-box {
-        position: relative;
-        margin: 12px;
-        margin-bottom: 8px;
-      }
+            <!-- Левая СТВОРКА: КОНЕЦ -->
+            <!-- РАБОЧАЯ ОБЛАСТЬ: НАЧАЛО -->
 
-      .pane {
-        float: left;
-        width: 370px;
-        height: 100%;
-        border-right: 1px solid #ccc;
-      }
-      .work-area {
-        float: left;
-        width: 100%;
-        height: 100%;
-      }
-      .tab-button {
-        width: 30px;
-        height: 30px;
-        text-align: center;
-        line-height: 30px;
-        font-size: 12px !important;
-        cursor: pointer;
-        color: #666;
-      }
-      .fixed-button {
-        position: fixed;
-        top: 0;
-        left: 0;
-      }
-
-      .request-prop {
-        overflow-y: scroll;
-      }
-
-      .view-group {
-        margin-bottom: 5px;
-
-        display: flex;
-        justify-content: space-between;
-
-      }
-      .view-label {
-        white-space: nowrap;
-        color: #bbb;
-
-        font-size: 15;
-      }
-      .view-value {
-        width: 100%;;
-        text-align: right;
-        color: #696969;
-        font-size: 15;
-
-        height: 19px; /* костыль */
-      }
-      .edit-value {
-        width: 100%;;
-        text-align: right;
-        color: #696969;
-        font-size: 15;
-
-        height: 19px; /* костыль */
-
-        border: none !important;
-        border-bottom: 1px solid #E5E5E5 !important;
-      }
-
-      .text-value {
-        height: 3rem;
-        border: 1px solid #E5E5E5 !important;
-      }
-
-      .edit-block > .view-group {
-        margin-bottom: 26px;
-      }
-
-      .tile-x {
-        margin-right: 10px;
-        width: 150px;
-        height: 150px;
-        color: #fff;
-        position: relative;
-      }
-
-
-      .tile {
-        margin: 0;
-        margin-right: 10px;
-      }
-      .icon {
-        line-height: 64px;
-      }
-      .tile-content.iconic .icon {
-        width: 128px;
-        margin-left: -64px;
-      }
-      .chart-block {
-        overflow:hidden;
-        border: 1px solid #e5e5e5;
-      }
-      .chart-header {
-        width: 100%;
-        height: 30px;
-        border-bottom: 1px solid #e5e5e5;
-        line-height: 30px;
-        color: #fff;
-      }
-
-      .array-container > span {
-        display: block;
-        margin-bottom: 5px;
-      }
-
-      .array-container > input {
-        margin-bottom: 5px;
-      }
-    `]
+            <div class="work-area" [style.width.px]="mapWidth">
+                <ui-tabs
+                    [header_mode]="!paneHidden"
+                >
+                    <ui-tab
+                        [title]="'Предложения'"
+                        (tabSelect)="offersSelected()"
+                    >
+                        <!-- сильное колдунство, св-во right получаем из HubService -->
+                        <!-- TODO: сделать это отдельным компонентом -->
+                        <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+                            <div style="width: 330px; background-color: #fff;">
+                                <div class="header">
+                                    <input type="text" style="width: 280px; margin-left: 10px; border: none;"
+                                        (keydown)="offer_search_keydown($event)"
+                                    >
+                                    <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
+                                        (click)="offer_search()"
+                                    ></span>
+                                </div>
+                                <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
+                                    <digest-offer *ngFor="let offer of offers"
+                                        [offer]="offer"
+                                        [compact]="true"
+                                    >
+                                    </digest-offer>
+                                </div>
+                            </div>
+                        </div>
+                        <google-map
+                            [latitude]="lat"
+                            [longitude]="lon"
+                            [zoom]="zoom"
+                            [polygone_points]="searchArea"
+                        >
+                            <div *ngFor="let r of offers">
+                                <google-map-marker
+                                    *ngIf="r.location"
+                                    (click)="markerClick(r)"
+                                    [is_selected]="r.selected"
+                                    [latitude]="parseFloat(r.location.lat)"
+                                    [longitude]="parseFloat(r.location.lon)"
+                                    [info_str]="getOfferDigest(r)">
+                                    [icon_id]="1"
+                                </google-map-marker>
+                            </div>
+                        </google-map>
+                    </ui-tab>
+                    <ui-tab [title]="'Аналитика'"
+                        (tabSelect)="analysisSelected()"
+                    >
+                        <div class="" style="max-width: 910px; overflow-y: scroll;" [style.height]="paneHeight">
+                            <div style="padding: 15px;">
+                                <div class="tile bg-gred fg-white">
+                                    <div class="tile-content iconic">
+                                        <span class="icon">{{ ch1_data_v1 }}</span>
+                                    </div>
+                                    <span class="tile-label">Всего задач</span>
+                                </div>
+                                <div class="chart-block">
+                                    <div class="chart-header bg-gred">
+                                        <span style="margin-left: 25px;">Активность</span>
+                                    </div>
+                                    <div>
+                                        <ui-pie-chart
+                                            [title]="''"
+                                            [data]="ch1_data"
+                                        >
+                                        </ui-pie-chart>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding: 15px;">
+                                <div style="float: left; display: flex; flex-direction: column;">
+                                    <div class="tile bg-gorange fg-white" style="margin-bottom: 5px;">
+                                        <div class="tile-content iconic">
+                                            <span class="icon" style="font-size: 48px;">{{ ch4_data_v1 }}</span>
+                                        </div>
+                                        <span class="tile-label">Всего объявлений</span>
+                                    </div>
+                                    <div class="tile bg-gorange fg-white" >
+                                        <div class="tile-content iconic">
+                                            <span class="icon" style="font-size: 48px;">{{ ch4_data_v2 }}</span>
+                                        </div>
+                                        <span class="tile-label">Потрачено руб.</span>
+                                    </div>
+                                </div>
+                                <div class="chart-block">
+                                    <div class="chart-header bg-gorange">
+                                        <span style="margin-left: 25px;">Реклама</span>
+                                    </div>
+                                    <div>
+                                        <ui-bar-chart
+                                            [title]="''"
+                                            [data]="ch4_data"
+                                        >
+                                        </ui-bar-chart>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding: 15px;">
+                                <div class="tile bg-gblue fg-white">
+                                    <div class="tile-content iconic">
+                                        <span class="icon">{{ ch2_data_v1 }}</span>
+                                    </div>
+                                    <span class="tile-label">Всего заявок</span>
+                                </div>
+                                <div class="chart-block">
+                                    <div class="chart-header bg-gblue">
+                                        <span style="margin-left: 25px;">Заявки</span>
+                                    </div>
+                                    <div>
+                                        <ui-line-chart
+                                            [title]="''"
+                                            [data]="ch2_data"
+                                        >
+                                        </ui-line-chart>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding: 15px;">
+                                <div style="float: left; display: flex; flex-direction: column;">
+                                    <div class="tile bg-ggreen fg-white" style="margin-bottom: 5px;">
+                                        <div class="tile-content iconic">
+                                            <span class="icon">{{ ch3_data_v1 }}</span>
+                                        </div>
+                                        <span class="tile-label">Успешно</span>
+                                    </div>
+                                    <div class="tile bg-ggreen fg-white">
+                                        <div class="tile-content iconic">
+                                            <span class="icon">{{ ch3_data_v2 }}</span>
+                                        </div>
+                                        <span class="tile-label">Не успешно</span>
+                                    </div>
+                                </div>
+                                <div class="chart-block">
+                                    <div class="chart-header bg-ggreen">
+                                        <span style="margin-left: 25px;">Показы</span>
+                                    </div>
+                                    <div>
+                                        <ui-line-chart
+                                            [title]="''"
+                                            [data]="ch3_data"
+                                        >
+                                        </ui-line-chart>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ui-tab>
+                    <ui-tab
+                        [title]="'История'"
+                        (tabSelect)="historySelected()"
+                    >
+                        <div class="" style="max-width: 910px; overflow-y: scroll;" [style.height]="paneHeight">
+                            <digest-history *ngFor="let record of historyRecs"
+                                [historyRecord]="record"
+                            >
+                            </digest-history>
+                        </div>
+                    </ui-tab>
+                </ui-tabs>
+            </div>
+            <!-- РАБОЧАЯ ОБЛАСТЬ: КОНЕЦ -->
+        </div>
+    `
 })
 
 export class TabRequestComponent {
@@ -633,25 +572,25 @@ export class TabRequestComponent {
 
     person: Person = new Person();
 
-    offers: Realty[];
+    offers: Offer[];
 
     agent: User = new User();
-    agent_opts: any[] = [];
+    agentOpts: any[] = [];
 
-    history_recs: HistoryRecord[];
+    historyRecs: HistoryRecord[];
 
-    new_request: boolean = false;
-    edit_enabled: boolean = false;
-    map_draw_allowed: boolean = false;
+    newRequest: boolean = false;
+    editEnabled: boolean = false;
+    mapDrawAllowed: boolean = false;
 
-    pane_hidden: boolean = false;
-    pane_height: number;
-    pane_width: number;
-    map_width: number;
+    paneHidden: boolean = false;
+    paneHeight: number;
+    paneWidth: number;
+    mapWidth: number;
 
     // для нового запроса
-    search_area: any;
-    query_text: string;
+    searchArea: any;
+    queryText: string;
     //
 
     lat: number = 48.480007;
@@ -672,176 +611,175 @@ export class TabRequestComponent {
     ch4_data_v2: number;
 
     log(e) {
-      console.log(e);
+        console.log(e);
     }
-    parseFloat(v: any) {    // сделать пайп
-      return parseFloat(v);
-    }
+
 
     constructor(private _hubService: HubService,
-        private _configService: ConfigService,
-        private _realtyService: RealtyService,
-        private _requestService: RequestService,
-        private _taskService: TaskService,
-        private _analysisService: AnalysisService,
-        private _historyService: HistoryService,
-        private _personService: PersonService,
-        private _userService: UserService
-      ) {
+                private _configService: ConfigService,
+                private _offerService: OfferService,
+                private _requestService: RequestService,
+                private _taskService: TaskService,
+                private _analysisService: AnalysisService,
+                private _historyService: HistoryService,
+                private _personService: PersonService,
+                private _userService: UserService) {
 
-      this._userService.list("agent", "").then(agents => {
-        for (let i = 0; i < agents.length; i++) {
-          var a = agents[i];
-          this.agent_opts.push({
-            val: a.id,
-            label: a.name
-          });
-        }
-      });
+        this._userService.list("AGENT", null, "").then(agents => {
+            for (let i = 0; i < agents.length; i++) {
+                var a = agents[i];
+                this.agentOpts.push({
+                    value: a.id,
+                    label: a.name
+                });
+            }
+        });
 
-      setTimeout(() => { this.tab.header = 'Запрос' });
+        setTimeout(() => {
+            this.tab.header = 'Запрос'
+        });
     }
 
     ngOnInit() {
-      this.request = this.tab.args.request;
-      if (this.request.id == null) {
-        this.new_request = true;
-      } else {
+        this.request = this.tab.args.request;
+        if (this.request.id == null) {
+            this.newRequest = true;
+        } else {
 
-      }
-      this._personService.get(this.request.person_id).then(person => {
-        this.person = person;
-      });
-
-      if (this.request.agent_id != null) {
-        this._userService.get(this.request.agent_id).then(agent => {
-          this.agent = agent;
+        }
+        this._personService.get(this.request.person_id).then(person => {
+            this.person = person;
         });
-      }
 
-      this.calcSize();
-      console.log(this.request);
+        if (this.request.agent_id != null) {
+            this._userService.get(this.request.agent_id).then(agent => {
+                this.agent = agent;
+            });
+        }
+
+        this.calcSize();
+        console.log(this.request);
     }
 
     onResize(e) {
-      this.calcSize();
+        this.calcSize();
     }
 
     calcSize() {
-      if (this.pane_hidden) {
-        this.pane_width = 0;
-      } else {
-        this.pane_width = 420;
-      }
-      this.map_width = document.body.clientWidth - (30 * 2) - this.pane_width;
-      this.pane_height = document.body.clientHeight - 31;
+        if (this.paneHidden) {
+            this.paneWidth = 0;
+        } else {
+            this.paneWidth = 420;
+        }
+        this.mapWidth = document.body.clientWidth - (30 * 2) - this.paneWidth;
+        this.paneHeight = document.body.clientHeight - 31;
     }
 
     toggleLeftPane() {
-      this.pane_hidden = !this.pane_hidden;
-      this.calcSize();
+        this.paneHidden = !this.paneHidden;
+        this.calcSize();
     }
 
     toggleEdit() {
-      this.edit_enabled = !this.edit_enabled;
+        this.editEnabled = !this.editEnabled;
     }
 
     agentChanged(e) {
-      this.request.agent_id = e.value.val;
-      if (this.request.agent_id != null) {
-        this._userService.get(this.request.agent_id).then(agent => {
-          this.agent = agent;
-        });
-      }
+        this.request.agent_id = e.value.val;
+        if (this.request.agent_id != null) {
+            this._userService.get(this.request.agent_id).then(agent => {
+                this.agent = agent;
+            });
+        }
     }
 
     save() {
-      if (this.request.id == null) {
-        this._requestService.create(this.request).then(request => {
-          this.request = request;
-          this.toggleEdit();
-        });
-      } else {
-        this._requestService.update(this.request).then(request => {
-          this.request = request;
-          this.toggleEdit();
-        });
-      }
+        if (this.request.id == null) {
+            this._requestService.create(this.request).then(request => {
+                this.request = request;
+                this.toggleEdit();
+            });
+        } else {
+            this._requestService.update(this.request).then(request => {
+                this.request = request;
+                this.toggleEdit();
+            });
+        }
     }
 
     offersSelected() {
-      this.getOffers(1, 16);
+        this.getOffers(1, 16);
     }
 
     analysisSelected() {
-      var a_data = this._analysisService.getObjAnalysis();
-      this.ch1_data = a_data.ch1_data;
-      this.ch1_data_v1 = a_data.ch1_data_v1;
+        var a_data = this._analysisService.getObjAnalysis();
+        this.ch1_data = a_data.ch1_data;
+        this.ch1_data_v1 = a_data.ch1_data_v1;
 
-      this.ch2_data = a_data.ch2_data;
-      this.ch2_data_v1 = a_data.ch2_data_v1;
+        this.ch2_data = a_data.ch2_data;
+        this.ch2_data_v1 = a_data.ch2_data_v1;
 
-      this.ch3_data = a_data.ch3_data;
-      this.ch3_data_v1 = a_data.ch3_data_v1;
-      this.ch3_data_v2 = a_data.ch3_data_v2;
+        this.ch3_data = a_data.ch3_data;
+        this.ch3_data_v1 = a_data.ch3_data_v1;
+        this.ch3_data_v2 = a_data.ch3_data_v2;
 
-      this.ch4_data = [
-        ['media', 'подано'],
-        ['avito', 7],
-        ['из рук в руки', 4],
-        ['презент', 6],
-        ['фарпост', 8],
-        ['ВНХ', 6],
-      ];
+        this.ch4_data = [
+            ['media', 'подано'],
+            ['avito', 7],
+            ['из рук в руки', 4],
+            ['презент', 6],
+            ['фарпост', 8],
+            ['ВНХ', 6],
+        ];
 
-      this.ch4_data_v1 = 31;
-      this.ch4_data_v2 = 5000;
+        this.ch4_data_v1 = 31;
+        this.ch4_data_v2 = 5000;
     }
 
     historySelected() {
-      this.history_recs = this._historyService.getObjHistory();
+        this.historyRecs = this._historyService.getObjHistory();
     }
 
     getOffers(page, per_page) {
-      this.offers = this._realtyService.getSimilarRealty(page, per_page);
+        this.offers = this._offerService.getSimilarOffer(page, per_page);
     }
 
     offer_search() {
-      this.getOffers(Math.floor(Math.random() * 4), 16);
+        this.getOffers(Math.floor(Math.random() * 4), 16);
     }
 
     offer_search_keydown(e: KeyboardEvent) {
-      if (e.keyCode == 13) {
-        this.offer_search();
-      }
+        if (e.keyCode == 13) {
+            this.offer_search();
+        }
     }
 
-    markerClick(r: Realty) {
-      console.log('markerClick');
-      console.log(r);
-      r.selected = !r.selected;
-      // scroll to object ???
+    markerClick(r: Offer) {
+        console.log('markerClick');
+        console.log(r);
+        //r.selected = !r.selected;
+        // scroll to object ???
     }
 
     drawFinished(e) {
-      console.log('draw_finished');
-      console.log(e);
-      this.search_area = e;
+        console.log('draw_finished');
+        console.log(e);
+        this.searchArea = e;
     }
 
     createRequest() {
-      this.new_request = false;
+        this.newRequest = false;
 
-      //this.request = this._requestService.getEmpty();
+        //this.request = this._requestService.getEmpty();
 
-      this.request.request = this.query_text;
+        this.request.request = this.queryText;
     }
 
     toggleDraw() {
-      this.map_draw_allowed = !this.map_draw_allowed;
+        this.mapDrawAllowed = !this.mapDrawAllowed;
     }
 
-    getRealtyDigest(r: Realty) {
-      return Realty.getDigest(r);
+    getOfferDigest(r: Offer) {
+        return Offer.getDigest(r);
     }
 }

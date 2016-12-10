@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 import {Photo} from '../../class/photo';
 
 @Component({
@@ -12,7 +12,7 @@ import {Photo} from '../../class/photo';
 
       <div class="ribbon" [style.left]="slider_pos" [style.transition-duration]="tr_duration">
 
-        <div *ngFor="#photo of photos" class="img-wrap pull-left" style="margin-left: 1px;">
+        <div *ngFor="let photo of photos" class="img-wrap pull-left" style="margin-left: 1px;">
           <div class="img-overlay" style="position: relative; display: inline-block;">
             <img class="carousel-img" [attr.src]="photo.fileName" style="height: 100px;">
           </div>

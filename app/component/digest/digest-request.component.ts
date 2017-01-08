@@ -7,6 +7,8 @@ import {TaskService} from '../../service/task.service'
 import {Request} from '../../class/request';
 import {Person} from '../../class/person';
 import {Task} from '../../class/task';
+import {User} from "../../class/user";
+import {UserService} from "../../service/user.service";
 
 @Component({
     selector: 'digest-request',
@@ -107,7 +109,8 @@ import {Task} from '../../class/task';
                 </tr>
                 <tr>
                     <td>
-                        <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#">Какой Какойтович</a>
+                        <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#"> {{ agent.name
+                        }} </a>
                     </td>
                     <td>
                         <span class="entry-header">Результат:</span> <span [class.badge-gray]="task.result_id == 0"
@@ -137,19 +140,28 @@ export class DigestRequestComponent implements OnInit {
 
     private selected = false;
     person: Person = new Person();
+    agent: User = new User();
     resultText: string;
     task: Task;
     to: any;
 
-    constructor(private _hubService: HubService, private _taskService: TaskService, private _personService: PersonService) { };
+    constructor(private _hubService: HubService, private _userService: UserService, private _taskService: TaskService, private _personService: PersonService) { };
 
     ngOnInit() {
         this.task = this._taskService.getRandomTasks();
         this.resultText = this.getResultText();
 
-        this._personService.get(this.request.person_id).then(person => {
-            this.person = person;
-        });
+        if (this.request.personId != null) {
+            this._personService.get(this.request.personId).then(person => {
+                this.person = person;
+            });
+        }
+
+        if (this.request.agentId != null) {
+            this._userService.get(this.request.agentId).then(agent => {
+                this.agent = agent;
+            });
+        }
 
     }
 

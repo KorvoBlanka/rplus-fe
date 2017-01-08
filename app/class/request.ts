@@ -1,11 +1,11 @@
 export class Request {
   id: String;
 
-  agent_id: number;
-  person_id: number;
+  agentId: number;
+  personId: number;
 
   request: String;
-  add_date: Number;
+  addDate: Number;
 
-  search_area: String;
+  searchArea: String;
 }

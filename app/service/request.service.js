@@ -40,39 +40,20 @@ var RequestService = (function () {
             }, function (err) { return console.log(err); });
         });
     };
-    RequestService.prototype.update = function (request) {
+    RequestService.prototype.save = function (request) {
         var _this = this;
-        console.log('request update');
+        console.log('request save');
+        console.log(request);
+        var _resourceUrl = this.RS + '/api/v1/request/save';
+        delete request["selected"];
+        var data_str = JSON.stringify(request);
         return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/request/update/' + request.id;
-            var headers = new http_1.Headers();
-            delete request["selected"];
-            var data_str = JSON.stringify(request);
-            _this._http.post(_resourceUrl, data_str, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
+            _this._http.post(_resourceUrl, data_str)
+                .map(function (res) { return res.json(); }).subscribe(function (data) {
                 if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
-    };
-    RequestService.prototype.create = function (request) {
-        var _this = this;
-        console.log('request create');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/request/create';
-            var headers = new http_1.Headers();
-            var data_str = JSON.stringify(request);
-            _this._http.post(_resourceUrl, data_str, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
+                    var cRerquest = data.result;
+                    //this._dataStore.persons.splice(0, 0, cPerson);
+                    resolve(cRerquest);
                 }
             }, function (err) { return console.log(err); });
         });

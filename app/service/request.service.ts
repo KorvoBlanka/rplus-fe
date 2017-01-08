@@ -43,53 +43,27 @@ export class RequestService {
     });
   }
 
-  update(request: Request) {
-    console.log('request update');
+    save(request: Request) {
+        console.log('request save');
+        console.log(request);
 
-    return new Promise<Request>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/request/update/' + request.id;
-      var headers = new Headers();
+        var _resourceUrl = this.RS + '/api/v1/request/save'
 
-      delete request["selected"];
+        delete request["selected"];
+        var data_str = JSON.stringify(request);
 
-      var data_str = JSON.stringify(request);
-
-      this._http.post(_resourceUrl, data_str, {
-          headers: headers
-          })
-          .map(res => res.json())
-          .subscribe(
-            data => {
-              if(data.response == "ok") {
-                resolve(data.result);
-              }
-            },
-            err => console.log(err)
-          );
-    });
-  }
-
-  create(request: Request) {
-    console.log('request create');
-
-    return new Promise<Request>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/request/create'
-      var headers = new Headers();
-
-      var data_str = JSON.stringify(request);
-
-      this._http.post(_resourceUrl, data_str, {
-          headers: headers
-          })
-          .map(res => res.json())
-          .subscribe(
-            data => {
-              if(data.response == "ok") {
-                resolve(data.result);
-              }
-            },
-            err => console.log(err)
-          );
-    });
-  }
+        return new Promise<Request>(resolve => {
+            this._http.post(_resourceUrl, data_str)
+                .map(res => res.json()).subscribe(
+                data => {
+                    if (data.response == "ok") {
+                        var cRerquest: Request = data.result;
+                        //this._dataStore.persons.splice(0, 0, cPerson);
+                        resolve(cRerquest);
+                    }
+                },
+                err => console.log(err)
+            );
+        });
+    }
 }

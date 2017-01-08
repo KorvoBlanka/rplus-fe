@@ -706,7 +706,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     createRequest() {
         var tab_sys = this._hubService.getProperty('tab_sys');
         var req = new Request();
-        req.person_id = this.person.id;
+        req.personId = this.person.id;
         tab_sys.addTab('request', {request: req});
     }
 

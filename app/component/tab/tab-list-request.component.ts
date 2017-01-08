@@ -5,6 +5,7 @@ import {RequestService} from '../../service/request.service';
 
 import {Tab} from '../../class/tab';
 import {Request} from '../../class/request';
+import {HubService} from "../../service/hub.service";
 
 
 @Component({
@@ -50,6 +51,14 @@ import {Request} from '../../class/request';
             padding: 0 15px;
             font-size: 14px;
             color: #666;
+        }
+        
+        .button {
+            text-align: center;
+            padding: 5px 15px;
+            background-color: #3366cc;
+            color: #fff;
+            cursor: pointer;
         }
     `],
     template: `
@@ -99,7 +108,12 @@ import {Request} from '../../class/request';
             </div>
         </div>
         <div class="request-list-wrapper">
-            <div class="scroll-wrapper" (scroll)="scroll($event)">    
+            <div class="scroll-wrapper" (scroll)="scroll($event)">
+                <div class="button"
+                    (click)="addRequest()"
+                >
+                    Добавить заявку
+                </div>
                 <digest-request
                     *ngFor="let r of requests"
                     [request]="r"
@@ -118,7 +132,7 @@ export class TabListRequestComponent {
     page: number = 0;
     perPage: number = 32;
 
-    constructor(private _configService: ConfigService, private _requerstService: RequestService) {
+    constructor(private _configService: ConfigService, private _hubService: HubService, private _requerstService: RequestService) {
         this._requerstService.list(this.page, this.perPage, null, "").then(requests => {
             this.requests = requests;
         });
@@ -147,4 +161,8 @@ export class TabListRequestComponent {
         });
     }
 
+    addRequest() {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('request', {request: new Request()});
+    }
 }

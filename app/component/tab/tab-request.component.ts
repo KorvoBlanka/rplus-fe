@@ -231,11 +231,11 @@ import {AnalysisService} from '../../service/analysis.service'
                         ></span>
                     </div>
                     <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
-                        <digest-offer *ngFor="let offer of offers"
+                        <!--<digest-offer *ngFor="let offer of offers"
                             [offer]="offer"
                             [compact]="true"
                         >
-                        </digest-offer>
+                        </digest-offer>-->
                     </div>
                 </div>
             </div>
@@ -293,7 +293,7 @@ import {AnalysisService} from '../../service/analysis.service'
                                 <span class="view-label">Ответственный</span>
                                 <ui-select class="view-value edit-value"
                                     [options] = "agentOpts"
-                                    [value]="agent.id"
+                                    [value]="agent?.id"
                                     (onChange)="agentChanged($event)"
                                 >
                                 </ui-select>
@@ -419,11 +419,11 @@ import {AnalysisService} from '../../service/analysis.service'
                                     ></span>
                                 </div>
                                 <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
-                                    <digest-offer *ngFor="let offer of offers"
+                                    <!--<digest-offer *ngFor="let offer of offers"
                                         [offer]="offer"
                                         [compact]="true"
                                     >
-                                    </digest-offer>
+                                    </digest-offer>-->
                                 </div>
                             </div>
                         </div>
@@ -433,7 +433,7 @@ import {AnalysisService} from '../../service/analysis.service'
                             [zoom]="zoom"
                             [polygone_points]="searchArea"
                         >
-                            <div *ngFor="let r of offers">
+                            <!--<div *ngFor="let r of offers">
                                 <google-map-marker
                                     *ngIf="r.location"
                                     (click)="markerClick(r)"
@@ -443,7 +443,8 @@ import {AnalysisService} from '../../service/analysis.service'
                                     [info_str]="getOfferDigest(r)">
                                     [icon_id]="1"
                                 </google-map-marker>
-                            </div>
+                            </div>-->
+                            
                         </google-map>
                     </ui-tab>
                     <ui-tab [title]="'Аналитика'"
@@ -647,12 +648,12 @@ export class TabRequestComponent {
         } else {
 
         }
-        this._personService.get(this.request.person_id).then(person => {
+        this._personService.get(this.request.personId).then(person => {
             this.person = person;
         });
 
-        if (this.request.agent_id != null) {
-            this._userService.get(this.request.agent_id).then(agent => {
+        if (this.request.agentId != null) {
+            this._userService.get(this.request.agentId).then(agent => {
                 this.agent = agent;
             });
         }
@@ -685,26 +686,19 @@ export class TabRequestComponent {
     }
 
     agentChanged(e) {
-        this.request.agent_id = e.value.val;
-        if (this.request.agent_id != null) {
-            this._userService.get(this.request.agent_id).then(agent => {
+        this.request.agentId = e.selected.value;
+        if (this.request.agentId != null) {
+            this._userService.get(this.request.agentId).then(agent => {
                 this.agent = agent;
             });
         }
     }
 
     save() {
-        if (this.request.id == null) {
-            this._requestService.create(this.request).then(request => {
-                this.request = request;
-                this.toggleEdit();
-            });
-        } else {
-            this._requestService.update(this.request).then(request => {
-                this.request = request;
-                this.toggleEdit();
-            });
-        }
+        this._requestService.save(this.request).then(request => {
+            this.request = request;
+            this.toggleEdit();
+        });
     }
 
     offersSelected() {

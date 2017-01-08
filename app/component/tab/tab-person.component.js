@@ -188,7 +188,7 @@ var TabPersonComponent = (function () {
     TabPersonComponent.prototype.createRequest = function () {
         var tab_sys = this._hubService.getProperty('tab_sys');
         var req = new request_1.Request();
-        req.person_id = this.person.id;
+        req.personId = this.person.id;
         tab_sys.addTab('request', { request: req });
     };
     TabPersonComponent.prototype.toggleOffer = function (offer_type) {

@@ -16,7 +16,7 @@ import {Output, EventEmitter} from '@angular/core';
             </div>
             <ul class="dropdown-menu pull-right" [hidden]="hidden">
                 <li *ngFor="let opt of options"
-                    [class.selected]="opt.value === selected?.value"
+                    [class.selected]="opt.value == selected?.value"
                     (click)="select(opt)"
                 >
                     <label><span *ngIf="opt?.icon" class="{{ opt?.icon }}"></span> {{ opt.label }} </label>
@@ -134,7 +134,7 @@ export class UISelect implements OnInit, OnChanges {
 
     ngOnChanges() {
         for (let o of this.options) {
-            if (this.value === o.value) {
+            if (this.value == o.value) {
                 this.selected = o;
             }
         }

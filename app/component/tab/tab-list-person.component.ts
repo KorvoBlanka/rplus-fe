@@ -127,7 +127,7 @@ import {UserService} from "../../service/user.service";
                 >
                 Добавить контакт
                 </div>
-                <digest-person *ngFor="let p of persons | async"
+                <digest-person *ngFor="let p of persons"
                     [person]="p"
                 >
                 </digest-person>
@@ -139,9 +139,7 @@ import {UserService} from "../../service/user.service";
 export class TabListPersonComponent implements OnInit, AfterViewInit {
     public tab: Tab;
 
-    persons: Observable<Person[]>;
-    page: number = 0;
-    perPage: number = 32;
+    persons: Person[];
     userId: number;
     searchQuery: string = "";
     agentOpts = [{
@@ -156,10 +154,15 @@ export class TabListPersonComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.persons = this._personService.persons$;
-        this._personService.list(0, this.perPage, null, null, "");
+        this._personService.list(null, null, "").subscribe(
+            data => {
+                console.log(data);
+                this.persons = data;
+            },
+            err => console.log(err)
+        );
 
-        this._userService.list("AGENT", null, "").then(agents => {
+        this._userService.list("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -186,8 +189,7 @@ export class TabListPersonComponent implements OnInit, AfterViewInit {
     }
 
     searchParamChanged() {
-        this.page = 0;
-        this._personService.list(0, this.perPage, this.userId, null, this.searchQuery);
+        this._personService.list(this.userId, null, this.searchQuery);
     }
 
 

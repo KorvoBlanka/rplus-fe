@@ -4,6 +4,7 @@ import {Http, Headers, Response} from '@angular/http';
 import {ConfigService} from './config.service';
 
 import {User} from '../class/user';
+import {AsyncSubject} from "rxjs/AsyncSubject";
 
 
 @Injectable()
@@ -11,30 +12,11 @@ export class UserService {
 
     RS: String = "";
 
+
     constructor(private _configService: ConfigService, private _http: Http) {
-        this.RS = this._configService.getConfig().RESTServer;
+        this.RS = this._configService.getConfig().RESTServer + '/api/v1/user/';
     };
 
-    get(userId: number) {
-        console.log('user get');
-
-        return new Promise<User>(resolve => {
-            var _resourceUrl = this.RS + '/api/v1/user/get/' + userId;
-            var headers = new Headers();
-            this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data.response == "ok") {
-                            resolve(data.result);
-                        }
-                    },
-                    err => console.log(err)
-                );
-        });
-    }
 
     list(role: string, superiorId: number, searchQuery: string) {
         console.log('user list');
@@ -51,50 +33,72 @@ export class UserService {
             query.push("searchQuery=" + searchQuery);
         }
 
-        return new Promise<User[]>(resolve => {
-            var _resourceUrl = this.RS + '/api/v1/user/list?' + query.join("&");
-            var headers = new Headers();
 
-            this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data.response == "ok") {
-                            resolve(data.result);
-                        }
-                    },
-                    err => console.log(err)
-                );
-        });
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
+
+        var ret_subj = <AsyncSubject<User[]>>new AsyncSubject();
+
+        this._http.get(_resourceUrl)
+            .map(res => res.json()).subscribe(
+                data => {
+                    var users: User[] = data.result;
+
+                    ret_subj.next(users);
+                    ret_subj.complete();
+                },
+                err => console.log(err)
+            );
+
+        return ret_subj;
+    }
+
+    get(userId: number) {
+        console.log('user get');
+
+        var _resourceUrl = this.RS + 'get/' + userId;
+
+        var ret_subj = <AsyncSubject<User>>new AsyncSubject();
+
+        this._http.get(_resourceUrl)
+            .map(res => res.json()).subscribe(
+                data => {
+                    var u: User = data.result;
+
+                    // TODO: pass copy????
+                    ret_subj.next(u);
+                    ret_subj.complete();
+                },
+                err => console.log(err)
+            );
+
+        return ret_subj;
     }
 
     save(user: User) {
         console.log('user save');
 
-        return new Promise<User>(resolve => {
-            var _resourceUrl = this.RS + '/api/v1/user/save'
-            var headers = new Headers();
 
-            var data_str = JSON.stringify(user);
+        var _resourceUrl = this.RS + 'save'
 
-            this._http.post(_resourceUrl, data_str, {
-                headers: headers
-            })
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data.response == "ok") {
-                            resolve(data.result);
-                        } else {
-                            console.log(data.result);
-                        }
-                    },
-                    err => {
-                        console.log(err)
-                    }
-                );
-        });
+        var ret_subj = <AsyncSubject<User>>new AsyncSubject();
+
+        var data_str = JSON.stringify(user);
+
+        this._http.post(_resourceUrl, data_str)
+            .map(res => res.json()).subscribe(
+                data => {
+
+                    var u: User = data.result;
+
+                    // TODO: pass copy????
+                    ret_subj.next(u);
+                    ret_subj.complete();
+                },
+                err => {
+                    console.log(err)
+                }
+            );
+
+        return ret_subj;
     }
 }

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 import {ConfigService} from '../../service/config.service';
 import {RequestService} from '../../service/request.service';
@@ -6,6 +6,7 @@ import {RequestService} from '../../service/request.service';
 import {Tab} from '../../class/tab';
 import {Request} from '../../class/request';
 import {HubService} from "../../service/hub.service";
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -125,40 +126,38 @@ import {HubService} from "../../service/hub.service";
     `
 })
 
-export class TabListRequestComponent {
+export class TabListRequestComponent implements OnInit {
     public tab: Tab;
     searchQuery: string;
-    requests: Request[] = [];
+    requests: Request[];
     page: number = 0;
     perPage: number = 32;
 
     constructor(private _configService: ConfigService, private _hubService: HubService, private _requerstService: RequestService) {
-        this._requerstService.list(this.page, this.perPage, null, "").then(requests => {
-            this.requests = requests;
-        });
         setTimeout(() => {
             this.tab.header = 'Заявки';
         });
     }
 
+    ngOnInit() {
+        this._requerstService.list(this.page, this.perPage, null, null, "").subscribe(
+            data => {
+                this.requests = data;
+            },
+            err => console.log(err)
+        );
+    }
+
     scroll(e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-            this.page++;
-            this._requerstService.list(this.page, this.perPage, null, "").then(requests => {
-                for (var i = 0; i < requests.length; i++) {
-                    this.requests.push(requests[i])
-                }
-            });
+
         }
     }
 
     searchParamChanged() {
         this.page = 0;
 
-        this._requerstService.list(this.page, this.perPage, null, this.searchQuery).then(requests => {
-            this.requests = requests;
-            this.page++;
-        });
+        this._requerstService.list(this.page, this.perPage, null, null, this.searchQuery)
     }
 
     addRequest() {

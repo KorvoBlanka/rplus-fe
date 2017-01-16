@@ -11,68 +11,55 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 var config_service_1 = require("./config.service");
+var AsyncSubject_1 = require("rxjs/AsyncSubject");
+require("rxjs/add/operator/map");
 var OrganisationService = (function () {
     function OrganisationService(_configService, _http) {
         this._configService = _configService;
         this._http = _http;
         this.RS = "";
-        this.RS = this._configService.getConfig().RESTServer;
+        this.RS = this._configService.getConfig().RESTServer + '/api/v1/organisation/';
     }
     ;
-    OrganisationService.prototype.get = function (organisationId) {
-        var _this = this;
-        console.log('org get');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/organisation/get/' + organisationId;
-            var headers = new http_1.Headers();
-            _this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
-    };
-    OrganisationService.prototype.list = function (page, perPage, searchQuery) {
-        var _this = this;
+    OrganisationService.prototype.list = function (searchQuery) {
         console.log('org list');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/organisation/list?'
-                + 'page=' + page
-                + '&per_page=' + perPage
-                + '&search_query=' + searchQuery;
-            var headers = new http_1.Headers();
-            _this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
+        var _resourceUrl = this.RS + 'list?'
+            + '&search_query=' + searchQuery;
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var organisations = data.result;
+            ret_subj.next(organisations);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
+    };
+    OrganisationService.prototype.get = function (organisationId) {
+        console.log('org get');
+        var _resourceUrl = this.RS + 'get/' + organisationId;
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var o = data.result;
+            // TODO: pass copy????
+            ret_subj.next(o);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
     };
     OrganisationService.prototype.save = function (org) {
-        var _this = this;
         console.log('org save');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/organisation/save';
-            var headers = new http_1.Headers();
-            var data_str = JSON.stringify(org);
-            _this._http.post(_resourceUrl, data_str, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
+        var _resourceUrl = this.RS + 'save';
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        var data_str = JSON.stringify(org);
+        this._http.post(_resourceUrl, data_str)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var o = data.result;
+            // TODO: pass copy????
+            ret_subj.next(o);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
     };
     return OrganisationService;
 }());

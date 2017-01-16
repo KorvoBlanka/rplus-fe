@@ -26,7 +26,7 @@ export class UIViewValue implements OnInit {
 
     ngOnInit() {
         for (let o of this.options) {
-            if (this.value === o.value) {
+            if (this.value == o.value) {
                 this.selected = o;
             }
         }

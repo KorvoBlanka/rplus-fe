@@ -1,11 +1,12 @@
 
+import {GeoPoint} from "./geoPoint";
 export class Offer {
 
     id: number;
 
     stateCode: string;
 
-    stage: string;
+    stageCode: string;
 
     typeCode: string;
 
@@ -88,28 +89,22 @@ export class Offer {
 
     mlsPrice: number;
 
-    location: any;
-
     agentId: number;
 
     personId: number;
 
 
-    public static normalize_(offer: Offer) {
-        console.log('normalize');
-        for (var f in offer) {
-            if (offer[f] == "") {
-                offer[f] = null;
-            }
-        }
-    }
+    locationLat: number;
+    locationLon: number;
+
+
 
     constructor () {
         // set default vals
-        this.stateCode = 'state1';
-        this.stage = 'stage1';
+        this.stateCode = 'raw';
+        this.stageCode = 'contact';
         this.offerTypeCode = 'sale';
-        this.typeCode = 'appartment';
+        this.typeCode = 'apartment';
     }
 
     public static getDigest(o: Offer) {

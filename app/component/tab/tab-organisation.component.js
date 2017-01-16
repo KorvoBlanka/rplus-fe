@@ -52,7 +52,6 @@ var TabOrganisationComponent = (function () {
         if (this.organisation.id == null) {
             this.toggleEdit();
         }
-        this.persons = this._personService.persons$;
         this.calcSize();
     };
     TabOrganisationComponent.prototype.onResize = function (e) {
@@ -77,7 +76,7 @@ var TabOrganisationComponent = (function () {
     };
     TabOrganisationComponent.prototype.save = function () {
         var _this = this;
-        this._organisationService.save(this.organisation).then(function (org) {
+        this._organisationService.save(this.organisation).subscribe(function (org) {
             _this.organisation = org;
         });
         this.toggleEdit();
@@ -113,7 +112,7 @@ var TabOrganisationComponent = (function () {
     };
     TabOrganisationComponent.prototype.getPersons = function (page, perPage) {
         if (this.organisation.id) {
-            this._personService.list(0, perPage, null, this.organisation.id, "");
+            this._personService.list(null, this.organisation.id, "");
         }
     };
     TabOrganisationComponent.prototype.getOffers = function (page, per_page) {

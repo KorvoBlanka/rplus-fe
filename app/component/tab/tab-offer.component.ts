@@ -18,6 +18,8 @@ import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 import {Photo} from '../../class/photo';
 import {User} from '../../class/user';
+import {PersonService} from "../../service/person.service";
+import {Person} from "../../class/person";
 
 
 @Component({
@@ -177,7 +179,7 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label">Статус</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "stateOptions"
+                                    [options] = "stateCodeOptions"
                                     [value]="offer.stateCode"
                                     (onChange)="offer.stateCode = $event.selected.value"
                                 >
@@ -187,24 +189,29 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "stageOptions"
+                                    [options] = "stageCodeOptions"
                                     [value]="1"
-                                    (onChange)="offer.stage = $event.selected.value"
+                                    (onChange)="offer.stageCode = $event.selected.value"
                                 >
                                 </ui-select>
                             </div>
     
                             <div class="view-group">
                                 <span class="view-label">Собственник</span>
-                                <span class="view-value"> Иван Иванович</span>
+                                <ui-select class="view-value edit-value"
+                                    [options] = "personOpts"
+                                    [value]="person.id"
+                                    (onChange)="personChanged($event)"
+                                >
+                                </ui-select>
                             </div>
                             <div class="view-group">
                                 <span class="view-label pull-left"></span>
-                                <span class="view-value"> (929)9292929, 929292</span>
+                                <span class="view-value"> </span>
                             </div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор</span>
-                                <span class="view-value"> #4242421365 от 08.02.22</span>
+                                <span class="view-value"> ... </span>
                             </div>
     
                             <br>
@@ -212,7 +219,7 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label pull-left">Предложение</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "offerTypeOptions"
+                                    [options] = "offerTypeCodeOptions"
                                     [value]="offer.offerTypeCode"
                                     (onChange)="offer.offerTypeCode = $event.selected.value"
                                 >
@@ -222,7 +229,7 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label">Тип недвижимости</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "realtyTypeOptions"
+                                    [options] = "typeCodeOptions"
                                     [value]="offer.typeCode"
                                     (onChange)="offer.typeCode = $event.selected.value"
                                 >
@@ -231,14 +238,24 @@ import {User} from '../../class/user';
     
     
                             <div class="view-group">
+                                <span class="view-label">Город</span>
+                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.locality">
+                            </div>
+    
+                            <div class="view-group">
+                                <span class="view-label">Район</span>
+                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.district">
+                            </div>
+    
+                            <div class="view-group">
                                 <span class="view-label">Адрес</span>
                                 <input type="text" class="view-value edit-value" [(ngModel)]="offer.address">
                             </div>
     
                             <div class="view-group">
                                 <span class="view-label">Номер</span>
-                                <input class="view-value edit-value vv-2">/
-                                <input class="view-value edit-value vv-2">
+                                <input class="view-value edit-value vv-2" [(ngModel)]="offer.houseNum">/
+                                <input class="view-value edit-value vv-2" [(ngModel)]="offer.apNum">
                             </div>
     
                             <div class="view-group">
@@ -263,21 +280,14 @@ import {User} from '../../class/user';
     
                             <div class="view-group">
                                 <span class="view-label">Количество комнат</span>
-                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.rooms_offer_count">/
-                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.rooms_count">
+                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.roomsOfferCount">/
+                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.roomsCount">
                             </div>
     
                             <div class="view-group">
                                 <span class="view-label">Тип комнаты</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "[
-                                        {value: 1, label: 'Икарус'},
-                                        {value: 2, label: 'Кухня-гостинная'},
-                                        {value: 3, label: 'Раздельные'},
-                                        {value: 4, label: 'Смежно-раздельные'},
-                                        {value: 5, label: 'Смежные'},
-                                        {value: 6, label: 'Студия'}
-                                    ]"
+                                    [options] = "roomSchemeOptions"
                                     [value]="offer.roomSchemeId"
                                     (onChange)="offer.roomSchemeId = $event.selected.value"
                                 >
@@ -353,7 +363,7 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label">Статус</span>
                                 <ui-view-value
-                                    [options] = "stateOptions"
+                                    [options] = "stateCodeOptions"
                                     [value]="offer.stateCode"
                                 > 
                                 </ui-view-value>
@@ -361,24 +371,24 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
                                 <ui-view-value
-                                    [options] = "stageOptions"
-                                    [value]="offer.stage"
+                                    [options] = "stageCodeOptions"
+                                    [value]="offer.stageCode"
                                 >
                                 </ui-view-value>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Собственник</span>
-                                <span class="view-value"> Иван Иванович</span>
+                                <span class="view-value"> {{ person.name }} </span>
                             </div>
         
                             <div class="view-group">
                                 <span class="view-label pull-left"></span>
-                                <span class="view-value"> (929)9292929, 929292</span>
+                                <span class="view-value"> </span>
                             </div>
         
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор</span>
-                                <span class="view-value"> #4242421365 от 08.02.22</span>
+                                <span class="view-value"> </span>
                             </div>
         
                             <br>
@@ -386,7 +396,7 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label pull-left">Предложение</span>
                                 <ui-view-value
-                                    [options] = "offerTypeOptions"
+                                    [options] = "offerTypeCodeOptions"
                                     [value]="offer.offerTypeCode"
                                 >
                                 </ui-view-value>
@@ -395,16 +405,27 @@ import {User} from '../../class/user';
                             <div class="view-group">
                                 <span class="view-label pull-left">Тип недвижимости</span>
                                 <ui-view-value
-                                    [options] = "realtyTypeOptions"
+                                    [options] = "typeCodeOptions"
                                     [value]="offer.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
         
                             <div class="view-group">
-                                <span class="view-label pull-left">Адрес</span>
-                                <span class="view-value"> {{ offer.address }} </span>
+                                <span class="view-label pull-left">Город</span>
+                                <span class="view-value"> {{ offer.locality }} </span>
                             </div>
+        
+                            <div class="view-group">
+                                <span class="view-label pull-left">Район</span>
+                                <span class="view-value"> {{ offer.district }} </span>
+                            </div>
+        
+                            <div class="view-group">
+                                <span class="view-label pull-left">Адрес</span>
+                                <span class="view-value"> {{ offer.address + ' ' + offer.houseNum || '' }} </span>
+                            </div>
+                            
         
                             <div class="view-group">
                                 <span class="view-label pull-left">Планировка</span>                               
@@ -431,7 +452,11 @@ import {User} from '../../class/user';
         
                             <div class="view-group">
                                 <span class="view-label pull-left">Тип комнат</span>
-                                <span class="view-value"> {{ offer.roomSchemeId }} </span>
+                                <ui-view-value
+                                    [options] = "roomSchemeOptions"
+                                    [value]="offer.roomSchemeId"
+                                >
+                                </ui-view-value>
                             </div>
         
                             <div class="view-group">
@@ -717,13 +742,16 @@ import {User} from '../../class/user';
     providers: [OfferService]
 })
 
-export class TabOfferComponent implements OnInit, AfterViewInit {
+export class TabOfferComponent implements OnInit {
     public tab: Tab;
     public offer: Offer;
     public photos: Photo[];
 
     agent: User = new User();
     agentOpts: any[] = [];
+
+    person: Person = new Person();
+    personOpts: any[] = [];
 
     similarOffers: Offer[];
     requests: Request[];
@@ -753,12 +781,12 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    offerTypeOptions =[
+    offerTypeCodeOptions =[
         {value: 'sale', label: 'Продажа'},
         {value: 'rent', label: 'Аренда'}
     ];
 
-    stateOptions = [
+    stateCodeOptions = [
         {value: 'raw', label: 'Не активен'},
         {value: 'active', label: 'Активен'},
         {value: 'work', label: 'В работе'},
@@ -766,21 +794,21 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
         {value: 'archive', label: 'Архив'}
     ];
 
-    stageOptions = [
-        {value: 1, label: 'Первичный контакт'},
-        {value: 2, label: 'Заключение договора'},
-        {value: 3, label: 'Показ'},
-        {value: 4, label: 'Подготовка договора'},
-        {value: 5, label: 'Принятие решения'},
-        {value: 6, label: 'Переговоры'},
-        {value: 7, label: 'Сделка'}
+    stageCodeOptions = [
+        {value: 'contact', label: 'Первичный контакт'},
+        {value: 'pre_deal', label: 'Заключение договора'},
+        {value: 'show', label: 'Показ'},
+        {value: 'prep_deal', label: 'Подготовка договора'},
+        {value: 'decision', label: 'Принятие решения'},
+        {value: 'negs', label: 'Переговоры'},
+        {value: 'deal', label: 'Сделка'}
     ];
 
-    realtyTypeOptions = [
-        {value: 1, label: 'Комната'},
-        {value: 2, label: 'Квартира'},
-        {value: 3, label: 'Дом'},
-        {value: 4, label: 'Таунхаус'}
+    typeCodeOptions = [
+        {value: 'room', label: 'Комната'},
+        {value: 'apartment', label: 'Квартира'},
+        {value: 'house', label: 'Дом'},
+        {value: 'townhouse', label: 'Таунхаус'}
     ];
 
     apSchemaOptions = [
@@ -791,6 +819,16 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
         {value: 4, label: 'Сталинка'},
         {value: 5, label: 'Улучшенная'},
         {value: 6, label: 'Хрущевка'}
+    ];
+
+    roomSchemeOptions = [
+        {value: 0, label: '-'},
+        {value: 1, label: 'Икарус'},
+        {value: 2, label: 'Кухня-гостинная'},
+        {value: 3, label: 'Раздельные'},
+        {value: 4, label: 'Смежно-раздельные'},
+        {value: 5, label: 'Смежные'},
+        {value: 6, label: 'Студия'}
     ];
 
     houseTypeOptions = [
@@ -849,9 +887,14 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _photoService: PhotoService,
-                private _userService: UserService) {
+                private _userService: UserService,
+                private _personService: PersonService) {
 
-        this._userService.list("AGENT", null, "").then(agents => {
+        setTimeout(() => {
+            this.tab.header = 'Объект ' + this.offer.id;
+        });
+
+        this._userService.list("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -860,18 +903,45 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
                 });
             }
         });
+
+        this._personService.list(null, null, "").subscribe(persons => {
+            for (let i = 0; i < persons.length; i++) {
+                var p = persons[i];
+                this.personOpts.push({
+                    value: p.id,
+                    label: p.name
+                });
+            }
+        });
     }
 
     ngOnInit() {
+
         this.offer = this.tab.args.offer;
 
-        if (this.offer == null) {
+        if (this.offer.id == null) {
             this.offer = new Offer();
+
+            if (this.tab.args.person) {
+                console.log(this.tab.args.person.id);
+                this.offer.personId = this.tab.args.person.id;
+            }
+
             this.editEnabled = true;
         }
 
-        console.log(this.offer);
+        if (this.offer.agentId != null) {
+            this._userService.get(this.offer.agentId).subscribe(agent => {
+                this.agent = agent;
+            });
+        }
 
+        if (this.offer.personId != null) {
+            this._personService.get(this.offer.personId).subscribe(person => {
+                this.person = person;
+                console.log(person);
+            });
+        }
         /*
         this._photoService.getPhotos(this.offer.id).then(photos => {
             this.photos = photos;
@@ -883,20 +953,11 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
         }
         */
 
-        if (this.offer.agentId != null) {
-            this._userService.get(this.offer.agentId).then(agent => {
-                this.agent = agent;
-            });
-        }
+
 
         this.calcSize();
     }
 
-    ngAfterViewInit() {
-        setTimeout(() => {
-            this.tab.header = 'Объект ' + this.offer.id;
-        });
-    }
 
     onResize(e) {
         this.calcSize();
@@ -922,17 +983,27 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
     }
 
     agentChanged(e) {
-        this.offer.agentId = e.value.val;
+        this.offer.agentId = e.selected.value;
         if (this.offer.agentId != null) {
-            this._userService.get(this.offer.agentId).then(agent => {
+            this._userService.get(this.offer.agentId).subscribe(agent => {
                 this.agent = agent;
             });
         }
     }
 
+    personChanged(e) {
+        this.offer.personId = e.selected.value;
+        if (this.offer.personId != null) {
+            this._personService.get(this.offer.personId).subscribe(person => {
+                this.person = person;
+            });
+        }
+    }
+
     save() {
-        this._offerService.saveOffer(this.offer).then(offer => {
+        this._offerService.save(this.offer).subscribe(offer => {
             console.log(offer);
+            this.offer = offer;
             this.toggleEdit();
         });
     }
@@ -975,7 +1046,12 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
     }
 
     getSimilarOffers(page, per_page) {
-        this.similarOffers = this._offerService.getSimilarOffer(page, per_page);
+        this._offerService.getSimilar(page, per_page).subscribe(
+            data => {
+                this.similarOffers = data;
+            },
+            err => console.log(err)
+        );
     }
 
     simSearch() {
@@ -988,9 +1064,9 @@ export class TabOfferComponent implements OnInit, AfterViewInit {
         }
     }
 
-    markerClick(r: Offer) {
+    markerClick(o: Offer) {
         console.log('markerClick');
-        console.log(r);
+        console.log(o);
         //r.selected = !r.selected;
         // scroll to object ???
     }

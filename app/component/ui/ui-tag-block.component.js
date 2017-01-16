@@ -61,8 +61,7 @@ UITagBlock = __decorate([
         inputs: ['value'],
         template: "\n    <div class=\"ui-tag-block\">\n      <div *ngFor=\"let tag of tags\" class=\"tag\" \n        [style.background-color]=\"tag.color\"\n        [style.border-color]=\"getBorderColor(tag)\"\n        (click)=\"select(tag)\"\n      >\n      </div>\n    </div>\n  ",
         styles: ["\n    .ui-tag-block {\n      overflow: hidden;\n    }\n    .tag {\n      height: 14px;\n      width: 14px;\n      border-radius: 14px;\n      margin-right: 5px;\n      float: left;\n      border: 2px solid #fff;\n    }\n  "]
-    }),
-    __metadata("design:paramtypes", [])
+    })
 ], UITagBlock);
 exports.UITagBlock = UITagBlock;
 //# sourceMappingURL=ui-tag-block.component.js.map

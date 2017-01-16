@@ -4,7 +4,7 @@ export class Request {
   agentId: number;
   personId: number;
 
-  request: String;
+  request: string;
   addDate: Number;
 
   searchArea: String;

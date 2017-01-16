@@ -4,81 +4,95 @@ import {Http, Headers, Response} from '@angular/http';
 import {ConfigService} from './config.service';
 
 import {Organisation} from '../class/organisation';
+import {AsyncSubject} from "rxjs/AsyncSubject";
+
+import 'rxjs/add/operator/map';
+
 
 @Injectable()
 export class OrganisationService {
 
     RS: String = "";
 
+
     constructor(private _configService: ConfigService, private _http: Http) {
-        this.RS = this._configService.getConfig().RESTServer;
+        this.RS = this._configService.getConfig().RESTServer + '/api/v1/organisation/';
     };
+
+
+    list(searchQuery: string) {
+        console.log('org list');
+
+
+        var _resourceUrl = this.RS + 'list?'
+            + '&search_query=' + searchQuery;
+
+        var ret_subj = <AsyncSubject<Organisation[]>>new AsyncSubject();
+
+        this._http.get(_resourceUrl)
+            .map(res => res.json()).subscribe(
+                data => {
+
+                    var organisations: Organisation[] = data.result;
+
+                    ret_subj.next(organisations);
+                    ret_subj.complete();
+
+                },
+                err => console.log(err)
+            );
+
+        return ret_subj;
+    }
 
     get(organisationId: number) {
         console.log('org get');
-        return new Promise<Organisation>(resolve => {
-            var _resourceUrl = this.RS + '/api/v1/organisation/get/' + organisationId;
-            var headers = new Headers();
-            this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data.response == "ok") {
-                            resolve(data.result);
-                        }
-                    },
-                    err => console.log(err)
-                );
-        });
+
+        var _resourceUrl = this.RS + 'get/' + organisationId;
+
+        var ret_subj = <AsyncSubject<Organisation>>new AsyncSubject();
+
+        this._http.get(_resourceUrl)
+            .map(res => res.json()).subscribe(
+                data => {
+
+                    var o: Organisation = data.result;
+
+                    // TODO: pass copy????
+                    ret_subj.next(o);
+                    ret_subj.complete();
+                },
+                err => console.log(err)
+            );
+
+        return ret_subj;
     }
 
-    list(page: number, perPage: number, searchQuery: string) {
-        console.log('org list');
-
-        return new Promise<Organisation[]>(resolve => {
-            var _resourceUrl = this.RS + '/api/v1/organisation/list?'
-                + 'page=' + page
-                + '&per_page=' + perPage
-                + '&search_query=' + searchQuery;
-            var headers = new Headers();
-            this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data.response == "ok") {
-                            resolve(data.result);
-                        }
-                    },
-                    err => console.log(err)
-                );
-        });
-    }
 
     save(org: Organisation) {
         console.log('org save');
 
-        return new Promise<Organisation>(resolve => {
-            var _resourceUrl = this.RS + '/api/v1/organisation/save'
-            var headers = new Headers();
 
-            var data_str = JSON.stringify(org);
+        var _resourceUrl = this.RS + 'save'
 
-            this._http.post(_resourceUrl, data_str, {
-                headers: headers
-            })
-                .map(res => res.json())
-                .subscribe(
-                    data => {
-                        if (data.response == "ok") {
-                            resolve(data.result);
-                        }
-                    },
-                    err => console.log(err)
-                );
-        });
+        var ret_subj = <AsyncSubject<Organisation>>new AsyncSubject();
+
+        var data_str = JSON.stringify(org);
+
+        this._http.post(_resourceUrl, data_str)
+            .map(res => res.json()).subscribe(
+                data => {
+
+                    var o: Organisation = data.result;
+
+                    // TODO: pass copy????
+                    ret_subj.next(o);
+                    ret_subj.complete();
+
+                },
+                err => console.log(err)
+            );
+
+        return ret_subj;
     }
 }

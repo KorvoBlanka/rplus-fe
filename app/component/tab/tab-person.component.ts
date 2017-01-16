@@ -337,14 +337,14 @@ import {UserService} from '../../service/user.service';
                             </div>
                         </div>
                         <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                            <div *ngFor="let r of offers">
+                            <div *ngFor="let o of offers">
                                 <google-map-marker
-                                    *ngIf="r._source.location"
-                                    (click)="markerClick(r)"
-                                    [is_selected]="r.selected"
-                                    [latitude]="parseFloat(r._source.location.lat)"
-                                    [longitude]="parseFloat(r._source.location.lon)"
-                                    [info_str]="getOfferDigest(r)">
+                                    *ngIf="o.locationLat"
+                                    (click)="markerClick(o)"
+                                    [is_selected]="o.selected"
+                                    [latitude]="o.locationLat"
+                                    [longitude]="o.locationLon"
+                                    [info_str]="getOfferDigest(o)">
                                     [icon_id]="1"
                                 </google-map-marker>
                             </div>
@@ -547,17 +547,18 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
                 private _organisationService: OrganisationService,
                 private _userService: UserService) {
 
-        _organisationService.list(0, 100, "").then(orgs => {
-            for (let i = 0; i < orgs.length; i++) {
-                var o = orgs[i];
-                this.organisationsOpts.push({
-                    value: o.id,
-                    label: o.name
-                });
+        _organisationService.list("").subscribe(organisations => {
+                for (let i = 0; i < organisations.length; i++) {
+                    var o = organisations[i];
+                    this.organisationsOpts.push({
+                        value: o.id,
+                        label: o.name
+                    });
+                }
             }
-        });
+        );
 
-        _userService.list("AGENT", null, "").then(agents => {
+        _userService.list("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -572,13 +573,13 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.person = this.tab.args.person;
 
         if (this.person.organisationId) {
-            this._organisationService.get(this.person.organisationId).then(org => {
+            this._organisationService.get(this.person.organisationId).subscribe(org => {
                 this.organisation = org;
             });
         }
 
         if (this.person.userId != null) {
-            this._userService.get(this.person.userId).then(agent => {
+            this._userService.get(this.person.userId).subscribe(agent => {
                 this.agent = agent;
             });
         }
@@ -622,25 +623,38 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     agentChanged(e) {
         this.person.userId = e.selected.value;
         if (this.person.userId != null) {
-            this._userService.get(this.person.userId).then(agent => {
+            this._userService.get(this.person.userId).subscribe(agent => {
                 this.agent = agent;
             });
         }
     }
 
     save() {
-        this._personService.save(this.person).then(person => {
-            this.person = person;
-            this.toggleEdit();
-        });
+        var subj = this._personService.save(this.person);
+
+        var component = this;
+
+        subj.subscribe(
+            function (x) {
+                //console.log('Next: ' + x.toString());
+            },
+            function (err) {
+                //console.log('Error: ' + err);
+            },
+            function () {
+                component.toggleEdit();
+            }
+        );
     }
 
     offersSelected() {
-        //this.getOffers(1, 16);
+        this._offerService.list(0, 32, {personId: this.person.id}, "", []).subscribe(offers => {
+            this.offers = offers;
+        });
     }
 
     requestsSelected() {
-        this._requestService.list(0, 32, this.person.id, "").then(requests => {
+        this._requestService.list(0, 32, null, this.person.id, "").subscribe(requests => {
             this.requests = requests;
         });
     }
@@ -675,7 +689,11 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     getOffers(page, per_page) {
-        this.offers = this._offerService.getSimilarOffer(page, per_page);
+        this._offerService.getSimilar(page, per_page).subscribe(
+            data => {
+                this.offers = data;
+            }
+        );
     }
 
     offer_search() {
@@ -717,7 +735,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     createOffer() {
         var tab_sys = this._hubService.getProperty('tab_sys');
-        tab_sys.addTab('offer', {offer: null, person: this.person});
+        tab_sys.addTab('offer', {offer: {}, person: this.person});
     }
 
     getOfferDigest(r: Offer) {

@@ -88,7 +88,7 @@ import {Task} from '../../class/task';
                 <span>{{ person.change_date | formatDate }} / {{ person.add_date | formatDate }}</span>
             </div>
             <table style="width: 100%;">
-                <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
+                <tbody style="vertical-align: top; font-size: 14px; font-weight: 200;">
                 <tr>
                     <td width="33%">
                         <span class="entry-header" style="width: 105px;">Организация:</span> {{ organisation.name }}
@@ -154,13 +154,13 @@ export class DigestPersonComponent implements OnInit {
         this.task = this._taskService.getRandomTasks();
 
         if (this.person.organisationId) {
-            this._organisationService.get(this.person.organisationId).then(org => {
+            this._organisationService.get(this.person.organisationId).subscribe(org => {
                 this.organisation = org;
             });
         }
 
         if (this.person.userId != null) {
-            this._userService.get(this.person.userId).then(agent => {
+            this._userService.get(this.person.userId).subscribe(agent => {
                 this.agent = agent;
             });
         }

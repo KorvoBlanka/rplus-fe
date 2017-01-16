@@ -34,8 +34,7 @@ UITab = __decorate([
         ],
         styles: [""],
         template: "\n    <div [hidden]=\"!active\" style=\"position: relative;\">\n      <ng-content></ng-content>\n    </div>\n  "
-    }),
-    __metadata("design:paramtypes", [])
+    })
 ], UITab);
 exports.UITab = UITab;
 //# sourceMappingURL=ui-tab.component.js.map

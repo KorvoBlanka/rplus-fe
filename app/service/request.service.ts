@@ -4,66 +4,70 @@ import {Http, Headers, Response} from '@angular/http';
 import {ConfigService} from './config.service';
 
 import {Request} from '../class/request';
-import {Person} from '../class/person';
-import {Organisation} from '../class/organisation';
+import {AsyncSubject} from "rxjs/AsyncSubject";
 
 
 @Injectable()
 export class RequestService {
 
-  RS: String = "";
+    RS: String = "";
 
-  constructor(private _configService: ConfigService, private _http: Http) {
-    this.RS = this._configService.getConfig().RESTServer;
-  };
 
-  list(page: number, perPage: number, personId: number, searchQuery: string) {
+    constructor(private _configService: ConfigService, private _http: Http) {
+        this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
+    };
 
-    console.log('request list');
+    list(page: number, perPage: number, agentId: number, personId: number, searchQuery: string) {
 
-    return new Promise<Request[]>(resolve => {
-      var _resourceUrl = this.RS + '/api/v1/request/list?'
-        + 'page=' + page
-        + '&per_page=' + perPage
-        + '&person_id=' + personId
-        + '&search_query=' + searchQuery;
-      var headers = new Headers();
-      this._http.get(_resourceUrl, {
-        headers: headers
-        })
-        .map(res => res.json())
-        .subscribe(
-          data => {
-            if(data.response == "ok") {
-              resolve(data.result);
-            }
-          },
-          err => console.log(err)
-        );
-    });
-  }
+        console.log('request list');
+
+        var _resourceUrl = this.RS + 'list?'
+            + 'page=' + page
+            + '&per_page=' + perPage
+            + '&agent_id=' + (agentId ? agentId : '')
+            + '&person_id=' + (personId ? personId : '')
+            + '&search_query=' + searchQuery;
+
+        var ret_subj = <AsyncSubject<Request[]>>new AsyncSubject();
+
+        this._http.get(_resourceUrl)
+            .map(res => res.json()).subscribe(
+                data => {
+                    var requests: Request[] = data.result;
+
+                    ret_subj.next(requests);
+                    ret_subj.complete();
+                },
+                err => console.log(err)
+            );
+        return ret_subj;
+    }
 
     save(request: Request) {
         console.log('request save');
         console.log(request);
 
-        var _resourceUrl = this.RS + '/api/v1/request/save'
+        var _resourceUrl = this.RS + 'save'
 
         delete request["selected"];
         var data_str = JSON.stringify(request);
 
-        return new Promise<Request>(resolve => {
-            this._http.post(_resourceUrl, data_str)
-                .map(res => res.json()).subscribe(
-                data => {
-                    if (data.response == "ok") {
-                        var cRerquest: Request = data.result;
-                        //this._dataStore.persons.splice(0, 0, cPerson);
-                        resolve(cRerquest);
-                    }
-                },
-                err => console.log(err)
-            );
-        });
+        var ret_subj = <AsyncSubject<Request>>new AsyncSubject();
+
+        this._http.post(_resourceUrl, data_str)
+            .map(res => res.json()).subscribe(
+            data => {
+
+                var r: Request = data.result;
+
+                // TODO: pass copy????
+                ret_subj.next(r);
+                ret_subj.complete();
+
+            },
+            err => console.log(err)
+        );
+
+        return ret_subj;
     }
 }

@@ -15,21 +15,19 @@ var user_service_1 = require("../../service/user.service");
 var user_1 = require("../../class/user");
 var TabListUserComponent = (function () {
     function TabListUserComponent(_configService, _hubService, _userService) {
+        var _this = this;
         this._configService = _configService;
         this._hubService = _hubService;
         this._userService = _userService;
-        this.users = [];
         this.superiorOpts = [{
                 value: 0,
                 label: '-'
             }];
+        setTimeout(function () { _this.tab.header = 'Пользователи'; });
     }
     TabListUserComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._userService.list(this.role, this.superiorId, this.searchQuery).then(function (users) {
-            _this.users = users;
-        });
-        this._userService.list("MANAGER", null, "").then(function (managers) {
+        this._userService.list("MANAGER", null, "").subscribe(function (managers) {
             for (var _i = 0, managers_1 = managers; _i < managers_1.length; _i++) {
                 var m = managers_1[_i];
                 console.log(m);
@@ -39,10 +37,9 @@ var TabListUserComponent = (function () {
                 });
             }
         });
-    };
-    TabListUserComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        setTimeout(function () { _this.tab.header = 'Пользователи'; });
+        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(function (data) {
+            _this.users = data;
+        }, function (err) { return console.log(err); });
     };
     TabListUserComponent.prototype.addUser = function () {
         var tab_sys = this._hubService.getProperty('tab_sys');
@@ -50,7 +47,7 @@ var TabListUserComponent = (function () {
     };
     TabListUserComponent.prototype.searchParamChanged = function () {
         var _this = this;
-        this._userService.list(this.role, this.superiorId, this.searchQuery).then(function (users) {
+        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(function (users) {
             _this.users = users;
         });
     };

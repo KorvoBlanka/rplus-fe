@@ -589,7 +589,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
             this.editEnabled = true;
         }
 
-        this._userService.list("MANAGER", null, "").then(managers => {
+        this._userService.list("MANAGER", null, "").subscribe(managers => {
             for (let m of managers) {
                 this.superiorOpts.push({
                     value: m.id,
@@ -599,7 +599,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         });
 
         if (this.user.superiorId != null) {
-            this._userService.get(this.user.superiorId).then(superior => {
+            this._userService.get(this.user.superiorId).subscribe(superior => {
                 this.superior = superior;
                 console.log(superior);
             });
@@ -646,7 +646,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     superiorChanged(e) {
         this.user.superiorId = e.selected.value;
         if (this.user.superiorId != null) {
-            this._userService.get(this.user.superiorId).then(superior => {
+            this._userService.get(this.user.superiorId).subscribe(superior => {
                 this.superior = superior;
             });
         }
@@ -654,7 +654,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
 
     save() {
 
-        this._userService.save(this.user).then(user => {
+        this._userService.save(this.user).subscribe(user => {
             this.user = user;
             this.toggleEdit();
         });
@@ -665,7 +665,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     requestsSelected() {
-        this._requestService.list(0, 32, this.user.id, "").then(requests => {
+        this._requestService.list(0, 32, this.user.id, null, "").subscribe(requests => {
             this.requests = requests;
         });
     }

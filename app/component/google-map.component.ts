@@ -7,10 +7,10 @@ import {
 import {Output, EventEmitter} from '@angular/core';
 
 import {ConcaveHull} from '../class/concavehull';
+import {GeoPoint} from "../class/geoPoint";
 
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map',
     inputs: [
         'latitude',
@@ -84,7 +84,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
                 case 'polygone_points':
                     if (this.polygone_points) {
                         this.polygone = new google.maps.Polygon({
-                            paths: this.polygone_points,
+                            paths: this.toGooglePoints(this.polygone_points),
                             strokeColor: "#062141",
                             strokeOpacity: 0.8,
                             strokeWeight: 2,
@@ -164,16 +164,31 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
                     map: _this.map,
                 });
 
-                _this.drawFinished.emit(ch);
+                _this.drawFinished.emit(_this.toRplusPoints(ch));
                 _this.polyline.setMap(null);
             }
         });
+    }
+
+    toGooglePoints(pList: any[]) {
+        var result: any[] = [];
+        pList.forEach(p => {
+            result.push({lat: p.lat, lng: p.lon});
+        });
+        return result;
+    }
+
+    toRplusPoints(pList: any[]) {
+        var result: GeoPoint[] = [];
+        pList.forEach(p => {
+            result.push({lat: p.lat, lon: p.lng});
+        });
+        return result;
     }
 }
 
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map-marker',
     inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
     styles: [``],
@@ -223,10 +238,13 @@ export class GoogleMapMarkerComponent implements OnChanges {
 
         var _this = this;
         this.marker.addListener('click', function () {
+            _this.infowindow.open(this.map, this.marker);
             _this.click.emit(_this);
         });
     }
 
+
+    // WTF???
     ngOnChanges() {
         if (this.marker) {
             if (this.is_selected) {

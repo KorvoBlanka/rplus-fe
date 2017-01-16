@@ -56,7 +56,7 @@ var TabUserComponent = (function () {
         if (this.user.id == null) {
             this.editEnabled = true;
         }
-        this._userService.list("MANAGER", null, "").then(function (managers) {
+        this._userService.list("MANAGER", null, "").subscribe(function (managers) {
             for (var _i = 0, managers_1 = managers; _i < managers_1.length; _i++) {
                 var m = managers_1[_i];
                 _this.superiorOpts.push({
@@ -66,7 +66,7 @@ var TabUserComponent = (function () {
             }
         });
         if (this.user.superiorId != null) {
-            this._userService.get(this.user.superiorId).then(function (superior) {
+            this._userService.get(this.user.superiorId).subscribe(function (superior) {
                 _this.superior = superior;
                 console.log(superior);
             });
@@ -107,14 +107,14 @@ var TabUserComponent = (function () {
         var _this = this;
         this.user.superiorId = e.selected.value;
         if (this.user.superiorId != null) {
-            this._userService.get(this.user.superiorId).then(function (superior) {
+            this._userService.get(this.user.superiorId).subscribe(function (superior) {
                 _this.superior = superior;
             });
         }
     };
     TabUserComponent.prototype.save = function () {
         var _this = this;
-        this._userService.save(this.user).then(function (user) {
+        this._userService.save(this.user).subscribe(function (user) {
             _this.user = user;
             _this.toggleEdit();
         });
@@ -124,7 +124,7 @@ var TabUserComponent = (function () {
     };
     TabUserComponent.prototype.requestsSelected = function () {
         var _this = this;
-        this._requestService.list(0, 32, this.user.id, "").then(function (requests) {
+        this._requestService.list(0, 32, this.user.id, null, "").subscribe(function (requests) {
             _this.requests = requests;
         });
     };

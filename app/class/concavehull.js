@@ -7,7 +7,7 @@ var ConcaveHull = (function () {
     }
     ConcaveHull.prototype.convertLatLngs = function (latLngs) {
         var longestDistance = 0, convertedPoints = latLngs.map(function (latLng, idx) {
-            // Transform the lat/long values into those the concave hull algorithm expects.
+            // Transform the lat/long values into those the concave hull algorithm expects
             latLng.x = latLng.lng;
             latLng.y = this.lat2y(latLng);
             if (latLngs[idx - 1]) {
@@ -35,10 +35,6 @@ var ConcaveHull = (function () {
         var hull = [], start = byY[0], current = start, previous = { x: current.x, y: current.y - 1 };
         hull.push(start);
         var next, count = 0;
-        /**
-         * @method sortPoints
-         * @type {Function}
-         */
         var sortPoints = function (a, b) {
             return this.getAngle(current, previous, b) - this.getAngle(current, previous, a);
         }.bind(this);
@@ -52,11 +48,11 @@ var ConcaveHull = (function () {
                 }
             }
             if (!next) {
-                // No polygon can be found.
+                // No polygon can be found
                 return this.points;
             }
             if (next === current) {
-                // Concave hull algorithm has gone very wrong indeed.
+                // Concave hull algorithm has gone very wrong indeed
                 return this.points;
             }
             hull.push(next);

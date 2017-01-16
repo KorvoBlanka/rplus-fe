@@ -49,7 +49,7 @@ var GoogleMapComponent = (function () {
                 case 'polygone_points':
                     if (this.polygone_points) {
                         this.polygone = new google.maps.Polygon({
-                            paths: this.polygone_points,
+                            paths: this.toGooglePoints(this.polygone_points),
                             strokeColor: "#062141",
                             strokeOpacity: 0.8,
                             strokeWeight: 2,
@@ -118,10 +118,24 @@ var GoogleMapComponent = (function () {
                     geodesic: false,
                     map: _this.map,
                 });
-                _this.drawFinished.emit(ch);
+                _this.drawFinished.emit(_this.toRplusPoints(ch));
                 _this.polyline.setMap(null);
             }
         });
+    };
+    GoogleMapComponent.prototype.toGooglePoints = function (pList) {
+        var result = [];
+        pList.forEach(function (p) {
+            result.push({ lat: p.lat, lng: p.lon });
+        });
+        return result;
+    };
+    GoogleMapComponent.prototype.toRplusPoints = function (pList) {
+        var result = [];
+        pList.forEach(function (p) {
+            result.push({ lat: p.lat, lon: p.lng });
+        });
+        return result;
     };
     return GoogleMapComponent;
 }());
@@ -131,7 +145,6 @@ __decorate([
 ], GoogleMapComponent.prototype, "drawFinished", void 0);
 GoogleMapComponent = __decorate([
     core_1.Component({
-        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
         selector: 'google-map',
         inputs: [
             'latitude',
@@ -178,9 +191,11 @@ var GoogleMapMarkerComponent = (function () {
         });
         var _this = this;
         this.marker.addListener('click', function () {
+            _this.infowindow.open(this.map, this.marker);
             _this.click.emit(_this);
         });
     };
+    // WTF???
     GoogleMapMarkerComponent.prototype.ngOnChanges = function () {
         if (this.marker) {
             if (this.is_selected) {
@@ -201,7 +216,6 @@ __decorate([
 ], GoogleMapMarkerComponent.prototype, "click", void 0);
 GoogleMapMarkerComponent = __decorate([
     core_1.Component({
-        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
         selector: 'google-map-marker',
         inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
         styles: [""],

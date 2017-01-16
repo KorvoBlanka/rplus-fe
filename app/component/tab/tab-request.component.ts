@@ -19,6 +19,7 @@ import {HistoryService} from '../../service/history.service'
 import {PersonService} from '../../service/person.service';
 import {UserService} from '../../service/user.service';
 import {AnalysisService} from '../../service/analysis.service'
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -202,7 +203,7 @@ import {AnalysisService} from '../../service/analysis.service'
         >
             <div class="search-form" [class.table-mode]="tableMode">
                 <div class="search-box with-button">
-                    <input type="text" class="" placeholder="" [(ngModel)]="queryText">
+                    <input type="text" class="" placeholder="" [(ngModel)]="queryText" (keydown)="offer_search_keydown($event)">
                     <div class="search-button" (click)="createRequest()">Создать</div>
                 </div>
                 <div class="tool-box">
@@ -220,22 +221,20 @@ import {AnalysisService} from '../../service/analysis.service'
         
             <!-- сильное колдунство, св-во right получаем из HubService -->
             <!-- TODO: сделать это отдельным компонентом -->
-            <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+            <div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
                 <div style="width: 330px; background-color: #fff;">
                     <div class="header">
-                        <input type="text" style="width: 280px; margin-left: 10px; border: none;"
-                            (keydown)="offer_search_keydown($event)"
-                        >
+                        <input type="text" style="width: 280px; margin-left: 10px; border: none;">
                         <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
                             (click)="offer_search()"
                         ></span>
                     </div>
                     <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
-                        <!--<digest-offer *ngFor="let offer of offers"
+                        <digest-offer *ngFor="let offer of offers"
                             [offer]="offer"
                             [compact]="true"
                         >
-                        </digest-offer>-->
+                        </digest-offer>
                     </div>
                 </div>
             </div>
@@ -247,6 +246,17 @@ import {AnalysisService} from '../../service/analysis.service'
                 [draw_allowed]="mapDrawAllowed"
                 (drawFinished)="drawFinished($event)"
             >
+                <template ngFor let-o [ngForOf]="offers">
+                    <google-map-marker
+                            *ngIf="o.locationLat"
+                            (click)="markerClick(o)"
+                            [is_selected]="o.selected"
+                            [latitude]="o.locationLat"
+                            [longitude]="o.locationLon"
+                            [info_str]="getOfferDigest(o)"
+                    >
+                    </google-map-marker>
+                </template>
             </google-map>
         </div>
 
@@ -280,12 +290,17 @@ import {AnalysisService} from '../../service/analysis.service'
     
                             <div class="view-group">
                                 <span class="view-label">Контакт</span>
-                                <span class="view-value">{{ person.name }}</span>
+                                <ui-select class="view-value edit-value"
+                                    [options] = "personOpts"
+                                    [value]="person?.id"
+                                    (onChange)="personChanged($event)"
+                                >
+                                </ui-select>
                             </div>
         
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор</span>
-                                <span class="view-value"> #4242421365 от 08.02.22</span>
+                                <span class="view-value"></span>
                             </div>
                             <br>
         
@@ -352,7 +367,7 @@ import {AnalysisService} from '../../service/analysis.service'
                             </div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор</span>
-                                <span class="view-value"> #4242421365 от 08.02.22</span>
+                                <span class="view-value"></span>
                             </div>
                             <br>
                             <div class="view-group">
@@ -419,11 +434,11 @@ import {AnalysisService} from '../../service/analysis.service'
                                     ></span>
                                 </div>
                                 <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
-                                    <!--<digest-offer *ngFor="let offer of offers"
+                                    <digest-offer *ngFor="let offer of offers"
                                         [offer]="offer"
                                         [compact]="true"
                                     >
-                                    </digest-offer>-->
+                                    </digest-offer>
                                 </div>
                             </div>
                         </div>
@@ -433,17 +448,17 @@ import {AnalysisService} from '../../service/analysis.service'
                             [zoom]="zoom"
                             [polygone_points]="searchArea"
                         >
-                            <!--<div *ngFor="let r of offers">
+                            <div *ngFor="let o of offers">
                                 <google-map-marker
-                                    *ngIf="r.location"
-                                    (click)="markerClick(r)"
-                                    [is_selected]="r.selected"
-                                    [latitude]="parseFloat(r.location.lat)"
-                                    [longitude]="parseFloat(r.location.lon)"
-                                    [info_str]="getOfferDigest(r)">
+                                    *ngIf="o.locationLat"
+                                    (click)="markerClick(o)"
+                                    [is_selected]="o.selected"
+                                    [latitude]="o.locationLat"
+                                    [longitude]="o.locationLon"
+                                    [info_str]="getOfferDigest(o)">
                                     [icon_id]="1"
                                 </google-map-marker>
-                            </div>-->
+                            </div>
                             
                         </google-map>
                     </ui-tab>
@@ -571,12 +586,13 @@ export class TabRequestComponent {
     public tab: Tab;
     public request: Request;
 
-    person: Person = new Person();
-
     offers: Offer[];
 
     agent: User = new User();
     agentOpts: any[] = [];
+
+    person: Person = new Person();
+    personOpts: any[] = [];
 
     historyRecs: HistoryRecord[];
 
@@ -590,8 +606,8 @@ export class TabRequestComponent {
     mapWidth: number;
 
     // для нового запроса
-    searchArea: any;
-    queryText: string;
+    searchArea: any = [];
+    queryText: string = "";
     //
 
     lat: number = 48.480007;
@@ -626,12 +642,23 @@ export class TabRequestComponent {
                 private _personService: PersonService,
                 private _userService: UserService) {
 
-        this._userService.list("AGENT", null, "").then(agents => {
+        this._userService.list("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
                     value: a.id,
                     label: a.name
+                });
+            }
+        });
+
+
+        this._personService.list(null, null, "").subscribe(persons => {
+            for (let i = 0; i < persons.length; i++) {
+                var p = persons[i];
+                this.personOpts.push({
+                    value: p.id,
+                    label: p.name
                 });
             }
         });
@@ -648,12 +675,24 @@ export class TabRequestComponent {
         } else {
 
         }
-        this._personService.get(this.request.personId).then(person => {
-            this.person = person;
-        });
+
+
+        this._offerService.list(0, 32, {}, this.request.request, []).subscribe(
+            data => {
+                this.offers = data;
+            },
+            err => console.log(err)
+        );
+
+        this._personService.get(this.request.personId).subscribe(
+            data => {
+                this.person = data;
+            }
+        );
+
 
         if (this.request.agentId != null) {
-            this._userService.get(this.request.agentId).then(agent => {
+            this._userService.get(this.request.agentId).subscribe(agent => {
                 this.agent = agent;
             });
         }
@@ -688,14 +727,23 @@ export class TabRequestComponent {
     agentChanged(e) {
         this.request.agentId = e.selected.value;
         if (this.request.agentId != null) {
-            this._userService.get(this.request.agentId).then(agent => {
+            this._userService.get(this.request.agentId).subscribe(agent => {
+                this.agent = agent;
+            });
+        }
+    }
+
+    personChanged(e) {
+        this.request.personId = e.selected.value;
+        if (this.request.agentId != null) {
+            this._userService.get(this.request.agentId).subscribe(agent => {
                 this.agent = agent;
             });
         }
     }
 
     save() {
-        this._requestService.save(this.request).then(request => {
+        this._requestService.save(this.request).subscribe(request => {
             this.request = request;
             this.toggleEdit();
         });
@@ -735,11 +783,16 @@ export class TabRequestComponent {
     }
 
     getOffers(page, per_page) {
-        this.offers = this._offerService.getSimilarOffer(page, per_page);
+        this._offerService.list(page, per_page, {}, this.queryText, this.searchArea).subscribe(
+            data => {
+                this.offers = data;
+            },
+            err => console.log(err)
+        );
     }
 
     offer_search() {
-        this.getOffers(Math.floor(Math.random() * 4), 16);
+        this.getOffers(0, 16);
     }
 
     offer_search_keydown(e: KeyboardEvent) {
@@ -759,6 +812,15 @@ export class TabRequestComponent {
         console.log('draw_finished');
         console.log(e);
         this.searchArea = e;
+        this.offer_search();
+    }
+
+    toggleDraw() {
+        this.mapDrawAllowed = !this.mapDrawAllowed;
+        if (!this.mapDrawAllowed) {
+            this.searchArea = [];
+            this.offer_search();
+        }
     }
 
     createRequest() {
@@ -767,10 +829,7 @@ export class TabRequestComponent {
         //this.request = this._requestService.getEmpty();
 
         this.request.request = this.queryText;
-    }
-
-    toggleDraw() {
-        this.mapDrawAllowed = !this.mapDrawAllowed;
+        this.request.searchArea = this.searchArea;
     }
 
     getOfferDigest(r: Offer) {

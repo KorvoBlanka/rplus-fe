@@ -92,8 +92,7 @@ import {UserService} from "../../service/user.service";
                 <tbody style="vertical-align: top; font-size: 14px; font-weight: 200;">
                 <tr>
                     <td width="33%">
-                        <span class="entry-header" style="width: 105px;">Контакт:</span> <a href="#">{{ person.name }}
-                        4212749444</a>
+                        <span class="entry-header" style="width: 105px;">Контакт:</span> <a href="#">{{ person.name }}</a>
                     </td>
                     <td width="33%">
                         <span class="entry-header">Задача:</span> {{ task.type }}
@@ -109,8 +108,7 @@ import {UserService} from "../../service/user.service";
                 </tr>
                 <tr>
                     <td>
-                        <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#"> {{ agent.name
-                        }} </a>
+                        <span class="entry-header" style="width: 105px;">Ответственный:</span> <a href="#"> {{ agent.name }} </a>
                     </td>
                     <td>
                         <span class="entry-header">Результат:</span> <span [class.badge-gray]="task.result_id == 0"
@@ -122,7 +120,7 @@ import {UserService} from "../../service/user.service";
                 </tr>
                 <tr>
                     <td>
-                        <span class="entry-header" style="width: 105px;">Стадия:</span> Первичный контакт
+                        <span class="entry-header" style="width: 105px;">Стадия:</span> 
                     </td>
                     <td></td>
                     <td>
@@ -152,13 +150,13 @@ export class DigestRequestComponent implements OnInit {
         this.resultText = this.getResultText();
 
         if (this.request.personId != null) {
-            this._personService.get(this.request.personId).then(person => {
+            this._personService.get(this.request.personId).subscribe(person => {
                 this.person = person;
             });
         }
 
         if (this.request.agentId != null) {
-            this._userService.get(this.request.agentId).then(agent => {
+            this._userService.get(this.request.agentId).subscribe(agent => {
                 this.agent = agent;
             });
         }

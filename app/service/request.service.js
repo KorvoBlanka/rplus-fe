@@ -11,52 +11,47 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 var config_service_1 = require("./config.service");
+var AsyncSubject_1 = require("rxjs/AsyncSubject");
 var RequestService = (function () {
     function RequestService(_configService, _http) {
         this._configService = _configService;
         this._http = _http;
         this.RS = "";
-        this.RS = this._configService.getConfig().RESTServer;
+        this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     }
     ;
-    RequestService.prototype.list = function (page, perPage, personId, searchQuery) {
-        var _this = this;
+    RequestService.prototype.list = function (page, perPage, agentId, personId, searchQuery) {
         console.log('request list');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/request/list?'
-                + 'page=' + page
-                + '&per_page=' + perPage
-                + '&person_id=' + personId
-                + '&search_query=' + searchQuery;
-            var headers = new http_1.Headers();
-            _this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
+        var _resourceUrl = this.RS + 'list?'
+            + 'page=' + page
+            + '&per_page=' + perPage
+            + '&agent_id=' + (agentId ? agentId : '')
+            + '&person_id=' + (personId ? personId : '')
+            + '&search_query=' + searchQuery;
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var requests = data.result;
+            ret_subj.next(requests);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
     };
     RequestService.prototype.save = function (request) {
-        var _this = this;
         console.log('request save');
         console.log(request);
-        var _resourceUrl = this.RS + '/api/v1/request/save';
+        var _resourceUrl = this.RS + 'save';
         delete request["selected"];
         var data_str = JSON.stringify(request);
-        return new Promise(function (resolve) {
-            _this._http.post(_resourceUrl, data_str)
-                .map(function (res) { return res.json(); }).subscribe(function (data) {
-                if (data.response == "ok") {
-                    var cRerquest = data.result;
-                    //this._dataStore.persons.splice(0, 0, cPerson);
-                    resolve(cRerquest);
-                }
-            }, function (err) { return console.log(err); });
-        });
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.post(_resourceUrl, data_str)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var r = data.result;
+            // TODO: pass copy????
+            ret_subj.next(r);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
     };
     return RequestService;
 }());

@@ -534,8 +534,6 @@ export class TabOrganisationComponent {
             this.toggleEdit();
         }
 
-        this.persons = this._personService.persons$;
-
         this.calcSize();
     }
 
@@ -564,7 +562,7 @@ export class TabOrganisationComponent {
 
     save() {
 
-        this._organisationService.save(this.organisation).then(org => {
+        this._organisationService.save(this.organisation).subscribe(org => {
             this.organisation = org;
         });
 
@@ -610,7 +608,7 @@ export class TabOrganisationComponent {
 
     getPersons(page, perPage) {
         if (this.organisation.id) {
-            this._personService.list(0, perPage, null, this.organisation.id, "");
+            this._personService.list(null, this.organisation.id, "");
         }
     }
 

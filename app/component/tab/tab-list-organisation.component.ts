@@ -6,6 +6,7 @@ import {OrganisationService} from '../../service/organisation.service';
 
 import {Tab} from '../../class/tab';
 import {Organisation} from '../../class/organisation';
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -127,19 +128,19 @@ import {Organisation} from '../../class/organisation';
 export class TabListOrganisationComponent implements OnInit, AfterViewInit {
     public tab: Tab;
 
-    organisations: Organisation[] = [];
-    page: number = 0;
-    perPage: number = 32;
+    organisations: Organisation[];
     searchQuery: string = "";
 
     constructor(private _configService: ConfigService, private _hubService: HubService, private _organisationService: OrganisationService) {
     }
 
     ngOnInit() {
-        this._organisationService.list(this.page, this.perPage, "").then(orgs => {
-            this.organisations = orgs;
-            this.page++;
-        });
+        this._organisationService.list("").subscribe(
+            data => {
+                this.organisations = data;
+            },
+            err => console.log(err)
+        );
     }
 
     ngAfterViewInit() {
@@ -150,12 +151,7 @@ export class TabListOrganisationComponent implements OnInit, AfterViewInit {
 
     scroll(e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-            this._organisationService.list(this.page, this.perPage, "").then(orgs => {
-                for (let i = 0; i < orgs.length; i++) {
-                    this.organisations.push(orgs[i]);
-                }
-                this.page++;
-            });
+
         }
     }
 
@@ -165,12 +161,7 @@ export class TabListOrganisationComponent implements OnInit, AfterViewInit {
     }
 
     searchParamChanged(event: any) {
-        this.page = 0;
-
-        this._organisationService.list(this.page, this.perPage, this.searchQuery).then(orgs => {
-            this.organisations = orgs;
-            this.page++;
-        });
+        this._organisationService.list(this.searchQuery);
 
     }
 }

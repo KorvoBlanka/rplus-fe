@@ -59,15 +59,15 @@ import {Offer} from '../../class/offer';
         }
     `],
     template: `
-        <div class="billet" data-id="r{{offer._id}}"
-            [class.selected]="offer.selected"
+        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}"
+            [class.selected]="selected"
             (click)="select()"
             (dblclick)="open()"
             (touchstart)="tStart()"
             (touchend)="tEnd()"
         >
             <div style="width: 100%;">
-                <div class="timestamp">07.01.16 11:09</div>
+                <div class="timestamp"> {{ offer.changeDate | formatDate }} </div>
                 <div class="tag-mark">
                     <ui-tag
                         [value]="offer.tag"
@@ -76,9 +76,9 @@ import {Offer} from '../../class/offer';
                 </div>
                 <img *ngIf="!compact" src="{{ PHOTO_STORAGE_URL + (offer.photo_thumbnail?offer.photo_thumbnail:'no_image.png') }}" style="height: 60px; min-width: 80px; float: left; margin: 10px;">
                 <div class="" style="min-height: 70px; margin-left: 10px;">
-                    <span style="font-weight: 400;">{{ offer.type_code }}</span>, {{ offer.rooms_count }} комн., {{ offer.floor }} эт., {{ offer.sqare_total }} кв. м.<br> {{ offer.address }} <br>
-                    <span class="text-primary">{{ offer.owner_price }} тыс. руб.</span>, <br>
-                    <span class="owner">Собственник (914)1593476</span>
+                    <span style="font-weight: 400;">{{ typeCodeOptions[offer.typeCode] }}</span>, {{ offer.roomsCount }} комн., {{ offer.floor }} эт., {{ offer.squareTotal }} кв. м.<br> {{ offer.address }} <br>
+                    <span class="text-primary">{{ offer.ownerPrice }} тыс. руб.</span>, <br>
+                    <span class="owner">Собственник </span>
                 </div>
                 <div class="healthbar">
                     <div class="health"></div>
@@ -96,6 +96,13 @@ export class DigestOfferComponent implements OnInit {
 
     private selected: boolean = false;
     private to: any;
+
+    typeCodeOptions = {
+        room: 'Комната',
+        apartment: 'Квартира',
+        house: 'Дом',
+        townhouse: 'Таунхаус'
+    };
 
     constructor(private _hubService: HubService) { };
 

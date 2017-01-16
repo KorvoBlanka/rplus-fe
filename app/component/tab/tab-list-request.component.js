@@ -19,34 +19,25 @@ var TabListRequestComponent = (function () {
         this._configService = _configService;
         this._hubService = _hubService;
         this._requerstService = _requerstService;
-        this.requests = [];
         this.page = 0;
         this.perPage = 32;
-        this._requerstService.list(this.page, this.perPage, null, "").then(function (requests) {
-            _this.requests = requests;
-        });
         setTimeout(function () {
             _this.tab.header = 'Заявки';
         });
     }
-    TabListRequestComponent.prototype.scroll = function (e) {
+    TabListRequestComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this._requerstService.list(this.page, this.perPage, null, null, "").subscribe(function (data) {
+            _this.requests = data;
+        }, function (err) { return console.log(err); });
+    };
+    TabListRequestComponent.prototype.scroll = function (e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-            this.page++;
-            this._requerstService.list(this.page, this.perPage, null, "").then(function (requests) {
-                for (var i = 0; i < requests.length; i++) {
-                    _this.requests.push(requests[i]);
-                }
-            });
         }
     };
     TabListRequestComponent.prototype.searchParamChanged = function () {
-        var _this = this;
         this.page = 0;
-        this._requerstService.list(this.page, this.perPage, null, this.searchQuery).then(function (requests) {
-            _this.requests = requests;
-            _this.page++;
-        });
+        this._requerstService.list(this.page, this.perPage, null, null, this.searchQuery);
     };
     TabListRequestComponent.prototype.addRequest = function () {
         var tab_sys = this._hubService.getProperty('tab_sys');

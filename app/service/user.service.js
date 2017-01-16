@@ -11,33 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 var config_service_1 = require("./config.service");
+var AsyncSubject_1 = require("rxjs/AsyncSubject");
 var UserService = (function () {
     function UserService(_configService, _http) {
         this._configService = _configService;
         this._http = _http;
         this.RS = "";
-        this.RS = this._configService.getConfig().RESTServer;
+        this.RS = this._configService.getConfig().RESTServer + '/api/v1/user/';
     }
     ;
-    UserService.prototype.get = function (userId) {
-        var _this = this;
-        console.log('user get');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/user/get/' + userId;
-            var headers = new http_1.Headers();
-            _this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
-    };
     UserService.prototype.list = function (role, superiorId, searchQuery) {
-        var _this = this;
         console.log('user list');
         var query = [];
         if (role) {
@@ -49,42 +32,44 @@ var UserService = (function () {
         if (searchQuery) {
             query.push("searchQuery=" + searchQuery);
         }
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/user/list?' + query.join("&");
-            var headers = new http_1.Headers();
-            _this._http.get(_resourceUrl, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-            }, function (err) { return console.log(err); });
-        });
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var users = data.result;
+            ret_subj.next(users);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
+    };
+    UserService.prototype.get = function (userId) {
+        console.log('user get');
+        var _resourceUrl = this.RS + 'get/' + userId;
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var u = data.result;
+            // TODO: pass copy????
+            ret_subj.next(u);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
     };
     UserService.prototype.save = function (user) {
-        var _this = this;
         console.log('user save');
-        return new Promise(function (resolve) {
-            var _resourceUrl = _this.RS + '/api/v1/user/save';
-            var headers = new http_1.Headers();
-            var data_str = JSON.stringify(user);
-            _this._http.post(_resourceUrl, data_str, {
-                headers: headers
-            })
-                .map(function (res) { return res.json(); })
-                .subscribe(function (data) {
-                if (data.response == "ok") {
-                    resolve(data.result);
-                }
-                else {
-                    console.log(data.result);
-                }
-            }, function (err) {
-                console.log(err);
-            });
+        var _resourceUrl = this.RS + 'save';
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        var data_str = JSON.stringify(user);
+        this._http.post(_resourceUrl, data_str)
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var u = data.result;
+            // TODO: pass copy????
+            ret_subj.next(u);
+            ret_subj.complete();
+        }, function (err) {
+            console.log(err);
         });
+        return ret_subj;
     };
     return UserService;
 }());

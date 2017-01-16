@@ -8,6 +8,7 @@ import {UserService} from '../../service/user.service';
 
 import {Tab} from '../../class/tab';
 import {User} from '../../class/user';
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -129,10 +130,10 @@ import {User} from '../../class/user';
     `
 })
 
-export class TabListUserComponent implements OnInit, AfterViewInit {
+export class TabListUserComponent implements OnInit {
     public tab: Tab;
 
-    users: User[] = [];
+    users: User[];
     searchQuery: string;
     superiorId: number;
     role: string;
@@ -143,15 +144,11 @@ export class TabListUserComponent implements OnInit, AfterViewInit {
     }];
 
     constructor(private _configService: ConfigService, private _hubService: HubService, private _userService: UserService) {
+        setTimeout(() => {this.tab.header = 'Пользователи'});
     }
 
     ngOnInit() {
-
-        this._userService.list(this.role, this.superiorId, this.searchQuery).then(users => {
-            this.users = users;
-        });
-
-        this._userService.list("MANAGER", null, "").then(managers => {
+        this._userService.list("MANAGER", null, "").subscribe(managers => {
             for (let m of managers) {
                 console.log(m);
                 this.superiorOpts.push({
@@ -160,10 +157,13 @@ export class TabListUserComponent implements OnInit, AfterViewInit {
                 });
             }
         });
-    }
 
-    ngAfterViewInit() {
-        setTimeout(() => {this.tab.header = 'Пользователи'});
+        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(
+            data => {
+                this.users = data;
+            },
+            err => console.log(err)
+        );
     }
 
     addUser() {
@@ -172,7 +172,7 @@ export class TabListUserComponent implements OnInit, AfterViewInit {
     }
 
     searchParamChanged() {
-        this._userService.list(this.role, this.superiorId, this.searchQuery).then(users => {
+        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(users => {
             this.users = users;
         });
     }

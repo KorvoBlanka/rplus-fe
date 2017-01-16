@@ -18,17 +18,13 @@ var TabListOrganisationComponent = (function () {
         this._configService = _configService;
         this._hubService = _hubService;
         this._organisationService = _organisationService;
-        this.organisations = [];
-        this.page = 0;
-        this.perPage = 32;
         this.searchQuery = "";
     }
     TabListOrganisationComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._organisationService.list(this.page, this.perPage, "").then(function (orgs) {
-            _this.organisations = orgs;
-            _this.page++;
-        });
+        this._organisationService.list("").subscribe(function (data) {
+            _this.organisations = data;
+        }, function (err) { return console.log(err); });
     };
     TabListOrganisationComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -37,14 +33,7 @@ var TabListOrganisationComponent = (function () {
         });
     };
     TabListOrganisationComponent.prototype.scroll = function (e) {
-        var _this = this;
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-            this._organisationService.list(this.page, this.perPage, "").then(function (orgs) {
-                for (var i = 0; i < orgs.length; i++) {
-                    _this.organisations.push(orgs[i]);
-                }
-                _this.page++;
-            });
         }
     };
     TabListOrganisationComponent.prototype.addOrganisation = function () {
@@ -52,12 +41,7 @@ var TabListOrganisationComponent = (function () {
         tabSys.addTab('organisation', { organisation: new organisation_1.Organisation() });
     };
     TabListOrganisationComponent.prototype.searchParamChanged = function (event) {
-        var _this = this;
-        this.page = 0;
-        this._organisationService.list(this.page, this.perPage, this.searchQuery).then(function (orgs) {
-            _this.organisations = orgs;
-            _this.page++;
-        });
+        this._organisationService.list(this.searchQuery);
     };
     return TabListOrganisationComponent;
 }());

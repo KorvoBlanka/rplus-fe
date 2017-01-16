@@ -26,7 +26,7 @@ import * as moment from 'moment/moment';
     
         .table {
             width: 100%;
-            font-size: 14;
+            font-size: 14px;
             border-collapse: collapse;
         }
     
@@ -279,14 +279,7 @@ export class OfferTableComponent implements OnInit {
 
     scroll(e) {
         if (e.currentTarget.scrollTop + this.contentHeight >= e.currentTarget.scrollHeight) {
-            this.page++;
-            this._offerService.listOffers(this.page, 10, "", "").then(offer => {
-                console.log('!');
-                var o = offer;
-                for (var i = 0; i < o.length; i++) {
-                    //this.offer.push(r[i])
-                }
-            });
+
         }
     }
 

@@ -34,7 +34,7 @@ import {Observable} from "rxjs";
             margin: 12px 12px 8px 12px;
         }
     
-        .person-list-wrapper {
+        .user-list-wrapper {
             padding-top: 25px;
             max-width: 1200px;
             margin: 0 auto;
@@ -74,11 +74,6 @@ import {Observable} from "rxjs";
                 <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
             </div>
             <div class="tool-box">
-                <div class="pull-left">
-                    <a (click)="addUser()">
-                        <span class="icon-add"></span>
-                    </a>
-                </div>
                 <div class="inline-select">
                     <ui-select class="view-value edit-value"
                         [options] = "superiorOpts"
@@ -121,11 +116,19 @@ import {Observable} from "rxjs";
                 </div>
             </div>
         </div>
-        <div class="user-list-wrapper">
-            <digest-user *ngFor="let u of users"
-                [user]="u"
-            >
-            </digest-user>
+        
+         <div class="user-list-wrapper">
+            <div class="scroll-wrapper">
+                <div class="button"
+                    (click)="addUser()"
+                >
+                Добавить пользователя
+                </div>
+                <digest-user *ngFor="let u of users"
+                    [user]="u"
+                >
+                </digest-user>
+            </div>
         </div>
     `
 })
@@ -148,6 +151,15 @@ export class TabListUserComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.tab.refreshRq.subscribe(
+            sender => {
+                this.listUsers();
+            }
+        )
+
+        this.listUsers();
+
         this._userService.list("MANAGER", null, "").subscribe(managers => {
             for (let m of managers) {
                 console.log(m);
@@ -157,7 +169,9 @@ export class TabListUserComponent implements OnInit {
                 });
             }
         });
+    }
 
+    listUsers() {
         this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(
             data => {
                 this.users = data;

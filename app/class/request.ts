@@ -1,11 +1,23 @@
+import {GeoPoint} from "./geoPoint";
 export class Request {
-  id: String;
+    id: String;
 
-  agentId: number;
-  personId: number;
+    agentId: number;
+    personId: number;
 
-  request: string;
-  addDate: Number;
+    stateCode: string;
+    stageCode: string;
+    offerTypeCode: string;
 
-  searchArea: String;
+    request: string;
+    addDate: Number;
+
+    searchArea: GeoPoint[];
+
+    constructor () {
+        // set default vals
+        this.offerTypeCode = 'sale';
+        this.searchArea = [];
+        this.request = '';
+    }
 }

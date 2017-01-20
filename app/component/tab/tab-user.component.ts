@@ -14,7 +14,7 @@ import {HistoryRecord} from '../../class/historyRecord';
 import {HubService} from '../../service/hub.service';
 import {UserService} from '../../service/user.service';
 import {ConfigService} from '../../service/config.service';
-import {OfferService} from '../../service/offer.service';
+import {OfferService, OfferSource} from '../../service/offer.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service';
@@ -333,7 +333,7 @@ import {AnalysisService} from '../../service/analysis.service';
 
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
-                    [header_mode]="!paneHidden"
+                    [headerMode]="!paneHidden"
                 >
                     <ui-tab
                         [title]="'Предложения'"
@@ -369,18 +369,7 @@ import {AnalysisService} from '../../service/analysis.service';
                                 </div>
                             </div>
                         </div>
-                        <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                            <div *ngFor="let r of offers">
-                                <google-map-marker
-                                    *ngIf="r._source.location"
-                                    (click)="markerClick(r)"
-                                    [is_selected]="r.selected"
-                                    [latitude]="parseFloat(r._source.location.lat)"
-                                    [longitude]="parseFloat(r._source.location.lon)"
-                                    [info_str]="getOfferDigest(r)">
-                                    [icon_id]="1"
-                                </google-map-marker>
-                            </div>
+                        <google-map [latitude]="lat" [longitude]="lon" [objects]="offers" [zoom]="zoom">
                         </google-map>
                     </ui-tab>
 
@@ -545,9 +534,9 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     editEnabled: boolean = false;
     requestOfferType: string = 'sale';
 
-    lat: number = 48.480007;
-    lon: number = 135.054954;
-    zoom: number = 16;
+    lat: number;
+    lon: number;
+    zoom: number;
 
     ch1_data: any[] = [];
     ch2_data: any[] = [];
@@ -584,7 +573,11 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.user = this.tab.args.user;
 
-        console.log(this.user);
+        var c = this._configService.getConfig();
+        this.zoom = c.map.zoom;
+        this.lat = c.map.lat;
+        this.lon = c.map.lon;
+
         if (this.user.id == null) {
             this.editEnabled = true;
         }
@@ -601,7 +594,6 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         if (this.user.superiorId != null) {
             this._userService.get(this.user.superiorId).subscribe(superior => {
                 this.superior = superior;
-                console.log(superior);
             });
         }
 
@@ -665,9 +657,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     requestsSelected() {
-        this._requestService.list(0, 32, this.user.id, null, "").subscribe(requests => {
-            this.requests = requests;
-        });
+        this.getRequests(0, 32);
     }
 
     analysisSelected() {
@@ -699,17 +689,21 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.historyRecs = this._historyService.getObjHistory();
     }
 
-    getOffers(page, per_page) {
-        //this.offers = this._offerService.getSimilarOffer(page, per_page);
+    getOffers(page, perPage) {
+        this._offerService.list(0, 32, OfferSource.LOCAL, {agentId: this.user.id, offerTypeCode: this.requestOfferType}, "", []).subscribe(offers => {
+            this.offers = offers;
+        });
     }
 
-    offerSearch() {
-        this.getOffers(Math.floor(Math.random() * 4), 16);
+    getRequests(page, perPage) {
+        this._requestService.list(0, 32, this.requestOfferType, this.user.id, null, "").subscribe(requests => {
+            this.requests = requests;
+        });
     }
 
     offerSearchKeydown(e: KeyboardEvent) {
         if (e.keyCode == 13) {
-            this.offerSearch();
+            this.getOffers(0, 16);
         }
     }
 
@@ -722,7 +716,8 @@ export class TabUserComponent implements OnInit, AfterViewInit {
 
     toggleOffer(offer_type: string) {
         this.requestOfferType = offer_type;
-        //this.requests = this._requestService.getRequest(1, 16);
+        this.getOffers(0, 16);
+        this.getRequests(0, 32);
     }
 
     getOfferDigest(r: Offer) {

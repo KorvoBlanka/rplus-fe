@@ -83,10 +83,10 @@ import {UserService} from "../../service/user.service";
         >
             <div style="display: flex; justify-content: space-between;">
                 <span>Заявка {{ request._id }}
-                  <span class="billet-label">{{ request.request }}</span>
+                  <span class="billet-label">{{ request.request }} ( {{ request.offerTypeCode }} )</span>
                 </span>
         
-                <span>11.11.15 11:29</span>
+                <span></span>
             </div>
             <table style="width: 100%;">
                 <tbody style="vertical-align: top; font-size: 14px; font-weight: 200;">

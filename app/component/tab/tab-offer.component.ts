@@ -171,7 +171,7 @@ import {Person} from "../../class/person";
                                 <span class="view-label">Ответственный</span>
                                 <ui-select class="view-value edit-value"
                                     [options] = "agentOpts"
-                                    [value]="agent.id"
+                                    [value]="offer.agent?.id"
                                     (onChange)="agentChanged($event)"
                                 >
                                 </ui-select>
@@ -200,7 +200,7 @@ import {Person} from "../../class/person";
                                 <span class="view-label">Собственник</span>
                                 <ui-select class="view-value edit-value"
                                     [options] = "personOpts"
-                                    [value]="person.id"
+                                    [value]="offer.person?.id"
                                     (onChange)="personChanged($event)"
                                 >
                                 </ui-select>
@@ -358,7 +358,7 @@ import {Person} from "../../class/person";
     
                             <div class="view-group">
                                 <span class="view-label">Ответственный</span>
-                                <span class="view-value"> {{ agent.name }} </span>
+                                <span class="view-value"> {{ offer.agent?.name }} </span>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Статус</span>
@@ -378,7 +378,7 @@ import {Person} from "../../class/person";
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Собственник</span>
-                                <span class="view-value"> {{ person.name }} </span>
+                                <span class="view-value"> {{ offer.person?.name }} </span>
                             </div>
         
                             <div class="view-group">
@@ -525,7 +525,7 @@ import {Person} from "../../class/person";
                                 <span class="icon-photo"> Фотографии</span>
                             </div>
                             <ui-carousel
-                                [photos] = "photos"
+                                [photos] = "offer.photoUrl"
                             >
                             </ui-carousel>
                         </div>
@@ -538,18 +538,19 @@ import {Person} from "../../class/person";
 
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
-                    [header_mode]="!paneHidden"
+                    [headerMode]="!paneHidden"
                 >
                     <ui-tab
                         [title]="'Карта'"
                     >
                         <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
                             <google-map-marker
-                                *ngIf="offer.location"
-                                (click)="log($event)"
-                                [latitude]="parseFloat(offer.location.lat)"
-                                [longitude]="parseFloat(offer.location.lon)"
-                                [info_str]="">
+                                *ngIf="offer.locationLat"
+                                (markerClick)="markerClick(offer)"
+                                [latitude]="offer.locationLat"
+                                [longitude]="offer.locationLon"
+                                [info_str]=""
+                            >
                             </google-map-marker>
                         </google-map>
                     </ui-tab>
@@ -578,23 +579,12 @@ import {Person} from "../../class/person";
                                 </div>
                             </div>
                         </div>
-                        <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                            <div *ngFor="let r of similarOffers">
-                                <google-map-marker
-                                    *ngIf="r.location"
-                                    (click)="markerClick(r)"
-                                    [is_selected]="r.selected"
-                                    [latitude]="parseFloat(r.location.lat)"
-                                    [longitude]="parseFloat(r.location.lon)"
-                                    [info_str]="getOfferDigest(r)">
-                                    [icon_id]="1"
-                                </google-map-marker>
-                            </div>
+                        <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" [objects]="similarOffers">
                             <google-map-marker
-                                *ngIf="offer.location"
+                                *ngIf="offer.locationLat"
                                 (markerClick)="markerClick(offer)"
-                                [latitude]="parseFloat(offer.location.lat)"
-                                [longitude]="parseFloat(offer.location.lon)"
+                                [latitude]="offer.locationLat"
+                                [longitude]="offer.locationLon"
                                 [info_str]=""
                             >
                             </google-map-marker>
@@ -747,10 +737,8 @@ export class TabOfferComponent implements OnInit {
     public offer: Offer;
     public photos: Photo[];
 
-    agent: User = new User();
     agentOpts: any[] = [];
 
-    person: Person = new Person();
     personOpts: any[] = [];
 
     similarOffers: Offer[];
@@ -764,9 +752,11 @@ export class TabOfferComponent implements OnInit {
 
     editEnabled: boolean = false;
 
-    lat: number = 48.480007;
-    lon: number = 135.054954;
-    zoom: number = 16;
+
+    lat: number;
+    lon: number;
+    zoom: number;
+
 
     ch1_data: any[] = [];
     ch2_data: any[] = [];
@@ -781,7 +771,7 @@ export class TabOfferComponent implements OnInit {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    offerTypeCodeOptions =[
+    offerTypeCodeOptions = [
         {value: 'sale', label: 'Продажа'},
         {value: 'rent', label: 'Аренда'}
     ];
@@ -919,7 +909,20 @@ export class TabOfferComponent implements OnInit {
 
         this.offer = this.tab.args.offer;
 
-        if (this.offer.id == null) {
+        console.log(this.offer);
+
+        var c = this._configService.getConfig();
+
+        this.zoom = c.map.zoom;
+        if (this.offer.locationLat) {
+            this.lat = this.offer.locationLat;
+            this.lon = this.offer.locationLon;
+        } else {
+            this.lat = c.map.lat;
+            this.lon = c.map.lon;
+        }
+
+        if (this.offer.id == null && this.offer.sourceUrl == null) {
             this.offer = new Offer();
 
             if (this.tab.args.person) {
@@ -929,31 +932,6 @@ export class TabOfferComponent implements OnInit {
 
             this.editEnabled = true;
         }
-
-        if (this.offer.agentId != null) {
-            this._userService.get(this.offer.agentId).subscribe(agent => {
-                this.agent = agent;
-            });
-        }
-
-        if (this.offer.personId != null) {
-            this._personService.get(this.offer.personId).subscribe(person => {
-                this.person = person;
-                console.log(person);
-            });
-        }
-        /*
-        this._photoService.getPhotos(this.offer.id).then(photos => {
-            this.photos = photos;
-        });
-
-        if (this.offer.location) {
-            this.lat = parseFloat(this.offer.location.lat);
-            this.lon = parseFloat(this.offer.location.lon);
-        }
-        */
-
-
 
         this.calcSize();
     }
@@ -986,7 +964,7 @@ export class TabOfferComponent implements OnInit {
         this.offer.agentId = e.selected.value;
         if (this.offer.agentId != null) {
             this._userService.get(this.offer.agentId).subscribe(agent => {
-                this.agent = agent;
+                this.offer.agent = agent;
             });
         }
     }
@@ -995,7 +973,7 @@ export class TabOfferComponent implements OnInit {
         this.offer.personId = e.selected.value;
         if (this.offer.personId != null) {
             this._personService.get(this.offer.personId).subscribe(person => {
-                this.person = person;
+                this.offer.person = person;
             });
         }
     }
@@ -1069,9 +1047,5 @@ export class TabOfferComponent implements OnInit {
         console.log(o);
         //r.selected = !r.selected;
         // scroll to object ???
-    }
-
-    getOfferDigest(r: Offer) {
-        return Offer.getDigest(r);
     }
 }

@@ -128,6 +128,7 @@ export class TabSystemComponent implements AfterContentInit{
 
     selectTab(tab: Tab) {
         this.selectedTab = tab;
+        tab.refresh("tabSys");
     }
 
     addTab(type, args) {

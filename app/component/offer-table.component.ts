@@ -85,19 +85,20 @@ import * as moment from 'moment/moment';
                     </thead>
                     <tbody
                         (scroll)="scroll($event)"
+                        (contextmenu)="tableContextMenu($event)"
                     >
-                        <tr *ngFor="let r of offers"
-                            [class.selected]="r.selected"
-                            (click)="click(r)"
-                            (dblclick)="dblClick(r)"
+                        <tr *ngFor="let o of offers"
+                            [class.selected]="o.selected"
+                            (click)="click(o)"
+                            (dblclick)="dblClick(o)"
                         >
                             <td *ngFor="let f of fields"
                                 [hidden]="!f.visible"
                                 [style.width.xx]="f.width"
                             >
-                                <span *ngIf="f.id=='status'" class="icon-{{ f.val(r) }}"></span>
-                                <span *ngIf="f.id=='photo' && r.main_photo_thumbnail" class="icon-photo"></span>
-                                <span *ngIf="f.id!='status' && f.id!='photo'">{{ f.val(r) }}</span>
+                                <span *ngIf="f.id=='status'" class="icon-{{ f.val(o) }}"></span>
+                                <span *ngIf="f.id=='photo' && o.photoUrl" class="icon-photo"></span>
+                                <span *ngIf="f.id!='status' && f.id!='photo'">{{ f.val(o) }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -195,7 +196,8 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'contact', label: 'Контакт', visible: true, sort: 0, val: (ofr: Offer) => {
-            return '~'
+            if (ofr.person) return ofr.person.name;
+            return '';
         }
         },
         {
@@ -218,7 +220,8 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'agent', label: 'Агент', visible: true, sort: 0, val: (ofr: Offer) => {
-            return '~'
+            if (ofr.agent) return ofr.agent.name;
+            return '';
         }
         },
         {
@@ -245,23 +248,23 @@ export class OfferTableComponent implements OnInit {
 
         {
             id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.lastSeenDate * 1000).format('DD.MM.YY hh:mm')
+            return moment(ofr.addDate).format('DD.MM.YY hh:mm')
         }
         },
         {
             id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: (ofr: Offer) => {
             //return moment(ofr.assignDate * 1000).format('DD.MM.YY hh:mm')
-            return moment(ofr.changeDate * 1000).format('DD.MM.YY hh:mm')
+            return moment(ofr.changeDate).format('DD.MM.YY hh:mm')
         }
         },
         {
             id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.changeDate * 1000).format('DD.MM.YY hh:mm')
+            return moment(ofr.changeDate).format('DD.MM.YY hh:mm')
         }
         },
         {
             id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.lastSeenDate * 1000).format('DD.MM.YY hh:mm')
+            return moment(ofr.lastSeenDate).format('DD.MM.YY hh:mm')
         }
         }
     ];
@@ -285,6 +288,45 @@ export class OfferTableComponent implements OnInit {
 
     click(ofr: Offer) {
         //r.selected = !r.selected;
+    }
+
+    tableContextMenu(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this._hubService.shared_var['cm_px'] = e.pageX;
+        this._hubService.shared_var['cm_py'] = e.pageY;
+
+        let items = [];
+
+        items.push({
+                class: "entry", disabled: false, label: 'пункт 1', callback: () => {
+
+                }
+            }
+        );
+
+        items.push({
+                class: "delimiter"
+            }
+        );
+
+        items.push({
+                class: "entry", disabled: false, label: 'пункт 2', callback: () => {
+
+                }
+            }
+        );
+
+        items.push({
+                class: "entry", disabled: false, label: 'пункт 3', callback: () => {
+
+                }
+            }
+        );
+
+
+        this._hubService.shared_var['cm_items'] = items;
+        this._hubService.shared_var['cm_hidden'] = false;
     }
 
     theaderContextMenu(e) {

@@ -32,10 +32,10 @@ var TabListPersonComponent = (function () {
     }
     TabListPersonComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._personService.list(null, null, "").subscribe(function (data) {
-            console.log(data);
-            _this.persons = data;
-        }, function (err) { return console.log(err); });
+        this.tab.refreshRq.subscribe(function (sender) {
+            _this.listPersons();
+        });
+        this.listPersons();
         this._userService.list("AGENT", null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
@@ -46,18 +46,23 @@ var TabListPersonComponent = (function () {
             }
         });
     };
-    TabListPersonComponent.prototype.ngAfterViewInit = function () {
-    };
-    TabListPersonComponent.prototype.scroll = function (e) {
-        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        }
+    TabListPersonComponent.prototype.listPersons = function () {
+        var _this = this;
+        this._personService.list(null, null, "").subscribe(function (data) {
+            _this.persons = data;
+        }, function (err) { return console.log(err); });
     };
     TabListPersonComponent.prototype.addPerson = function () {
         var tab_sys = this._hubService.getProperty('tab_sys');
         tab_sys.addTab('person', { person: new person_1.Person() });
     };
     TabListPersonComponent.prototype.searchParamChanged = function () {
-        this._personService.list(this.userId, null, this.searchQuery);
+        this.listPersons();
+    };
+    TabListPersonComponent.prototype.scroll = function (e) {
+        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+            this.listPersons();
+        }
     };
     return TabListPersonComponent;
 }());

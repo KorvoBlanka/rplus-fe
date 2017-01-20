@@ -8,6 +8,11 @@ import {AsyncSubject} from "rxjs/AsyncSubject";
 import {GeoPoint} from "../class/geoPoint";
 
 
+export enum OfferSource {
+    LOCAL = 1,
+    IMPORT
+}
+
 @Injectable()
 export class OfferService {
 
@@ -18,12 +23,18 @@ export class OfferService {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/offer/';
     };
 
-    list(page: number, perPage: number, filter: any, searchQuery: string, searchArea: GeoPoint[]) {
+    list(page: number, perPage: number, source: OfferSource, filter: any, searchQuery: string, searchArea: GeoPoint[]) {
         console.log('offers list');
+
+        var source_str = 'local';
+        if (source == OfferSource.IMPORT) {
+            source_str = 'import';
+        }
 
         var _resourceUrl = this.RS + 'list?'
             + 'page=' + page
             + '&per_page=' + perPage
+            + '&source=' + source_str
             + '&filter=' + JSON.stringify(filter)
             + '&search_query=' + searchQuery
             + '&search_area=' + JSON.stringify(searchArea);

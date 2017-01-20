@@ -13,7 +13,7 @@ import {HistoryRecord} from '../../class/historyRecord';
 
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
-import {OfferService} from '../../service/offer.service';
+import {OfferService, OfferSource} from '../../service/offer.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service';
@@ -299,7 +299,7 @@ import {UserService} from '../../service/user.service';
 
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
-                    [header_mode]="!paneHidden"
+                    [headerMode]="!paneHidden"
                 >
                     <ui-tab
                         [title]="'Предложения'"
@@ -327,7 +327,7 @@ import {UserService} from '../../service/user.service';
                                 <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
                                     <div class="button" (click)="createOffer()">
                                         Добавить предложение
-                                    </div>                    
+                                    </div>
                                     <digest-offer *ngFor="let offer of offers"
                                       [offer]="offer"
                                       [compact]="true"
@@ -336,18 +336,7 @@ import {UserService} from '../../service/user.service';
                                 </div>
                             </div>
                         </div>
-                        <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                            <div *ngFor="let o of offers">
-                                <google-map-marker
-                                    *ngIf="o.locationLat"
-                                    (click)="markerClick(o)"
-                                    [is_selected]="o.selected"
-                                    [latitude]="o.locationLat"
-                                    [longitude]="o.locationLon"
-                                    [info_str]="getOfferDigest(o)">
-                                    [icon_id]="1"
-                                </google-map-marker>
-                            </div>
+                        <google-map [latitude]="lat" [longitude]="lon" [objects]="offers" [zoom]="zoom">
                         </google-map>
                     </ui-tab>
                     <ui-tab
@@ -515,9 +504,9 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     requestOfferType: string = 'sale';
 
-    lat: number = 48.480007;
-    lon: number = 135.054954;
-    zoom: number = 16;
+    lat: number;
+    lon: number;
+    zoom: number;
 
     ch1_data: any[] = [];
     ch2_data: any[] = [];
@@ -571,6 +560,11 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.person = this.tab.args.person;
+
+        var c = this._configService.getConfig();
+        this.zoom = c.map.zoom;
+        this.lat = c.map.lat;
+        this.lon = c.map.lon;
 
         if (this.person.organisationId) {
             this._organisationService.get(this.person.organisationId).subscribe(org => {
@@ -648,13 +642,13 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     offersSelected() {
-        this._offerService.list(0, 32, {personId: this.person.id}, "", []).subscribe(offers => {
+        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, "", []).subscribe(offers => {
             this.offers = offers;
         });
     }
 
     requestsSelected() {
-        this._requestService.list(0, 32, null, this.person.id, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, null, this.person.id, "").subscribe(requests => {
             this.requests = requests;
         });
     }
@@ -730,7 +724,15 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     toggleOffer(offer_type: string) {
         this.requestOfferType = offer_type;
-        //this.requests = this._requestService.getRequest(1, 16);
+
+        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, "", []).subscribe(offers => {
+            this.offers = offers;
+        });
+
+        this._requestService.list(0, 32, this.requestOfferType, null, this.person.id, "").subscribe(requests => {
+            this.requests = requests;
+        });
+
     }
 
     createOffer() {

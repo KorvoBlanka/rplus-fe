@@ -19,7 +19,9 @@ ConfigService = __decorate([
 ], ConfigService);
 exports.ConfigService = ConfigService;
 var CONFIG = {
-    map: { lat: 48.480007, lon: 135.054954, zoom: 14 },
+    map: {
+        lat: 48.480228, lon: 135.071921, zoom: 14
+    },
     RESTServer: "http://192.168.5.81:4567",
 };
 //# sourceMappingURL=config.service.js.map

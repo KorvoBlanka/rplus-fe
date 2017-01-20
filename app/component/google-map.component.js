@@ -11,12 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var core_2 = require("@angular/core");
 var concavehull_1 = require("../class/concavehull");
+var offer_1 = require("../class/offer");
 var GoogleMapComponent = (function () {
     function GoogleMapComponent(_elem) {
         this._elem = _elem;
+        this.markers = [];
+        this.infoWindows = [];
         this.latitude = 0;
         this.longitude = 0;
         this.zoom = 8;
+        this.objects = [];
         this.id = Math.round(Math.random() * 1000);
         this.draw_allowed = false;
         this.is_drawing = false;
@@ -30,6 +34,23 @@ var GoogleMapComponent = (function () {
             disableDefaultUI: true
         };
         this.map = new google.maps.Map(this.container, opts);
+        if (this.polygone_points) {
+            this.polygone = new google.maps.Polygon({
+                paths: this.toGooglePoints(this.polygone_points),
+                strokeColor: "#062141",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#062141",
+                fillOpacity: 0.35,
+                editable: false,
+                geodesic: false,
+                map: this.map,
+            });
+        }
+        else {
+            this.polygone = new google.maps.Polygon();
+        }
+        this.refreshMarkers();
         this.initDrawer();
     };
     GoogleMapComponent.prototype.ngOnChanges = function (changes) {
@@ -38,6 +59,9 @@ var GoogleMapComponent = (function () {
         for (var p_name in changes) {
             var prop = changes[p_name];
             switch (p_name) {
+                case 'objects':
+                    this.refreshMarkers();
+                    break;
                 case 'latitude':
                 case 'longitude':
                     this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
@@ -72,6 +96,36 @@ var GoogleMapComponent = (function () {
             this.p_w = this.container.clientWidth;
             google.maps.event.trigger(this.map, 'resize');
         }
+    };
+    GoogleMapComponent.prototype.refreshMarkers = function () {
+        var _this = this;
+        if (this.objects == null)
+            return;
+        this.markers.forEach(function (m) {
+            m.setMap(null);
+        });
+        this.markers = [];
+        var c = this;
+        this.objects.forEach(function (obj) {
+            if (obj.locationLat) {
+                var m = new google.maps.Marker({
+                    map: _this.map,
+                    position: new google.maps.LatLng(obj.locationLat, obj.locationLon),
+                    title: '',
+                    //icon: ico,
+                    animation: google.maps.Animation.DROP
+                });
+                _this.markers.push(m);
+                var iw = new google.maps.InfoWindow({
+                    content: '<div>' + offer_1.Offer.getDigest(obj) + '</div>'
+                });
+                _this.infoWindows.push(iw);
+                m.addListener('click', function () {
+                    iw.open(this.map, m);
+                    //c.click.emit(_this);
+                });
+            }
+        });
     };
     GoogleMapComponent.prototype.initDrawer = function () {
         var _this = this;
@@ -150,6 +204,7 @@ GoogleMapComponent = __decorate([
             'latitude',
             'longitude',
             'zoom',
+            'objects',
             'draw_allowed',
             'polygone_points'
         ],
@@ -195,7 +250,6 @@ var GoogleMapMarkerComponent = (function () {
             _this.click.emit(_this);
         });
     };
-    // WTF???
     GoogleMapMarkerComponent.prototype.ngOnChanges = function () {
         if (this.marker) {
             if (this.is_selected) {

@@ -15,33 +15,38 @@ var organisation_service_1 = require("../../service/organisation.service");
 var organisation_1 = require("../../class/organisation");
 var TabListOrganisationComponent = (function () {
     function TabListOrganisationComponent(_configService, _hubService, _organisationService) {
+        var _this = this;
         this._configService = _configService;
         this._hubService = _hubService;
         this._organisationService = _organisationService;
         this.searchQuery = "";
+        setTimeout(function () {
+            _this.tab.header = 'Контрагенты';
+        });
     }
     TabListOrganisationComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.tab.refreshRq.subscribe(function (sender) {
+            _this.listOrganisation();
+        });
+        this.listOrganisation();
+    };
+    TabListOrganisationComponent.prototype.listOrganisation = function () {
         var _this = this;
         this._organisationService.list("").subscribe(function (data) {
             _this.organisations = data;
         }, function (err) { return console.log(err); });
-    };
-    TabListOrganisationComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        setTimeout(function () {
-            _this.tab.header = 'Контрагенты';
-        });
-    };
-    TabListOrganisationComponent.prototype.scroll = function (e) {
-        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-        }
     };
     TabListOrganisationComponent.prototype.addOrganisation = function () {
         var tabSys = this._hubService.getProperty('tab_sys');
         tabSys.addTab('organisation', { organisation: new organisation_1.Organisation() });
     };
     TabListOrganisationComponent.prototype.searchParamChanged = function (event) {
-        this._organisationService.list(this.searchQuery);
+        this.listOrganisation();
+    };
+    TabListOrganisationComponent.prototype.scroll = function (e) {
+        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+        }
     };
     return TabListOrganisationComponent;
 }());

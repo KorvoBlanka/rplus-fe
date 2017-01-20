@@ -36,6 +36,7 @@ var TabSystemComponent = (function () {
     };
     TabSystemComponent.prototype.selectTab = function (tab) {
         this.selectedTab = tab;
+        tab.refresh("tabSys");
     };
     TabSystemComponent.prototype.addTab = function (type, args) {
         if (this.tabs.length < 10) {

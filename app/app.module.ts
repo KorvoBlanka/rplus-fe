@@ -5,6 +5,7 @@ import {NgModule}      from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule}   from '@angular/forms';
 import {HttpModule} from "@angular/http";
+import { RouterModule, Routes } from '@angular/router';
 
 import {AppComponent} from "./app.component";
 
@@ -44,6 +45,7 @@ import {FormatDatePipe} from "./pipe/format-date.pipe";
 import {UITag} from "./component/ui/ui-tag.component";
 import {UIViewValue} from "./component/ui/ui-view-value";
 import {OffClickDirective} from "./component/ui/off-click";
+import {AdminPageComponent} from "./component/admin-page.component";
 
 
 @NgModule({
@@ -55,10 +57,12 @@ import {OffClickDirective} from "./component/ui/off-click";
     declarations: [
         FormatDatePipe,
 
+        LoginScreenComponent,
+        AdminPageComponent,
+
         AppComponent,
         ContextMenuComponent,
         NotebookComponent,
-        LoginScreenComponent,
         TabSystemComponent,
         TabRootComponent,
         TabMainComponent,

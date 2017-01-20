@@ -17,6 +17,7 @@ import {PhotoService} from "./service/photo.service";
     selector: 'rplus-app',
     styles: [``],
     template: `
+        <router-outlet></router-outlet>
         <div
             (contextmenu)="contextMenu($event)"
             (click)="click($event)"
@@ -28,7 +29,6 @@ import {PhotoService} from "./service/photo.service";
                 [items]="_hubService.shared_var['cm_items']"
             >
             </context-menu>
-            <login-screen></login-screen>
             <tab-system></tab-system>
             <notebook></notebook>
         </div>

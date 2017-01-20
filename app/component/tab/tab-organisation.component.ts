@@ -294,7 +294,7 @@ import {Observable} from 'rxjs/Observable';
 
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
-                    [header_mode]="!paneHidden"
+                    [headerMode]="!paneHidden"
                 >
                     <ui-tab
                       [title]="'Контакты'"
@@ -338,20 +338,9 @@ import {Observable} from 'rxjs/Observable';
                             [latitude]="lat"
                             [longitude]="lon"
                             [zoom]="zoom"
+                            [objects]="offers"
                             [polygone_points]="searchArea"
                         >
-                            <div *ngFor="let r of offers">
-                                <google-map-marker
-                                    *ngIf="r._source.location"
-                                    (click)="markerClick(r)"
-                                    [is_selected]="r.selected"
-                                    [latitude]="parseFloat(r._source.location.lat)"
-                                    [longitude]="parseFloat(r._source.location.lon)"
-                                    [info_str]="getOfferDigest(r)">
-                                    [icon_id]="1"
-                                </google-map-marker>
-                            </div>
-    
                         </google-map>
                     </ui-tab>
 

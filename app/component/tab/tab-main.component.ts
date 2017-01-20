@@ -26,21 +26,21 @@ import {Tab} from '../../class/tab';
         <div class="tile-board" style="">
             <div class="tile-group">
 
-                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer')">
-                    <div class="tile-content iconic">
-                        <span class="icon icon-home"></span>
-                    </div>
-                    <span class="tile-label">Недвижимость - Аренда</span>
-                </div>
-
-                <div class="tile bg-red fg-white">
+                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer' , {offerTypeCode: 'sale'})">
                     <div class="tile-content iconic">
                         <span class="icon icon-home"></span>
                     </div>
                     <span class="tile-label">Недвижимость - Продажа</span>
                 </div>
 
-                <div class="tile bg-green fg-white" (click)="turnTo('list_request')">
+                <div class="tile bg-red fg-white" (click)="turnTo('list_offer', {offerTypeCode: 'rent'})">
+                    <div class="tile-content iconic">
+                        <span class="icon icon-home"></span>
+                    </div>
+                    <span class="tile-label">Недвижимость - Аренда</span>
+                </div>
+
+                <div class="tile bg-green fg-white" (click)="turnTo('list_request', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-req-list"></span>
                     </div>
@@ -61,14 +61,14 @@ import {Tab} from '../../class/tab';
                     <span class="tile-label">Договоры</span>
                 </div>
 
-                <div class="tile bg-indigo fg-white" (click)="turnTo('list_person')">
+                <div class="tile bg-indigo fg-white" (click)="turnTo('list_person', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-contact"></span>
                     </div>
                     <span class="tile-label">Контакты</span>
                 </div>
 
-                <div class="tile bg-teal fg-white" (click)="turnTo('list_organisation')">
+                <div class="tile bg-teal fg-white" (click)="turnTo('list_organisation', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-organisation"></span>
                     </div>
@@ -82,7 +82,7 @@ import {Tab} from '../../class/tab';
                     <span class="tile-label">Настройки</span>
                 </div>
 
-                <div class="tile bg-teal fg-white" (click)="turnTo('list_users')">
+                <div class="tile bg-teal fg-white" (click)="turnTo('list_users', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-user"></span>
                     </div>
@@ -97,8 +97,8 @@ import {Tab} from '../../class/tab';
 export class TabMainComponent {
     public tab: Tab;
 
-    turnTo(tab_type: string) {
-        this.tab.reborn(tab_type, {});
+    turnTo(tabType: string, arg: any) {
+        this.tab.reborn(tabType, arg);
     }
 
     constructor() {

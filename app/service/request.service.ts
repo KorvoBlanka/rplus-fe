@@ -17,13 +17,14 @@ export class RequestService {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     };
 
-    list(page: number, perPage: number, agentId: number, personId: number, searchQuery: string) {
+    list(page: number, perPage: number, offerTypeCode: string, agentId: number, personId: number, searchQuery: string) {
 
         console.log('request list');
 
         var _resourceUrl = this.RS + 'list?'
             + 'page=' + page
             + '&per_page=' + perPage
+            + '&offerTypeCode=' + offerTypeCode
             + '&agent_id=' + (agentId ? agentId : '')
             + '&person_id=' + (personId ? personId : '')
             + '&search_query=' + searchQuery;

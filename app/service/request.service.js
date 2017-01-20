@@ -20,11 +20,12 @@ var RequestService = (function () {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     }
     ;
-    RequestService.prototype.list = function (page, perPage, agentId, personId, searchQuery) {
+    RequestService.prototype.list = function (page, perPage, offerTypeCode, agentId, personId, searchQuery) {
         console.log('request list');
         var _resourceUrl = this.RS + 'list?'
             + 'page=' + page
             + '&per_page=' + perPage
+            + '&offerTypeCode=' + offerTypeCode
             + '&agent_id=' + (agentId ? agentId : '')
             + '&person_id=' + (personId ? personId : '')
             + '&search_query=' + searchQuery;

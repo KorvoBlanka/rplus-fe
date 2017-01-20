@@ -3,7 +3,7 @@ import {
     ElementRef
 } from '@angular/core';
 
-import {OfferService} from '../../service/offer.service';
+import {OfferService, OfferSource} from '../../service/offer.service';
 import {ConfigService} from '../../service/config.service';
 
 import {Tab} from '../../class/tab';
@@ -74,6 +74,14 @@ import {UserService} from "../../service/user.service";
             font-size: 14px;
             color: #666;
         }
+        
+        .button {
+            text-align: center;
+            padding: 5px 15px;
+            background-color: #3366cc;
+            color: #fff;
+            cursor: pointer;
+        }
     `],
     template: `
         <div class="search-form" [class.table-mode]="tableMode">
@@ -86,27 +94,25 @@ import {UserService} from "../../service/user.service";
         
                 <div class="pull-left">
                 
-                    <button (click)="addOffer()">+</button>
-                
-                    <div class="inline-select">
+                    <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
                             [options]="stateCodeOptions"
                             [value]="filter.state"
                             [config]="{icon: 'icon-square', drawArrow: true}"
-                            (onChange)="filter.state = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.stateCode = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
-                    <div class="inline-select">
+                    <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
                             [options]="agentOpts"
                             [value]="filter.agent"
                             [config]="{icon: 'icon-person', drawArrow: true}"
-                            (onChange)="filter.agent = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.agentId = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
-                    <div class="inline-select">
+                    <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
                             [options]="[
                                 {value: 'all', label: 'Все'},
@@ -135,9 +141,9 @@ import {UserService} from "../../service/user.service";
                                 {value: '90', label: '3 месяца'},
                                 {value: 'all', label: 'Все'}
                             ]"
-                            [value]="filter.depth"
+                            [value]="filter.changeDate"
                             [config]="{icon: 'icon-month', drawArrow: true}"
-                            (onChange)="filter.depth = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.changeDate = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
@@ -173,14 +179,27 @@ import {UserService} from "../../service/user.service";
         >
             <div class="pane" [hidden]="paneHidden" [style.width.px]="paneWidth">
                 <div class="header">
-                    <div class="header-label">
+                
+                <!---------------------------------------------------------------------->
+                
+                    <div class="header-label" style="float: left;">
                         {{ tab.header }}
                     </div>
+                    <div class="two-way-switch" style="float: right; display: flex;">
+                        <div (click)="toggleSource('import')">Общая</div>&nbsp;
+                        <div (click)="toggleSource('local')">Компании</div>
+                    </div>
+                    
+                <!---------------------------------------------------------------------->
+                    
                 </div>
                 <div class="digest-list"
                      (scroll)="scroll($event)"
                      [style.height]="paneHeight"
                 >
+                    <div class="button" (click)="addOffer()">
+                        Добавить предложение
+                    </div>                    
                     <digest-offer *ngFor="let offer of offers"
                                   [offer]="offer"
                                   (click)="select(offer)"
@@ -190,23 +209,13 @@ import {UserService} from "../../service/user.service";
             </div>
             <div class="work-area" [style.width.px]="mapWidth">
                 <google-map
-                        [latitude]="lat"
-                        [longitude]="lon"
-                        [zoom]="zoom"
-                        [draw_allowed]="mapDrawAllowed"
-                        (drawFinished)="finishDraw($event)"
+                    [latitude]="lat"
+                    [longitude]="lon"
+                    [zoom]="zoom"
+                    [objects]="offers"
+                    [draw_allowed]="mapDrawAllowed"
+                    (drawFinished)="finishDraw($event)"
                 >
-                    <template ngFor let-o [ngForOf]="offers">
-                        <google-map-marker
-                                *ngIf="o.locationLat"
-                                (click)="markerClick(o)"
-                                [is_selected]="o.selected"
-                                [latitude]="o.locationLat"
-                                [longitude]="o.locationLon"
-                                [info_str]="getOfferDigest(o)"
-                        >
-                        </google-map-marker>
-                    </template>
                 </google-map>
             </div>
         </div>
@@ -217,14 +226,16 @@ export class TabListOfferComponent {
     public tab: Tab;
     public tableMode: boolean = false;
 
+    source: OfferSource = OfferSource.LOCAL;
     searchQuery: string = "";
     searchArea: any[] = [];
 
     filter: any = {
-        state: 'all',
-        agent: 'all',
+        stateCode: 'all',
+        agentId: 'all',
         tag: 'all',
-        depth: 90,
+        changeDate: 90,
+        offerTypeCode: 'sale',
     };
 
     agentOpts = [{
@@ -253,6 +264,7 @@ export class TabListOfferComponent {
 
     offers: Offer[];
     page: number = 0;
+    perPage: number = 32;
 
     to: number;
     list: HTMLElement;
@@ -266,6 +278,18 @@ export class TabListOfferComponent {
 
     ngOnInit() {
 
+        this.tab.refreshRq.subscribe(
+            sender => {
+                this.listOffers();
+            }
+        )
+
+        this.filter.offerTypeCode = this.tab.args.offerTypeCode;
+        this.list = this._elem.nativeElement.querySelector('.digest-list');
+
+        this.page = 0;
+        this.listOffers();
+
         this._userService.list("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
@@ -276,22 +300,21 @@ export class TabListOfferComponent {
             }
         });
 
-        this.page = 0;
-        this._offerService.list(this.page, 32, {}, "", []).subscribe(
-            data => {
-                this.offers = data;
-            },
-            err => console.log(err)
-        );
-
-        this.list = this._elem.nativeElement.querySelector('.digest-list');
         var c = this._configService.getConfig();
-
         this.lat = c.map.lat;
         this.lon = c.map.lon;
         this.zoom = c.map.zoom;
 
         this.calcSize();
+    }
+
+    listOffers() {
+        this._offerService.list(this.page, this.perPage, this.source, this.filter, this.searchQuery, this.searchArea).subscribe(
+            data => {
+                this.offers = data;
+            },
+            err => console.log(err)
+        );
     }
 
     onResize(e) {
@@ -304,30 +327,19 @@ export class TabListOfferComponent {
 
     toggleDraw() {
         this.mapDrawAllowed = !this.mapDrawAllowed;
-
         if (!this.mapDrawAllowed) {
+            this.page = 0;
+            this.offers = [];
             this.searchArea = [];
-            this._offerService.list(this.page, 32, {}, "", this.searchArea).subscribe(
-                data => {
-                    this.offers = data;
-                },
-                err => console.log(err)
-            );
+            this.listOffers();
         }
     }
 
     finishDraw(e) {
-        console.log('yay! finish');
-
         this.page = 0;
         this.offers = [];
         this.searchArea = e;
-        this._offerService.list(this.page, 32, {}, "", this.searchArea).subscribe(
-            data => {
-                this.offers = data;
-            },
-            err => console.log(err)
-        );
+        this.listOffers();
     }
 
     calcSize() {
@@ -346,7 +358,6 @@ export class TabListOfferComponent {
     }
 
     select(o: Offer) {
-        console.log('select');
         if (o.locationLat && o.locationLon) {
             this.lat = o.locationLat;
             this.lon = o.locationLon;
@@ -361,12 +372,7 @@ export class TabListOfferComponent {
 
     searchParamChanged(e) {
         this.page = 0;
-        this._offerService.list(this.page, 32, this.filter, this.searchQuery, this.searchArea).subscribe(
-            data => {
-                this.offers = data;
-            },
-            err => console.log(err)
-        );
+        this.listOffers();
     }
 
     markerClick(o: Offer) {
@@ -381,12 +387,19 @@ export class TabListOfferComponent {
         //}
     }
 
-    getOfferDigest(o: Offer) {
-        return Offer.getDigest(o);
-    }
-
     addOffer() {
         var tab_sys = this._hubService.getProperty('tab_sys');
         tab_sys.addTab('offer', {offer: new Offer()});
+    }
+
+    toggleSource(s: string) {
+
+        if (s == 'local') {
+            this.source = OfferSource.LOCAL;
+        } else {
+            this.source = OfferSource.IMPORT;
+        }
+
+        this.listOffers();
     }
 }

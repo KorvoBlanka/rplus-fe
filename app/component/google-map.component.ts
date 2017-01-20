@@ -8,6 +8,7 @@ import {Output, EventEmitter} from '@angular/core';
 
 import {ConcaveHull} from '../class/concavehull';
 import {GeoPoint} from "../class/geoPoint";
+import {Offer} from "../class/offer";
 
 
 @Component({
@@ -16,6 +17,7 @@ import {GeoPoint} from "../class/geoPoint";
         'latitude',
         'longitude',
         'zoom',
+        'objects',
         'draw_allowed',
         'polygone_points'
     ],
@@ -36,9 +38,14 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     container: HTMLElement;
     map: google.maps.Map;
 
+    markers: google.maps.Marker[] = [];
+    infoWindows: google.maps.InfoWindow[] = [];
+
     latitude: number = 0;
     longitude: number = 0;
     zoom: number = 8;
+
+    objects: Offer[] = [];
 
     id: number = Math.round(Math.random() * 1000);
     p_w: number;
@@ -47,7 +54,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     draw_allowed: boolean = false;
     is_drawing: boolean = false;
     polyline: google.maps.Polyline;
-    polygone_points: any[];
+    polygone_points: GeoPoint[];
     polygone: google.maps.Polygon;
 
     @Output() drawFinished: EventEmitter<any> = new EventEmitter();
@@ -65,6 +72,25 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
             disableDefaultUI: true
         };
         this.map = new google.maps.Map(this.container, opts);
+
+        if (this.polygone_points) {
+            this.polygone = new google.maps.Polygon({
+                paths: this.toGooglePoints(this.polygone_points),
+                strokeColor: "#062141",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#062141",
+                fillOpacity: 0.35,
+                editable: false,
+                geodesic: false,
+                map: this.map,
+            });
+        } else {
+            this.polygone = new google.maps.Polygon();
+        }
+
+        this.refreshMarkers();
+
         this.initDrawer();
     }
 
@@ -73,6 +99,9 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
         for (let p_name in changes) {
             let prop = changes[p_name];
             switch (p_name) {
+                case 'objects':
+                    this.refreshMarkers();
+                    break;
                 case 'latitude':
                 case 'longitude':
                     this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
@@ -107,6 +136,43 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
             this.p_w = this.container.clientWidth;
             google.maps.event.trigger(this.map, 'resize');
         }
+    }
+
+    refreshMarkers() {
+        if (this.objects == null) return;
+        this.markers.forEach(m => {
+            m.setMap(null);
+        });
+        this.markers = [];
+
+        var c = this;
+
+        this.objects.forEach(obj => {
+            if(obj.locationLat) {
+
+                var m = new google.maps.Marker({
+                    map: this.map,
+                    position: new google.maps.LatLng(obj.locationLat, obj.locationLon),
+                    title: '',
+                    //icon: ico,
+                    animation: google.maps.Animation.DROP
+                });
+
+                this.markers.push(m);
+
+                var iw = new google.maps.InfoWindow({
+                    content: '<div>' + Offer.getDigest(obj) + '</div>'
+                });
+
+                this.infoWindows.push(iw);
+
+                m.addListener('click', function () {
+                    iw.open(this.map, m);
+                    //c.click.emit(_this);
+                });
+
+            }
+        });
     }
 
     initDrawer() {
@@ -170,7 +236,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
         });
     }
 
-    toGooglePoints(pList: any[]) {
+    toGooglePoints(pList: GeoPoint[]) {
         var result: any[] = [];
         pList.forEach(p => {
             result.push({lat: p.lat, lng: p.lon});
@@ -243,8 +309,6 @@ export class GoogleMapMarkerComponent implements OnChanges {
         });
     }
 
-
-    // WTF???
     ngOnChanges() {
         if (this.marker) {
             if (this.is_selected) {

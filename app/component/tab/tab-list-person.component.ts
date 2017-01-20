@@ -136,7 +136,7 @@ import {UserService} from "../../service/user.service";
     `
 })
 
-export class TabListPersonComponent implements OnInit, AfterViewInit {
+export class TabListPersonComponent implements OnInit {
     public tab: Tab;
 
     persons: Person[];
@@ -154,13 +154,14 @@ export class TabListPersonComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this._personService.list(null, null, "").subscribe(
-            data => {
-                console.log(data);
-                this.persons = data;
-            },
-            err => console.log(err)
-        );
+
+        this.tab.refreshRq.subscribe(
+            sender => {
+                this.listPersons();
+            }
+        )
+
+        this.listPersons();
 
         this._userService.list("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
@@ -173,14 +174,13 @@ export class TabListPersonComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit() {
-
-    }
-
-    scroll(e) {
-        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-
-        }
+    listPersons() {
+        this._personService.list(null, null, "").subscribe(
+            data => {
+                this.persons = data;
+            },
+            err => console.log(err)
+        );
     }
 
     addPerson() {
@@ -189,8 +189,12 @@ export class TabListPersonComponent implements OnInit, AfterViewInit {
     }
 
     searchParamChanged() {
-        this._personService.list(this.userId, null, this.searchQuery);
+        this.listPersons();
     }
 
-
+    scroll(e) {
+        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+            this.listPersons();
+        }
+    }
 }

@@ -2,39 +2,57 @@ https://sites.google.com/site/gmapsdevelopment/
 http://bluejamesbond.github.io/CharacterMap/
 
 
-infinite scrolling в режиме таблицы
-недвижимость в режиме таблицы и карты - как сделать объекты "общими"??
-подумать над "тэгами". откуда получать, как рисовать в менюшках и пр.
-dataProvider - для всего
-dictProvider - для всяких "словарей"
 
-разгрести css"ку, сделать выбор активного цвета
+- общее
+    refresh tab content on select               V +/-
+    inf scroll
+    ~dictionaries~
 
 
-attr.scrollTop не работает ??? может потом починят
-url фоток, формировать на сервере?
+- list offer
+    search by phone, "near"
+    common offers                               !   range exact
+    table view -
 
 
-возможность выбрать ежедневник для синхронизации
+- list request
+    search (by user, by person, phone ...)
+    date filter
 
-#
-Тип
-Фото
-Город
-Адрес
-Комнаты
-Планировка
-Материал
-Этаж
-Площадь
-Импорт
-Предложение
-Контакт
-Цена
-Цена 2м
-MLS
-Агент
-Добавлено
-Назначено
-Изменено
-Актуально
+
+- list user
+    search
+
+
+- list person
+    search
+    date filter
+    agent filter
+
+
+- list org
+    search
+
+
+
+- offer
+    similar
+    requests
+    photos
+    files
+
+
+- request
+
+
+
+- user
+    blank manager option
+
+
+
+- person
+
+
+
+- org

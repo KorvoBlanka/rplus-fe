@@ -125,16 +125,30 @@ import {Observable} from "rxjs";
     `
 })
 
-export class TabListOrganisationComponent implements OnInit, AfterViewInit {
+export class TabListOrganisationComponent implements OnInit {
     public tab: Tab;
 
     organisations: Organisation[];
     searchQuery: string = "";
 
     constructor(private _configService: ConfigService, private _hubService: HubService, private _organisationService: OrganisationService) {
+        setTimeout(() => {
+            this.tab.header = 'Контрагенты';
+        });
     }
 
     ngOnInit() {
+
+        this.tab.refreshRq.subscribe(
+            sender => {
+                this.listOrganisation();
+            }
+        )
+
+        this.listOrganisation();
+    }
+
+    listOrganisation() {
         this._organisationService.list("").subscribe(
             data => {
                 this.organisations = data;
@@ -143,25 +157,19 @@ export class TabListOrganisationComponent implements OnInit, AfterViewInit {
         );
     }
 
-    ngAfterViewInit() {
-        setTimeout(() => {
-            this.tab.header = 'Контрагенты';
-        });
-    }
-
-    scroll(e) {
-        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-
-        }
-    }
-
     addOrganisation() {
         var tabSys = this._hubService.getProperty('tab_sys');
         tabSys.addTab('organisation', {organisation: new Organisation()});
     }
 
     searchParamChanged(event: any) {
-        this._organisationService.list(this.searchQuery);
+        this.listOrganisation();
 
+    }
+
+    scroll(e) {
+        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+
+        }
     }
 }

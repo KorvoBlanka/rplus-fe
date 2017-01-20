@@ -97,6 +97,11 @@ export class Offer {
     locationLat: number;
     locationLon: number;
 
+    photoUrl: string[];
+    //photo_tumb???
+
+    person: any;
+    agent: any;
 
 
     constructor () {

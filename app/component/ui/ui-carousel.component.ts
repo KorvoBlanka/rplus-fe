@@ -14,7 +14,7 @@ import {Photo} from '../../class/photo';
 
         <div *ngFor="let photo of photos" class="img-wrap pull-left" style="margin-left: 1px;">
           <div class="img-overlay" style="position: relative; display: inline-block;">
-            <img class="carousel-img" [attr.src]="photo.fileName" style="height: 100px;">
+            <img class="carousel-img" [attr.src]="photo" style="height: 100px;">
           </div>
         </div>
 

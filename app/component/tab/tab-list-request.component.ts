@@ -73,6 +73,20 @@ import {Observable} from "rxjs";
                 <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
             </div>
             <div class="tool-box">
+            
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options] = "[
+                            {value: 'sale', label: 'Продажа'},
+                            {value: 'rent', label: 'Аренда'}
+                        ]"
+                        [value]="sale"
+                        [config]="{icon: 'icon-', draw_arrow: true}"
+                        (onChange)="offerTypeCode = $event.selected.value; searchParamChanged();"
+                        >
+                    </ui-select>
+                </div>
+            
                 <div class="inline-select">
                     <ui-select class="view-value edit-value"
                         [options] = "[
@@ -87,6 +101,7 @@ import {Observable} from "rxjs";
                         ]"
                         [value]="0"
                         [config]="{icon: 'icon-tag', draw_arrow: true}"
+                        (onChange)="searchParamChanged();"
                         >
                     </ui-select>
                 </div>
@@ -103,6 +118,7 @@ import {Observable} from "rxjs";
                         ]"
                         [value]="6"
                         [config]="{icon: 'icon-month', drawArrow: true}"
+                        (onChange)="searchParamChanged();"
                     >
                     </ui-select>
                 </div>
@@ -120,7 +136,6 @@ import {Observable} from "rxjs";
                     [request]="r"
                 >
                 </digest-request>
-        
             </div>
         </div>
     `
@@ -128,7 +143,8 @@ import {Observable} from "rxjs";
 
 export class TabListRequestComponent implements OnInit {
     public tab: Tab;
-    searchQuery: string;
+    searchQuery: string = "";
+    offerTypeCode: string = 'sale';
     requests: Request[];
     page: number = 0;
     perPage: number = 32;
@@ -140,7 +156,18 @@ export class TabListRequestComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._requerstService.list(this.page, this.perPage, null, null, "").subscribe(
+
+        this.tab.refreshRq.subscribe(
+            sender => {
+                this.listRequests();
+            }
+        )
+
+        this.listRequests();
+    }
+
+    listRequests() {
+        this._requerstService.list(this.page, this.perPage, this.offerTypeCode, null, null, this.searchQuery).subscribe(
             data => {
                 this.requests = data;
             },
@@ -148,20 +175,21 @@ export class TabListRequestComponent implements OnInit {
         );
     }
 
-    scroll(e) {
-        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-
-        }
+    addRequest() {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        var r = new Request();
+        r.offerTypeCode = this.offerTypeCode;
+        tab_sys.addTab('request', {request: r});
     }
 
     searchParamChanged() {
         this.page = 0;
-
-        this._requerstService.list(this.page, this.perPage, null, null, this.searchQuery)
+        this.listRequests();
     }
 
-    addRequest() {
-        var tab_sys = this._hubService.getProperty('tab_sys');
-        tab_sys.addTab('request', {request: new Request()});
+    scroll(e) {
+        if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+            this.listRequests();
+        }
     }
 }

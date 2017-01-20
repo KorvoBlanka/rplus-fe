@@ -12,7 +12,7 @@ import {User} from '../../class/user';
 
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
-import {OfferService} from '../../service/offer.service';
+import {OfferService, OfferSource} from '../../service/offer.service';
 import {RequestService} from '../../service/request.service';
 import {TaskService} from '../../service/task.service';
 import {HistoryService} from '../../service/history.service'
@@ -203,11 +203,20 @@ import {Observable} from "rxjs";
         >
             <div class="search-form" [class.table-mode]="tableMode">
                 <div class="search-box with-button">
-                    <input type="text" class="" placeholder="" [(ngModel)]="queryText" (keydown)="offer_search_keydown($event)">
+                    <input type="text" class="" placeholder="" [(ngModel)]="request.request" (keydown)="offer_search_keydown($event)">
                     <div class="search-button" (click)="createRequest()">Создать</div>
                 </div>
                 <div class="tool-box">
                     <div class="pull-left">
+                        <div class="inline-select">
+                            <ui-select class="view-value edit-value"
+                                [options] = "offerTypeCodeOptions"
+                                [value]="request.offerTypeCode"
+                                [config]="{icon: 'icon-', draw_arrow: true}"
+                                (onChange)="request.offerTypeCode = $event.selected.value; offer_search();"
+                                >
+                            </ui-select>
+                        </div>
                     </div>
                     <div class="pull-right">
                         <a (click)="toggleDraw()" [hidden]="tableMode">
@@ -238,27 +247,20 @@ import {Observable} from "rxjs";
                     </div>
                 </div>
             </div>
-        
             <google-map
                 [latitude]="lat"
                 [longitude]="lon"
                 [zoom]="zoom"
+                [objects]="offers"
                 [draw_allowed]="mapDrawAllowed"
                 (drawFinished)="drawFinished($event)"
             >
-                <template ngFor let-o [ngForOf]="offers">
-                    <google-map-marker
-                            *ngIf="o.locationLat"
-                            (click)="markerClick(o)"
-                            [is_selected]="o.selected"
-                            [latitude]="o.locationLat"
-                            [longitude]="o.locationLon"
-                            [info_str]="getOfferDigest(o)"
-                    >
-                    </google-map-marker>
-                </template>
             </google-map>
         </div>
+
+
+        <!------------------>
+
 
         <div class="request"
             (window:resize)="onResize($event)"
@@ -275,7 +277,7 @@ import {Observable} from "rxjs";
                     <div style="margin: 5px;">
                         <div class="pull-container">
                             <div class="font-sz-2 pull-left">Источник: звонок<span class="color-g1"><a href="" target="_blank"></a></span></div>
-                            <div class="font-sz-1 color-g2 pull-right"> {{ request.add_date | formatDate }} </div>
+                            <div class="font-sz-1 color-g2 pull-right"> {{ request.changeDate | formatDate }} </div>
                         </div>
                         <hr>
 
@@ -316,36 +318,28 @@ import {Observable} from "rxjs";
                             <div class="view-group">
                                 <span class="view-label">Статус</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "[
-                                        {value: 1, label: 'Не активен'},
-                                        {value: 2, label: 'Активен'},
-                                        {value: 3, label: 'В работе'},
-                                        {value: 4, label: 'Приостановлен'},
-                                        {value: 5, label: 'Архив'}
-                                    ]"
-                                    [value]="1"
-                                    (onChange)="log($event)"
+                                    [options] = "stateCodeOptions"
+                                    [value]="request?.stateCode"
+                                    (onChange)="request.stateCode = $event.selected.value"
                                 >
                                 </ui-select>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
                                 <ui-select class="view-value edit-value"
-                                    [options] = "[
-                                        {value: 1, label: 'Первичный контакт'},
-                                        {value: 2, label: 'Заключение договора'},
-                                        {value: 3, label: 'Показ'},
-                                        {value: 4, label: 'Подготовка договора'},
-                                        {value: 5, label: 'Принятие решения'},
-                                        {value: 6, label: 'Переговоры'},
-                                        {value: 7, label: 'Сделка'}
-                                    ]"
-                                    [value]="1"
-                                    (onChange)="log($event)"
+                                    [options] = "stageCodeOptions"
+                                    [value]="request?.stageCode"
+                                    (onChange)="request.stageCode = $event.selected.value"
                                 >
                                 </ui-select>
                             </div>
                             <br>
+                            
+                            <div class="view-group">
+                                <span class="view-label">Тип</span>
+                                <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.offerTypeCode">
+                            </div>
+                            
                             <div class="view-group">
                                 <span class="view-label">Запрос</span>
                                 <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.request">
@@ -376,13 +370,27 @@ import {Observable} from "rxjs";
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Статус</span>
-                                <span class="view-value"> Активен</span>
+                                <ui-view-value
+                                    [options] = "stateCodeOptions"
+                                    [value]="request.stateCode"
+                                > 
+                                </ui-view-value>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
-                                <span class="view-value"> {{ request.state_code }} </span>
+                                <ui-view-value
+                                    [options] = "stageCodeOptions"
+                                    [value]="request.stageCode"
+                                >
+                                </ui-view-value>
                             </div>
                             <br>
+                            
+                            <div class="view-group">
+                                <span class="view-label pull-left">Тип</span>
+                                <span class="view-value"> {{ request.offerTypeCode }}</span>
+                            </div>
+                            
                             <div class="view-group">
                                 <span class="view-label pull-left">Запрос</span>
                                 <span class="view-value"> {{ request.request }}</span>
@@ -415,7 +423,7 @@ import {Observable} from "rxjs";
 
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
-                    [header_mode]="!paneHidden"
+                    [headerMode]="!paneHidden"
                 >
                     <ui-tab
                         [title]="'Предложения'"
@@ -446,20 +454,9 @@ import {Observable} from "rxjs";
                             [latitude]="lat"
                             [longitude]="lon"
                             [zoom]="zoom"
-                            [polygone_points]="searchArea"
+                            [objects]="offers"
+                            [polygone_points]="request?.searchArea"
                         >
-                            <div *ngFor="let o of offers">
-                                <google-map-marker
-                                    *ngIf="o.locationLat"
-                                    (click)="markerClick(o)"
-                                    [is_selected]="o.selected"
-                                    [latitude]="o.locationLat"
-                                    [longitude]="o.locationLon"
-                                    [info_str]="getOfferDigest(o)">
-                                    [icon_id]="1"
-                                </google-map-marker>
-                            </div>
-                            
                         </google-map>
                     </ui-tab>
                     <ui-tab [title]="'Аналитика'"
@@ -605,14 +602,9 @@ export class TabRequestComponent {
     paneWidth: number;
     mapWidth: number;
 
-    // для нового запроса
-    searchArea: any = [];
-    queryText: string = "";
-    //
-
-    lat: number = 48.480007;
-    lon: number = 135.054954;
-    zoom: number = 16;
+    lat: number;
+    lon: number;
+    zoom: number;
 
     ch1_data: any[] = [];
     ch2_data: any[] = [];
@@ -627,9 +619,28 @@ export class TabRequestComponent {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    log(e) {
-        console.log(e);
-    }
+    offerTypeCodeOptions =[
+        {value: 'sale', label: 'Продажа'},
+        {value: 'rent', label: 'Аренда'}
+    ];
+
+    stateCodeOptions = [
+        {value: 'raw', label: 'Не активен'},
+        {value: 'active', label: 'Активен'},
+        {value: 'work', label: 'В работе'},
+        {value: 'suspended', label: 'Приостановлен'},
+        {value: 'archive', label: 'Архив'}
+    ];
+
+    stageCodeOptions = [
+        {value: 'contact', label: 'Первичный контакт'},
+        {value: 'pre_deal', label: 'Заключение договора'},
+        {value: 'show', label: 'Показ'},
+        {value: 'prep_deal', label: 'Подготовка договора'},
+        {value: 'decision', label: 'Принятие решения'},
+        {value: 'negs', label: 'Переговоры'},
+        {value: 'deal', label: 'Сделка'}
+    ];
 
 
     constructor(private _hubService: HubService,
@@ -670,25 +681,49 @@ export class TabRequestComponent {
 
     ngOnInit() {
         this.request = this.tab.args.request;
+
+        var c = this._configService.getConfig();
+
+        this.zoom = c.map.zoom;
+        if (this.request.searchArea && this.request.searchArea.length > 0) {
+
+            var lat: number = 0.0;
+            var lon: number = 0.0;
+            this.request.searchArea.forEach(p => {
+                lat += p.lat;
+                lon += p.lon;
+            })
+
+            this.lat = lat / this.request.searchArea.length;
+            this.lon = lon / this.request.searchArea.length;
+
+            console.log(this.lat);
+            console.log(this.lon);
+        } else {
+            this.lat = c.map.lat;
+            this.lon = c.map.lon;
+        }
+
         if (this.request.id == null) {
             this.newRequest = true;
         } else {
 
         }
 
-
-        this._offerService.list(0, 32, {}, this.request.request, []).subscribe(
+        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, this.request.request, this.request.searchArea).subscribe(
             data => {
                 this.offers = data;
             },
             err => console.log(err)
         );
 
-        this._personService.get(this.request.personId).subscribe(
-            data => {
-                this.person = data;
-            }
-        );
+        if (this.request.personId != null) {
+            this._personService.get(this.request.personId).subscribe(
+                data => {
+                    this.person = data;
+                }
+            );
+        }
 
 
         if (this.request.agentId != null) {
@@ -698,7 +733,6 @@ export class TabRequestComponent {
         }
 
         this.calcSize();
-        console.log(this.request);
     }
 
     onResize(e) {
@@ -750,7 +784,7 @@ export class TabRequestComponent {
     }
 
     offersSelected() {
-        this.getOffers(1, 16);
+        this.getOffers(0, 16);
     }
 
     analysisSelected() {
@@ -783,7 +817,8 @@ export class TabRequestComponent {
     }
 
     getOffers(page, per_page) {
-        this._offerService.list(page, per_page, {}, this.queryText, this.searchArea).subscribe(
+        console.log(this.request);
+        this._offerService.list(page, per_page, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, this.request.request, this.request.searchArea).subscribe(
             data => {
                 this.offers = data;
             },
@@ -811,14 +846,14 @@ export class TabRequestComponent {
     drawFinished(e) {
         console.log('draw_finished');
         console.log(e);
-        this.searchArea = e;
+        this.request.searchArea = e;
         this.offer_search();
     }
 
     toggleDraw() {
         this.mapDrawAllowed = !this.mapDrawAllowed;
         if (!this.mapDrawAllowed) {
-            this.searchArea = [];
+            this.request.searchArea = [];
             this.offer_search();
         }
     }
@@ -826,10 +861,7 @@ export class TabRequestComponent {
     createRequest() {
         this.newRequest = false;
 
-        //this.request = this._requestService.getEmpty();
-
-        this.request.request = this.queryText;
-        this.request.searchArea = this.searchArea;
+        this.save();
     }
 
     getOfferDigest(r: Offer) {

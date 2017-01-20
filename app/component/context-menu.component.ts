@@ -13,8 +13,8 @@ import {
     styles: [`
         .context-menu-wrapper {
 
-            height: 450px;
-            overflow-y: scroll;
+            max-height: 450px;
+            overflow-y: auto;
 
             position: fixed;
             background-color: #fff;
@@ -66,16 +66,16 @@ import {
                 [ngSwitch]="i.class"
                 (click)="click($event, i)"
             >
-                <div ngSwitchCase="'entry'" class="entry" [class.disabled]="i.disabled">
+                <div *ngSwitchCase="'entry'" class="entry" [class.disabled]="i.disabled">
                     <span *ngIf="i.icon" class="icon-{{ i.icon }}"></span>
                     {{ i.label }}
                 </div>
-                <div ngSwitchCase="'entry_cb'" class="entry" [class.disabled]="i.disabled">
+                <div *ngSwitchCase="'entry_cb'" class="entry" [class.disabled]="i.disabled">
                     <span *ngIf="i.value" class="icon-check"></span>
                     <span *ngIf="!i.value" class="icon-none"></span>
                     {{ i.label }}
                 </div>
-                <hr ngSwitchCase="'delimiter'">
+                <hr *ngSwitchCase="'delimiter'">
             </div>
         </div>
     `

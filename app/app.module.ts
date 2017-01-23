@@ -11,7 +11,6 @@ import {AppComponent} from "./app.component";
 
 import {ContextMenuComponent} from "./component/context-menu.component";
 import {NotebookComponent} from "./component/notebook.component";
-import {LoginScreenComponent} from "./component/login-screen.component";
 import {TabSystemComponent} from "./component/tab-system.component";
 import {TabRootComponent} from "./component/tab/tab-root.component";
 import {TabMainComponent} from "./component/tab/tab-main.component";
@@ -45,14 +44,25 @@ import {FormatDatePipe} from "./pipe/format-date.pipe";
 import {UITag} from "./component/ui/ui-tag.component";
 import {UIViewValue} from "./component/ui/ui-view-value";
 import {OffClickDirective} from "./component/ui/off-click";
+
+import {LoginScreenComponent} from "./component/login-screen.component";
 import {AdminPageComponent} from "./component/admin-page.component";
 
 
+const appRoutes: Routes = [
+    { path: 'admin', component: AdminPageComponent },
+    //{ path: 'login', component: LoginScreenComponent },
+
+    //{ path: '**', component: PageNotFoundComponent }
+];
+
 @NgModule({
     imports: [
+        RouterModule.forRoot(appRoutes),
         BrowserModule,
         FormsModule,
         HttpModule
+        //AppRoutingModule
     ],
     declarations: [
         FormatDatePipe,
@@ -80,18 +90,20 @@ import {AdminPageComponent} from "./component/admin-page.component";
         DigestOfferComponent,
         GoogleMapComponent,
         GoogleMapMarkerComponent,
-        UISelect,
-        UIViewValue,
-        UITabs,
-        UITab,
-        UITag,
-        UITagBlock,
+
         DigestHistoryComponent,
         DigestOfferComponent,
         DigestUserComponent,
         DigestOrganisationComponent,
         DigestRequestComponent,
         DigestPersonComponent,
+
+        UISelect,
+        UIViewValue,
+        UITabs,
+        UITab,
+        UITag,
+        UITagBlock,
         UILineChart,
         UIBarChart,
         UIPieChart,

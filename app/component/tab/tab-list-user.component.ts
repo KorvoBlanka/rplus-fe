@@ -160,7 +160,7 @@ export class TabListUserComponent implements OnInit {
 
         this.listUsers();
 
-        this._userService.list("MANAGER", null, "").subscribe(managers => {
+        this._userService.listX("MANAGER", null, "").subscribe(managers => {
             for (let m of managers) {
                 console.log(m);
                 this.superiorOpts.push({
@@ -172,7 +172,7 @@ export class TabListUserComponent implements OnInit {
     }
 
     listUsers() {
-        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(
+        this._userService.listX(this.role, this.superiorId, this.searchQuery).subscribe(
             data => {
                 this.users = data;
             },
@@ -186,7 +186,7 @@ export class TabListUserComponent implements OnInit {
     }
 
     searchParamChanged() {
-        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(users => {
+        this._userService.listX(this.role, this.superiorId, this.searchQuery).subscribe(users => {
             this.users = users;
         });
     }

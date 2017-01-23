@@ -128,7 +128,7 @@ var TabOfferComponent = (function () {
         setTimeout(function () {
             _this.tab.header = 'Объект ' + _this.offer.id;
         });
-        this._userService.list("AGENT", null, "").subscribe(function (agents) {
+        this._userService.listX("AGENT", null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({

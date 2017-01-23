@@ -19,6 +19,8 @@ export class User {
 
     changeDate: number;
 
+    accountId: number;
+
     constructor () {
         this.role = 'AGENT';
         this.phones = [];

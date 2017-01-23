@@ -35,7 +35,7 @@ var PersonService = (function () {
             query.push("searchQuery=" + searchQuery);
         }
         var _resourceUrl = this.RS + 'list?' + query.join("&");
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var persons = data.result;
             ret_subj.next(persons);
@@ -47,7 +47,7 @@ var PersonService = (function () {
         console.log('person get');
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         var _resourceUrl = this.RS + 'get/' + personId;
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var notFound = true;
             var p = data.result;
@@ -64,7 +64,7 @@ var PersonService = (function () {
         var _resourceUrl = this.RS + 'save';
         delete person["selected"];
         var data_str = JSON.stringify(person);
-        this._http.post(_resourceUrl, data_str)
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var notFound = true;
             var p = data.result;

@@ -653,7 +653,7 @@ export class TabRequestComponent {
                 private _personService: PersonService,
                 private _userService: UserService) {
 
-        this._userService.list("AGENT", null, "").subscribe(agents => {
+        this._userService.listX("AGENT", null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({

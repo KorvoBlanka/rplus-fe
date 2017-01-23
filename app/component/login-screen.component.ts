@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
+import {ConfigService} from "../service/config.service";
 
 
 @Component({
@@ -59,6 +60,12 @@ import {Http, Headers, Response} from '@angular/http';
             <div class="login-form">
                 <div class="form-header">Добро пожаловать</div>
                 <hr>
+                
+                <div class="input-control">
+                    <label>Аккаунт</label>
+                    <input [(ngModel)]="account">
+                </div>
+                
                 <div class="input-control">
                     <label>Имя пользователя</label>
                     <input [(ngModel)]="userName">
@@ -77,13 +84,14 @@ import {Http, Headers, Response} from '@angular/http';
 
 export class LoginScreenComponent {
     public isLoggedIn: boolean;
+    public account: string;
     public userName: string;
     public password: string;
-    private _logingUrl = 'http://localhost:4567/session/login';
-    private _logoutUrl = 'http://localhost:4567/session/logout';
+    private _logingUrl = this._configService.getConfig().RESTServer + '/session/login';
+    private _logoutUrl = this._configService.getConfig().RESTServer + '/session/logout';
 
-    constructor(private _http: Http) {
-        this.isLoggedIn = true;
+    constructor(private _http: Http, private _configService: ConfigService) {
+        this.isLoggedIn = false;
     }
 
     login() {
@@ -91,12 +99,15 @@ export class LoginScreenComponent {
     }
 
     _login() {
-        var headers = new Headers();
-        var auth_header = btoa(this.userName + ":" + this.password);
         //headers.append('Authorization', 'Basic ' + auth_header);
-        this._http.post(this._logingUrl, "auth: " + auth_header, {
-            headers: headers
-        })
+
+        var data_str = JSON.stringify({
+            account: this.account,
+            userName: this.userName,
+            password: this.password
+        });
+
+        this._http.post(this._logingUrl, data_str, { withCredentials: true })
             .map(res => res.json())
             .subscribe(
                 data => {

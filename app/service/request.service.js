@@ -30,7 +30,7 @@ var RequestService = (function () {
             + '&person_id=' + (personId ? personId : '')
             + '&search_query=' + searchQuery;
         var ret_subj = new AsyncSubject_1.AsyncSubject();
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var requests = data.result;
             ret_subj.next(requests);
@@ -45,7 +45,7 @@ var RequestService = (function () {
         delete request["selected"];
         var data_str = JSON.stringify(request);
         var ret_subj = new AsyncSubject_1.AsyncSubject();
-        this._http.post(_resourceUrl, data_str)
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var r = data.result;
             // TODO: pass copy????

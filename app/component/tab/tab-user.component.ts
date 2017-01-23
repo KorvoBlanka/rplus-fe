@@ -582,7 +582,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
             this.editEnabled = true;
         }
 
-        this._userService.list("MANAGER", null, "").subscribe(managers => {
+        this._userService.listX("MANAGER", null, "").subscribe(managers => {
             for (let m of managers) {
                 this.superiorOpts.push({
                     value: m.id,

@@ -62,7 +62,7 @@ var TabListOfferComponent = (function () {
         this.list = this._elem.nativeElement.querySelector('.digest-list');
         this.page = 0;
         this.listOffers();
-        this._userService.list("AGENT", null, "").subscribe(function (agents) {
+        this._userService.listX("AGENT", null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({

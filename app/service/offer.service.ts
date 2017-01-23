@@ -41,7 +41,7 @@ export class OfferService {
 
         var ret_subj = <AsyncSubject<Offer[]>>new AsyncSubject();
 
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
                     var offers: Offer[] = data.result;
@@ -65,7 +65,7 @@ export class OfferService {
         var ret_subj = <AsyncSubject<Offer>>new AsyncSubject();
 
 
-        this._http.post(_resourceUrl, data_str)
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
 

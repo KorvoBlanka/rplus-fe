@@ -38,7 +38,7 @@ export class PersonService {
 
         var _resourceUrl = this.RS + 'list?' + query.join("&");
 
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
 
@@ -59,7 +59,7 @@ export class PersonService {
         var ret_subj = <AsyncSubject<Person>>new AsyncSubject();
 
         var _resourceUrl = this.RS + 'get/' + personId;
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
 
@@ -89,7 +89,7 @@ export class PersonService {
         var data_str = JSON.stringify(person);
 
 
-        this._http.post(_resourceUrl, data_str)
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
 

@@ -20,7 +20,7 @@ var UserService = (function () {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/user/';
     }
     ;
-    UserService.prototype.list = function (role, superiorId, searchQuery) {
+    UserService.prototype.listX = function (role, superiorId, searchQuery) {
         console.log('user list');
         var query = [];
         if (role) {
@@ -34,7 +34,32 @@ var UserService = (function () {
         }
         var _resourceUrl = this.RS + 'list?' + query.join("&");
         var ret_subj = new AsyncSubject_1.AsyncSubject();
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var users = data.result;
+            ret_subj.next(users);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
+    };
+    UserService.prototype.list = function (accountId, role, superiorId, searchQuery) {
+        console.log('user list');
+        var query = [];
+        if (accountId) {
+            query.push("accountId=" + accountId);
+        }
+        if (role) {
+            query.push("role=" + role);
+        }
+        if (superiorId) {
+            query.push("superiorId=" + superiorId.toString());
+        }
+        if (searchQuery) {
+            query.push("searchQuery=" + searchQuery);
+        }
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var users = data.result;
             ret_subj.next(users);
@@ -46,7 +71,7 @@ var UserService = (function () {
         console.log('user get');
         var _resourceUrl = this.RS + 'get/' + userId;
         var ret_subj = new AsyncSubject_1.AsyncSubject();
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var u = data.result;
             // TODO: pass copy????
@@ -60,7 +85,7 @@ var UserService = (function () {
         var _resourceUrl = this.RS + 'save';
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         var data_str = JSON.stringify(user);
-        this._http.post(_resourceUrl, data_str)
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var u = data.result;
             // TODO: pass copy????

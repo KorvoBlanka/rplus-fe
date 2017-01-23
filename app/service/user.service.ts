@@ -18,7 +18,7 @@ export class UserService {
     };
 
 
-    list(role: string, superiorId: number, searchQuery: string) {
+    listX(role: string, superiorId: number, searchQuery: string) {
         console.log('user list');
 
         var query = [];
@@ -38,7 +38,45 @@ export class UserService {
 
         var ret_subj = <AsyncSubject<User[]>>new AsyncSubject();
 
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
+            .map(res => res.json()).subscribe(
+            data => {
+                var users: User[] = data.result;
+
+                ret_subj.next(users);
+                ret_subj.complete();
+            },
+            err => console.log(err)
+        );
+
+        return ret_subj;
+    }
+
+    list(accountId: number, role: string, superiorId: number, searchQuery: string) {
+        console.log('user list');
+
+        var query = [];
+
+
+        if (accountId) {
+            query.push("accountId=" + accountId);
+        }
+        if (role) {
+            query.push("role=" + role);
+        }
+        if (superiorId) {
+            query.push("superiorId=" + superiorId.toString());
+        }
+        if (searchQuery) {
+            query.push("searchQuery=" + searchQuery);
+        }
+
+
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
+
+        var ret_subj = <AsyncSubject<User[]>>new AsyncSubject();
+
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
                     var users: User[] = data.result;
@@ -59,7 +97,7 @@ export class UserService {
 
         var ret_subj = <AsyncSubject<User>>new AsyncSubject();
 
-        this._http.get(_resourceUrl)
+        this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
                     var u: User = data.result;
@@ -84,7 +122,7 @@ export class UserService {
 
         var data_str = JSON.stringify(user);
 
-        this._http.post(_resourceUrl, data_str)
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
 

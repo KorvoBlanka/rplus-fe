@@ -36,7 +36,7 @@ var TabListPersonComponent = (function () {
             _this.listPersons();
         });
         this.listPersons();
-        this._userService.list("AGENT", null, "").subscribe(function (agents) {
+        this._userService.listX("AGENT", null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({

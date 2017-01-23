@@ -31,7 +31,7 @@ var TabListUserComponent = (function () {
             _this.listUsers();
         });
         this.listUsers();
-        this._userService.list("MANAGER", null, "").subscribe(function (managers) {
+        this._userService.listX("MANAGER", null, "").subscribe(function (managers) {
             for (var _i = 0, managers_1 = managers; _i < managers_1.length; _i++) {
                 var m = managers_1[_i];
                 console.log(m);
@@ -44,7 +44,7 @@ var TabListUserComponent = (function () {
     };
     TabListUserComponent.prototype.listUsers = function () {
         var _this = this;
-        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(function (data) {
+        this._userService.listX(this.role, this.superiorId, this.searchQuery).subscribe(function (data) {
             _this.users = data;
         }, function (err) { return console.log(err); });
     };
@@ -54,7 +54,7 @@ var TabListUserComponent = (function () {
     };
     TabListUserComponent.prototype.searchParamChanged = function () {
         var _this = this;
-        this._userService.list(this.role, this.superiorId, this.searchQuery).subscribe(function (users) {
+        this._userService.listX(this.role, this.superiorId, this.searchQuery).subscribe(function (users) {
             _this.users = users;
         });
     };

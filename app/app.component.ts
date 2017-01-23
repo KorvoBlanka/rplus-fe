@@ -11,6 +11,7 @@ import {TaskService} from "./service/task.service";
 import {AnalysisService} from "./service/analysis.service";
 import {HistoryService} from "./service/history.service";
 import {PhotoService} from "./service/photo.service";
+import {AccountService} from "./service/account.service";
 
 
 @Component({
@@ -22,6 +23,7 @@ import {PhotoService} from "./service/photo.service";
             (contextmenu)="contextMenu($event)"
             (click)="click($event)"
         >
+            <login-screen></login-screen>
             <context-menu
                 [posX]="_hubService.shared_var['cm_px']"
                 [posY]="_hubService.shared_var['cm_py']"
@@ -33,7 +35,7 @@ import {PhotoService} from "./service/photo.service";
             <notebook></notebook>
         </div>
     `,
-    providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService]
+    providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService]
 })
 
 export class AppComponent {

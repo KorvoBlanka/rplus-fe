@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
 import {ConfigService} from "../service/config.service";
+import {SessionService} from "../service/session.service";
+import {Observable} from "rxjs";
 
 
 @Component({
@@ -56,7 +58,7 @@ import {ConfigService} from "../service/config.service";
 
     `],
     template: `
-        <div class="login-screen bg-darkTeal" [hidden]="isLoggedIn">
+        <div class="login-screen bg-darkTeal" [hidden]="authorized | async">
             <div class="login-form">
                 <div class="form-header">Добро пожаловать</div>
                 <hr>
@@ -67,14 +69,14 @@ import {ConfigService} from "../service/config.service";
                 </div>
                 
                 <div class="input-control">
-                    <label>Имя пользователя</label>
-                    <input [(ngModel)]="userName">
+                    <label>Логин пользователя</label>
+                    <input [(ngModel)]="login">
                 </div>
                 <div class="input-control">
                     <label>Пароль</label>
                     <input type="password" [(ngModel)]="password">
                 </div>
-                <div class="action-block" (click)="login()">
+                <div class="action-block" (click)="_login()">
                     <div class="button">Вход</div>
                 </div>
             </div>
@@ -83,43 +85,32 @@ import {ConfigService} from "../service/config.service";
 })
 
 export class LoginScreenComponent {
-    public isLoggedIn: boolean;
-    public account: string;
-    public userName: string;
-    public password: string;
-    private _logingUrl = this._configService.getConfig().RESTServer + '/session/login';
-    private _logoutUrl = this._configService.getConfig().RESTServer + '/session/logout';
 
-    constructor(private _http: Http, private _configService: ConfigService) {
-        this.isLoggedIn = false;
+    public authorized: Observable<boolean>;
+
+
+    public account: string;
+    public login: string;
+    public password: string;
+
+    constructor(private _sessionService: SessionService) {
+        this.authorized = _sessionService.authorized;
     }
 
-    login() {
-        this._login();
+
+    ngOnInit() {
+        this.checkSession();
     }
 
     _login() {
-        //headers.append('Authorization', 'Basic ' + auth_header);
-
-        var data_str = JSON.stringify({
-            account: this.account,
-            userName: this.userName,
-            password: this.password
-        });
-
-        this._http.post(this._logingUrl, data_str, { withCredentials: true })
-            .map(res => res.json())
-            .subscribe(
-                data => {
-                    if (data.result == "OK") {
-                        this.isLoggedIn = true;
-                    }
-                },
-                err => console.log(err)
-            );
+        this._sessionService.login(this.account, this.login, this.password);
     }
 
     _logout() {
-        console.log(this._http.get(this._logoutUrl).map(res => res.json().data));
+        this._sessionService.logout();
+    }
+
+    checkSession() {
+        this._sessionService.check();
     }
 }

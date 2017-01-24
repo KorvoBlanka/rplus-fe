@@ -1,5 +1,10 @@
 import {Component} from '@angular/core';
 import {Tab} from '../../class/tab';
+import {ConfigService} from "../../service/config.service";
+import {Http} from "@angular/http";
+import {SessionService} from "../../service/session.service";
+import {Observable} from "rxjs";
+import {User} from "../../class/user";
 
 
 @Component({
@@ -24,6 +29,11 @@ import {Tab} from '../../class/tab';
     `],
     template: `
         <div class="tile-board" style="">
+        
+            <div class="user-badge">
+                <span> {{ (user | async)?.login }} </span>  <span (click)="logout()"> выйти </span>
+            </div>
+        
             <div class="tile-group">
 
                 <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer' , {offerTypeCode: 'sale'})">
@@ -94,14 +104,24 @@ import {Tab} from '../../class/tab';
     `
 })
 
+// TODO: запилить что-то типа authService и убрать туда всю фигню из логин скрина и отсюда
 export class TabMainComponent {
     public tab: Tab;
+    user: Observable<User>;
+
+    constructor(private _sessionService: SessionService) {
+        setTimeout(() => { this.tab.header = 'new tab'; });
+        this.user = _sessionService.user;
+
+    }
+
 
     turnTo(tabType: string, arg: any) {
         this.tab.reborn(tabType, arg);
     }
 
-    constructor() {
-        setTimeout(() => { this.tab.header = 'new tab'; });
+
+    logout() {
+        this._sessionService.logout();
     }
 }

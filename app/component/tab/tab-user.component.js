@@ -56,7 +56,7 @@ var TabUserComponent = (function () {
         if (this.user.id == null) {
             this.editEnabled = true;
         }
-        this._userService.listX("MANAGER", null, "").subscribe(function (managers) {
+        this._userService.list("MANAGER", null, "").subscribe(function (managers) {
             for (var _i = 0, managers_1 = managers; _i < managers_1.length; _i++) {
                 var m = managers_1[_i];
                 _this.superiorOpts.push({
@@ -165,8 +165,6 @@ var TabUserComponent = (function () {
         }
     };
     TabUserComponent.prototype.markerClick = function (r) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     };

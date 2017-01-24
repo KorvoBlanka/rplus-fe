@@ -103,6 +103,8 @@ export class Offer {
     person: any;
     agent: any;
 
+    accountId: number;
+
 
     constructor () {
         // set default vals

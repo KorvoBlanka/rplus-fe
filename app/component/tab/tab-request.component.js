@@ -65,7 +65,7 @@ var TabRequestComponent = (function () {
             { value: 'negs', label: 'Переговоры' },
             { value: 'deal', label: 'Сделка' }
         ];
-        this._userService.listX("AGENT", null, "").subscribe(function (agents) {
+        this._userService.list(null, null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({
@@ -101,8 +101,6 @@ var TabRequestComponent = (function () {
             });
             this.lat = lat / this.request.searchArea.length;
             this.lon = lon / this.request.searchArea.length;
-            console.log(this.lat);
-            console.log(this.lon);
         }
         else {
             this.lat = c.map.lat;
@@ -201,7 +199,6 @@ var TabRequestComponent = (function () {
     };
     TabRequestComponent.prototype.getOffers = function (page, per_page) {
         var _this = this;
-        console.log(this.request);
         this._offerService.list(page, per_page, offer_service_1.OfferSource.LOCAL, { offerTypeCode: this.request.offerTypeCode }, this.request.request, this.request.searchArea).subscribe(function (data) {
             _this.offers = data;
         }, function (err) { return console.log(err); });
@@ -215,14 +212,10 @@ var TabRequestComponent = (function () {
         }
     };
     TabRequestComponent.prototype.markerClick = function (r) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     };
     TabRequestComponent.prototype.drawFinished = function (e) {
-        console.log('draw_finished');
-        console.log(e);
         this.request.searchArea = e;
         this.offer_search();
     };

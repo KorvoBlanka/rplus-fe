@@ -146,7 +146,7 @@ export class DigestRequestComponent implements OnInit {
     constructor(private _hubService: HubService, private _userService: UserService, private _taskService: TaskService, private _personService: PersonService) { };
 
     ngOnInit() {
-        this.task = this._taskService.getRandomTasks();
+        this.task = this._taskService.getRandomTask();
         this.resultText = this.getResultText();
 
         if (this.request.personId != null) {

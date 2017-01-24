@@ -54,7 +54,7 @@ var TabPersonComponent = (function () {
                 });
             }
         });
-        _userService.listX("AGENT", null, "").subscribe(function (agents) {
+        _userService.list(null, null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({
@@ -125,14 +125,13 @@ var TabPersonComponent = (function () {
         }
     };
     TabPersonComponent.prototype.save = function () {
-        var subj = this._personService.save(this.person);
-        var component = this;
-        subj.subscribe(function (x) {
+        var c = this;
+        this._personService.save(this.person).subscribe(function (person) {
             //console.log('Next: ' + x.toString());
         }, function (err) {
             //console.log('Error: ' + err);
         }, function () {
-            component.toggleEdit();
+            c.toggleEdit();
         });
     };
     TabPersonComponent.prototype.offersSelected = function () {
@@ -185,8 +184,6 @@ var TabPersonComponent = (function () {
         }
     };
     TabPersonComponent.prototype.markerClick = function (r) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     };

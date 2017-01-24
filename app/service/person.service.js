@@ -13,10 +13,12 @@ var http_1 = require("@angular/http");
 var config_service_1 = require("./config.service");
 var AsyncSubject_1 = require("rxjs/AsyncSubject");
 require("rxjs/add/operator/map");
+var session_service_1 = require("./session.service");
 var PersonService = (function () {
-    function PersonService(_configService, _http) {
-        this._configService = _configService;
+    function PersonService(_http, _configService, _sessionService) {
         this._http = _http;
+        this._configService = _configService;
+        this._sessionService = _sessionService;
         this.RS = "";
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/person/';
     }
@@ -25,6 +27,8 @@ var PersonService = (function () {
         console.log('person list');
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         var query = [];
+        var user = this._sessionService.getUser();
+        query.push("accountId=" + user.accountId);
         if (userId) {
             query.push("userId=" + userId.toString());
         }
@@ -59,7 +63,8 @@ var PersonService = (function () {
     };
     PersonService.prototype.save = function (person) {
         console.log('person save');
-        console.log(person);
+        var user = this._sessionService.getUser();
+        person.accountId = user.accountId;
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         var _resourceUrl = this.RS + 'save';
         delete person["selected"];
@@ -78,7 +83,7 @@ var PersonService = (function () {
 }());
 PersonService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [config_service_1.ConfigService, http_1.Http])
+    __metadata("design:paramtypes", [http_1.Http, config_service_1.ConfigService, session_service_1.SessionService])
 ], PersonService);
 exports.PersonService = PersonService;
 //# sourceMappingURL=person.service.js.map

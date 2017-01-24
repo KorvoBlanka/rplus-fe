@@ -884,7 +884,7 @@ export class TabOfferComponent implements OnInit {
             this.tab.header = 'Объект ' + this.offer.id;
         });
 
-        this._userService.listX("AGENT", null, "").subscribe(agents => {
+        this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -906,10 +906,7 @@ export class TabOfferComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.offer = this.tab.args.offer;
-
-        console.log(this.offer);
 
         var c = this._configService.getConfig();
 
@@ -926,7 +923,6 @@ export class TabOfferComponent implements OnInit {
             this.offer = new Offer();
 
             if (this.tab.args.person) {
-                console.log(this.tab.args.person.id);
                 this.offer.personId = this.tab.args.person.id;
             }
 
@@ -980,7 +976,6 @@ export class TabOfferComponent implements OnInit {
 
     save() {
         this._offerService.save(this.offer).subscribe(offer => {
-            console.log(offer);
             this.offer = offer;
             this.toggleEdit();
         });
@@ -1043,8 +1038,6 @@ export class TabOfferComponent implements OnInit {
     }
 
     markerClick(o: Offer) {
-        console.log('markerClick');
-        console.log(o);
         //r.selected = !r.selected;
         // scroll to object ???
     }

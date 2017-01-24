@@ -14,6 +14,9 @@ export class Request {
 
     searchArea: GeoPoint[];
 
+    accountId: number;
+
+
     constructor () {
         // set default vals
         this.offerTypeCode = 'sale';

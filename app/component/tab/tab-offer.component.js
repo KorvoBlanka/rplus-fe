@@ -128,7 +128,7 @@ var TabOfferComponent = (function () {
         setTimeout(function () {
             _this.tab.header = 'Объект ' + _this.offer.id;
         });
-        this._userService.listX("AGENT", null, "").subscribe(function (agents) {
+        this._userService.list(null, null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({
@@ -152,7 +152,6 @@ var TabOfferComponent = (function () {
     };
     TabOfferComponent.prototype.ngOnInit = function () {
         this.offer = this.tab.args.offer;
-        console.log(this.offer);
         var c = this._configService.getConfig();
         this.zoom = c.map.zoom;
         if (this.offer.locationLat) {
@@ -166,7 +165,6 @@ var TabOfferComponent = (function () {
         if (this.offer.id == null && this.offer.sourceUrl == null) {
             this.offer = new offer_1.Offer();
             if (this.tab.args.person) {
-                console.log(this.tab.args.person.id);
                 this.offer.personId = this.tab.args.person.id;
             }
             this.editEnabled = true;
@@ -214,7 +212,6 @@ var TabOfferComponent = (function () {
     TabOfferComponent.prototype.save = function () {
         var _this = this;
         this._offerService.save(this.offer).subscribe(function (offer) {
-            console.log(offer);
             _this.offer = offer;
             _this.toggleEdit();
         });
@@ -263,8 +260,6 @@ var TabOfferComponent = (function () {
         }
     };
     TabOfferComponent.prototype.markerClick = function (o) {
-        console.log('markerClick');
-        console.log(o);
         //r.selected = !r.selected;
         // scroll to object ???
     };

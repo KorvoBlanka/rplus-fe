@@ -62,7 +62,7 @@ var TabListOfferComponent = (function () {
         this.list = this._elem.nativeElement.querySelector('.digest-list');
         this.page = 0;
         this.listOffers();
-        this._userService.listX("AGENT", null, "").subscribe(function (agents) {
+        this._userService.list(null, null, "").subscribe(function (agents) {
             for (var i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 _this.agentOpts.push({
@@ -133,8 +133,6 @@ var TabListOfferComponent = (function () {
         this.listOffers();
     };
     TabListOfferComponent.prototype.markerClick = function (o) {
-        console.log('markerClick');
-        console.log(o);
         //r.selected = !r.selected;
         // scroll to object !?
         // let get dirty!

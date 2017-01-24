@@ -160,7 +160,6 @@ var GoogleMapComponent = (function () {
                     pa.push({ lat: ll.lat(), lng: ll.lng() });
                 });
                 var ch = new concavehull_1.ConcaveHull(pa, 2000).getLatLngs();
-                console.log(ch);
                 _this.polygone = new google.maps.Polygon({
                     paths: ch,
                     strokeColor: "#062141",

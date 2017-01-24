@@ -21,6 +21,7 @@ export class User {
 
     accountId: number;
 
+
     constructor () {
         this.role = 'AGENT';
         this.phones = [];

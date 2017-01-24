@@ -12,6 +12,7 @@ import {AnalysisService} from "./service/analysis.service";
 import {HistoryService} from "./service/history.service";
 import {PhotoService} from "./service/photo.service";
 import {AccountService} from "./service/account.service";
+import {SessionService} from "./service/session.service";
 
 
 @Component({
@@ -35,7 +36,7 @@ import {AccountService} from "./service/account.service";
             <notebook></notebook>
         </div>
     `,
-    providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService]
+    providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService, SessionService]
 })
 
 export class AppComponent {

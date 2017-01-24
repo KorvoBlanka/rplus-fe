@@ -74,7 +74,7 @@ import {Offer} from '../../class/offer';
                     >
                     </ui-tag>
                 </div>
-                <img *ngIf="!compact" src="{{ offer.photoUrl?offer.photoUrl[0]:'no_image.png' }}" style="height: 60px; min-width: 80px; float: left; margin: 10px;">
+                <img *ngIf="!compact" src="{{ offer.photoUrl?offer.photoUrl[0]:'res/no_photo.png' }}" style="height: 60px; min-width: 80px; float: left; margin: 10px;">
                 <div class="" style="min-height: 70px; margin-left: 10px;">
                     <span style="font-weight: 400;">{{ typeCodeOptions[offer.typeCode] }}</span>, {{ offer.roomsCount }} комн., {{ offer.floor }} эт., {{ offer.squareTotal }} кв. м.
                     <br> {{ offer.address + " " + offer.houseNum }} <br>

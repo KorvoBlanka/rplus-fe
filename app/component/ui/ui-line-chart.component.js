@@ -19,7 +19,6 @@ var UILineChart = (function () {
         if (!this.container) {
             this.container = this._elem.nativeElement.querySelector('.ui-line-chart');
         }
-        console;
         this.draw();
     };
     UILineChart.prototype.draw = function () {

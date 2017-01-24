@@ -216,7 +216,6 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
                 });
 
                 var ch = new ConcaveHull(pa, 2000).getLatLngs();
-                console.log(ch);
 
                 _this.polygone = new google.maps.Polygon({
                     paths: ch,

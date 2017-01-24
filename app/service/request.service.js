@@ -12,23 +12,28 @@ var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 var config_service_1 = require("./config.service");
 var AsyncSubject_1 = require("rxjs/AsyncSubject");
+var session_service_1 = require("./session.service");
 var RequestService = (function () {
-    function RequestService(_configService, _http) {
-        this._configService = _configService;
+    function RequestService(_http, _configService, _sessionService) {
         this._http = _http;
+        this._configService = _configService;
+        this._sessionService = _sessionService;
         this.RS = "";
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     }
     ;
     RequestService.prototype.list = function (page, perPage, offerTypeCode, agentId, personId, searchQuery) {
         console.log('request list');
-        var _resourceUrl = this.RS + 'list?'
-            + 'page=' + page
-            + '&per_page=' + perPage
-            + '&offerTypeCode=' + offerTypeCode
-            + '&agent_id=' + (agentId ? agentId : '')
-            + '&person_id=' + (personId ? personId : '')
-            + '&search_query=' + searchQuery;
+        var query = [];
+        var user = this._sessionService.getUser();
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+        query.push('offerTypeCode=' + offerTypeCode);
+        query.push('agent_id=' + (agentId ? agentId : ''));
+        query.push('person_id=' + (personId ? personId : ''));
+        query.push('search_query=' + searchQuery);
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
@@ -40,7 +45,8 @@ var RequestService = (function () {
     };
     RequestService.prototype.save = function (request) {
         console.log('request save');
-        console.log(request);
+        var user = this._sessionService.getUser();
+        request.accountId = user.accountId;
         var _resourceUrl = this.RS + 'save';
         delete request["selected"];
         var data_str = JSON.stringify(request);
@@ -58,7 +64,7 @@ var RequestService = (function () {
 }());
 RequestService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [config_service_1.ConfigService, http_1.Http])
+    __metadata("design:paramtypes", [http_1.Http, config_service_1.ConfigService, session_service_1.SessionService])
 ], RequestService);
 exports.RequestService = RequestService;
 //# sourceMappingURL=request.service.js.map

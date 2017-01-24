@@ -7,6 +7,8 @@ import {Person} from '../class/person';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 
 import 'rxjs/add/operator/map';
+import {User} from "../class/user";
+import {SessionService} from "./session.service";
 
 
 
@@ -15,7 +17,7 @@ export class PersonService {
     RS: String = "";
 
 
-    constructor(private _configService: ConfigService, private _http: Http) {
+    constructor(private _http: Http, private _configService: ConfigService, private _sessionService: SessionService) {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/person/';
     };
 
@@ -26,6 +28,10 @@ export class PersonService {
 
         var query = [];
 
+        var user: User = this._sessionService.getUser();
+
+
+        query.push("accountId=" + user.accountId);
         if (userId) {
             query.push("userId=" + userId.toString());
         }
@@ -35,6 +41,8 @@ export class PersonService {
         if (searchQuery) {
             query.push("searchQuery=" + searchQuery);
         }
+
+
 
         var _resourceUrl = this.RS + 'list?' + query.join("&");
 
@@ -79,7 +87,9 @@ export class PersonService {
 
     save(person: Person) {
         console.log('person save');
-        console.log(person);
+
+        var user: User = this._sessionService.getUser();
+        person.accountId = user.accountId;
 
         var ret_subj = <AsyncSubject<Person>>new AsyncSubject();
 

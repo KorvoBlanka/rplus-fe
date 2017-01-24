@@ -582,7 +582,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
             this.editEnabled = true;
         }
 
-        this._userService.listX("MANAGER", null, "").subscribe(managers => {
+        this._userService.list("MANAGER", null, "").subscribe(managers => {
             for (let m of managers) {
                 this.superiorOpts.push({
                     value: m.id,
@@ -708,8 +708,6 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     markerClick(r: Offer) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     }

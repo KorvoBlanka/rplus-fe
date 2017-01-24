@@ -616,8 +616,6 @@ export class TabOrganisationComponent {
     }
 
     markerClick(r: Offer) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     }

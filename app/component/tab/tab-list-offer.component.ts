@@ -290,7 +290,7 @@ export class TabListOfferComponent {
         this.page = 0;
         this.listOffers();
 
-        this._userService.listX("AGENT", null, "").subscribe(agents => {
+        this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -376,8 +376,6 @@ export class TabListOfferComponent {
     }
 
     markerClick(o: Offer) {
-        console.log('markerClick');
-        console.log(o);
         //r.selected = !r.selected;
         // scroll to object !?
         // let get dirty!

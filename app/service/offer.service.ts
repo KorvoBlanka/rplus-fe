@@ -6,6 +6,8 @@ import {ConfigService} from './config.service';
 import {Offer} from '../class/offer';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 import {GeoPoint} from "../class/geoPoint";
+import {User} from "../class/user";
+import {SessionService} from "./session.service";
 
 
 export enum OfferSource {
@@ -19,25 +21,32 @@ export class OfferService {
     RS: String = "";
 
 
-    constructor(private _configService: ConfigService, private _http: Http) {
+    constructor(private _http: Http, private _configService: ConfigService, private _sessionService: SessionService) {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/offer/';
     };
 
     list(page: number, perPage: number, source: OfferSource, filter: any, searchQuery: string, searchArea: GeoPoint[]) {
         console.log('offers list');
 
+        var query = [];
+
+        var user: User = this._sessionService.getUser();
+
+
         var source_str = 'local';
         if (source == OfferSource.IMPORT) {
             source_str = 'import';
         }
 
-        var _resourceUrl = this.RS + 'list?'
-            + 'page=' + page
-            + '&per_page=' + perPage
-            + '&source=' + source_str
-            + '&filter=' + JSON.stringify(filter)
-            + '&search_query=' + searchQuery
-            + '&search_area=' + JSON.stringify(searchArea);
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+        query.push('source=' + source_str);
+        query.push('filter=' + JSON.stringify(filter));
+        query.push('search_query=' + searchQuery);
+        query.push('search_area=' + JSON.stringify(searchArea));
+
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
 
         var ret_subj = <AsyncSubject<Offer[]>>new AsyncSubject();
 
@@ -57,6 +66,9 @@ export class OfferService {
 
     save(offer: Offer) {
         console.log('offer save');
+
+        var user: User = this._sessionService.getUser();
+        offer.accountId = user.accountId;
 
         var _resourceUrl = this.RS + 'save';
 

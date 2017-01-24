@@ -127,8 +127,6 @@ var TabOrganisationComponent = (function () {
         }
     };
     TabOrganisationComponent.prototype.markerClick = function (r) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     };

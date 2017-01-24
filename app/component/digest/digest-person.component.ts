@@ -151,7 +151,7 @@ export class DigestPersonComponent implements OnInit {
     constructor(private _hubService: HubService, private _userService: UserService, private _organisationService: OrganisationService, private _taskService: TaskService) { };
 
     ngOnInit() {
-        this.task = this._taskService.getRandomTasks();
+        this.task = this._taskService.getRandomTask();
 
         if (this.person.organisationId) {
             this._organisationService.get(this.person.organisationId).subscribe(org => {

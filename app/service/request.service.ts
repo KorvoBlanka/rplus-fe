@@ -5,6 +5,8 @@ import {ConfigService} from './config.service';
 
 import {Request} from '../class/request';
 import {AsyncSubject} from "rxjs/AsyncSubject";
+import {User} from "../class/user";
+import {SessionService} from "./session.service";
 
 
 @Injectable()
@@ -13,21 +15,26 @@ export class RequestService {
     RS: String = "";
 
 
-    constructor(private _configService: ConfigService, private _http: Http) {
+    constructor(private _http: Http, private _configService: ConfigService, private _sessionService: SessionService) {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     };
 
     list(page: number, perPage: number, offerTypeCode: string, agentId: number, personId: number, searchQuery: string) {
-
         console.log('request list');
 
-        var _resourceUrl = this.RS + 'list?'
-            + 'page=' + page
-            + '&per_page=' + perPage
-            + '&offerTypeCode=' + offerTypeCode
-            + '&agent_id=' + (agentId ? agentId : '')
-            + '&person_id=' + (personId ? personId : '')
-            + '&search_query=' + searchQuery;
+        var query = [];
+
+        var user: User = this._sessionService.getUser();
+
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+        query.push('offerTypeCode=' + offerTypeCode);
+        query.push('agent_id=' + (agentId ? agentId : ''));
+        query.push('person_id=' + (personId ? personId : ''));
+        query.push('search_query=' + searchQuery);
+
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
 
         var ret_subj = <AsyncSubject<Request[]>>new AsyncSubject();
 
@@ -46,7 +53,9 @@ export class RequestService {
 
     save(request: Request) {
         console.log('request save');
-        console.log(request);
+
+        var user: User = this._sessionService.getUser();
+        request.accountId = user.accountId;
 
         var _resourceUrl = this.RS + 'save'
 

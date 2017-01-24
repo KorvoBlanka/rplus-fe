@@ -18,6 +18,9 @@ export class Person {
 
     userId: number;
 
+    accountId: number;
+
+
     constructor () {
         this.phones = [];
         this.emails = [];

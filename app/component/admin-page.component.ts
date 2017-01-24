@@ -161,8 +161,7 @@ export class AdminPageComponent {
     }
 
     listUsers() {
-        console.log(this.selectedAcc);
-        this._userService.list(this.selectedAcc.id, null, null, null).subscribe(users => {
+        this._userService.listX(this.selectedAcc.id, null, null, null).subscribe(users => {
             this.users = users;
         });
     }
@@ -186,7 +185,7 @@ export class AdminPageComponent {
         usr.password = "12345";
         usr.accountId = this.selectedAcc.id;
 
-        this._userService.save(usr);
+        this._userService.saveX(usr);
 
         this.listUsers();
     }
@@ -196,7 +195,7 @@ export class AdminPageComponent {
     }
 
     saveUser() {
-        this._userService.save(this.selectedUser);
+        this._userService.saveX(this.selectedUser);
     }
 
     makeId()

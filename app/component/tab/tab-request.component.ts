@@ -653,7 +653,7 @@ export class TabRequestComponent {
                 private _personService: PersonService,
                 private _userService: UserService) {
 
-        this._userService.listX("AGENT", null, "").subscribe(agents => {
+        this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -697,8 +697,6 @@ export class TabRequestComponent {
             this.lat = lat / this.request.searchArea.length;
             this.lon = lon / this.request.searchArea.length;
 
-            console.log(this.lat);
-            console.log(this.lon);
         } else {
             this.lat = c.map.lat;
             this.lon = c.map.lon;
@@ -817,7 +815,6 @@ export class TabRequestComponent {
     }
 
     getOffers(page, per_page) {
-        console.log(this.request);
         this._offerService.list(page, per_page, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, this.request.request, this.request.searchArea).subscribe(
             data => {
                 this.offers = data;
@@ -837,15 +834,11 @@ export class TabRequestComponent {
     }
 
     markerClick(r: Offer) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     }
 
     drawFinished(e) {
-        console.log('draw_finished');
-        console.log(e);
         this.request.searchArea = e;
         this.offer_search();
     }

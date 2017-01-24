@@ -547,7 +547,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
             }
         );
 
-        _userService.listX("AGENT", null, "").subscribe(agents => {
+        _userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
@@ -624,21 +624,18 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     save() {
-        var subj = this._personService.save(this.person);
-
-        var component = this;
-
-        subj.subscribe(
-            function (x) {
+        var c = this;
+        this._personService.save(this.person).subscribe(
+            person => {
                 //console.log('Next: ' + x.toString());
             },
-            function (err) {
+            err => {
                 //console.log('Error: ' + err);
             },
-            function () {
-                component.toggleEdit();
+            () => {
+                c.toggleEdit();
             }
-        );
+        )
     }
 
     offersSelected() {
@@ -701,8 +698,6 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     markerClick(r: Offer) {
-        console.log('markerClick');
-        console.log(r);
         //r.selected = !r.selected;
         // scroll to object ???
     }

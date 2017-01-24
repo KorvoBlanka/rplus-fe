@@ -12,17 +12,21 @@ var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 var config_service_1 = require("./config.service");
 var AsyncSubject_1 = require("rxjs/AsyncSubject");
+var session_service_1 = require("./session.service");
 var UserService = (function () {
-    function UserService(_configService, _http) {
-        this._configService = _configService;
+    function UserService(_http, _configService, _sessionService) {
         this._http = _http;
+        this._configService = _configService;
+        this._sessionService = _sessionService;
         this.RS = "";
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/user/';
     }
     ;
-    UserService.prototype.listX = function (role, superiorId, searchQuery) {
+    UserService.prototype.list = function (role, superiorId, searchQuery) {
         console.log('user list');
         var query = [];
+        var user = this._sessionService.getUser();
+        query.push("accountId=" + user.accountId);
         if (role) {
             query.push("role=" + role);
         }
@@ -42,7 +46,7 @@ var UserService = (function () {
         }, function (err) { return console.log(err); });
         return ret_subj;
     };
-    UserService.prototype.list = function (accountId, role, superiorId, searchQuery) {
+    UserService.prototype.listX = function (accountId, role, superiorId, searchQuery) {
         console.log('user list');
         var query = [];
         if (accountId) {
@@ -82,6 +86,24 @@ var UserService = (function () {
     };
     UserService.prototype.save = function (user) {
         console.log('user save');
+        var _user = this._sessionService.getUser();
+        user.accountId = _user.accountId;
+        var _resourceUrl = this.RS + 'save';
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        var data_str = JSON.stringify(user);
+        this._http.post(_resourceUrl, data_str, { withCredentials: true })
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var u = data.result;
+            // TODO: pass copy????
+            ret_subj.next(u);
+            ret_subj.complete();
+        }, function (err) {
+            console.log(err);
+        });
+        return ret_subj;
+    };
+    UserService.prototype.saveX = function (user) {
+        console.log('user save');
         var _resourceUrl = this.RS + 'save';
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         var data_str = JSON.stringify(user);
@@ -100,7 +122,7 @@ var UserService = (function () {
 }());
 UserService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [config_service_1.ConfigService, http_1.Http])
+    __metadata("design:paramtypes", [http_1.Http, config_service_1.ConfigService, session_service_1.SessionService])
 ], UserService);
 exports.UserService = UserService;
 //# sourceMappingURL=user.service.js.map

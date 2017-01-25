@@ -4,11 +4,11 @@
 
 import {Component, AfterViewInit} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
-import {ConfigService} from "../service/config.service";
-import {AccountService} from "../service/account.service";
-import {UserService} from "../service/user.service";
-import {Account} from "../class/account";
-import {User} from "../class/user";
+import {ConfigService} from "./service/config.service";
+import {AccountService} from "./service/account.service";
+import {UserService} from "./service/user.service";
+import {Account} from "./class/account";
+import {User} from "./class/user";
 
 
 @Component({

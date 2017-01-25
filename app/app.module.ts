@@ -46,13 +46,13 @@ import {UIViewValue} from "./component/ui/ui-view-value";
 import {OffClickDirective} from "./component/ui/off-click";
 
 import {LoginScreenComponent} from "./component/login-screen.component";
-import {AdminPageComponent} from "./component/admin-page.component";
+import {AdminPageComponent} from "./admin-page.component";
+import {MainComponent} from "./main.component";
 
 
 const appRoutes: Routes = [
     { path: 'admin', component: AdminPageComponent },
-    //{ path: 'login', component: LoginScreenComponent },
-
+    { path: '', component: MainComponent },
     //{ path: '**', component: PageNotFoundComponent }
 ];
 
@@ -71,6 +71,7 @@ const appRoutes: Routes = [
         AdminPageComponent,
 
         AppComponent,
+        MainComponent,
         ContextMenuComponent,
         NotebookComponent,
         TabSystemComponent,

@@ -19,36 +19,13 @@ import {SessionService} from "./service/session.service";
     selector: 'rplus-app',
     styles: [``],
     template: `
+        <login-screen></login-screen>
         <router-outlet></router-outlet>
-        <div
-            (contextmenu)="contextMenu($event)"
-            (click)="click($event)"
-        >
-            <login-screen></login-screen>
-            <context-menu
-                [posX]="_hubService.shared_var['cm_px']"
-                [posY]="_hubService.shared_var['cm_py']"
-                [hidden]="_hubService.shared_var['cm_hidden']"
-                [items]="_hubService.shared_var['cm_items']"
-            >
-            </context-menu>
-            <tab-system></tab-system>
-            <notebook></notebook>
-        </div>
     `,
     providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService, SessionService]
 })
 
 export class AppComponent {
-    constructor(private _hubService: HubService) {
-        this._hubService.shared_var['cm_hidden'] = true;
-    }
-
-    contextMenu(e) {
-        this._hubService.shared_var['cm_hidden'] = true;
-    }
-
-    click(e) {
-        this._hubService.shared_var['cm_hidden'] = true;
+    constructor() {
     }
 }

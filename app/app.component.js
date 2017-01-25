@@ -23,26 +23,18 @@ var photo_service_1 = require("./service/photo.service");
 var account_service_1 = require("./service/account.service");
 var session_service_1 = require("./service/session.service");
 var AppComponent = (function () {
-    function AppComponent(_hubService) {
-        this._hubService = _hubService;
-        this._hubService.shared_var['cm_hidden'] = true;
+    function AppComponent() {
     }
-    AppComponent.prototype.contextMenu = function (e) {
-        this._hubService.shared_var['cm_hidden'] = true;
-    };
-    AppComponent.prototype.click = function (e) {
-        this._hubService.shared_var['cm_hidden'] = true;
-    };
     return AppComponent;
 }());
 AppComponent = __decorate([
     core_1.Component({
         selector: 'rplus-app',
         styles: [""],
-        template: "\n        <router-outlet></router-outlet>\n        <div\n            (contextmenu)=\"contextMenu($event)\"\n            (click)=\"click($event)\"\n        >\n            <login-screen></login-screen>\n            <context-menu\n                [posX]=\"_hubService.shared_var['cm_px']\"\n                [posY]=\"_hubService.shared_var['cm_py']\"\n                [hidden]=\"_hubService.shared_var['cm_hidden']\"\n                [items]=\"_hubService.shared_var['cm_items']\"\n            >\n            </context-menu>\n            <tab-system></tab-system>\n            <notebook></notebook>\n        </div>\n    ",
+        template: "\n        <login-screen></login-screen>\n        <router-outlet></router-outlet>\n    ",
         providers: [hub_service_1.HubService, config_service_1.ConfigService, user_service_1.UserService, organisation_service_1.OrganisationService, person_service_1.PersonService, request_service_1.RequestService, offer_service_1.OfferService, task_service_1.TaskService, analysis_service_1.AnalysisService, history_service_1.HistoryService, photo_service_1.PhotoService, account_service_1.AccountService, session_service_1.SessionService]
     }),
-    __metadata("design:paramtypes", [hub_service_1.HubService])
+    __metadata("design:paramtypes", [])
 ], AppComponent);
 exports.AppComponent = AppComponent;
 //# sourceMappingURL=app.component.js.map

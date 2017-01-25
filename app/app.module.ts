@@ -45,7 +45,7 @@ import {UITag} from "./component/ui/ui-tag.component";
 import {UIViewValue} from "./component/ui/ui-view-value";
 import {OffClickDirective} from "./component/ui/off-click";
 
-import {LoginScreenComponent} from "./component/login-screen.component";
+import {LoginScreenComponent} from "./login-screen.component";
 import {AdminPageComponent} from "./admin-page.component";
 import {MainComponent} from "./main.component";
 

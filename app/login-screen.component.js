@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var session_service_1 = require("../service/session.service");
+var session_service_1 = require("./service/session.service");
 var LoginScreenComponent = (function () {
     function LoginScreenComponent(_sessionService) {
         this._sessionService = _sessionService;

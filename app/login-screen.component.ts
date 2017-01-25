@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
-import {ConfigService} from "../service/config.service";
-import {SessionService} from "../service/session.service";
+import {ConfigService} from "./service/config.service";
+import {SessionService} from "./service/session.service";
 import {Observable} from "rxjs";
 
 

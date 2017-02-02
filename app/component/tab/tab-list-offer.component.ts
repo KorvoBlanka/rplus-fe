@@ -264,7 +264,7 @@ export class TabListOfferComponent {
 
     offers: Offer[];
     page: number = 0;
-    perPage: number = 32;
+    perPage: number = 15;
 
     to: number;
     list: HTMLElement;
@@ -311,7 +311,13 @@ export class TabListOfferComponent {
     listOffers() {
         this._offerService.list(this.page, this.perPage, this.source, this.filter, this.searchQuery, this.searchArea).subscribe(
             data => {
-                this.offers = data;
+                if (this.page == 0) {
+                    this.offers = data;
+                } else {
+                    data.forEach(i => {
+                        this.offers.push(i);
+                    })
+                }
             },
             err => console.log(err)
         );
@@ -366,6 +372,8 @@ export class TabListOfferComponent {
 
     scroll(e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+            this.page += 1;
+            this.listOffers();
 
         }
     }
@@ -397,7 +405,7 @@ export class TabListOfferComponent {
         } else {
             this.source = OfferSource.IMPORT;
         }
-
+        this.page = 0;
         this.listOffers();
     }
 }

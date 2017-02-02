@@ -48,7 +48,7 @@ var TabListOfferComponent = (function () {
         this.paneHidden = false;
         this.mapDrawAllowed = false;
         this.page = 0;
-        this.perPage = 32;
+        this.perPage = 15;
         setTimeout(function () {
             _this.tab.header = 'Недвижимость';
         });
@@ -80,7 +80,14 @@ var TabListOfferComponent = (function () {
     TabListOfferComponent.prototype.listOffers = function () {
         var _this = this;
         this._offerService.list(this.page, this.perPage, this.source, this.filter, this.searchQuery, this.searchArea).subscribe(function (data) {
-            _this.offers = data;
+            if (_this.page == 0) {
+                _this.offers = data;
+            }
+            else {
+                data.forEach(function (i) {
+                    _this.offers.push(i);
+                });
+            }
         }, function (err) { return console.log(err); });
     };
     TabListOfferComponent.prototype.onResize = function (e) {
@@ -126,6 +133,8 @@ var TabListOfferComponent = (function () {
     };
     TabListOfferComponent.prototype.scroll = function (e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
+            this.page += 1;
+            this.listOffers();
         }
     };
     TabListOfferComponent.prototype.searchParamChanged = function (e) {
@@ -152,6 +161,7 @@ var TabListOfferComponent = (function () {
         else {
             this.source = offer_service_1.OfferSource.IMPORT;
         }
+        this.page = 0;
         this.listOffers();
     };
     return TabListOfferComponent;

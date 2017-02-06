@@ -3,6 +3,9 @@
 
 # my stuff
 node_modules/
+*.js
+*.js.map
+!/systemjs.config.js
 
 # User-specific stuff:
 .idea/workspace.xml
@@ -45,3 +48,4 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+

@@ -675,7 +675,11 @@ export class TabRequestComponent {
         });
 
         setTimeout(() => {
-            this.tab.header = 'Запрос'
+            if (this.request.id) {
+                this.tab.header = 'Запрос ' + this.request.id;
+            } else {
+                this.tab.header = 'Новый запрос';
+            }
         });
     }
 
@@ -776,7 +780,9 @@ export class TabRequestComponent {
 
     save() {
         this._requestService.save(this.request).subscribe(request => {
-            this.request = request;
+            setTimeout(() => {
+                this.request = request;
+            });
             this.toggleEdit();
         });
     }

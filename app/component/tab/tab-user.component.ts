@@ -1,7 +1,5 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 
-import {FormatDatePipe} from '../../pipe/format-date.pipe';
-
 import {Tab} from '../../class/tab';
 import {User} from '../../class/user';
 import {Offer} from '../../class/offer';
@@ -601,7 +599,13 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {this.tab.header = 'Пользователь'});
+        setTimeout(() => {
+            if (this.user.id) {
+                this.tab.header = 'Пользователь ' + this.user.id;
+            } else {
+                this.tab.header = 'Новый пользователь';
+            }
+        });
     }
 
     onResize(e) {
@@ -647,7 +651,9 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     save() {
 
         this._userService.save(this.user).subscribe(user => {
-            this.user = user;
+            setTimeout(() => {
+                this.user = user;
+            });
             this.toggleEdit();
         });
     }

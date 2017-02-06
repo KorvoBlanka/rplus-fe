@@ -587,7 +587,11 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         setTimeout(() => {
-            this.tab.header = 'Контакт';
+            if (this.person.id) {
+                this.tab.header = 'Контакт ' + this.person.id;
+            } else {
+                this.tab.header = 'Новый контакт';
+            }
         });
     }
 

@@ -41,7 +41,12 @@ var TabOrganisationComponent = (function () {
         this.ch3_data = [];
         this.ch4_data = [];
         setTimeout(function () {
-            _this.tab.header = 'Контрагент';
+            if (_this.organisation.id) {
+                _this.tab.header = 'Орг. ' + _this.organisation.id;
+            }
+            else {
+                _this.tab.header = 'Новая организация';
+            }
         });
     }
     TabOrganisationComponent.prototype.log = function (e) {
@@ -77,7 +82,9 @@ var TabOrganisationComponent = (function () {
     TabOrganisationComponent.prototype.save = function () {
         var _this = this;
         this._organisationService.save(this.organisation).subscribe(function (org) {
-            _this.organisation = org;
+            setTimeout(function () {
+                _this.organisation = org;
+            });
         });
         this.toggleEdit();
     };

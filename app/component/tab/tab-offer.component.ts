@@ -154,7 +154,7 @@ import {Person} from "../../class/person";
                     <div style="margin: 5px;">
                         <div class="pull-container">
                             <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="" target="_blank">{{ offer.sourceMedia }}</a></span></div>
-                            <div class="font-sz-1 color-g2 pull-right"> {{offer.lastSeenDate }} </div>
+                            <div class="font-sz-1 color-g2 pull-right"> {{offer.changeDate | formatDate }} </div>
                         </div>
                         <div class="font-sz-2 color-g2 line-clamp line-clamp-2" style="margin: 5px 5px 0 5px;">{{ offer.sourceMediaText }}</div>
                         <hr>
@@ -423,7 +423,7 @@ import {Person} from "../../class/person";
         
                             <div class="view-group">
                                 <span class="view-label pull-left">Адрес</span>
-                                <span class="view-value"> {{ offer.address + ' ' + offer.houseNum || '' }} </span>
+                                <span class="view-value"> {{ offer.address + ' ' + (offer.houseNum | strNn) }} </span>
                             </div>
                             
         
@@ -797,8 +797,28 @@ export class TabOfferComponent implements OnInit {
     typeCodeOptions = [
         {value: 'room', label: 'Комната'},
         {value: 'apartment', label: 'Квартира'},
+        {value: 'apartment_small', label: 'Малосемейка'},
+        {value: 'apartment_new', label: 'Новостройка'},
+
         {value: 'house', label: 'Дом'},
-        {value: 'townhouse', label: 'Таунхаус'}
+        {value: 'dacha', label: 'Дача'},
+        {value: 'cottage', label: 'Коттедж'},
+
+        {value: 'townhouse', label: 'Таунхаус'},
+
+        {value: 'other', label: 'Другое'},
+        {value: 'land', label: 'Земля'},
+
+        {value: 'building', label: 'здание'},
+        {value: 'office_place', label: 'офис'},
+        {value: 'office', label: 'офис'},
+        {value: 'market_place', label: 'торговая площадь'},
+        {value: 'production_place', label: 'производственное помещение'},
+        {value: 'gpurpose_place', label: 'помещение общего назначения'},
+        {value: 'autoservice_place', label: 'автосервис'},
+        {value: 'service_place', label: 'помещение под сферу услуг'},
+        {value: 'warehouse_place', label: 'склад база'},
+        {value: 'garage', label: 'гараж'}
     ];
 
     apSchemaOptions = [
@@ -881,7 +901,12 @@ export class TabOfferComponent implements OnInit {
                 private _personService: PersonService) {
 
         setTimeout(() => {
-            this.tab.header = 'Объект ' + this.offer.id;
+            if (this.offer.id) {
+                this.tab.header = 'Объект ' + this.offer.id;
+            } else {
+                this.tab.header = 'Новый Объект';
+            }
+
         });
 
         this._userService.list(null, null, "").subscribe(agents => {
@@ -976,7 +1001,9 @@ export class TabOfferComponent implements OnInit {
 
     save() {
         this._offerService.save(this.offer).subscribe(offer => {
-            this.offer = offer;
+            setTimeout(() => {
+                this.offer = offer;
+            });
             this.toggleEdit();
         });
     }

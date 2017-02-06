@@ -84,7 +84,12 @@ var TabRequestComponent = (function () {
             }
         });
         setTimeout(function () {
-            _this.tab.header = 'Запрос';
+            if (_this.request.id) {
+                _this.tab.header = 'Запрос ' + _this.request.id;
+            }
+            else {
+                _this.tab.header = 'Новый запрос';
+            }
         });
     }
     TabRequestComponent.prototype.ngOnInit = function () {
@@ -167,7 +172,9 @@ var TabRequestComponent = (function () {
     TabRequestComponent.prototype.save = function () {
         var _this = this;
         this._requestService.save(this.request).subscribe(function (request) {
-            _this.request = request;
+            setTimeout(function () {
+                _this.request = request;
+            });
             _this.toggleEdit();
         });
     };

@@ -40,7 +40,6 @@ import {UIPieChart} from "./component/ui/ui-pie-chart.component";
 import {UICarousel} from "./component/ui/ui-carousel.component";
 import {UITagBlock} from "./component/ui/ui-tag-block.component";
 import {DigestPersonComponent} from "./component/digest/digest-person.component";
-import {FormatDatePipe} from "./pipe/format-date.pipe";
 import {UITag} from "./component/ui/ui-tag.component";
 import {UIViewValue} from "./component/ui/ui-view-value";
 import {OffClickDirective} from "./component/ui/off-click";
@@ -48,6 +47,9 @@ import {OffClickDirective} from "./component/ui/off-click";
 import {LoginScreenComponent} from "./login-screen.component";
 import {AdminPageComponent} from "./admin-page.component";
 import {MainComponent} from "./main.component";
+
+import {FormatDatePipe} from "./pipe/format-date.pipe";
+import {StrNnPipe} from "./pipe/str-nn.pipe";
 
 
 const appRoutes: Routes = [
@@ -66,6 +68,7 @@ const appRoutes: Routes = [
     ],
     declarations: [
         FormatDatePipe,
+        StrNnPipe,
 
         LoginScreenComponent,
         AdminPageComponent,

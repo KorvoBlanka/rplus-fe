@@ -513,7 +513,11 @@ export class TabOrganisationComponent {
                 private _personService: PersonService,
                 private _organisationService: OrganisationService) {
         setTimeout(() => {
-            this.tab.header = 'Контрагент'
+            if (this.organisation.id) {
+                this.tab.header = 'Орг. ' + this.organisation.id;
+            } else {
+                this.tab.header = 'Новая организация';
+            }
         });
     }
 
@@ -550,11 +554,11 @@ export class TabOrganisationComponent {
     }
 
     save() {
-
         this._organisationService.save(this.organisation).subscribe(org => {
-            this.organisation = org;
+            setTimeout(() => {
+                this.organisation = org;
+            });
         });
-
         this.toggleEdit();
     }
 

@@ -74,7 +74,14 @@ var TabUserComponent = (function () {
     };
     TabUserComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        setTimeout(function () { _this.tab.header = 'Пользователь'; });
+        setTimeout(function () {
+            if (_this.user.id) {
+                _this.tab.header = 'Пользователь ' + _this.user.id;
+            }
+            else {
+                _this.tab.header = 'Новый пользователь';
+            }
+        });
     };
     TabUserComponent.prototype.onResize = function (e) {
         this.calcSize();
@@ -114,7 +121,9 @@ var TabUserComponent = (function () {
     TabUserComponent.prototype.save = function () {
         var _this = this;
         this._userService.save(this.user).subscribe(function (user) {
-            _this.user = user;
+            setTimeout(function () {
+                _this.user = user;
+            });
             _this.toggleEdit();
         });
     };

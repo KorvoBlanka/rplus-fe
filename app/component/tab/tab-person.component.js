@@ -92,7 +92,12 @@ var TabPersonComponent = (function () {
     TabPersonComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         setTimeout(function () {
-            _this.tab.header = 'Контакт';
+            if (_this.person.id) {
+                _this.tab.header = 'Контакт ' + _this.person.id;
+            }
+            else {
+                _this.tab.header = 'Новый контакт';
+            }
         });
     };
     TabPersonComponent.prototype.onResize = function (e) {

@@ -153,7 +153,7 @@ import {Person} from "../../class/person";
                 <div class="offer-prop" [style.height]="paneHeight">
                     <div style="margin: 5px;">
                         <div class="pull-container">
-                            <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="" target="_blank">{{ offer.sourceMedia }}</a></span></div>
+                            <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="{{ offer.sourceUrl }}" target="_blank">{{ offer.sourceMedia }}</a></span></div>
                             <div class="font-sz-1 color-g2 pull-right"> {{offer.changeDate | formatDate }} </div>
                         </div>
                         <div class="font-sz-2 color-g2 line-clamp line-clamp-2" style="margin: 5px 5px 0 5px;">{{ offer.sourceMediaText }}</div>

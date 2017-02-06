@@ -3,8 +3,8 @@
 
 # my stuff
 node_modules/
-*.js
-*.js.map
+**/*.js
+**/*.js.map
 !/systemjs.config.js
 
 # User-specific stuff:

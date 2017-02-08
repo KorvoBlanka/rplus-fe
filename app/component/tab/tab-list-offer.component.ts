@@ -166,6 +166,8 @@ import {UserService} from "../../service/user.service";
         <offer-table
             [hidden]="!tableMode"
             [offers]="offers"
+            (onSort)="sortChanged($event)"
+            (onListEnd)="page = page + 1; listOffers();"
         >
         </offer-table>
         
@@ -238,6 +240,8 @@ export class TabListOfferComponent {
         offerTypeCode: 'sale',
     };
 
+    sort: any = {};
+
     agentOpts = [{
         value: 'all',
         label: '-'
@@ -264,7 +268,7 @@ export class TabListOfferComponent {
 
     offers: Offer[];
     page: number = 0;
-    perPage: number = 15;
+    perPage: number = 32;
 
     to: number;
     list: HTMLElement;
@@ -309,7 +313,7 @@ export class TabListOfferComponent {
     }
 
     listOffers() {
-        this._offerService.list(this.page, this.perPage, this.source, this.filter, this.searchQuery, this.searchArea).subscribe(
+        this._offerService.list(this.page, this.perPage, this.source, this.filter, this.sort, this.searchQuery, this.searchArea).subscribe(
             data => {
                 if (this.page == 0) {
                     this.offers = data;
@@ -374,11 +378,26 @@ export class TabListOfferComponent {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
             this.page += 1;
             this.listOffers();
-
         }
     }
 
     searchParamChanged(e) {
+        this.page = 0;
+        this.listOffers();
+    }
+
+    sortChanged(e) {
+        console.log(e);
+        if (e.order == 0) {
+            delete this.sort[e.field];
+        } else {
+            if (e.order == 1) {
+                this.sort[e.field] = "ASC";
+            } else {
+                this.sort[e.field] = "DESC";
+            }
+        }
+
         this.page = 0;
         this.listOffers();
     }

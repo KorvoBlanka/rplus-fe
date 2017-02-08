@@ -25,7 +25,7 @@ export class OfferService {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/offer/';
     };
 
-    list(page: number, perPage: number, source: OfferSource, filter: any, searchQuery: string, searchArea: GeoPoint[]) {
+    list(page: number, perPage: number, source: OfferSource, filter: any, sort: any, searchQuery: string, searchArea: GeoPoint[]) {
         console.log('offers list');
 
         var query = [];
@@ -43,6 +43,9 @@ export class OfferService {
         query.push('per_page=' + perPage);
         query.push('source=' + source_str);
         query.push('filter=' + JSON.stringify(filter));
+        if (sort) {
+            query.push('sort=' + JSON.stringify(sort));
+        }
         query.push('search_query=' + searchQuery);
         query.push('search_area=' + JSON.stringify(searchArea));
 

@@ -696,7 +696,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     getOffers(page, perPage) {
-        this._offerService.list(0, 32, OfferSource.LOCAL, {agentId: this.user.id, offerTypeCode: this.requestOfferType}, "", []).subscribe(offers => {
+        this._offerService.list(0, 32, OfferSource.LOCAL, {agentId: this.user.id, offerTypeCode: this.requestOfferType}, null, "", []).subscribe(offers => {
             this.offers = offers;
         });
     }

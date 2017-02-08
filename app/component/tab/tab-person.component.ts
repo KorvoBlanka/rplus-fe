@@ -643,7 +643,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     offersSelected() {
-        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, "", []).subscribe(offers => {
+        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, null,  "", []).subscribe(offers => {
             this.offers = offers;
         });
     }
@@ -724,7 +724,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     toggleOffer(offer_type: string) {
         this.requestOfferType = offer_type;
 
-        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, "", []).subscribe(offers => {
+        this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, null, "", []).subscribe(offers => {
             this.offers = offers;
         });
 

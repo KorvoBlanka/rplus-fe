@@ -2,6 +2,7 @@ import {
     Component,
     ElementRef, OnInit
 } from '@angular/core';
+import {Output, EventEmitter} from '@angular/core';
 
 import {HubService} from '../service/hub.service'
 import {OfferService} from '../service/offer.service';
@@ -65,7 +66,7 @@ import * as moment from 'moment/moment';
     `],
     template: `
         <div class="offer-table-wrapper" (window:resize)="onResize($event)">
-            <div class="scroll-wrapper" [style.height]="contentHeight">
+            <div class="scroll-wrapper" [style.height]="contentHeight" (scroll)="scroll($event)">
                 <table class="table table-striped">
                     <thead
                         (contextmenu)="theaderContextMenu($event)"
@@ -84,7 +85,6 @@ import * as moment from 'moment/moment';
                         </tr>
                     </thead>
                     <tbody
-                        (scroll)="scroll($event)"
                         (contextmenu)="tableContextMenu($event)"
                     >
                         <tr *ngFor="let o of offers"
@@ -96,9 +96,9 @@ import * as moment from 'moment/moment';
                                 [hidden]="!f.visible"
                                 [style.width.xx]="f.width"
                             >
-                                <span *ngIf="f.id=='status'" class="icon-{{ f.val(o) }}"></span>
+                                <span *ngIf="f.id=='stateCode'" class="icon-{{ f.val(o) }}"></span>
                                 <span *ngIf="f.id=='photo' && o.photoUrl" class="icon-photo"></span>
-                                <span *ngIf="f.id!='status' && f.id!='photo'">{{ f.val(o) }}</span>
+                                <span *ngIf="f.id!='stateCode' && f.id!='photo'">{{ f.val(o) }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -115,9 +115,12 @@ export class OfferTableComponent implements OnInit {
     page: number = 0;
     to: any;
 
+    @Output() onSort: EventEmitter<any> = new EventEmitter();
+    @Output() onListEnd: EventEmitter<any> = new EventEmitter();
+
     private fields = [
         {
-            id: 'status', label: '#', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'stateCode', label: '#', visible: true, sort: 0, val: (ofr: Offer) => {
             return ofr.stateCode;
         }
         },
@@ -128,12 +131,12 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'type', label: 'Тип', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'typeCode', label: 'Тип', visible: true, sort: 0, val: (ofr: Offer) => {
             return ofr.typeCode;
         }
         },
         {
-            id: 'city', label: 'Город', visible: false, sort: 0, val: (ofr: Offer) => {
+            id: 'locality', label: 'Город', visible: false, sort: 0, val: (ofr: Offer) => {
             return ofr.locality;
         }
         },
@@ -143,7 +146,7 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'rooms', label: 'Комнаты', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'roomsCount', label: 'Комнаты', visible: true, sort: 0, val: (ofr: Offer) => {
             var res;
             if (ofr.roomsOfferCount) {
                 res = ofr.roomsOfferCount;
@@ -156,17 +159,17 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'ap_scheme', label: 'Планировка', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'apSchemeId', label: 'Планировка', visible: true, sort: 0, val: (ofr: Offer) => {
             return ofr.apSchemeId;
         }
         },
         {
-            id: 'wall_type', label: 'Материал', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'houseTypeId', label: 'Материал', visible: true, sort: 0, val: (ofr: Offer) => {
             return ofr.houseTypeId;
         }
         },
         {
-            id: 'floors', label: 'Этаж', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'floor', label: 'Этаж', visible: true, sort: 0, val: (ofr: Offer) => {
             var res = '';
             if (ofr.floor) {
                 res += ofr.floor;
@@ -179,13 +182,13 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'squares', label: 'Площадь', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'squareTotal', label: 'Площадь', visible: true, sort: 0, val: (ofr: Offer) => {
 
             return ofr.squareTotal;
         }
         },
         {
-            id: 'import_source', label: 'Источник', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'sourceMedia', label: 'Источник', visible: true, sort: 0, val: (ofr: Offer) => {
             return ofr.sourceMedia;
         }
         },
@@ -201,12 +204,12 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'price', label: 'Цена', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'ownerPrice', label: 'Цена', visible: true, sort: 0, val: (ofr: Offer) => {
             return ofr.ownerPrice;
         }
         },
         {
-            id: 'price_sq', label: 'Цена м2', visible: false, sort: 0, val: (ofr: Offer) => {
+            id: 'priceSq', label: 'Цена м2', visible: false, sort: 0, val: (ofr: Offer) => {
             if (ofr.ownerPrice && ofr.squareTotal) {
                 return (ofr.ownerPrice / ofr.squareTotal) + '';
             }
@@ -215,7 +218,7 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'mls', label: 'MLS', visible: false, sort: 0, val: (ofr: Offer) => {
-            return ''
+            return '';
         }
         },
         {
@@ -226,45 +229,45 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'manager', label: 'Менеджер', visible: false, sort: 0, val: (ofr: Offer) => {
-            return '~'
+            return '~';
         }
         },
 
         {
             id: 'reqests', label: 'Заявки', visible: false, sort: 0, val: (ofr: Offer) => {
-            return '10'
+            return '10';
         }
         },
         {
             id: 'click_count', label: 'Кол-во кликов', visible: false, sort: 0, val: (ofr: Offer) => {
-            return '100'
+            return '100';
         }
         },
         {
             id: 'progress', label: 'Прогресс', visible: false, sort: 0, val: (ofr: Offer) => {
-            return '50%'
+            return '50%';
         }
         },
 
         {
-            id: 'add_date', label: 'Добавлено', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.addDate).format('DD.MM.YY hh:mm')
+            id: 'addDate', label: 'Добавлено', visible: true, sort: 0, val: (ofr: Offer) => {
+            return moment(ofr.addDate).format('DD.MM.YY hh:mm');
         }
         },
         {
-            id: 'assign_date', label: 'Назначено', visible: false, sort: 0, val: (ofr: Offer) => {
+            id: 'changeDate', label: 'Назначено', visible: false, sort: 0, val: (ofr: Offer) => {
             //return moment(ofr.assignDate * 1000).format('DD.MM.YY hh:mm')
-            return moment(ofr.changeDate).format('DD.MM.YY hh:mm')
+            return moment(ofr.changeDate).format('DD.MM.YY hh:mm');
         }
         },
         {
-            id: 'change_date', label: 'Изменено', visible: false, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.changeDate).format('DD.MM.YY hh:mm')
+            id: 'changeDate', label: 'Изменено', visible: false, sort: 0, val: (ofr: Offer) => {
+            return moment(ofr.changeDate).format('DD.MM.YY hh:mm');
         }
         },
         {
-            id: 'last_seen_date', label: 'Актуально', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.lastSeenDate).format('DD.MM.YY hh:mm')
+            id: 'lastSeenDate', label: 'Актуально', visible: true, sort: 0, val: (ofr: Offer) => {
+            return moment(ofr.lastSeenDate).format('DD.MM.YY hh:mm');
         }
         }
     ];
@@ -282,7 +285,7 @@ export class OfferTableComponent implements OnInit {
 
     scroll(e) {
         if (e.currentTarget.scrollTop + this.contentHeight >= e.currentTarget.scrollHeight) {
-
+            this.onListEnd.emit({bla: 'bla'});
         }
     }
 
@@ -372,5 +375,6 @@ export class OfferTableComponent implements OnInit {
     toggleSort(f) {
         f.sort++;
         if (f.sort > 2) f.sort = 0;
+        this.onSort.emit({field: f.id, order: f.sort});
     }
 }

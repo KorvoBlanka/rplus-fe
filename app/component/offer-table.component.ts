@@ -364,7 +364,7 @@ export class OfferTableComponent implements OnInit {
                     c._offerService.save(o);
                 })
             }},
-        )
+        );
         users.forEach(u => {
             uOpt.push(
                 {class: "entry", disabled: false, label: u.name, callback: function() {
@@ -437,8 +437,7 @@ export class OfferTableComponent implements OnInit {
                 }},
                 {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
                 {class: "delimiter"},
-                {class: "submenu", disabled: false, icon: "start", label: "Статус", items: stateOpt},
-                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stateOpt},
                 {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
                 {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},

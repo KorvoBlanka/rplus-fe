@@ -16,6 +16,7 @@ import {Output, EventEmitter} from '@angular/core';
             </div>
             <ul class="dropdown-menu pull-right" [hidden]="hidden">
                 <li *ngFor="let opt of options"
+                    [class.bold]="opt.bold == true"
                     [class.selected]="opt.value == selected?.value"
                     (click)="select(opt)"
                 >
@@ -67,6 +68,10 @@ import {Output, EventEmitter} from '@angular/core';
             cursor: pointer;
         }
         
+        .bold>label {
+            font-weight: 600 !important;
+        }
+        
         .dropdown-menu>li>label {
             display: block;
             padding: 3px 20px;
@@ -95,6 +100,7 @@ import {Output, EventEmitter} from '@angular/core';
             font-weight: 200;
             font-size: 14px;
         }
+        
     `]
 })
 

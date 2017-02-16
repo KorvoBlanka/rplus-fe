@@ -89,6 +89,10 @@ import {User} from "../../class/user";
             background-color: #3366cc;
         }
         
+        .src-sel {
+            background-color: #3366cc;
+        }
+        
     `],
     template: `
         <div class="search-form" [class.table-mode]="tableMode">
@@ -100,6 +104,19 @@ import {User} from "../../class/user";
             <div class="tool-box">
         
                 <div class="pull-left">
+                
+                    <div class="inline-select">
+                        <ui-select class="view-value edit-value"
+                            [options]="[
+                                {value: 'sale', label: 'Продажа'},
+                                {value: 'rent', label: 'Аренда'}
+                            ]"
+                            [value]="sale"
+                            [config]="{icon: 'icon-square', drawArrow: true}"
+                            (onChange)="filter.offerTypeCode = $event.selected.value; searchParamChanged($event);"
+                        >
+                        </ui-select>
+                    </div>
                 
                     <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
@@ -195,8 +212,8 @@ import {User} from "../../class/user";
                         {{ tab.header }}
                     </div>
                     <div class="two-way-switch" style="float: right; display: flex;">
-                        <div (click)="toggleSource('import')">Общая</div>&nbsp;
-                        <div (click)="toggleSource('local')">Компании</div>
+                        <div style="padding: 0 4px; cursor: hand;"  [class.src-sel]="source == 2" (click)="toggleSource('import')">Общая</div>&nbsp;
+                        <div style="padding: 0 4px; cursor: hand;"  [class.src-sel]="source == 1" (click)="toggleSource('local')">Компании</div>
                     </div>
                     
                 <!---------------------------------------------------------------------->
@@ -255,10 +272,7 @@ export class TabListOfferComponent {
 
     sort: any = {};
 
-    agentOpts = [{
-        value: 'all',
-        label: '-'
-    }];
+    agentOpts = [];
 
     stateCodeOptions = [
         {value: 'all', label: 'Все'},
@@ -308,11 +322,16 @@ export class TabListOfferComponent {
             }
         )
 
-        this.filter.offerTypeCode = this.tab.args.offerTypeCode;
         this.list = this._elem.nativeElement.querySelector('.digest-list');
 
         this.page = 0;
         this.listOffers();
+
+        this.agentOpts.push({value: 'all', label: 'Все объекты', bold: true});
+        this.agentOpts.push({value: 'all_agents', label: 'Все агенты', bold: true});
+        this.agentOpts.push({value: 'realtor', label: 'Посредник', bold: true});
+        this.agentOpts.push({value: 'private', label: 'Собственник', bold: true});
+        this.agentOpts.push({value: 'my', label: 'Мои объекты', bold: true});
 
         this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
@@ -475,8 +494,7 @@ export class TabListOfferComponent {
                 }},
                 {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
                 {class: "delimiter"},
-                {class: "submenu", disabled: false, icon: "start", label: "Статус", items: stateOpt},
-                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stateOpt},
                 {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
                 {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},

@@ -36,18 +36,11 @@ import {User} from "../../class/user";
         
             <div class="tile-group">
 
-                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer' , {offerTypeCode: 'sale'})">
+                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-home"></span>
                     </div>
-                    <span class="tile-label">Недвижимость - Продажа</span>
-                </div>
-
-                <div class="tile bg-red fg-white" (click)="turnTo('list_offer', {offerTypeCode: 'rent'})">
-                    <div class="tile-content iconic">
-                        <span class="icon icon-home"></span>
-                    </div>
-                    <span class="tile-label">Недвижимость - Аренда</span>
+                    <span class="tile-label">Недвижимость</span>
                 </div>
 
                 <div class="tile bg-green fg-white" (click)="turnTo('list_request', {})">

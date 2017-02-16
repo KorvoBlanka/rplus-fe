@@ -10,6 +10,7 @@ import {Tab} from '../../class/tab';
 import {Offer} from '../../class/offer';
 import {HubService} from "../../service/hub.service";
 import {UserService} from "../../service/user.service";
+import {User} from "../../class/user";
 
 
 @Component({
@@ -82,6 +83,12 @@ import {UserService} from "../../service/user.service";
             color: #fff;
             cursor: pointer;
         }
+        
+        .selected {
+            color: #fff !important;
+            background-color: #3366cc;
+        }
+        
     `],
     template: `
         <div class="search-form" [class.table-mode]="tableMode">
@@ -198,13 +205,19 @@ import {UserService} from "../../service/user.service";
                 <div class="digest-list"
                      (scroll)="scroll($event)"
                      [style.height]="paneHeight"
+                     (contextmenu)="tableContextMenu($event)"
                 >
                     <div class="button" (click)="addOffer()">
                         Добавить предложение
                     </div>                    
                     <digest-offer *ngFor="let offer of offers"
-                                  [offer]="offer"
-                                  (click)="select(offer)"
+                                [offer]="offer"
+                                [class.selected]="selectedOffers.indexOf(offer) > -1"
+                                (click)="click($event, offer)"
+                                (contextmenu)="click($event, offer)"
+                                (dblclick)="dblClick(offer)"
+                                (touchstart)="tStart(offer)"
+                                (touchend)="tEnd(offer)"
                     >
                     </digest-offer>
                 </div>
@@ -270,8 +283,11 @@ export class TabListOfferComponent {
     page: number = 0;
     perPage: number = 32;
 
-    to: number;
+    to: any;
     list: HTMLElement;
+
+    selectedOffers: Offer[] = [];
+    lastClckIdx: number = 0;
 
 
     constructor(private _elem: ElementRef, private _hubService: HubService, private _offerService: OfferService, private _userService: UserService, private _configService: ConfigService) {
@@ -281,6 +297,10 @@ export class TabListOfferComponent {
     }
 
     ngOnInit() {
+
+        if (this.tab.args.query) {
+            this.searchQuery = this.tab.args.query;
+        }
 
         this.tab.refreshRq.subscribe(
             sender => {
@@ -367,11 +387,177 @@ export class TabListOfferComponent {
         this.calcSize();
     }
 
+    tableContextMenu(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var c = this;
+        var users: User[] = this._userService.listCached("", 0, "");
+        var uOpt = [];
+        uOpt.push(
+            {class: "entry", disabled: false, label: "Не задано", callback: function() {
+                c.selectedOffers.forEach(o => {
+                    o.agentId = null;
+                    o.agent = null;
+                    c._offerService.save(o);
+                })
+            }},
+        )
+        users.forEach(u => {
+            uOpt.push(
+                {class: "entry", disabled: false, label: u.name, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.agentId = u.id;
+                        o.agent = u;
+                        c._offerService.save(o);
+                    })
+                }},
+            )
+        });
+
+        var stateOpt = [];
+        var states = [
+            {value: 'raw', label: 'Не активен'},
+            {value: 'active', label: 'Активен'},
+            {value: 'work', label: 'В работе'},
+            {value: 'suspended', label: 'Приостановлен'},
+            {value: 'archive', label: 'Архив'}
+        ];
+        var stageOpt = [];
+        var stages = [
+            {value: 'contact', label: 'Первичный контакт'},
+            {value: 'pre_deal', label: 'Заключение договора'},
+            {value: 'show', label: 'Показ'},
+            {value: 'prep_deal', label: 'Подготовка договора'},
+            {value: 'decision', label: 'Принятие решения'},
+            {value: 'negs', label: 'Переговоры'},
+            {value: 'deal', label: 'Сделка'}
+        ];
+        states.forEach(s => {
+            stateOpt.push(
+                {class: "entry", disabled: false, label: s.label, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.stateCode = s.value;
+                        c._offerService.save(o);
+                    })
+                }}
+            )
+        });
+        stages.forEach(s => {
+            stageOpt.push(
+                {class: "entry", disabled: false, label: s.label, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.stageCode = s.value;
+                        c._offerService.save(o);
+                    })
+                }}
+            )
+        });
+
+        let menu = {
+            pX: e.pageX,
+            pY: e.pageY,
+            scrollable: false,
+            items: [
+                {class: "entry", disabled: false, icon: "check", label: 'Проверить', callback: () => {
+                    var tab_sys = this._hubService.getProperty('tab_sys');
+                    var rq = [];
+                    this.selectedOffers.forEach(o => {
+                        rq.push(o.person.phones.join(" "));
+                    });
+                    tab_sys.addTab('list_offer', {query: rq.join(" ")});
+                }},
+                {class: "entry", disabled: false, icon: "document", label: 'Открыть', callback: () => {
+                    var tab_sys = this._hubService.getProperty('tab_sys');
+                    this.selectedOffers.forEach(o => {
+                        tab_sys.addTab('offer', {offer: o});
+                    })
+                }},
+                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
+                {class: "delimiter"},
+                {class: "submenu", disabled: false, icon: "start", label: "Статус", items: stateOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
+                {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
+                {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
+                    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+                    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+                ]},
+                {class: "submenu", disabled: true, icon: "", label: "Реклама", items: [
+                    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+                    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+                ]},
+                {class: "delimiter"},
+                {class: "entry", disabled: false, icon: "tag", label: 'Теги', callback: () => {}},
+            ]
+        };
+
+        this._hubService.shared_var['cm'] = menu;
+        this._hubService.shared_var['cm_hidden'] = false;
+    }
+
+    click(event: MouseEvent, offer: Offer) {
+
+        console.log('!');
+
+        var cIdx = this.offers.indexOf(offer);
+
+        if (event.button == 2) {    // right click
+            if (this.selectedOffers.indexOf(offer) == -1) { // if not over selected items
+                this.lastClckIdx = cIdx;
+                this.selectedOffers = [offer];
+            }
+        } else {
+            if (event.ctrlKey) {
+                // add to selection
+                this.lastClckIdx = cIdx;
+                this.selectedOffers.push(offer);
+            } else if (event.shiftKey) {
+                this.selectedOffers = [];
+                var idx = cIdx;
+                var idx_e = this.lastClckIdx;
+                if (cIdx > this.lastClckIdx) {
+                    idx = this.lastClckIdx;
+                    idx_e = cIdx;
+                }
+                while (idx <= idx_e) {
+                    var oi = this.offers[idx++];
+                    this.selectedOffers.push(oi);
+                }
+            } else {
+                this.lastClckIdx = cIdx;
+                this.selectedOffers = [offer];
+                console.log(this.selectedOffers);
+            }
+        }
+
+        console.log(this.selectedOffers);
+    }
+
+    dblClick(offer: Offer) {
+        this.openOffer(offer);
+    }
+
+    tStart(offer: Offer) {
+        clearTimeout(this.to);
+        this.to = setTimeout(() => {
+            this.openOffer(offer);
+        }, 1000);
+    }
+
+    tEnd(offer: Offer) {
+        clearTimeout(this.to);
+    }
+
     select(o: Offer) {
         if (o.locationLat && o.locationLon) {
             this.lat = o.locationLat;
             this.lon = o.locationLon;
         }
+    }
+
+    openOffer(offer: Offer) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('offer', {offer: offer});
     }
 
     scroll(e) {

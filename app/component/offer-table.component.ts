@@ -9,6 +9,8 @@ import {OfferService} from '../service/offer.service';
 import {Offer} from '../class/offer';
 
 import * as moment from 'moment/moment';
+import {UserService} from "../service/user.service";
+import {User} from "../class/user";
 
 
 @Component({
@@ -88,9 +90,12 @@ import * as moment from 'moment/moment';
                         (contextmenu)="tableContextMenu($event)"
                     >
                         <tr *ngFor="let o of offers"
-                            [class.selected]="o.selected"
-                            (click)="click(o)"
+                            [class.selected]="selectedOffers.indexOf(o) > -1"
+                            (click)="click($event, o)"
+                            (contextmenu)="click($event, o)"
                             (dblclick)="dblClick(o)"
+                            (touchstart)="tStart(o)"
+                            (touchend)="tEnd(o)"
                         >
                             <td *ngFor="let f of fields"
                                 [hidden]="!f.visible"
@@ -111,9 +116,12 @@ import * as moment from 'moment/moment';
 export class OfferTableComponent implements OnInit {
     public offers: Offer[];
 
+    selectedOffers: Offer[] = [];
     contentHeight: number = 600;
     page: number = 0;
     to: any;
+
+    lastClckIdx: number = 0;
 
     @Output() onSort: EventEmitter<any> = new EventEmitter();
     @Output() onListEnd: EventEmitter<any> = new EventEmitter();
@@ -272,7 +280,7 @@ export class OfferTableComponent implements OnInit {
         }
     ];
 
-    constructor(private _elem: ElementRef, private _hubService: HubService, private _offerService: OfferService) {
+    constructor(private _elem: ElementRef, private _hubService: HubService, private _offerService: OfferService, private _userService: UserService) {
     };
 
     ngOnInit() {
@@ -289,68 +297,188 @@ export class OfferTableComponent implements OnInit {
         }
     }
 
-    click(ofr: Offer) {
-        //r.selected = !r.selected;
+    openOffer(offer: Offer) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('offer', {offer: offer});
+    }
+
+    click(event: MouseEvent, offer: Offer) {
+        var cIdx = this.offers.indexOf(offer);
+
+        if (event.button == 2) {    // right click
+            if (this.selectedOffers.indexOf(offer) == -1) { // if not over selected items
+                this.lastClckIdx = cIdx;
+                this.selectedOffers = [offer];
+            }
+        } else {
+            if (event.ctrlKey) {
+                // add to selection
+                this.lastClckIdx = cIdx;
+                this.selectedOffers.push(offer);
+            } else if (event.shiftKey) {
+                this.selectedOffers = [];
+                var idx = cIdx;
+                var idx_e = this.lastClckIdx;
+                if (cIdx > this.lastClckIdx) {
+                    idx = this.lastClckIdx;
+                    idx_e = cIdx;
+                }
+                while (idx <= idx_e) {
+                    var oi = this.offers[idx++];
+                    this.selectedOffers.push(oi);
+                }
+            } else {
+                this.lastClckIdx = cIdx;
+                this.selectedOffers = [offer];
+            }
+        }
+    }
+
+    dblClick(offer: Offer) {
+        this.openOffer(offer);
+    }
+
+    tStart(offer: Offer) {
+        clearTimeout(this.to);
+        this.to = setTimeout(() => {
+            this.openOffer(offer);
+        }, 1000);
+    }
+
+    tEnd(offer: Offer) {
+        clearTimeout(this.to);
     }
 
     tableContextMenu(e) {
         e.preventDefault();
         e.stopPropagation();
-        this._hubService.shared_var['cm_px'] = e.pageX;
-        this._hubService.shared_var['cm_py'] = e.pageY;
 
-        let items = [];
+        var c = this;
+        var users: User[] = this._userService.listCached("", 0, "");
+        var uOpt = [];
+        uOpt.push(
+            {class: "entry", disabled: false, label: "Не задано", callback: function() {
+                c.selectedOffers.forEach(o => {
+                    o.agentId = null;
+                    o.agent = null;
+                    c._offerService.save(o);
+                })
+            }},
+        )
+        users.forEach(u => {
+            uOpt.push(
+                {class: "entry", disabled: false, label: u.name, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.agentId = u.id;
+                        o.agent = u;
+                        c._offerService.save(o);
+                    })
+                }},
+            )
+        });
 
-        items.push({
-                class: "entry", disabled: false, label: 'пункт 1', callback: () => {
+        var stateOpt = [];
+        var states = [
+            {value: 'raw', label: 'Не активен'},
+            {value: 'active', label: 'Активен'},
+            {value: 'work', label: 'В работе'},
+            {value: 'suspended', label: 'Приостановлен'},
+            {value: 'archive', label: 'Архив'}
+        ];
+        var stageOpt = [];
+        var stages = [
+            {value: 'contact', label: 'Первичный контакт'},
+            {value: 'pre_deal', label: 'Заключение договора'},
+            {value: 'show', label: 'Показ'},
+            {value: 'prep_deal', label: 'Подготовка договора'},
+            {value: 'decision', label: 'Принятие решения'},
+            {value: 'negs', label: 'Переговоры'},
+            {value: 'deal', label: 'Сделка'}
+        ];
+        states.forEach(s => {
+            stateOpt.push(
+                {class: "entry", disabled: false, label: s.label, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.stateCode = s.value;
+                        c._offerService.save(o);
+                    })
+                }}
+            )
+        });
+        stages.forEach(s => {
+            stageOpt.push(
+                {class: "entry", disabled: false, label: s.label, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.stageCode = s.value;
+                        c._offerService.save(o);
+                    })
+                }}
+            )
+        });
 
-                }
-            }
-        );
+        let menu = {
+            pX: e.pageX,
+            pY: e.pageY,
+            scrollable: false,
+            items: [
+                {class: "entry", disabled: false, icon: "check", label: 'Проверить', callback: () => {
+                    var tab_sys = this._hubService.getProperty('tab_sys');
+                    var rq = [];
+                    this.selectedOffers.forEach(o => {
+                        rq.push(o.person.phones.join(" "));
+                    });
+                    tab_sys.addTab('list_offer', {query: rq.join(" ")});
+                }},
+                {class: "entry", disabled: false, icon: "document", label: 'Открыть', callback: () => {
+                    var tab_sys = this._hubService.getProperty('tab_sys');
+                    this.selectedOffers.forEach(o => {
+                        tab_sys.addTab('offer', {offer: o});
+                    })
+                }},
+                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
+                {class: "delimiter"},
+                {class: "submenu", disabled: false, icon: "start", label: "Статус", items: stateOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
+                {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
+                {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
+                    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+                    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+                ]},
+                {class: "submenu", disabled: true, icon: "", label: "Реклама", items: [
+                    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+                    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+                ]},
+                {class: "delimiter"},
+                {class: "entry", disabled: false, icon: "tag", label: 'Теги', callback: () => {}},
+            ]
+        };
 
-        items.push({
-                class: "delimiter"
-            }
-        );
-
-        items.push({
-                class: "entry", disabled: false, label: 'пункт 2', callback: () => {
-
-                }
-            }
-        );
-
-        items.push({
-                class: "entry", disabled: false, label: 'пункт 3', callback: () => {
-
-                }
-            }
-        );
-
-
-        this._hubService.shared_var['cm_items'] = items;
+        this._hubService.shared_var['cm'] = menu;
         this._hubService.shared_var['cm_hidden'] = false;
     }
 
     theaderContextMenu(e) {
         e.preventDefault();
         e.stopPropagation();
-        this._hubService.shared_var['cm_px'] = e.pageX;
-        this._hubService.shared_var['cm_py'] = e.pageY;
 
-        let items = [];
+        let menu = {
+            pX: e.pageX,
+            pY: e.pageY,
+            scrollable: true,
+            items: []
+        };
 
         this.fields.forEach(f => {
-            items.push(
+            menu.items.push(
                 {
                     class: "entry_cb", disabled: false, value: f.visible, label: f.label, callback: () => {
-                    this.toggleVisibility(f.id)
-                }
+                        this.toggleVisibility(f.id)
+                    }
                 }
             );
         })
 
-        this._hubService.shared_var['cm_items'] = items;
+        this._hubService.shared_var['cm'] = menu;
         this._hubService.shared_var['cm_hidden'] = false;
     }
 
@@ -360,12 +488,6 @@ export class OfferTableComponent implements OnInit {
                 f.visible = !f.visible;
             }
         });
-    }
-
-    dblClick(o: Offer) {
-        //r.selected = true;
-        var tab_sys = this._hubService.getProperty('tab_sys');
-        tab_sys.addTab('offer', {offer: o});
     }
 
     calcSize() {

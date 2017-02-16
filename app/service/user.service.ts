@@ -13,11 +13,15 @@ export class UserService {
 
     RS: String = "";
 
+    cache: any = {};
 
     constructor(private _http: Http, private _configService: ConfigService, private _sessionService: SessionService) {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/user/';
     };
 
+    listCached(role: string, superiorId: number, searchQuery: string) {
+        return this.cache[role + superiorId + searchQuery];
+    }
 
     list(role: string, superiorId: number, searchQuery: string) {
         console.log('user list');
@@ -25,34 +29,45 @@ export class UserService {
         var query = [];
 
         var user: User = this._sessionService.getUser();
-
-        query.push("accountId=" + user.accountId);
-
-        if (role) {
-            query.push("role=" + role);
-        }
-        if (superiorId) {
-            query.push("superiorId=" + superiorId.toString());
-        }
-        if (searchQuery) {
-            query.push("searchQuery=" + searchQuery);
-        }
-
-
-        var _resourceUrl = this.RS + 'list?' + query.join("&");
-
         var ret_subj = <AsyncSubject<User[]>>new AsyncSubject();
 
-        this._http.get(_resourceUrl, { withCredentials: true })
-            .map(res => res.json()).subscribe(
-            data => {
-                var users: User[] = data.result;
+        if (this.cache[role + superiorId + searchQuery] == null) {
 
-                ret_subj.next(users);
-                ret_subj.complete();
-            },
-            err => console.log(err)
-        );
+            query.push("accountId=" + user.accountId);
+
+            if (role) {
+                query.push("role=" + role);
+            }
+            if (superiorId) {
+                query.push("superiorId=" + superiorId.toString());
+            }
+            if (searchQuery) {
+                query.push("searchQuery=" + searchQuery);
+            }
+
+
+            var _resourceUrl = this.RS + 'list?' + query.join("&");
+
+
+            this._http.get(_resourceUrl, {withCredentials: true})
+                .map(res => res.json()).subscribe(
+                data => {
+                    var users: User[] = data.result;
+
+                    this.cache[role + superiorId + searchQuery] = users;
+
+                    console.log(this.cache);
+
+                    ret_subj.next(users);
+                    ret_subj.complete();
+                },
+                err => console.log(err)
+            );
+        } else {
+            var users = this.cache[role + superiorId + searchQuery];
+            ret_subj.next(users);
+            ret_subj.complete();
+        }
 
         return ret_subj;
     }

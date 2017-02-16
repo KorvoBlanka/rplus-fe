@@ -10,18 +10,19 @@ import {Offer} from '../../class/offer';
     selector: 'digest-offer',
     inputs: ['offer', 'compact'],
     styles: [`
+
+        .billet.selected {
+            background-color: #157ad3;
+            color: #fff !important;
+        }
+
         .billet {
             background-color: inherit;
-            color: #696969;
+            /*color: #696969;*/
             font-weight: 200;
             font-size: 14px;
             position: relative;
             padding-top: 5px;
-        }
-        
-        .billet.selected {
-            background-color: #157ad3;
-            color: #fff !important;
         }
         
         .healthbar {
@@ -59,13 +60,7 @@ import {Offer} from '../../class/offer';
         }
     `],
     template: `
-        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}"
-            [class.selected]="selected"
-            (click)="select()"
-            (dblclick)="open()"
-            (touchstart)="tStart()"
-            (touchend)="tEnd()"
-        >
+        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}">
             <div style="width: 100%;">
                 <div class="timestamp"> {{ offer.changeDate | formatDate }} </div>
                 <div class="tag-mark">
@@ -89,13 +84,11 @@ import {Offer} from '../../class/offer';
     `
 })
 
-export class DigestOfferComponent implements OnInit {
-    PHOTO_STORAGE_URL = 'http://localhost:4567/photo_storage/';
+export class DigestOfferComponent {
 
     public offer: Offer;
     public compact: boolean = false;
 
-    private selected: boolean = false;
     private to: any;
 
     typeCodeOptions = {
@@ -127,27 +120,8 @@ export class DigestOfferComponent implements OnInit {
 
     constructor(private _hubService: HubService) { };
 
-    ngOnInit() { }
-
-    select() {
-        this.selected = !this.selected;
-    }
-
     open() {
-        this.selected = true;
         var tabSys = this._hubService.getProperty('tab_sys');
         tabSys.addTab('offer', {offer: this.offer});
     }
-
-    tStart() {
-        clearTimeout(this.to);
-        this.to = setTimeout(() => {
-            this.open();
-        }, 1000);
-    }
-
-    tEnd() {
-        clearTimeout(this.to);
-    }
-
 }

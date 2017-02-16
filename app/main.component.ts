@@ -27,10 +27,8 @@ import {SessionService} from "./service/session.service";
             (click)="click($event)"
         >
             <context-menu
-                [posX]="_hubService.shared_var['cm_px']"
-                [posY]="_hubService.shared_var['cm_py']"
+                [menu]="_hubService.shared_var['cm']"
                 [hidden]="_hubService.shared_var['cm_hidden']"
-                [items]="_hubService.shared_var['cm_items']"
             >
             </context-menu>
             <tab-system></tab-system>

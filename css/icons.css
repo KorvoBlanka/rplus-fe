@@ -142,3 +142,12 @@
 .icon-work:before {
   content: "\E001";
 }
+
+
+.icon-document:before {
+  content: "\E160";
+}
+
+.icon-trash:before {
+  content: "\E107";
+}

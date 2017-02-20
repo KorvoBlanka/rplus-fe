@@ -59,12 +59,19 @@ import {User} from "../class/user";
         .table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {
             background-color: #f9f9f9;
         }
+         
+        .seen > td {
+            background-color: #dbe2f0 !important;
+        }
+            
+        .modified > td {
+            background-color: #dff0d8 !important;
+        }
     
         .table > tbody > tr.selected > td {
             color: #fff;
-            background-color: #3366cc;
+            background-color: #3366cc !important;
         }
-    
     `],
     template: `
         <div class="offer-table-wrapper" (window:resize)="onResize($event)">
@@ -90,6 +97,10 @@ import {User} from "../class/user";
                         (contextmenu)="tableContextMenu($event)"
                     >
                         <tr *ngFor="let o of offers"
+                        
+                            [class.seen]="o.openDate > timestamp"
+                            [class.modified]="o.changeDate > timestamp"
+                        
                             [class.selected]="selectedOffers.indexOf(o) > -1"
                             (click)="click($event, o)"
                             (contextmenu)="click($event, o)"
@@ -123,8 +134,12 @@ export class OfferTableComponent implements OnInit {
 
     lastClckIdx: number = 0;
 
+    timestamp: number = (Date.now() / 1000) - 1000;
+
+
     @Output() onSort: EventEmitter<any> = new EventEmitter();
     @Output() onListEnd: EventEmitter<any> = new EventEmitter();
+    @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
     private fields = [
         {
@@ -146,6 +161,16 @@ export class OfferTableComponent implements OnInit {
         {
             id: 'locality', label: 'Город', visible: false, sort: 0, val: (ofr: Offer) => {
             return ofr.locality;
+        }
+        },
+        {
+            id: 'district', label: 'Район', visible: false, sort: 0, val: (ofr: Offer) => {
+            return ofr.district;
+        }
+        },
+        {
+            id: 'poi', label: 'Ориентир', visible: false, sort: 0, val: (ofr: Offer) => {
+            return ofr.poi;
         }
         },
         {
@@ -299,6 +324,7 @@ export class OfferTableComponent implements OnInit {
 
     openOffer(offer: Offer) {
         var tab_sys = this._hubService.getProperty('tab_sys');
+        offer.openDate = Math.round((Date.now() / 1000));
         tab_sys.addTab('offer', {offer: offer});
     }
 
@@ -332,6 +358,7 @@ export class OfferTableComponent implements OnInit {
                 this.selectedOffers = [offer];
             }
         }
+        this.onSelect.emit(this.selectedOffers);
     }
 
     dblClick(offer: Offer) {

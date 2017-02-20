@@ -6,14 +6,16 @@ export class HubService {
   public shared_var = {};
 
   private stash = {
-    some_prop: 'some_val',
+      some_prop: 'some_val',
+      seenOffers: [],
+      modifiedOffers: []
   }
 
   getProperty(name: string) {
-    return this.stash[name];
+      return this.stash[name];
   }
 
   setProperty(name: string, val: any) {
-    this.stash[name] = val;
+      this.stash[name] = val;
   }
 }

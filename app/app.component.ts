@@ -13,6 +13,7 @@ import {HistoryService} from "./service/history.service";
 import {PhotoService} from "./service/photo.service";
 import {AccountService} from "./service/account.service";
 import {SessionService} from "./service/session.service";
+import {UploadService} from "./service/upload.service";
 
 
 @Component({
@@ -22,7 +23,7 @@ import {SessionService} from "./service/session.service";
         <login-screen></login-screen>
         <router-outlet></router-outlet>
     `,
-    providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService, SessionService]
+    providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService, SessionService, UploadService]
 })
 
 export class AppComponent {

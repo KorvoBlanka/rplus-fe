@@ -76,7 +76,7 @@ export class Offer {
 
 
     addDate: number;
-
+    openDate: number;
     changeDate: number;
 
     deleteDate: number;

@@ -644,7 +644,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     offersSelected() {
         this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, null,  "", []).subscribe(offers => {
-            this.offers = offers;
+            this.offers = offers.list;
         });
     }
 
@@ -725,7 +725,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.requestOfferType = offer_type;
 
         this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.requestOfferType, personId: this.person.id}, null, "", []).subscribe(offers => {
-            this.offers = offers;
+            this.offers = offers.list;
         });
 
         this._requestService.list(0, 32, this.requestOfferType, null, this.person.id, "").subscribe(requests => {

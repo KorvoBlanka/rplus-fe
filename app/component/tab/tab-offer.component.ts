@@ -20,6 +20,7 @@ import {Photo} from '../../class/photo';
 import {User} from '../../class/user';
 import {PersonService} from "../../service/person.service";
 import {Person} from "../../class/person";
+import {UploadService} from "../../service/upload.service";
 
 
 @Component({
@@ -524,6 +525,7 @@ import {Person} from "../../class/person";
                             <div class="view-group">
                                 <span class="icon-photo"> Фотографии</span>
                             </div>
+                            <input type="file" class="form-control" name="documents" (change)="photoChanges($event)" [(ngModel)]="uploadPhoto" #documents="ngModel">
                             <ui-carousel
                                 [photos] = "offer.photoUrl"
                             >
@@ -757,6 +759,8 @@ export class TabOfferComponent implements OnInit {
     lon: number;
     zoom: number;
 
+    uploadPhoto: any;
+
 
     ch1_data: any[] = [];
     ch2_data: any[] = [];
@@ -898,7 +902,8 @@ export class TabOfferComponent implements OnInit {
                 private _historyService: HistoryService,
                 private _photoService: PhotoService,
                 private _userService: UserService,
-                private _personService: PersonService) {
+                private _personService: PersonService,
+                private _uploadService: UploadService) {
 
         setTimeout(() => {
             if (this.offer.id) {
@@ -933,6 +938,8 @@ export class TabOfferComponent implements OnInit {
     ngOnInit() {
         this.offer = this.tab.args.offer;
 
+        this.offer.openDate = Math.round((Date.now() / 1000));
+
         var c = this._configService.getConfig();
 
         this.zoom = c.map.zoom;
@@ -955,6 +962,16 @@ export class TabOfferComponent implements OnInit {
         }
 
         this.calcSize();
+    }
+
+
+    photoChanges(event) {
+        let file = event.srcElement.files;
+        let postData = {field1:"field1", field2:"field2"}; // Put your form data variable. This is only example.
+
+        this._uploadService.uploadPhoto(postData, file).then(result => {
+            console.log(result);
+        });
     }
 
 
@@ -1000,6 +1017,9 @@ export class TabOfferComponent implements OnInit {
     }
 
     save() {
+
+        this.offer.changeDate = Math.round((Date.now() / 1000));
+
         this._offerService.save(this.offer).subscribe(offer => {
             setTimeout(() => {
                 this.offer = offer;

@@ -84,13 +84,21 @@ import {User} from "../../class/user";
             cursor: pointer;
         }
         
+        .seen {
+            background-color: #dbe2f0 !important;
+        }
+            
+        .modified {
+            background-color: #dff0d8 !important;
+        }
+        
         .selected {
             color: #fff !important;
-            background-color: #3366cc;
+            background-color: #3366cc !important;
         }
         
         .src-sel {
-            background-color: #3366cc;
+            background-color: #3366cc !important;
         }
         
     `],
@@ -173,6 +181,10 @@ import {User} from "../../class/user";
                     </div>
                 </div>
                 <div class="pull-right">
+                
+                    <span>{{ hitsCount }}</span>/<span>{{ selectedOffers.length }}</span>
+                    
+                
                     <a (click)="toggleDraw()" [hidden]="tableMode">
                         <span
                             [ngClass]="{'icon-cancel': mapDrawAllowed, 'icon-edit': !mapDrawAllowed}"
@@ -192,6 +204,7 @@ import {User} from "../../class/user";
             [offers]="offers"
             (onSort)="sortChanged($event)"
             (onListEnd)="page = page + 1; listOffers();"
+            (onSelect)="selectedOffers = $event"
         >
         </offer-table>
         
@@ -229,6 +242,10 @@ import {User} from "../../class/user";
                     </div>                    
                     <digest-offer *ngFor="let offer of offers"
                                 [offer]="offer"
+                                
+                                [class.seen]="offer.openDate > timestamp"
+                                [class.modified]="offer.changeDate > timestamp"
+                                
                                 [class.selected]="selectedOffers.indexOf(offer) > -1"
                                 (click)="click($event, offer)"
                                 (contextmenu)="click($event, offer)"
@@ -294,6 +311,7 @@ export class TabListOfferComponent {
     zoom: number;
 
     offers: Offer[];
+    hitsCount: number = 0;
     page: number = 0;
     perPage: number = 32;
 
@@ -302,6 +320,8 @@ export class TabListOfferComponent {
 
     selectedOffers: Offer[] = [];
     lastClckIdx: number = 0;
+
+    timestamp: number = (Date.now() / 1000) - 1000;
 
 
     constructor(private _elem: ElementRef, private _hubService: HubService, private _offerService: OfferService, private _userService: UserService, private _configService: ConfigService) {
@@ -318,7 +338,7 @@ export class TabListOfferComponent {
 
         this.tab.refreshRq.subscribe(
             sender => {
-                this.listOffers();
+                //this.listOffers();
             }
         )
 
@@ -354,10 +374,13 @@ export class TabListOfferComponent {
     listOffers() {
         this._offerService.list(this.page, this.perPage, this.source, this.filter, this.sort, this.searchQuery, this.searchArea).subscribe(
             data => {
+
+                this.hitsCount = data.hitsCount;
+
                 if (this.page == 0) {
-                    this.offers = data;
+                    this.offers = data.list;
                 } else {
-                    data.forEach(i => {
+                    data.list.forEach(i => {
                         this.offers.push(i);
                     })
                 }

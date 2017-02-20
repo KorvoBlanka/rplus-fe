@@ -713,8 +713,8 @@ export class TabRequestComponent {
         }
 
         this._offerService.list(0, 32, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, null, this.request.request, this.request.searchArea).subscribe(
-            data => {
-                this.offers = data;
+            offers => {
+                this.offers = offers.list;
             },
             err => console.log(err)
         );
@@ -822,8 +822,8 @@ export class TabRequestComponent {
 
     getOffers(page, per_page) {
         this._offerService.list(page, per_page, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, null, this.request.request, this.request.searchArea).subscribe(
-            data => {
-                this.offers = data;
+            offers => {
+                this.offers = offers.list;
             },
             err => console.log(err)
         );

@@ -8,6 +8,7 @@ import {AsyncSubject} from "rxjs/AsyncSubject";
 import {GeoPoint} from "../class/geoPoint";
 import {User} from "../class/user";
 import {SessionService} from "./session.service";
+import {ListResult} from "../class/listResult";
 
 
 export enum OfferSource {
@@ -51,14 +52,17 @@ export class OfferService {
 
         var _resourceUrl = this.RS + 'list?' + query.join("&");
 
-        var ret_subj = <AsyncSubject<Offer[]>>new AsyncSubject();
+        var ret_subj = <AsyncSubject<ListResult>>new AsyncSubject();
 
         this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
-                    var offers: Offer[] = data.result;
+                    var obj: ListResult = new ListResult();
 
-                    ret_subj.next(offers);
+                    obj.hitsCount = data.result.hitsCount;
+                    obj.list = data.result.list;
+
+                    ret_subj.next(obj);
                     ret_subj.complete();
                 },
                 err => console.log(err)

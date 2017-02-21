@@ -538,8 +538,6 @@ export class TabListOfferComponent {
 
     click(event: MouseEvent, offer: Offer) {
 
-        console.log('!');
-
         var cIdx = this.offers.indexOf(offer);
 
         if (event.button == 2) {    // right click
@@ -567,11 +565,8 @@ export class TabListOfferComponent {
             } else {
                 this.lastClckIdx = cIdx;
                 this.selectedOffers = [offer];
-                console.log(this.selectedOffers);
             }
         }
-
-        console.log(this.selectedOffers);
     }
 
     dblClick(offer: Offer) {
@@ -614,7 +609,6 @@ export class TabListOfferComponent {
     }
 
     sortChanged(e) {
-        console.log(e);
         if (e.order == 0) {
             delete this.sort[e.field];
         } else {

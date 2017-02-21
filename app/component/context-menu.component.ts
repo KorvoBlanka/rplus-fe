@@ -3,7 +3,7 @@ import {
     SimpleChange,
     Output,
     EventEmitter,
-    OnChanges, OnInit
+    OnChanges, OnInit, ElementRef
 } from '@angular/core';
 
 
@@ -81,6 +81,10 @@ import {
             cursor: not-allowed;
         }
 
+        .flip {
+            left: -101%;
+        }
+
         hr {
             margin: 5px;
         }
@@ -101,7 +105,7 @@ import {
                 <div *ngSwitchCase="'submenu'" class="entry submenu-sc" [class.disabled]="i.disabled" style="position: relative;">
                     <span *ngIf="i.icon" class="icon-{{ i.icon }}"></span>
                     {{ i.label }}
-                    <div class="submenu-wrapper">
+                    <div class="submenu-wrapper" [class.flip]="flip">
                         <div
                             *ngFor="let si of i.items"
                             [ngSwitch]="si.class"
@@ -144,7 +148,7 @@ export class ContextMenuComponent implements OnInit, OnChanges {
         scrollable: false,
         items: []
     };
-
+    flip: boolean = false;
 
     @Output() dummy: EventEmitter<any> = new EventEmitter();
 
@@ -164,13 +168,36 @@ export class ContextMenuComponent implements OnInit, OnChanges {
     docClick() {
     }
 
-    constructor() {
+    constructor(private elementRef: ElementRef) {
     }
 
     ngOnInit() {
+
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
+
+        var cm_element = this.elementRef.nativeElement.querySelector('.context-menu-wrapper');
+
+
+        console.log(this.hidden);
+
+        if (this.menu && !this.hidden) {
+            var pY = this.menu.pY;
+            this.menu.pY = 1000;
+
+            setTimeout(t => {
+                this.menu.pY = pY;
+                if (cm_element.offsetHeight + this.menu.pY > document.body.clientHeight) {
+                    this.menu.pY -= cm_element.offsetHeight;
+                }
+                if (cm_element.offsetWidth + this.menu.pX > document.body.clientWidth) {
+                    this.menu.pX -= cm_element.offsetWidth;
+                    this.flip = true;
+                }
+            }, 0);
+        }
+
     }
 }
 

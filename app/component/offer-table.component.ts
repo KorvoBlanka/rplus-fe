@@ -141,6 +141,97 @@ export class OfferTableComponent implements OnInit {
     @Output() onListEnd: EventEmitter<any> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
+    typeCodeOptions = {
+        room: 'Комната',
+        apartment: 'Квартира',
+        apartment_small: 'Малосемейка',
+        apartment_new: 'Новостройка',
+
+        house: 'Дом',
+        dacha: 'Дача',
+        cottage: 'Коттедж',
+
+        townhouse: 'Таунхаус',
+
+        other: 'Другое',
+        land: 'Земля',
+
+        building: 'здание',
+        office_place: 'офис',
+        office: 'офис',
+        market_place: 'торговая площадь',
+        production_place: 'производственное помещение',
+        gpurpose_place: 'помещение общего назначения',
+        autoservice_place: 'автосервис',
+        service_place: 'помещение под сферу услуг',
+        warehouse_place: 'склад база',
+        garage: 'гараж'
+    };
+
+    apSchemaOptions = {
+        0: '-',
+        1: 'Индивидуальная',
+        2: 'Новая',
+        3: 'Общежитие',
+        4: 'Сталинка',
+        5: 'Улучшенная',
+        6: 'Хрущевка'
+    };
+
+    roomSchemeOptions = {
+        0: '-',
+        1: 'Икарус',
+        2: 'Кухня-гостинная',
+        3: 'Раздельные',
+        4: 'Смежно-раздельные',
+        5: 'Смежные',
+        6: 'Студия'
+    };
+
+    houseTypeOptions = {
+        0: '-',
+        1: 'Брус',
+        2: 'Деревянный',
+        3: 'Каркасно-засыпной',
+        4: 'Кирпичный'
+    };
+
+    conditionOptions = {
+        0: '-',
+        1: 'социальный ремонт',
+        2: 'сделан ремонт',
+        3: 'дизайнерский ремонт',
+        4: 'требуется ремонт',
+        5: 'требуется косм. ремонт',
+        6: 'после строителей',
+        7: 'евроремонт',
+        8: 'удовлетворительное',
+        9: 'нормальное'
+    };
+
+    balconyOptions = {
+        0: '-',
+        1: 'без балкона',
+        2: 'балкон',
+        3: 'лоджия',
+        4: '2 балкона',
+        5: '2 лоджии',
+        6: 'балкон и лоджия',
+        7: 'балкон застеклен',
+        8: 'лоджия застеклена'
+    };
+
+    bathroomOptions = {
+        0: '-',
+        1: 'без удобств',
+        2: 'туалет',
+        3: 'с удобствами',
+        4: 'душ и туалет',
+        5: '2 смежных санузла',
+        6: '2 раздельных санузла',
+        7: 'санузел совмещенный'
+    };
+
     private fields = [
         {
             id: 'stateCode', label: '#', visible: true, sort: 0, val: (ofr: Offer) => {
@@ -155,7 +246,7 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'typeCode', label: 'Тип', visible: true, sort: 0, val: (ofr: Offer) => {
-            return ofr.typeCode;
+            return this.typeCodeOptions[ofr.typeCode];
         }
         },
         {
@@ -192,13 +283,13 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'apSchemeId', label: 'Планировка', visible: true, sort: 0, val: (ofr: Offer) => {
-            return ofr.apSchemeId;
+            id: 'apScheme', label: 'Планировка', visible: true, sort: 0, val: (ofr: Offer) => {
+            return this.apSchemaOptions[ofr.apSchemeId];
         }
         },
         {
-            id: 'houseTypeId', label: 'Материал', visible: true, sort: 0, val: (ofr: Offer) => {
-            return ofr.houseTypeId;
+            id: 'houseType', label: 'Материал', visible: true, sort: 0, val: (ofr: Offer) => {
+            return this.houseTypeOptions[ofr.houseTypeId];
         }
         },
         {
@@ -231,7 +322,7 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'contact', label: 'Контакт', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'personName', label: 'Контакт', visible: true, sort: 0, val: (ofr: Offer) => {
             if (ofr.person) return ofr.person.name;
             return '';
         }
@@ -255,7 +346,7 @@ export class OfferTableComponent implements OnInit {
         }
         },
         {
-            id: 'agent', label: 'Агент', visible: true, sort: 0, val: (ofr: Offer) => {
+            id: 'agentName', label: 'Агент', visible: true, sort: 0, val: (ofr: Offer) => {
             if (ofr.agent) return ofr.agent.name;
             return '';
         }

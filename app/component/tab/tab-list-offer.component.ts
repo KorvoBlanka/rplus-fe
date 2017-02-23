@@ -540,6 +540,8 @@ export class TabListOfferComponent {
 
         var cIdx = this.offers.indexOf(offer);
 
+        this.setLocation(offer);
+
         if (event.button == 2) {    // right click
             if (this.selectedOffers.indexOf(offer) == -1) { // if not over selected items
                 this.lastClckIdx = cIdx;
@@ -584,7 +586,7 @@ export class TabListOfferComponent {
         clearTimeout(this.to);
     }
 
-    select(o: Offer) {
+    setLocation(o: Offer) {
         if (o.locationLat && o.locationLon) {
             this.lat = o.locationLat;
             this.lon = o.locationLon;

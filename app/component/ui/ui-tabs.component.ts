@@ -59,6 +59,7 @@ export class UITabs implements  AfterContentInit {
     @ContentChildren(UITab) tabs: QueryList<UITab>;
     headerMode: boolean;
 
+
     constructor() {}
 
     ngAfterContentInit() {

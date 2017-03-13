@@ -684,15 +684,17 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     getOffers(page, per_page) {
-        this._offerService.getSimilar(page, per_page).subscribe(
+        /*
+        this._offerService.list(page, per_page, ).subscribe(
             data => {
                 this.offers = data;
             }
         );
+        */
     }
 
     offer_search() {
-        this.getOffers(Math.floor(Math.random() * 4), 16);
+        this.getOffers(0, 16);
     }
 
     offer_search_keydown(e: KeyboardEvent) {

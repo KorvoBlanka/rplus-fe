@@ -101,9 +101,40 @@ export class OfferService {
         return ret_subj;
     }
 
-    getSimilar(page: number, per_page: number) {
+    getSimilar(offer: Offer, page: number, perPage: number) {
+        console.log('offer get similar');
+        console.log(offer);
 
-        var ret_subj = <AsyncSubject<Offer[]>>new AsyncSubject();
+
+
+        var query = [];
+
+        var user: User = this._sessionService.getUser();
+
+
+        var source_str = 'local';
+
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+
+        var _resourceUrl = this.RS + 'list_similar/' + offer.id + '?' + query.join("&");
+
+        var ret_subj = <AsyncSubject<ListResult>>new AsyncSubject();
+
+        this._http.get(_resourceUrl, { withCredentials: true })
+            .map(res => res.json()).subscribe(
+            data => {
+                var obj: ListResult = new ListResult();
+
+                obj.hitsCount = data.result.hitsCount;
+                obj.list = data.result.list;
+
+                ret_subj.next(obj);
+                ret_subj.complete();
+            },
+            err => console.log(err)
+        );
 
         return ret_subj;
     }

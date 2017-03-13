@@ -128,7 +128,7 @@ export class TabSystemComponent implements AfterContentInit{
 
     selectTab(tab: Tab) {
         this.selectedTab = tab;
-        tab.refresh("tabSys");
+        this.selectedTab.refresh("tabSys");
     }
 
     addTab(type, args) {
@@ -150,6 +150,7 @@ export class TabSystemComponent implements AfterContentInit{
         } else {
             if(this.selectedTab == tab) {
                 this.selectedTab = this.tabs[idx ? (idx - 1) : 0];
+                this.selectedTab.refresh("tabSys");
             }
         }
 

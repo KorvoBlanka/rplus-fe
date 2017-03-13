@@ -7,6 +7,7 @@ import {Request} from '../class/request';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 import {User} from "../class/user";
 import {SessionService} from "./session.service";
+import {Offer} from "../class/offer";
 
 
 @Injectable()
@@ -48,6 +49,38 @@ export class RequestService {
                 },
                 err => console.log(err)
             );
+        return ret_subj;
+    }
+
+    listForOffer(offer: Offer) {
+        console.log('request list for offer');
+
+        let page = 0;
+        let perPage = 16;
+
+        var query = [];
+
+        var user: User = this._sessionService.getUser();
+
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+
+
+        var _resourceUrl = this.RS + 'list_for_offer/' + offer.id + '?' + query.join("&");
+
+        var ret_subj = <AsyncSubject<Request[]>>new AsyncSubject();
+
+        this._http.get(_resourceUrl, { withCredentials: true })
+            .map(res => res.json()).subscribe(
+            data => {
+                var requests: Request[] = data.result;
+
+                ret_subj.next(requests);
+                ret_subj.complete();
+            },
+            err => console.log(err)
+        );
         return ret_subj;
     }
 

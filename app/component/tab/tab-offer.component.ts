@@ -566,7 +566,7 @@ import {UploadService} from "../../service/upload.service";
                             <div style="width: 330px; background-color: #fff;">
                                 <div class="header">
                                     <input type="text" style="width: 280px; margin-left: 10px; border: none;"
-                                        (keydown)="simSearchKeydown($event)"
+                                        (keydown)="console.log($event)"
                                     >
                                     <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
                                         (click)="simSearch()"
@@ -1029,14 +1029,21 @@ export class TabOfferComponent implements OnInit {
     }
 
     similarObjSelected() {
-        this.getSimilarOffers(1, 16);
+        this.getSimilarOffers(0, 16);
     }
 
     requestsSelected() {
-        //this.requests = this._requestService.list(1, 16, "", "");
+        this._requestService.listForOffer(this.offer).subscribe(
+            data => {
+                this.requests = data;
+            }
+        )
     }
 
     analysisSelected() {
+
+        console.log('ass sel');
+
         var a_data = this._analysisService.getObjAnalysis();
         this.ch1_data = a_data.ch1_data;
         this.ch1_data_v1 = a_data.ch1_data_v1;
@@ -1066,22 +1073,12 @@ export class TabOfferComponent implements OnInit {
     }
 
     getSimilarOffers(page, per_page) {
-        this._offerService.getSimilar(page, per_page).subscribe(
+        this._offerService.getSimilar(this.offer, page, per_page).subscribe(
             data => {
-                this.similarOffers = data;
+                this.similarOffers = data.list;
             },
             err => console.log(err)
         );
-    }
-
-    simSearch() {
-        this.getSimilarOffers(Math.floor(Math.random() * 4), 16);
-    }
-
-    simSearchKeydown(e: KeyboardEvent) {
-        if (e.keyCode == 13) {
-            this.simSearch();
-        }
     }
 
     markerClick(o: Offer) {

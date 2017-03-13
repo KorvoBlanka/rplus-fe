@@ -5,11 +5,13 @@ import {
 
 import {OfferService, OfferSource} from '../../service/offer.service';
 import {ConfigService} from '../../service/config.service';
+import {HubService} from "../../service/hub.service";
+import {UserService} from "../../service/user.service";
+import {SuggestionService} from "../../service/suggestion.service";
 
 import {Tab} from '../../class/tab';
 import {Offer} from '../../class/offer';
-import {HubService} from "../../service/hub.service";
-import {UserService} from "../../service/user.service";
+
 import {User} from "../../class/user";
 
 
@@ -101,6 +103,30 @@ import {User} from "../../class/user";
             background-color: #3366cc !important;
         }
         
+        .suggestions {
+            min-width: 160px;
+            margin-top: 2px;
+            padding: 5px 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border: 1px solid rgba(0,0,0,.15);
+            width: 100%;
+            
+            position: absolute;
+            z-index: 2;
+        }
+        
+        .suggestions > ul {
+            margin: 0 0;
+            list-style: none;
+            padding: 3px 20px;
+        }
+        
+        .suggestions > ul:hover {
+            background: #bbbbbb;
+            cursor: default;
+        }
+        
     `],
     template: `
         <div class="search-form" [class.table-mode]="tableMode">
@@ -108,6 +134,15 @@ import {User} from "../../class/user";
                 <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery"
                        (keyup)="searchParamChanged($event)">
                 <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
+                
+                <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0">
+                    <ul *ngFor="let item of sgList" >
+                        <li >
+                            <a (click)="select(item)">{{item}}</a>
+                        </li>
+                    </ul>
+                </div>
+                
             </div>
             <div class="tool-box">
         
@@ -279,6 +314,8 @@ export class TabListOfferComponent {
     searchQuery: string = "";
     searchArea: any[] = [];
 
+    sgList: string[] = [];
+
     filter: any = {
         stateCode: 'all',
         agentId: 'all',
@@ -324,7 +361,13 @@ export class TabListOfferComponent {
     timestamp: number = (Date.now() / 1000) - 1000;
 
 
-    constructor(private _elem: ElementRef, private _hubService: HubService, private _offerService: OfferService, private _userService: UserService, private _configService: ConfigService) {
+    constructor(private _elem: ElementRef,
+                private _hubService: HubService,
+                private _offerService: OfferService,
+                private _userService: UserService,
+                private _configService: ConfigService,
+                private _suggestionService: SuggestionService
+    ) {
         setTimeout(() => {
             this.tab.header = 'Недвижимость';
         });
@@ -338,7 +381,7 @@ export class TabListOfferComponent {
 
         this.tab.refreshRq.subscribe(
             sender => {
-                //this.listOffers();
+                this.listOffers();
             }
         )
 
@@ -605,7 +648,38 @@ export class TabListOfferComponent {
         }
     }
 
+    docClick() {
+        this.sgList = [];
+    }
+
+    select(itm) {
+        this.searchQuery = itm;
+        this.sgList = [];
+    }
+
     searchParamChanged(e) {
+
+        if (this.searchQuery.length > 0) {
+
+            let sq = this.searchQuery.split(" ");
+
+            let lp = sq.pop()
+            let q = sq.join(" ");
+
+            this.sgList = [];
+
+            if (lp.length > 0) {
+
+                // запросить варианты
+
+                this._suggestionService.list(this.searchQuery).subscribe(sgs => {
+                    sgs.forEach(e => {
+                        this.sgList.push(e);
+                    })
+                })
+            }
+        }
+
         this.page = 0;
         this.listOffers();
     }

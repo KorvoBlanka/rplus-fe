@@ -20,7 +20,10 @@ export class UITab {
     title: string;
     active: boolean = false;
 
+    @Output() tabSelect: EventEmitter<any> = new EventEmitter();
+
     selectTab() {
+        this.tabSelect.emit({bla: "bla"});
         this.active = true;
     }
 }

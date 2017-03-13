@@ -7,6 +7,7 @@ import {Tab} from '../../class/tab';
 import {Request} from '../../class/request';
 import {HubService} from "../../service/hub.service";
 import {Observable} from "rxjs";
+import {UserService} from "../../service/user.service";
 
 
 @Component({
@@ -80,10 +81,20 @@ import {Observable} from "rxjs";
                             {value: 'sale', label: 'Продажа'},
                             {value: 'rent', label: 'Аренда'}
                         ]"
-                        [value]="sale"
+                        [value]="filter.offerTypeCode"
                         [config]="{icon: 'icon-', draw_arrow: true}"
-                        (onChange)="offerTypeCode = $event.selected.value; searchParamChanged();"
+                        (onChange)="filter.offerTypeCode = $event.selected.value; searchParamChanged();"
                         >
+                    </ui-select>
+                </div>
+            
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options]="agentOpts"
+                        [value]="filter.agent"
+                        [config]="{icon: 'icon-person', drawArrow: true}"
+                        (onChange)="filter.agentId = $event.selected.value; searchParamChanged();"
+                    >
                     </ui-select>
                 </div>
             
@@ -144,12 +155,23 @@ import {Observable} from "rxjs";
 export class TabListRequestComponent implements OnInit {
     public tab: Tab;
     searchQuery: string = "";
-    offerTypeCode: string = 'sale';
     requests: Request[];
+
     page: number = 0;
     perPage: number = 32;
 
-    constructor(private _configService: ConfigService, private _hubService: HubService, private _requerstService: RequestService) {
+    filter: any = {
+        agentId: 'all',
+        tag: 'all',
+        changeDate: 90,
+        offerTypeCode: 'sale',
+    };
+
+    sort: any = {};
+
+    agentOpts = [];
+
+    constructor(private _configService: ConfigService, private _hubService: HubService, private _requerstService: RequestService, private _userService: UserService) {
         setTimeout(() => {
             this.tab.header = 'Заявки';
         });
@@ -163,11 +185,24 @@ export class TabListRequestComponent implements OnInit {
             }
         )
 
+        this.agentOpts.push({value: 'all', label: 'Все заявки', bold: true});
+        this.agentOpts.push({value: 'my', label: 'Мои заявки', bold: true});
+
+        this._userService.list(null, null, "").subscribe(agents => {
+            for (let i = 0; i < agents.length; i++) {
+                var a = agents[i];
+                this.agentOpts.push({
+                    value: '' + a.id,
+                    label: a.name
+                });
+            }
+        });
+
         this.listRequests();
     }
 
     listRequests() {
-        this._requerstService.list(this.page, this.perPage, this.offerTypeCode, null, null, this.searchQuery).subscribe(
+        this._requerstService.list(this.page, this.perPage, this.filter.offerTypeCode, this.filter.agentId, null, this.searchQuery).subscribe(
             data => {
                 this.requests = data;
             },
@@ -178,7 +213,7 @@ export class TabListRequestComponent implements OnInit {
     addRequest() {
         var tab_sys = this._hubService.getProperty('tab_sys');
         var r = new Request();
-        r.offerTypeCode = this.offerTypeCode;
+        r.offerTypeCode = this.filter.offerTypeCode;
         tab_sys.addTab('request', {request: r});
     }
 

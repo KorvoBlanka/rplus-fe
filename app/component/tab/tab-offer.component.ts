@@ -21,6 +21,7 @@ import {User} from '../../class/user';
 import {PersonService} from "../../service/person.service";
 import {Person} from "../../class/person";
 import {UploadService} from "../../service/upload.service";
+import {SuggestionService} from "../../service/suggestion.service";
 
 
 @Component({
@@ -137,6 +138,34 @@ import {UploadService} from "../../service/upload.service";
             line-height: 30px;
             color: #fff;
         }
+        
+        .suggestions {
+        
+            left: 10px;
+            top: 16px;
+            min-width: 160px;
+            margin-top: 2px;
+            padding: 5px 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border: 1px solid rgba(0,0,0,.15);
+            width: 100%;
+            position: absolute;
+            z-index: 2;
+            overflow-y: auto;
+            height: 400px;
+        }
+        
+        .suggestions > ul {
+            margin: 0 0;
+            list-style: none;
+            padding: 3px 20px;
+        }
+        
+        .suggestions > ul:hover {
+            background: #bbbbbb;
+            cursor: default;
+        }
     `],
     template: `
         <div class="tab-button fixed-button" (click)="toggleLeftPane()">
@@ -248,9 +277,18 @@ import {UploadService} from "../../service/upload.service";
                                 <input type="text" class="view-value edit-value" [(ngModel)]="offer.district">
                             </div>
     
-                            <div class="view-group">
+                            <div class="view-group" style="position: relative;">
                                 <span class="view-label">Адрес</span>
-                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.address">
+                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.address" (keyup)="addrChanged()">
+                                
+                                <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0">
+                                    <ul *ngFor="let item of sgList" >
+                                        <li >
+                                            <a (click)="select(item)">{{item}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
                             </div>
     
                             <div class="view-group">
@@ -739,6 +777,8 @@ export class TabOfferComponent implements OnInit {
     public offer: Offer;
     public photos: Photo[];
 
+    sgList: string[] = [];
+
     agentOpts: any[] = [];
 
     personOpts: any[] = [];
@@ -903,7 +943,9 @@ export class TabOfferComponent implements OnInit {
                 private _photoService: PhotoService,
                 private _userService: UserService,
                 private _personService: PersonService,
-                private _uploadService: UploadService) {
+                private _uploadService: UploadService,
+                private _suggestionService: SuggestionService
+    ) {
 
         setTimeout(() => {
             if (this.offer.id) {
@@ -964,6 +1006,29 @@ export class TabOfferComponent implements OnInit {
         this.calcSize();
     }
 
+
+    select(itm) {
+        this.offer.address = itm;
+        this.sgList = [];
+    }
+
+    docClick() {
+        this.sgList = [];
+    }
+
+    addrChanged() {
+        this.sgList = [];
+        if (this.offer.address.length > 0) {
+
+            // запросить варианты
+
+            this._suggestionService.list(this.offer.address).subscribe(sgs => {
+                sgs.forEach(e => {
+                    this.sgList.push(e);
+                })
+            })
+        }
+    }
 
     photoChanges(event) {
         let file = event.srcElement.files;

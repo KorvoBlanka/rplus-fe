@@ -79,7 +79,12 @@ export class OfferService {
 
         var _resourceUrl = this.RS + 'save';
 
-        var data_str = JSON.stringify(offer);
+        var data_str = JSON.stringify(offer, function(key, value) {
+            if (typeof value === 'string' && value.length == 0) {
+                return undefined;
+            }
+            return value;
+        });
 
         var ret_subj = <AsyncSubject<Offer>>new AsyncSubject();
 

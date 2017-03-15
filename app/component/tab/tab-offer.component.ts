@@ -293,8 +293,8 @@ import {SuggestionService} from "../../service/suggestion.service";
     
                             <div class="view-group">
                                 <span class="view-label">Номер</span>
-                                <input class="view-value edit-value vv-2" [(ngModel)]="offer.houseNum">/
-                                <input class="view-value edit-value vv-2" [(ngModel)]="offer.apNum">
+                                <input class="view-value edit-value vv-2"  placeholder="# дома" [(ngModel)]="offer.houseNum">/
+                                <input class="view-value edit-value vv-2" placeholder="# кв" [(ngModel)]="offer.apNum">
                             </div>
     
                             <div class="view-group">
@@ -319,8 +319,8 @@ import {SuggestionService} from "../../service/suggestion.service";
     
                             <div class="view-group">
                                 <span class="view-label">Количество комнат</span>
-                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.roomsOfferCount">/
-                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.roomsCount">
+                                <input type="number" class="view-value edit-value vv-2" placeholder="предложено" [(ngModel)]="offer.roomsOfferCount">/
+                                <input type="number" class="view-value edit-value vv-2" placeholder="всего" [(ngModel)]="offer.roomsCount">
                             </div>
     
                             <div class="view-group">
@@ -335,16 +335,16 @@ import {SuggestionService} from "../../service/suggestion.service";
     
                             <div class="view-group">
                                 <span class="view-label">Этаж</span>
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.floor">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.floorsCount">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.levelsCount">
+                                <input class="view-value edit-value vv-3" placeholder="этаж" [(ngModel)]="offer.floor">/
+                                <input class="view-value edit-value vv-3" placeholder="всего" [(ngModel)]="offer.floorsCount">/
+                                <input class="view-value edit-value vv-3" placeholder="уровней" [(ngModel)]="offer.levelsCount">
                             </div>
     
                             <div class="view-group">
                                 <span class="view-label">Площадь</span>
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.squareTotal">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.squareLiving">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.squareKitchen">
+                                <input class="view-value edit-value vv-3" placeholder="всего" [(ngModel)]="offer.squareTotal">/
+                                <input class="view-value edit-value vv-3" placeholder="жилая" [(ngModel)]="offer.squareLiving">/
+                                <input class="view-value edit-value vv-3" placeholder="кухня" [(ngModel)]="offer.squareKitchen">
                             </div>
     
                             <div class="view-group">

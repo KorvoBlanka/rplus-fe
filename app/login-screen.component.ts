@@ -59,7 +59,7 @@ import {Observable} from "rxjs";
     `],
     template: `
         <div class="login-screen bg-darkTeal" [hidden]="authorized | async">
-            <div class="login-form">
+            <div class="login-form" (keypress)="keypressHandler($event)">
                 <div class="form-header">Добро пожаловать</div>
                 <hr>
                 
@@ -99,10 +99,21 @@ export class LoginScreenComponent {
 
 
     ngOnInit() {
+        let cuStr = localStorage.getItem('currentUser');
+        if (cuStr) {
+            let cu = JSON.parse(cuStr);
+            this.account = cu.account;
+            this.login = cu.login;
+        }
         this.checkSession();
     }
 
+    keypressHandler(e) {
+        this._login();
+    }
+
     _login() {
+        localStorage.setItem('currentUser', JSON.stringify({ account: this.account, login: this.login }));
         this._sessionService.login(this.account, this.login, this.password);
     }
 

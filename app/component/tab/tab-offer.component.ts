@@ -166,6 +166,10 @@ import {SuggestionService} from "../../service/suggestion.service";
             background: #bbbbbb;
             cursor: default;
         }
+        
+        a {
+            cursor: hand;
+        }
     `],
     template: `
         <div class="tab-button fixed-button" (click)="toggleLeftPane()">
@@ -397,7 +401,7 @@ import {SuggestionService} from "../../service/suggestion.service";
     
                             <div class="view-group">
                                 <span class="view-label">Ответственный</span>
-                                <span class="view-value"> {{ offer.agent?.name }} </span>
+                                <span class="view-value"> <a (click)="openUser(offer.agent)"> {{ offer.agent?.name }} </a> </span>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Статус</span>
@@ -417,7 +421,7 @@ import {SuggestionService} from "../../service/suggestion.service";
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Собственник</span>
-                                <span class="view-value"> {{ offer.person?.name }} </span>
+                                <span class="view-value"> <a (click)="openPerson(offer.person)"> {{ offer.person?.name }} </a></span>
                             </div>
         
                             <div class="view-group">
@@ -1149,5 +1153,15 @@ export class TabOfferComponent implements OnInit {
     markerClick(o: Offer) {
         //r.selected = !r.selected;
         // scroll to object ???
+    }
+
+    openPerson(person: Person) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('person', {person: person});
+    }
+
+    openUser(user: User) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('user', {user: user});
     }
 }

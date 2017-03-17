@@ -59,7 +59,7 @@ import {Observable} from "rxjs";
     `],
     template: `
         <div class="login-screen bg-darkTeal" [hidden]="authorized | async">
-            <div class="login-form" (keypress)="keypressHandler($event)">
+            <div class="login-form" (keyup.enter)="_login();">
                 <div class="form-header">Добро пожаловать</div>
                 <hr>
                 
@@ -106,10 +106,6 @@ export class LoginScreenComponent {
             this.login = cu.login;
         }
         this.checkSession();
-    }
-
-    keypressHandler(e) {
-        this._login();
     }
 
     _login() {

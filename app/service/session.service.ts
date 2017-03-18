@@ -4,6 +4,7 @@
 
 import {Injectable} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
+import {AsyncSubject} from "rxjs/AsyncSubject";
 
 import {ConfigService} from './config.service';
 
@@ -19,15 +20,18 @@ export class SessionService {
     RS: String;
 
     authorized: Observable<boolean>;
+    msg: Observable<string>;
     user: Observable<User>;
     account: Observable<Account>;
 
     _authorized: BehaviorSubject<boolean>;
+    _msg: BehaviorSubject<string>;
     _user: BehaviorSubject<User>;
     _account: BehaviorSubject<Account>;
 
     private dataStore = {
         authorized: false,
+        msg: "",
         user: null,
         account: null
     }
@@ -41,6 +45,9 @@ export class SessionService {
 
         this._authorized = <BehaviorSubject<boolean>>new BehaviorSubject(false);
         this.authorized = this._authorized.asObservable();
+
+        this._msg = <BehaviorSubject<string>>new BehaviorSubject("");
+        this.msg = this._msg.asObservable();
 
         this._user = <BehaviorSubject<User>>new BehaviorSubject(null);
         this.user = this._user.asObservable();
@@ -78,6 +85,9 @@ export class SessionService {
                         this.dataStore.authorized = true;
                         this._authorized.next(Object.assign({}, this.dataStore).authorized);
 
+                        this.dataStore.msg = "logged in";
+                        this._msg.next(Object.assign({}, this.dataStore).msg);
+
                         this.dataStore.user = data.user;
                         this._user.next(Object.assign({}, this.dataStore).user);
 
@@ -88,6 +98,9 @@ export class SessionService {
 
                         this.dataStore.authorized = false;
                         this._authorized.next(Object.assign({}, this.dataStore).authorized);
+
+                        this.dataStore.msg = data.msg;
+                        this._msg.next(Object.assign({}, this.dataStore).msg);
 
                         /*
                         this.dataStore.user = data.user;
@@ -113,6 +126,9 @@ export class SessionService {
                 data => {
                     this.dataStore.authorized = false;
                     this._authorized.next(Object.assign({}, this.dataStore).authorized);
+
+                    this.dataStore.msg = "logged out";
+                    this._msg.next(Object.assign({}, this.dataStore).msg);
                 }
             );
 
@@ -131,6 +147,9 @@ export class SessionService {
 
                         this.dataStore.authorized = true;
                         this._authorized.next(Object.assign({}, this.dataStore).authorized);
+
+                        this.dataStore.msg = "logged in";
+                        this._msg.next(Object.assign({}, this.dataStore).msg);
 
                         this.dataStore.user = data.user;
                         this._user.next(Object.assign({}, this.dataStore).user);

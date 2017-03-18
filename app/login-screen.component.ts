@@ -55,10 +55,20 @@ import {Observable} from "rxjs";
             color: #fff;
             cursor: pointer;
         }
+        
+        .ver-str {
+            color: #eeeeee;
+        }
+
+        .login-msg {
+            color: #eeeeee;
+        }
 
     `],
     template: `
         <div class="login-screen bg-darkTeal" [hidden]="authorized | async">
+            <div class="ver-str"><span>v: {{_configService.getConfig().version}}</span></div>
+            <div class="login-msg"><span>msg: {{msg | async}}</span></div>
             <div class="login-form" (keyup.enter)="_login();">
                 <div class="form-header">Добро пожаловать</div>
                 <hr>
@@ -87,14 +97,18 @@ import {Observable} from "rxjs";
 export class LoginScreenComponent {
 
     public authorized: Observable<boolean>;
-
+    public msg: Observable<string>;
 
     public account: string;
     public login: string;
     public password: string;
 
-    constructor(private _sessionService: SessionService) {
+    constructor(private _sessionService: SessionService, private _configService: ConfigService) {
         this.authorized = _sessionService.authorized;
+        this.msg = _sessionService.msg;
+        this.account  = "";
+        this.login = "";
+        this.password = "";
     }
 
 

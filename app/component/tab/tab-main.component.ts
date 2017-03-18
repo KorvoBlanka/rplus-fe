@@ -26,6 +26,10 @@ import {User} from "../../class/user";
             padding-top: 40px;
             position: relative;
         }
+        
+        .user-badge {
+            color: #eeeeee;
+        }
     `],
     template: `
         <div class="tile-board" style="">

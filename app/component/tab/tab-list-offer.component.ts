@@ -13,6 +13,8 @@ import {Tab} from '../../class/tab';
 import {Offer} from '../../class/offer';
 
 import {User} from "../../class/user";
+import {SessionService} from "../../service/session.service";
+import {Account} from "../../class/account";
 
 
 @Component({
@@ -366,7 +368,8 @@ export class TabListOfferComponent {
                 private _offerService: OfferService,
                 private _userService: UserService,
                 private _configService: ConfigService,
-                private _suggestionService: SuggestionService
+                private _suggestionService: SuggestionService,
+                private _sessionService: SessionService
     ) {
         setTimeout(() => {
             this.tab.header = 'Недвижимость';
@@ -407,9 +410,18 @@ export class TabListOfferComponent {
         });
 
         var c = this._configService.getConfig();
-        this.lat = c.map.lat;
-        this.lon = c.map.lon;
-        this.zoom = c.map.zoom;
+
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
+        }
 
         this.calcSize();
     }

@@ -11,7 +11,7 @@ export class ConfigService {
 }
 
 var CONFIG: Config = {
-    version: "b16.3",
+    version: "b16.5",
     map: {
         default: {
             lat: 55.755505, lon: 37.617270, zoom: 14
@@ -29,6 +29,6 @@ var CONFIG: Config = {
             lat: 43.119348, lon: 131.886965, zoom: 14
         }
     },
-    //RESTServer: "http://maklersoft.com:4567",
-    RESTServer: "http://localhost:4567",
+    RESTServer: "http://maklersoft.com:4567",
+    //RESTServer: "http://localhost:4567",
 }

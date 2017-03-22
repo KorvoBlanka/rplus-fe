@@ -20,6 +20,7 @@ import {PersonService} from '../../service/person.service';
 import {UserService} from '../../service/user.service';
 import {AnalysisService} from '../../service/analysis.service'
 import {Observable} from "rxjs";
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -651,7 +652,9 @@ export class TabRequestComponent {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _personService: PersonService,
-                private _userService: UserService) {
+                private _userService: UserService,
+                private _sessionService: SessionService
+    ) {
 
         this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
@@ -687,8 +690,8 @@ export class TabRequestComponent {
         this.request = this.tab.args.request;
 
         var c = this._configService.getConfig();
+        let loc = this._sessionService.getAccount().location;
 
-        this.zoom = c.map.zoom;
         if (this.request.searchArea && this.request.searchArea.length > 0) {
 
             var lat: number = 0.0;
@@ -702,8 +705,15 @@ export class TabRequestComponent {
             this.lon = lon / this.request.searchArea.length;
 
         } else {
-            this.lat = c.map.lat;
-            this.lon = c.map.lon;
+            if (c.map[loc]) {
+                this.lat = c.map[loc].lat;
+                this.lon = c.map[loc].lon;
+                this.zoom = c.map[loc].zoom;
+            } else {
+                this.lat = c.map['default'].lat;
+                this.lon = c.map['default'].lon;
+                this.zoom = c.map['default'].zoom;
+            }
         }
 
         if (this.request.id == null) {

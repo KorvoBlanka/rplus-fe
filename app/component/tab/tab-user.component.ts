@@ -19,6 +19,7 @@ import {HistoryService} from '../../service/history.service';
 import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
 import {AnalysisService} from '../../service/analysis.service';
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -563,7 +564,9 @@ export class TabUserComponent implements OnInit, AfterViewInit {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _personService: PersonService,
-                private _organisationService: OrganisationService) {
+                private _organisationService: OrganisationService,
+                private _sessionService: SessionService
+    ) {
 
 
     }
@@ -572,9 +575,18 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.user = this.tab.args.user;
 
         var c = this._configService.getConfig();
-        this.zoom = c.map.zoom;
-        this.lat = c.map.lat;
-        this.lon = c.map.lon;
+
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
+        }
 
         if (this.user.id == null) {
             this.editEnabled = true;

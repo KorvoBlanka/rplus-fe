@@ -19,6 +19,7 @@ import {PersonService} from '../../service/person.service';
 
 
 import {Observable} from 'rxjs/Observable';
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -511,7 +512,9 @@ export class TabOrganisationComponent {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _personService: PersonService,
-                private _organisationService: OrganisationService) {
+                private _organisationService: OrganisationService,
+                private _sessionService: SessionService
+    ) {
         setTimeout(() => {
             if (this.organisation.id) {
                 this.tab.header = 'Орг. ' + this.organisation.id;
@@ -525,6 +528,19 @@ export class TabOrganisationComponent {
         this.organisation = this.tab.args.organisation;
         if (this.organisation.id == null) {
             this.toggleEdit();
+        }
+
+        var c = this._configService.getConfig();
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
         }
 
         this.calcSize();

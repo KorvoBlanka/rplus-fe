@@ -20,6 +20,7 @@ import {HistoryService} from '../../service/history.service';
 import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
 import {UserService} from '../../service/user.service';
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -534,7 +535,9 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
                 private _historyService: HistoryService,
                 private _personService: PersonService,
                 private _organisationService: OrganisationService,
-                private _userService: UserService) {
+                private _userService: UserService,
+                private _sessionService: SessionService
+    ) {
 
         _organisationService.list("").subscribe(organisations => {
                 for (let i = 0; i < organisations.length; i++) {
@@ -562,9 +565,19 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.person = this.tab.args.person;
 
         var c = this._configService.getConfig();
-        this.zoom = c.map.zoom;
-        this.lat = c.map.lat;
-        this.lon = c.map.lon;
+
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
+        }
+
 
         if (this.person.organisationId) {
             this._organisationService.get(this.person.organisationId).subscribe(org => {

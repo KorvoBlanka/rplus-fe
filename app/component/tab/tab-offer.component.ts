@@ -22,6 +22,7 @@ import {PersonService} from "../../service/person.service";
 import {Person} from "../../class/person";
 import {UploadService} from "../../service/upload.service";
 import {SuggestionService} from "../../service/suggestion.service";
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -948,7 +949,8 @@ export class TabOfferComponent implements OnInit {
                 private _userService: UserService,
                 private _personService: PersonService,
                 private _uploadService: UploadService,
-                private _suggestionService: SuggestionService
+                private _suggestionService: SuggestionService,
+                private _sessionService: SessionService
     ) {
 
         setTimeout(() => {
@@ -987,14 +989,23 @@ export class TabOfferComponent implements OnInit {
         this.offer.openDate = Math.round((Date.now() / 1000));
 
         var c = this._configService.getConfig();
+        let loc = this._sessionService.getAccount().location;
 
-        this.zoom = c.map.zoom;
+
         if (this.offer.locationLat) {
             this.lat = this.offer.locationLat;
             this.lon = this.offer.locationLon;
+            this.zoom = 14;
         } else {
-            this.lat = c.map.lat;
-            this.lon = c.map.lon;
+            if (c.map[loc]) {
+                this.lat = c.map[loc].lat;
+                this.lon = c.map[loc].lon;
+                this.zoom = c.map[loc].zoom;
+            } else {
+                this.lat = c.map['default'].lat;
+                this.lon = c.map['default'].lon;
+                this.zoom = c.map['default'].zoom;
+            }
         }
 
         if (this.offer.id == null && this.offer.sourceUrl == null) {

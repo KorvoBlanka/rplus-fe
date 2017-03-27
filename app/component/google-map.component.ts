@@ -147,8 +147,31 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
 
         var c = this;
 
+        let minLat = 100000;
+        let minLon = 100000;
+        let maxLat = 0;
+        let maxLon = 0;
+        let mark = 0;
+
         this.objects.forEach(obj => {
             if(obj.locationLat) {
+
+                if (obj.locationLat > maxLat) {
+                    maxLat = obj.locationLat;
+                    mark ++;
+                }
+                if (obj.locationLon > maxLon) {
+                    maxLon = obj.locationLon;
+                    mark ++;
+                }
+                if (obj.locationLat < minLat) {
+                    minLat = obj.locationLat;
+                    mark ++;
+                }
+                if (obj.locationLon < minLon) {
+                    minLon = obj.locationLon;
+                    mark ++;
+                }
 
                 var m = new google.maps.Marker({
                     map: this.map,
@@ -173,6 +196,17 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
 
             }
         });
+
+
+        if (mark > 3) {
+            var bounds = new google.maps.LatLngBounds();
+            //sw
+            bounds.extend(new google.maps.LatLng(minLat, minLon));
+            //ne
+            bounds.extend(new google.maps.LatLng(maxLat, maxLon));
+
+            this.map.fitBounds(bounds);
+        }
     }
 
     initDrawer() {

@@ -134,7 +134,7 @@ import {Account} from "../../class/account";
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
                 <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery"
-                       (keyup)="searchParamChanged($event)">
+                       (keyup)="searchStringChanged($e)">
                 <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
                 
                 <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0">
@@ -354,6 +354,7 @@ export class TabListOfferComponent {
     page: number = 0;
     perPage: number = 32;
 
+    suggestionTo: any;
     to: any;
     list: HTMLElement;
 
@@ -669,6 +670,14 @@ export class TabListOfferComponent {
         this.sgList = [];
     }
 
+    searchStringChanged(e) {
+        let c = this;
+        clearTimeout(this.suggestionTo);
+        this.suggestionTo = setTimeout(function() {
+            c.searchParamChanged(e);
+        }, 500);
+    }
+
     searchParamChanged(e) {
 
         if (this.searchQuery.length > 0) {
@@ -688,6 +697,7 @@ export class TabListOfferComponent {
                     sgs.forEach(e => {
                         this.sgList.push(e);
                     })
+                    console.log(this.sgList);
                 })
             }
         }

@@ -65,7 +65,10 @@ export class SuggestionService {
                         }
                     })
 
-                    sgs.push(short_addr.join(", "));
+                    let ts = short_addr.join(", ");
+                    if (ts) {
+                        sgs.push(ts);
+                    }
                 });
 
                 var arr = [];

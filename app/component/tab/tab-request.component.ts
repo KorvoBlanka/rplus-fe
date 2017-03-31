@@ -192,6 +192,10 @@ import {SessionService} from "../../service/session.service";
         .array-container > input {
             margin-bottom: 5px;
         }
+        
+        .src-sel {
+            background-color: #3366cc !important;
+        }
     `],
     template: `
 
@@ -442,6 +446,12 @@ import {SessionService} from "../../service/session.service";
                                         (click)="offer_search()"
                                     ></span>
                                 </div>
+                                
+                                <div class="two-way-switch" style="float: right; display: flex;">
+                                    <div style="padding: 0 4px; cursor: hand;"  [class.src-sel]="source == 2" (click)="toggleSource('import')">Общая</div>&nbsp;
+                                    <div style="padding: 0 4px; cursor: hand;"  [class.src-sel]="source == 1" (click)="toggleSource('local')">Компании</div>
+                                </div>
+                                
                                 <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
                                     <digest-offer *ngFor="let offer of offers"
                                         [offer]="offer"
@@ -584,6 +594,9 @@ export class TabRequestComponent {
     public tab: Tab;
     public request: Request;
 
+    page: number = 0;
+    perPage: number = 16;
+    source: OfferSource = OfferSource.LOCAL;
     offers: Offer[];
 
     agent: User = new User();
@@ -831,7 +844,7 @@ export class TabRequestComponent {
     }
 
     getOffers(page, per_page) {
-        this._offerService.list(page, per_page, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, null, this.request.request, this.request.searchArea).subscribe(
+        this._offerService.list(page, per_page, this.source, {offerTypeCode: this.request.offerTypeCode}, null, this.request.request, this.request.searchArea).subscribe(
             offers => {
                 this.offers = offers.list;
             },
@@ -839,13 +852,13 @@ export class TabRequestComponent {
         );
     }
 
-    offer_search() {
-        this.getOffers(0, 16);
+    offerSearch() {
+        this.getOffers(this.page, this.perPage);
     }
 
     offer_search_keydown(e: KeyboardEvent) {
         if (e.keyCode == 13) {
-            this.offer_search();
+            this.offerSearch();
         }
     }
 
@@ -856,14 +869,14 @@ export class TabRequestComponent {
 
     drawFinished(e) {
         this.request.searchArea = e;
-        this.offer_search();
+        this.offerSearch();
     }
 
     toggleDraw() {
         this.mapDrawAllowed = !this.mapDrawAllowed;
         if (!this.mapDrawAllowed) {
             this.request.searchArea = [];
-            this.offer_search();
+            this.offerSearch();
         }
     }
 
@@ -875,5 +888,16 @@ export class TabRequestComponent {
 
     getOfferDigest(r: Offer) {
         return Offer.getDigest(r);
+    }
+
+    toggleSource(s: string) {
+
+        if (s == 'local') {
+            this.source = OfferSource.LOCAL;
+        } else {
+            this.source = OfferSource.IMPORT;
+        }
+        this.page = 0;
+        this.offerSearch();
     }
 }

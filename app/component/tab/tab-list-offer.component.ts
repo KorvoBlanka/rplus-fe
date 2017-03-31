@@ -395,9 +395,9 @@ export class TabListOfferComponent {
         this.listOffers();
 
         this.agentOpts.push({value: 'all', label: 'Все объекты', bold: true});
-        this.agentOpts.push({value: 'all_agents', label: 'Все агенты', bold: true});
-        this.agentOpts.push({value: 'realtor', label: 'Посредник', bold: true});
-        this.agentOpts.push({value: 'private', label: 'Собственник', bold: true});
+        this.agentOpts.push({value: 'realtor', label: 'Конкуренты', bold: true});
+        this.agentOpts.push({value: 'private', label: 'Собственники', bold: true});
+        this.agentOpts.push({value: 'company', label: 'Наша компания', bold: true});
         this.agentOpts.push({value: 'my', label: 'Мои объекты', bold: true});
 
         this._userService.list(null, null, "").subscribe(agents => {

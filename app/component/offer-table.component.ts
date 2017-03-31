@@ -375,23 +375,23 @@ export class OfferTableComponent implements OnInit {
 
         {
             id: 'addDate', label: 'Добавлено', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.addDate).format('DD.MM.YY hh:mm');
+            return moment(ofr.addDate * 1000).format('DD.MM.YY hh:mm');
         }
         },
         {
             id: 'changeDate', label: 'Назначено', visible: false, sort: 0, val: (ofr: Offer) => {
             //return moment(ofr.assignDate * 1000).format('DD.MM.YY hh:mm')
-            return moment(ofr.changeDate).format('DD.MM.YY hh:mm');
+            return moment(ofr.changeDate * 1000).format('DD.MM.YY hh:mm');
         }
         },
         {
             id: 'changeDate', label: 'Изменено', visible: false, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.changeDate).format('DD.MM.YY hh:mm');
+            return moment(ofr.changeDate * 1000).format('DD.MM.YY hh:mm');
         }
         },
         {
             id: 'lastSeenDate', label: 'Актуально', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.lastSeenDate).format('DD.MM.YY hh:mm');
+            return moment(ofr.lastSeenDate * 1000).format('DD.MM.YY hh:mm');
         }
         }
     ];

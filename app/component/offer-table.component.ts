@@ -141,6 +141,15 @@ export class OfferTableComponent implements OnInit {
     @Output() onListEnd: EventEmitter<any> = new EventEmitter();
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
 
+    stageCodeOptions = [
+        {value: 'raw', label: 'Не активен'},
+        {value: 'active', label: 'Активен'},
+        {value: 'price', label: 'Прайс'},
+        {value: 'deal', label: 'Сделка'},
+        {value: 'suspended', label: 'Приостановлен'},
+        {value: 'archive', label: 'Архив'}
+    ];
+
     typeCodeOptions = {
         room: 'Комната',
         apartment: 'Квартира',
@@ -401,6 +410,22 @@ export class OfferTableComponent implements OnInit {
 
     ngOnInit() {
         this.calcSize();
+
+        let tfStr = localStorage.getItem('tableFields');
+        if (tfStr) {
+            let tf = JSON.parse(tfStr);
+            console.log(tf);
+
+            for (var fid in tf) {
+                console.log(fid);
+                this.fields.forEach(f => {
+                    if (f.id == fid) {
+                        f.visible = tf[fid];
+                    }
+                });
+            }
+
+        }
     }
 
     onResize(e) {
@@ -495,42 +520,23 @@ export class OfferTableComponent implements OnInit {
             )
         });
 
-        var stateOpt = [];
-        var states = [
-            {value: 'raw', label: 'Не активен'},
-            {value: 'active', label: 'Активен'},
-            {value: 'work', label: 'В работе'},
-            {value: 'suspended', label: 'Приостановлен'},
-            {value: 'archive', label: 'Архив'}
-        ];
         var stageOpt = [];
-        var stages = [
-            {value: 'contact', label: 'Первичный контакт'},
-            {value: 'pre_deal', label: 'Заключение договора'},
-            {value: 'show', label: 'Показ'},
-            {value: 'prep_deal', label: 'Подготовка договора'},
-            {value: 'decision', label: 'Принятие решения'},
-            {value: 'negs', label: 'Переговоры'},
-            {value: 'deal', label: 'Сделка'}
-        ];
-        states.forEach(s => {
-            stateOpt.push(
-                {class: "entry", disabled: false, label: s.label, callback: function() {
-                    c.selectedOffers.forEach(o => {
-                        o.stateCode = s.value;
-                        c._offerService.save(o);
-                    })
-                }}
-            )
-        });
-        stages.forEach(s => {
+
+        this.stageCodeOptions.forEach(s => {
             stageOpt.push(
-                {class: "entry", disabled: false, label: s.label, callback: function() {
+                {
+                    class: "entry", disabled: false, label: s.label, callback: function () {
                     c.selectedOffers.forEach(o => {
                         o.stageCode = s.value;
                         c._offerService.save(o);
-                    })
-                }}
+                    });
+                    /*)
+                    setTimeout(function () {
+                        c.listOffers();
+                    }, 1200);
+                    */
+                }
+                }
             )
         });
 
@@ -553,9 +559,19 @@ export class OfferTableComponent implements OnInit {
                         tab_sys.addTab('offer', {offer: o});
                     })
                 }},
-                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
+                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {
+                    this.selectedOffers.forEach(o => {
+                        o.stageCode = 'archive';
+                        c._offerService.save(o);
+                    });
+                    /*
+                    setTimeout(function () {
+                        c.listOffers();
+                    }, 1200);
+                    */
+                }},
                 {class: "delimiter"},
-                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stateOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
                 {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
                 {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
@@ -589,7 +605,7 @@ export class OfferTableComponent implements OnInit {
             menu.items.push(
                 {
                     class: "entry_cb", disabled: false, value: f.visible, label: f.label, callback: () => {
-                        this.toggleVisibility(f.id)
+                        this.toggleVisibility(f.id);
                     }
                 }
             );
@@ -600,11 +616,14 @@ export class OfferTableComponent implements OnInit {
     }
 
     toggleVisibility(field_id: string) {
+        let flds = {};
         this.fields.forEach(f => {
             if (f.id == field_id) {
                 f.visible = !f.visible;
             }
+            flds[f.id] = f.visible;
         });
+        localStorage.setItem('tableFields', JSON.stringify(flds));
     }
 
     calcSize() {

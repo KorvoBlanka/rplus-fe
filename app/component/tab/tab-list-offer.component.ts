@@ -165,10 +165,10 @@ import {Account} from "../../class/account";
                 
                     <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
-                            [options]="stateCodeOptions"
-                            [value]="filter.state"
+                            [options]="stageCodeOptions"
+                            [value]="filter.stage"
                             [config]="{icon: 'icon-square', drawArrow: true}"
-                            (onChange)="filter.stateCode = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.stageCode = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
@@ -319,7 +319,7 @@ export class TabListOfferComponent {
     sgList: string[] = [];
 
     filter: any = {
-        stateCode: 'all',
+        stageCode: 'all',
         agentId: 'all',
         tag: 'all',
         changeDate: 90,
@@ -330,11 +330,12 @@ export class TabListOfferComponent {
 
     agentOpts = [];
 
-    stateCodeOptions = [
+    stageCodeOptions = [
         {value: 'all', label: 'Все'},
         {value: 'raw', label: 'Не активен'},
         {value: 'active', label: 'Активен'},
-        {value: 'work', label: 'В работе'},
+        {value: 'price', label: 'Прайс'},
+        {value: 'deal', label: 'Сделка'},
         {value: 'suspended', label: 'Приостановлен'},
         {value: 'archive', label: 'Архив'}
     ];
@@ -508,48 +509,32 @@ export class TabListOfferComponent {
                         o.agentId = u.id;
                         o.agent = u;
                         c._offerService.save(o);
-                    })
+                    });
+                    setTimeout(function () {
+                        c.listOffers();
+                    }, 1200);
                 }},
             )
         });
 
-        var stateOpt = [];
-        var states = [
-            {value: 'raw', label: 'Не активен'},
-            {value: 'active', label: 'Активен'},
-            {value: 'work', label: 'В работе'},
-            {value: 'suspended', label: 'Приостановлен'},
-            {value: 'archive', label: 'Архив'}
-        ];
         var stageOpt = [];
-        var stages = [
-            {value: 'contact', label: 'Первичный контакт'},
-            {value: 'pre_deal', label: 'Заключение договора'},
-            {value: 'show', label: 'Показ'},
-            {value: 'prep_deal', label: 'Подготовка договора'},
-            {value: 'decision', label: 'Принятие решения'},
-            {value: 'negs', label: 'Переговоры'},
-            {value: 'deal', label: 'Сделка'}
-        ];
-        states.forEach(s => {
-            stateOpt.push(
-                {class: "entry", disabled: false, label: s.label, callback: function() {
-                    c.selectedOffers.forEach(o => {
-                        o.stateCode = s.value;
-                        c._offerService.save(o);
-                    })
-                }}
-            )
-        });
-        stages.forEach(s => {
-            stageOpt.push(
-                {class: "entry", disabled: false, label: s.label, callback: function() {
-                    c.selectedOffers.forEach(o => {
-                        o.stageCode = s.value;
-                        c._offerService.save(o);
-                    })
-                }}
-            )
+
+        this.stageCodeOptions.forEach(s => {
+            if (s.value != 'all') {
+                stageOpt.push(
+                    {
+                        class: "entry", disabled: false, label: s.label, callback: function () {
+                            c.selectedOffers.forEach(o => {
+                                o.stageCode = s.value;
+                                c._offerService.save(o);
+                            });
+                            setTimeout(function () {
+                                c.listOffers();
+                            }, 1200);
+                        }
+                    }
+                )
+            }
         });
 
         let menu = {
@@ -571,9 +556,17 @@ export class TabListOfferComponent {
                         tab_sys.addTab('offer', {offer: o});
                     })
                 }},
-                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
+                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {
+                    this.selectedOffers.forEach(o => {
+                        o.stageCode = 'archive';
+                        c._offerService.save(o);
+                    });
+                    setTimeout(function () {
+                        c.listOffers();
+                    }, 1200);
+                }},
                 {class: "delimiter"},
-                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stateOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
                 {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
                 {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},

@@ -90,6 +90,16 @@ import {UserService} from "../../service/user.service";
             
                 <div class="inline-select">
                     <ui-select class="view-value edit-value"
+                        [options]="stageCodeOptions"
+                        [value]="filter.stage"
+                        [config]="{icon: 'icon-square', drawArrow: true}"
+                        (onChange)="filter.stageCode = $event.selected.value; searchParamChanged();"
+                    >
+                    </ui-select>
+                </div>
+            
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
                         [options]="agentOpts"
                         [value]="filter.agent"
                         [config]="{icon: 'icon-person', drawArrow: true}"
@@ -162,10 +172,21 @@ export class TabListRequestComponent implements OnInit {
 
     filter: any = {
         agentId: 'all',
+        stageCode: 'all',
         tag: 'all',
         changeDate: 90,
         offerTypeCode: 'sale',
     };
+
+    stageCodeOptions = [
+        {value: 'all', label: 'Все'},
+        {value: 'raw', label: 'Не активен'},
+        {value: 'active', label: 'Активен'},
+        {value: 'listing', label: 'Листинг'},
+        {value: 'deal', label: 'Сделка'},
+        {value: 'suspended', label: 'Приостановлен'},
+        {value: 'archive', label: 'Архив'}
+    ];
 
     sort: any = {};
 
@@ -202,7 +223,7 @@ export class TabListRequestComponent implements OnInit {
     }
 
     listRequests() {
-        this._requerstService.list(this.page, this.perPage, this.filter.offerTypeCode, this.filter.agentId, null, this.searchQuery).subscribe(
+        this._requerstService.list(this.page, this.perPage, this.filter.offerTypeCode, this.filter.stageCode, this.filter.agentId, null, this.searchQuery).subscribe(
             data => {
                 this.requests = data;
             },

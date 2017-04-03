@@ -20,7 +20,7 @@ export class RequestService {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     };
 
-    list(page: number, perPage: number, offerTypeCode: string, agentId: number, personId: number, searchQuery: string) {
+    list(page: number, perPage: number, offerTypeCode: string, stageCode: string, agentId: number, personId: number, searchQuery: string) {
         console.log('request list');
 
         var query = [];
@@ -31,6 +31,7 @@ export class RequestService {
         query.push('page=' + page);
         query.push('per_page=' + perPage);
         query.push('offerTypeCode=' + offerTypeCode);
+        query.push('stageCode=' + stageCode);
         query.push('agent_id=' + (agentId ? agentId : ''));
         query.push('person_id=' + (personId ? personId : ''));
         query.push('search_query=' + searchQuery);

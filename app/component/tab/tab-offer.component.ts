@@ -211,21 +211,12 @@ import {SessionService} from "../../service/session.service";
                                 >
                                 </ui-select>
                             </div>
-                            <div class="view-group">
-                                <span class="view-label">Статус</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "stateCodeOptions"
-                                    [value]="offer.stateCode"
-                                    (onChange)="offer.stateCode = $event.selected.value"
-                                >
-                                </ui-select>
-                            </div>
     
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
                                 <ui-select class="view-value edit-value"
                                     [options] = "stageCodeOptions"
-                                    [value]="1"
+                                    [value]="offer.stageCode"
                                     (onChange)="offer.stageCode = $event.selected.value"
                                 >
                                 </ui-select>
@@ -403,14 +394,6 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label">Ответственный</span>
                                 <span class="view-value"> <a (click)="openUser(offer.agent)"> {{ offer.agent?.name }} </a> </span>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label">Статус</span>
-                                <ui-view-value
-                                    [options] = "stateCodeOptions"
-                                    [value]="offer.stateCode"
-                                > 
-                                </ui-view-value>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
@@ -825,14 +808,16 @@ export class TabOfferComponent implements OnInit {
         {value: 'rent', label: 'Аренда'}
     ];
 
-    stateCodeOptions = [
+    stageCodeOptions = [
         {value: 'raw', label: 'Не активен'},
         {value: 'active', label: 'Активен'},
-        {value: 'work', label: 'В работе'},
+        {value: 'price', label: 'Прайс'},
+        {value: 'deal', label: 'Сделка'},
         {value: 'suspended', label: 'Приостановлен'},
         {value: 'archive', label: 'Архив'}
     ];
 
+    /*
     stageCodeOptions = [
         {value: 'contact', label: 'Первичный контакт'},
         {value: 'pre_deal', label: 'Заключение договора'},
@@ -842,6 +827,7 @@ export class TabOfferComponent implements OnInit {
         {value: 'negs', label: 'Переговоры'},
         {value: 'deal', label: 'Сделка'}
     ];
+    */
 
     typeCodeOptions = [
         {value: 'room', label: 'Комната'},

@@ -321,15 +321,6 @@ import {SessionService} from "../../service/session.service";
                                 </ui-select>
                             </div>
                             <div class="view-group">
-                                <span class="view-label">Статус</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "stateCodeOptions"
-                                    [value]="request?.stateCode"
-                                    (onChange)="request.stateCode = $event.selected.value"
-                                >
-                                </ui-select>
-                            </div>
-                            <div class="view-group">
                                 <span class="view-label">Стадия</span>
                                 <ui-select class="view-value edit-value"
                                     [options] = "stageCodeOptions"
@@ -372,14 +363,6 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label">Ответственный</span>
                                 <span class="view-value"> {{ agent.name }} </span>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label">Статус</span>
-                                <ui-view-value
-                                    [options] = "stateCodeOptions"
-                                    [value]="request.stateCode"
-                                > 
-                                </ui-view-value>
                             </div>
                             <div class="view-group">
                                 <span class="view-label">Стадия</span>
@@ -638,14 +621,16 @@ export class TabRequestComponent {
         {value: 'rent', label: 'Аренда'}
     ];
 
-    stateCodeOptions = [
+    stageCodeOptions = [
         {value: 'raw', label: 'Не активен'},
         {value: 'active', label: 'Активен'},
-        {value: 'work', label: 'В работе'},
+        {value: 'listing', label: 'Листинг'},
+        {value: 'deal', label: 'Сделка'},
         {value: 'suspended', label: 'Приостановлен'},
         {value: 'archive', label: 'Архив'}
     ];
 
+    /*
     stageCodeOptions = [
         {value: 'contact', label: 'Первичный контакт'},
         {value: 'pre_deal', label: 'Заключение договора'},
@@ -655,7 +640,7 @@ export class TabRequestComponent {
         {value: 'negs', label: 'Переговоры'},
         {value: 'deal', label: 'Сделка'}
     ];
-
+    */
 
     constructor(private _hubService: HubService,
                 private _configService: ConfigService,

@@ -662,7 +662,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     requestsSelected() {
-        this._requestService.list(0, 32, this.requestOfferType, null, this.person.id, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, "all", null, this.person.id, "").subscribe(requests => {
             this.requests = requests;
         });
     }
@@ -743,7 +743,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
             this.offers = offers.list;
         });
 
-        this._requestService.list(0, 32, this.requestOfferType, null, this.person.id, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, "all", null, this.person.id, "").subscribe(requests => {
             this.requests = requests;
         });
 

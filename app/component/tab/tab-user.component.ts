@@ -714,7 +714,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     getRequests(page, perPage) {
-        this._requestService.list(0, 32, this.requestOfferType, this.user.id, null, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, "all", this.user.id, null, "").subscribe(requests => {
             this.requests = requests;
         });
     }

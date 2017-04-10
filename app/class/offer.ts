@@ -106,6 +106,109 @@ export class Offer {
     accountId: number;
 
 
+    // new stuff
+    stageCode_n: string;
+
+    sourceCode_n: string;
+
+    sourceUrl_n: string;
+
+    offerTypeCode_n: string;
+
+    typeCode_n: string;;
+
+    region_n: string;
+
+    city_n: string;
+
+    area_n: string;
+
+    admArea_n: string;
+
+    street_n: string;
+
+    house_n: string;
+
+    housing_n: string;
+
+    apartment_n: string;
+
+    settlement_n: string;
+
+    newBuilding_n: boolean;
+
+    objectStage_n: string;
+
+    buildYear_n: string;
+
+    houseType_n: string;
+
+    houseMaterial_n: string;
+
+    roomsCount_n: number;
+
+    roomsType_n: string;
+
+    floor_n: number;
+
+    floorsCount_n: number;
+
+    levelsCount_n: number;
+
+    squareTotal_n: number;
+
+    squareLiving_n: number;
+
+    squareKitchen_n: number;
+
+    squareLand_n: number;
+
+    squareLandType_n: number;
+
+    balcony_n: boolean;
+
+    loggia_n: boolean;
+
+    bathroom_n: boolean;
+
+    condition_n: string;
+
+    price_n: number;
+
+    comission_n: number;
+
+    comissionPerc_n: number;
+
+    distance_n: number;
+
+    guard_n: boolean;
+
+    waterSupply_n: boolean;
+
+    gasification_n: boolean;
+
+    electrification_n: boolean;
+
+    sewerage_n: boolean;
+
+    centralHeating_n: boolean;
+
+    lift_n: boolean;
+
+    parking_n: boolean;
+
+    landPurpose_n: string;
+
+    objectName_n: string;
+
+    buildingType_n: string;
+
+    buildingClass_n: string;
+
+    сeilingHeight_n: number;
+
+
+
     constructor () {
         // set default vals
         this.stateCode = 'raw';

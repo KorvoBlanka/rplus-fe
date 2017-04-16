@@ -8,6 +8,7 @@ import {AsyncSubject} from "rxjs/AsyncSubject";
 import {GeoPoint} from "../class/geoPoint";
 import {User} from "../class/user";
 import {SessionService} from "./session.service";
+import {ListResult} from "../class/listResult";
 
 
 export enum OfferSource {
@@ -25,7 +26,7 @@ export class OfferService {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/offer/';
     };
 
-    list(page: number, perPage: number, source: OfferSource, filter: any, searchQuery: string, searchArea: GeoPoint[]) {
+    list(page: number, perPage: number, source: OfferSource, filter: any, sort: any, searchQuery: string, searchArea: GeoPoint[]) {
         console.log('offers list');
 
         var query = [];
@@ -43,19 +44,25 @@ export class OfferService {
         query.push('per_page=' + perPage);
         query.push('source=' + source_str);
         query.push('filter=' + JSON.stringify(filter));
+        if (sort) {
+            query.push('sort=' + JSON.stringify(sort));
+        }
         query.push('search_query=' + searchQuery);
         query.push('search_area=' + JSON.stringify(searchArea));
 
         var _resourceUrl = this.RS + 'list?' + query.join("&");
 
-        var ret_subj = <AsyncSubject<Offer[]>>new AsyncSubject();
+        var ret_subj = <AsyncSubject<ListResult>>new AsyncSubject();
 
         this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
                 data => {
-                    var offers: Offer[] = data.result;
+                    var obj: ListResult = new ListResult();
 
-                    ret_subj.next(offers);
+                    obj.hitsCount = data.result.hitsCount;
+                    obj.list = data.result.list;
+
+                    ret_subj.next(obj);
                     ret_subj.complete();
                 },
                 err => console.log(err)
@@ -65,14 +72,19 @@ export class OfferService {
     }
 
     save(offer: Offer) {
-        console.log('offer save');
+        console.log('offer save', offer);
 
         var user: User = this._sessionService.getUser();
         offer.accountId = user.accountId;
 
         var _resourceUrl = this.RS + 'save';
 
-        var data_str = JSON.stringify(offer);
+        var data_str = JSON.stringify(offer, function(key, value) {
+            if (typeof value === 'string' && value.length == 0) {
+                return undefined;
+            }
+            return value;
+        });
 
         var ret_subj = <AsyncSubject<Offer>>new AsyncSubject();
 
@@ -94,9 +106,40 @@ export class OfferService {
         return ret_subj;
     }
 
-    getSimilar(page: number, per_page: number) {
+    getSimilar(offer: Offer, page: number, perPage: number) {
+        console.log('offer get similar');
+        console.log(offer);
 
-        var ret_subj = <AsyncSubject<Offer[]>>new AsyncSubject();
+
+
+        var query = [];
+
+        var user: User = this._sessionService.getUser();
+
+
+        var source_str = 'local';
+
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+
+        var _resourceUrl = this.RS + 'list_similar/' + offer.id + '?' + query.join("&");
+
+        var ret_subj = <AsyncSubject<ListResult>>new AsyncSubject();
+
+        this._http.get(_resourceUrl, { withCredentials: true })
+            .map(res => res.json()).subscribe(
+            data => {
+                var obj: ListResult = new ListResult();
+
+                obj.hitsCount = data.result.hitsCount;
+                obj.list = data.result.list;
+
+                ret_subj.next(obj);
+                ret_subj.complete();
+            },
+            err => console.log(err)
+        );
 
         return ret_subj;
     }

@@ -13,26 +13,43 @@ import {Observable} from "rxjs";
     selector: 'tab-list-organisation',
     inputs: ['tab'],
     styles: [`
+        .underline{
+            margin: 0;
+            border: 2px solid;
+            margin-top: 16px;
+            color: rgb(61, 155, 233);
+        }
         .search-form {
-            width: 50%;
-            min-width: 800px;
-            margin: 0 auto;
-            margin-top: 10px;
             background: #fff;
             z-index: 1;
+            width: 38%;
+            margin-left: 655;
+            margin-top: 27px;
         }
-    
+
         .tool-box {
             height: 30px;
             margin: 0 12px;
         }
-    
+
+        .round_menu{
+            width: 210;
+            height: 50px;
+            position: absolute;
+            left: 445px;
+            top: 15px;
+            text-align: center;
+            z-index: 10;
+            line-height: 50px;
+            display: flex;
+            justify-content: space-around;
+        }
+
         .search-box {
             position: relative;
-            margin: 12px;
-            margin-bottom: 8px;
+            margin: 12px 12px 8px 12px;
         }
-    
+
         .organisation-list-wrapper {
             padding-top: 25px;
             max-width: 1200px;
@@ -40,12 +57,12 @@ import {Observable} from "rxjs";
             height: 100%;
             width: 100%;
         }
-    
+
         .scroll-wrapper {
             height: calc(100% - 115px);
             overflow-y: auto;
         }
-    
+
         .inline-select {
             display: inline-block;
             height: 20px;
@@ -53,21 +70,51 @@ import {Observable} from "rxjs";
             font-size: 14px;
             color: #666;
         }
-    
+
         .button {
-            text-align: center;
-            padding: 5px 15px;
-            background-color: #3366cc;
-            color: #fff;
+            height: 50px;
+            width: 50px;
+            border-radius: 40px;
             cursor: pointer;
+            font-size: 11px;
+            line-height: 120px;
+            background-size: cover;
+            color: #6b6c6d;
+        }
+
+        .plus:hover{
+            background-image: url(res/plus_color.png);
+        }
+
+        .plus {
+            background-image: url(res/Plus.png);
+        }
+        .import:hover{
+            background-image: url(res/base_plus_color.png) !important;
+        }
+
+        .import {
+            background-image: url(res/base_plus.png);
+        }
+        .local:hover{
+            background-image: url(res/base_color.png) !important;
+        }
+
+        .local {
+            background-image: url(res/base.png);
         }
     `],
     template: `
         <div class="header-label-abs">{{ tab.header }}</div>
-    
+        <div class = "round_menu">
+            <div class="button plus"  (click) ="addOrganisation()">Добавить</div>
+            <div (click)="toggleSource('import')" [style.background-image]="getImage('import')" class="button import" style="">Общая</div>
+            <div (click)="toggleSource('local')"  class="button local"  [style.background-image1]="getImage('local')">Компания</div>
+        </div>
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
-                <input type="text" class="" placeholder="" style="height: 28px; width: 100%;"
+                <input type="text" class="" placeholder="" style="height: 28px; width: 100%;
+                background-color: rgb(247, 247, 247); border: 1px solid rgba(204, 204, 204, 0.47);"
                     [(ngModel)]="searchQuery" (keyup)="searchParamChanged($event)"
                 >
                 <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
@@ -108,13 +155,10 @@ import {Observable} from "rxjs";
                 </div>
             </div>
         </div>
+        <hr class='underline'>
         <div class="organisation-list-wrapper">
             <div class="scroll-wrapper">
-                <div class="button"
-                    (click)="addOrganisation()"
-                >
-                Добавить организацию
-                </div>
+
                 <digest-organisation
                     *ngFor="let o of organisations"
                     [organisation]="o"
@@ -130,7 +174,7 @@ export class TabListOrganisationComponent implements OnInit {
 
     organisations: Organisation[];
     searchQuery: string = "";
-
+    isImport: boolean = true;
     constructor(private _configService: ConfigService, private _hubService: HubService, private _organisationService: OrganisationService) {
         setTimeout(() => {
             this.tab.header = 'Контрагенты';
@@ -170,6 +214,20 @@ export class TabListOrganisationComponent implements OnInit {
     scroll(e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
 
+        }
+    }
+
+    getImage(s: string){
+        if (s == 'local') {
+          if(this.isImport)
+            return "url(res/base.png)";
+          else
+            return "url(res/base_color.png)";
+        } else {
+          if(this.isImport)
+            return "url(res/base_plus_color.png)";
+          else
+            return "url(res/base_plus.png)";
         }
     }
 }

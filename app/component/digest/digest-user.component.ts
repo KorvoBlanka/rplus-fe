@@ -15,13 +15,13 @@ import {User} from '../../class/user';
             font-weight: 200;
             font-size: 14px;
             position: relative;
-    
+
             border-bottom: 1px solid #e5e5e5;
             overflow: hidden;
-    
+
             padding: 10px 20px;
         }
-    
+
         .billet-label {
             font-weight: 400;
             color:  #666;
@@ -29,23 +29,23 @@ import {User} from '../../class/user';
             white-space: nowrap;
             margin-left: 50px;
         }
-    
+
         .billet.selected {
             background-color: #157ad3;
             color: #fff !important;
         }
-    
+
         .billet-block {
             display: inline-block;
             width: 32%;
         }
-    
+
         .entry-header {
             display: inline-block;
             width: 90px;
             color: #aaa;
         }
-    
+
         .badge-gray {
             display: inline-block;
             width: 85px;
@@ -77,14 +77,14 @@ import {User} from '../../class/user';
           (touchend)="tEnd()"
         >
             <div style="display: flex; justify-content: space-between;">
-                <span>Пользователь {{ user.id }}
+                <span>Пользователь 
                     <span class="billet-label">{{ user.name }}</span>
                 </span>
                 <span>{{ user.change_date | formatDate }} / {{ user.add_date | formatDate }}</span>
             </div>
             <table style="width: 100%;">
                 <tbody style="vertical-align: top; font-size: 14; font-weight: 200;">
-    
+
                 </tbody>
             </table>
         </div>

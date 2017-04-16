@@ -1,65 +1,102 @@
 import {
   Component, ContentChildren, QueryList, AfterViewInit, AfterContentChecked,
-  AfterContentInit,
+  AfterContentInit
 } from '@angular/core';
 
 import {UITab} from './ui-tab.component';
 
 @Component({
     selector: 'ui-tabs',
-    inputs: ['headerMode'],
+    inputs: ['headerMode', 'iconUrls', 'iconUrls_active'],
     template: `
-        <div class="header">
+        <div class="head">
             <div class="tabs" [class.align-left]="headerMode">
-                <div *ngFor="let tab of tabs" class="tab-header" (click)="selectTab(tab)" [class.active]="tab.active">
-                    <a href="#">{{tab.title}}</a>
+                <div *ngFor="let tab of tabs; let i = index;" class="tab-header"
+                 (click)="selectTab(tab)" [class.active]="tab.active"
+                 [ngStyle]="{'background-image': 'url(' + selectedIcon(tab.active, i) + ')'}"
+                 (mouseover) = "setIcon(i, true, $event)"
+                 (mouseout) = "setIcon(i, false, $event)">
+                    {{tab.title}}
                 </div>
             </div>
         </div>
         <ng-content></ng-content>
     `,
     styles: [`
+        .head{
+            height: 110px;
+            display: flex;
+            border-bottom: 4px solid rgba(61, 155, 233, 1);
+        }
         .tabs {
             display: flex;
+            margin-top: 15px;
+            height: 70px;
+            width: 230px;
             justify-content: center;
+            margin-left: 45px;
         }
         .tabs.align-left {
-            justify-content: flex-start; 
+            justify-content: flex-start;
         }
         .tab-header {
-            display: inline-block;
-            position: relative;
-            width: 180px;
-            border-right: 1px solid #eee;
+            width: 70px;
+            height: 50px;
+            font-size: 9pt;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: #aaa;
+            line-height: 120px;
             text-align: center;
         }
         .tab-header:first-child {
-            border-left: 1px solid #eee;
+            //width: 80px;
         }
-        .tab-header > a {
+
+        .tab-header:hover {
+        }
+
+        .tab-header > span {
             color: #aaa;
+            margin-top: 40px;
+            margin-left: -15px;
+            display: block;
         }
         .tab-header.active > a {
             color: #157ad3;
         }
         .tab-header.active::after {
-            content: '';
+            /*content: '';
             position: absolute;
             left: 0;
             top: 26px;
             width: 80%;
             margin-left: 10%;
             height: 2px;
-            background-color: #157ad3;
+            background-color: #157ad3;/*
         }
   `]
 })
 
-export class UITabs implements  AfterContentInit {
+export class UITabs implements  AfterContentInit  {
     @ContentChildren(UITab) tabs: QueryList<UITab>;
     headerMode: boolean;
+    iconUrls: String[] = [];
+    iconUrls_active: String[] = [];
+    currentUrl: String[] = [];
 
-    constructor() {}
+    constructor() {
+        setTimeout(()=> {
+            if(this.iconUrls){
+                this.currentUrl[0] = this.iconUrls_active[0];
+                for(var i= 1; i< this.iconUrls.length;++i){
+                    this.currentUrl.push(this.iconUrls[i]);
+                }
+            }
+        },300);
+
+    }
 
     ngAfterContentInit() {
 
@@ -76,11 +113,36 @@ export class UITabs implements  AfterContentInit {
 
     selectTab(tab: UITab) {
 
-        _deactivateAllTabs(this.tabs.toArray());
-        tab.selectTab()
+        this._deactivateAllTabs(this.tabs.toArray());
+        this.currentUrl[0] = this.iconUrls[0];
+        this.currentUrl[1] = this.iconUrls[1];
+        this.currentUrl[2] = this.iconUrls[2];
+        tab.selectTab();
+    }
 
-        function _deactivateAllTabs(tabs: UITab[]) {
-            tabs.forEach((tab) => tab.active = false);
+    _deactivateAllTabs(tabs: UITab[]) {
+        tabs.forEach((tab) => tab.active = false);
+    }
+
+    selectedIcon(act: boolean, i){
+        //if(iconUrls_active && iconUrls){
+            if(act)
+                return this.iconUrls_active[i] || '';
+            else {
+                return this.currentUrl[i];
+            };
+        //}
+    }
+
+    setIcon(i:number, act: boolean, event){
+        if((<HTMLElement>event.target).classList[0] == "tab-header"){
+            if((<HTMLElement>event.target).className != "tab-header active"){
+                if(act)
+                    this.currentUrl[i] = this.iconUrls_active[i];
+                else {
+                        this.currentUrl[i] = this.iconUrls[i];
+                }
+            }
         }
     }
 }

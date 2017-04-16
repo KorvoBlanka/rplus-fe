@@ -5,68 +5,118 @@ import {
 
 import {OfferService, OfferSource} from '../../service/offer.service';
 import {ConfigService} from '../../service/config.service';
+import {HubService} from "../../service/hub.service";
+import {UserService} from "../../service/user.service";
+import {SuggestionService} from "../../service/suggestion.service";
 
 import {Tab} from '../../class/tab';
 import {Offer} from '../../class/offer';
-import {HubService} from "../../service/hub.service";
-import {UserService} from "../../service/user.service";
 
+import {User} from "../../class/user";
+import {SessionService} from "../../service/session.service";
+import {Account} from "../../class/account";
 
 @Component({
     selector: 'tab-list-offer',
     inputs: ['tab'],
     styles: [`
+        .underline{
+            border: 2px solid;
+            color: rgb(61, 155, 233);
+            position: absolute;
+            top: 92px;
+            left: 30;
+            width: 100vw;
+        }
         .search-form {
             position: absolute;
-            width: 45%;
-            margin-left: 27.5%;
-            margin-top: 10px;
-            background: #fff;
+            width: 38%;
+            margin-left: 610;
+            margin-top: 15px;
             z-index: 1;
-            border: 1px solid #eee;
         }
 
         .search-form.table-mode {
             border: 1px solid #fff;
         }
 
+        .round_menu{
+            width: 170px;
+            height: 50px;
+            position: absolute;
+            left: 450;
+            top: 15px;
+            text-align: center;
+            z-index: 10;
+            line-height: 50px;
+            display: flex;
+            justify-content: space-around;
+
+        }
+        .fake{
+            font-size: 12pt;
+            color: #fbfbfb;
+            background-color: #0b9700;
+            height: 28px;
+            line-height: 28px;
+            width: 80px;
+            cursor: pointer;
+            text-align: center;
+        }
+
         .tool-box {
             height: 30px;
             margin: 0 12px;
         }
-    
+
         .search-box {
+            display: flex;
             position: relative;
+            height: 30px;
             margin: 12px 12px 8px 12px;
         }
-    
+
+        .search-box > a {
+            font-size: 10pt;
+            color: #fbfbfb;
+            background-color: #0e60c5;
+            height: 28px;
+            line-height: 28px;
+            width: 80px;
+            cursor: pointer;
+            text-align: center;
+        }
+
         .offer-list {
             position: relative;
         }
-    
+
         .digest-list {
             overflow-x: scroll;
+            border-right: 1px solid #ccc;
+            border-top: 1px solid #ccc;
         }
-    
+
         .pane {
             float: left;
             width: 370px;
             height: 100%;
-            border-right: 1px solid #ccc;
+            //border-right: 1px solid #ccc;
         }
-    
+
         .work-area {
             float: left;
-            width: 77%;
-            height: 100%;
+            height: calc(100% - 115px);
+            margin-top: 115px;
+            border-top: 1px solid #ccc;
         }
-    
+
         .fixed-button {
             position: fixed;
             top: 0;
             left: 0;
         }
-    
+
         .inline-select {
             display: inline-block;
             height: 20px;
@@ -74,26 +124,139 @@ import {UserService} from "../../service/user.service";
             font-size: 14px;
             color: #666;
         }
-        
+
         .button {
-            text-align: center;
-            padding: 5px 15px;
-            background-color: #3366cc;
-            color: #fff;
+            height: 50px;
+            width: 50px;
+            border-radius: 40px;
             cursor: pointer;
+            font-size: 11px;
+            line-height: 120px;
+            background-size: cover;
+            color: #6b6c6d;
+        }
+
+        .button:active {
+          //border: 1px solid silver;
+        }
+
+        .head{
+            width: 100%;
+            height: 115px;
+            display: flex;
+        }
+
+        .head > span{
+            font-size: 16pt;
+            display: block;
+            margin: 30px 0 0 30px;
+            color: #595a5a;
+        }
+        .plus:hover{
+            background-image: url(res/plus_color.png);
+        }
+
+        .plus {
+            background-image: url(res/Plus.png);
+        }
+        .import:hover{
+            background-image: url(res/base_plus_color.png) !important;
+        }
+
+        .import {
+            background-image: url(res/base_plus.png);
+        }
+        .local:hover{
+            background-image: url(res/base_color.png) !important;
+        }
+
+        .local {
+            background-image: url(res/base.png);
+        }
+
+        .seen {
+            background-color: #dbe2f0 !important;
+        }
+
+        .modified {
+            background-color: #dff0d8 !important;
+        }
+
+        .selected {
+            color: #fff !important;
+            background-color: #3366cc !important;
+        }
+
+        .src-sel {
+            background-color: #3366cc !important;
+        }
+
+        .suggestions {
+            min-width: 160px;
+            margin-top: 27px;
+            padding: 5px 0;
+            background-color: #f7f7f7;
+            border: 1px solid #e3e3e3;
+            width: 88%;
+            position: absolute;
+            z-index: 2;
+            font-size: 11pt;
+        }
+
+        .suggestions > ul {
+            margin: 0 0;
+            list-style: none;
+            padding: 3px 20px;
+        }
+
+        .suggestions > ul:hover {
+            background: #bbbbbb;
+            cursor: default;
         }
     `],
     template: `
+        <div class = "round_menu">
+            <div class="button plus"  (click) ="addOffer()">Добавить</div>
+            <div (click)="toggleSource('import')" [style.background-image]="getImage('import')" class="button import" style="">Общая</div>
+            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="getImage('local')">Компания</div>
+        </div>
         <div class="search-form" [class.table-mode]="tableMode">
+
             <div class="search-box">
-                <input type="text" class="" placeholder="" style="height: 28px; width: 100%;" [(ngModel)]="searchQuery"
+                <input type="text" class="" placeholder="" [style.width]="getInputWidth()"
+                    style="height: 28px; background-color: rgb(247, 247, 247); border: 1px solid rgba(204, 204, 204, 0.47);" [(ngModel)]="searchQuery"
                        (keyup)="searchParamChanged($event)">
-                <span class="icon-search" style="position: absolute; right: 12px; top: 7px;"></span>
+                       <span class="icon-search" style="position: absolute; top: 7px;" [style.right]="getSearchPosition()"></span>
+                <a (click)="toggleDraw()" [hidden]="tableMode">
+                    <!--<span
+                        [ngClass]="{'icon-cancel': mapDrawAllowed, 'icon-edit': !mapDrawAllowed}"
+                    ></span>-->
+                    <span>Обвести</span>
+                </a>
+                <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0">
+                    <ul *ngFor="let item of sgList" >
+                        <li >
+                            <a (click)="select(item)">{{item}}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="tool-box">
-        
+
                 <div class="pull-left">
-                
+
+                    <div class="inline-select">
+                        <ui-select class="view-value edit-value"
+                            [options]="[
+                                {value: 'sale', label: 'Продажа'},
+                                {value: 'rent', label: 'Аренда'}
+                            ]"
+                            [value]="sale"
+                            [config]="{icon: 'icon-square', drawArrow: true}"
+                            (onChange)="filter.offerTypeCode = $event.selected.value; searchParamChanged($event);"
+                        >
+                        </ui-select>
+                </div>
                     <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
                             [options]="stateCodeOptions"
@@ -149,11 +312,10 @@ import {UserService} from "../../service/user.service";
                     </div>
                 </div>
                 <div class="pull-right">
-                    <a (click)="toggleDraw()" [hidden]="tableMode">
-                        <span
-                            [ngClass]="{'icon-cancel': mapDrawAllowed, 'icon-edit': !mapDrawAllowed}"
-                        ></span>
-                    </a>
+
+                    <span>{{ hitsCount }}</span>/<span>{{ selectedOffers.length }}</span>
+
+
                     <a (click)="toggleMode()">
                         <span
                             [ngClass]="{'icon-globus': tableMode, 'icon-table': !tableMode}"
@@ -162,47 +324,47 @@ import {UserService} from "../../service/user.service";
                 </div>
             </div>
         </div>
-        
+
+        <hr class='underline'>
+
         <offer-table
             [hidden]="!tableMode"
             [offers]="offers"
+            (onSort)="sortChanged($event)"
+            (onListEnd)="page = page + 1; listOffers();"
+            (onSelect)="selectedOffers = $event"
         >
         </offer-table>
-        
+
         <div class="tab-button fixed-button" (click)="toggleLeftPane()">
             <span [ngClass]="{'icon-arrow-right': paneHidden, 'icon-arrow-left': !paneHidden}"></span>
         </div>
-        
+
         <div class="offer-list"
              [hidden]="tableMode"
              (window:resize)="onResize($event)"
         >
             <div class="pane" [hidden]="paneHidden" [style.width.px]="paneWidth">
-                <div class="header">
-                
-                <!---------------------------------------------------------------------->
-                
-                    <div class="header-label" style="float: left;">
-                        {{ tab.header }}
-                    </div>
-                    <div class="two-way-switch" style="float: right; display: flex;">
-                        <div (click)="toggleSource('import')">Общая</div>&nbsp;
-                        <div (click)="toggleSource('local')">Компании</div>
-                    </div>
-                    
-                <!---------------------------------------------------------------------->
-                    
-                </div>
+                <div class="head"><span>{{tab.header}}</span></div>
+
                 <div class="digest-list"
                      (scroll)="scroll($event)"
                      [style.height]="paneHeight"
+                     (contextmenu)="tableContextMenu($event)"
                 >
-                    <div class="button" (click)="addOffer()">
-                        Добавить предложение
-                    </div>                    
+
                     <digest-offer *ngFor="let offer of offers"
                                   [offer]="offer"
-                                  (click)="select(offer)"
+
+                                [class.seen]="offer.openDate > timestamp"
+                                [class.modified]="offer.changeDate > timestamp"
+
+                                [class.selected]="selectedOffers.indexOf(offer) > -1"
+                                (click)="click($event, offer)"
+                                (contextmenu)="click($event, offer)"
+                                (dblclick)="dblClick(offer)"
+                                (touchstart)="tStart(offer)"
+                                (touchend)="tEnd(offer)"
                     >
                     </digest-offer>
                 </div>
@@ -225,10 +387,12 @@ import {UserService} from "../../service/user.service";
 export class TabListOfferComponent {
     public tab: Tab;
     public tableMode: boolean = false;
-
+    isImport: boolean = false;
     source: OfferSource = OfferSource.LOCAL;
     searchQuery: string = "";
     searchArea: any[] = [];
+
+    sgList: string[] = [];
 
     filter: any = {
         stateCode: 'all',
@@ -238,16 +402,16 @@ export class TabListOfferComponent {
         offerTypeCode: 'sale',
     };
 
-    agentOpts = [{
-        value: 'all',
-        label: '-'
-    }];
+    sort: any = {};
+
+    agentOpts = [];
 
     stateCodeOptions = [
         {value: 'all', label: 'Все'},
         {value: 'raw', label: 'Не активен'},
         {value: 'active', label: 'Активен'},
-        {value: 'work', label: 'В работе'},
+        {value: 'work', label: 'Прайс'},
+        {value: 'ок', label: 'Сделка'},
         {value: 'suspended', label: 'Приостановлен'},
         {value: 'archive', label: 'Архив'}
     ];
@@ -263,20 +427,36 @@ export class TabListOfferComponent {
     zoom: number;
 
     offers: Offer[];
+    hitsCount: number = 0;
     page: number = 0;
     perPage: number = 32;
 
-    to: number;
+    to: any;
     list: HTMLElement;
 
+    selectedOffers: Offer[] = [];
+    lastClckIdx: number = 0;
 
-    constructor(private _elem: ElementRef, private _hubService: HubService, private _offerService: OfferService, private _userService: UserService, private _configService: ConfigService) {
+    timestamp: number = (Date.now() / 1000) - 1000;
+
+    constructor(private _elem: ElementRef,
+                private _hubService: HubService,
+                private _offerService: OfferService,
+                private _userService: UserService,
+                private _configService: ConfigService,
+                private _suggestionService: SuggestionService,
+                private _sessionService: SessionService
+            ) {
         setTimeout(() => {
-            this.tab.header = 'Недвижимость';
+            this.tab.header = 'Предложения';
         });
     }
 
     ngOnInit() {
+
+        if (this.tab.args.query) {
+            this.searchQuery = this.tab.args.query;
+        }
 
         this.tab.refreshRq.subscribe(
             sender => {
@@ -284,11 +464,16 @@ export class TabListOfferComponent {
             }
         )
 
-        this.filter.offerTypeCode = this.tab.args.offerTypeCode;
         this.list = this._elem.nativeElement.querySelector('.digest-list');
 
         this.page = 0;
         this.listOffers();
+
+        this.agentOpts.push({value: 'all', label: 'Все объекты', bold: true});
+        this.agentOpts.push({value: 'all_agents', label: 'Все агенты', bold: true});
+        this.agentOpts.push({value: 'realtor', label: 'Посредник', bold: true});
+        this.agentOpts.push({value: 'private', label: 'Собственник', bold: true});
+        this.agentOpts.push({value: 'my', label: 'Мои объекты', bold: true});
 
         this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
@@ -301,19 +486,40 @@ export class TabListOfferComponent {
         });
 
         var c = this._configService.getConfig();
-        this.lat = c.map.lat;
-        this.lon = c.map.lon;
-        this.zoom = c.map.zoom;
+
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
+        }
 
         this.calcSize();
     }
 
     listOffers() {
-        this._offerService.list(this.page, this.perPage, this.source, this.filter, this.searchQuery, this.searchArea).subscribe(
+
+        this._offerService.list(this.page, this.perPage, this.source, this.filter, this.sort, this.searchQuery, this.searchArea).subscribe(
             data => {
-                this.offers = data;
+
+                this.hitsCount = data.hitsCount;
+
+                if (this.page == 0) {
+                    this.offers = data.list;
+                } else {
+                    data.list.forEach(i => {
+                        this.offers.push(i);
+                    })
+                }
             },
-            err => console.log(err)
+            err => {
+                console.log(err);
+            }
         );
     }
 
@@ -346,9 +552,9 @@ export class TabListOfferComponent {
         if (this.paneHidden) {
             this.paneWidth = 0;
         } else {
-            this.paneWidth = 420;
+            this.paneWidth = 370;
         }
-        this.mapWidth = document.body.clientWidth - (30 * 2) - this.paneWidth;
+        this.mapWidth = document.body.clientWidth - (31) - this.paneWidth;
         this.paneHeight = document.body.clientHeight - 31;
     }
 
@@ -357,20 +563,222 @@ export class TabListOfferComponent {
         this.calcSize();
     }
 
-    select(o: Offer) {
+    tableContextMenu(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var c = this;
+        var users: User[] = this._userService.listCached("", 0, "");
+        var uOpt = [];
+        uOpt.push(
+            {class: "entry", disabled: false, label: "Не задано", callback: function() {
+                c.selectedOffers.forEach(o => {
+                    o.agentId = null;
+                    o.agent = null;
+                    c._offerService.save(o);
+                })
+            }},
+        )
+        users.forEach(u => {
+            uOpt.push(
+                {class: "entry", disabled: false, label: u.name, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.agentId = u.id;
+                        o.agent = u;
+                        c._offerService.save(o);
+                    })
+                }},
+            )
+        });
+
+        var stateOpt = [];
+        var states = [
+            {value: 'raw', label: 'Не активен'},
+            {value: 'active', label: 'Активен'},
+            {value: 'work', label: 'В работе'},
+            {value: 'suspended', label: 'Приостановлен'},
+            {value: 'archive', label: 'Архив'}
+        ];
+        var stageOpt = [];
+        var stages = [
+            {value: 'contact', label: 'Первичный контакт'},
+            {value: 'pre_deal', label: 'Заключение договора'},
+            {value: 'show', label: 'Показ'},
+            {value: 'prep_deal', label: 'Подготовка договора'},
+            {value: 'decision', label: 'Принятие решения'},
+            {value: 'negs', label: 'Переговоры'},
+            {value: 'deal', label: 'Сделка'}
+        ];
+        states.forEach(s => {
+            stateOpt.push(
+                {class: "entry", disabled: false, label: s.label, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.stateCode = s.value;
+                        c._offerService.save(o);
+                    })
+                }}
+            )
+        });
+        stages.forEach(s => {
+            stageOpt.push(
+                {class: "entry", disabled: false, label: s.label, callback: function() {
+                    c.selectedOffers.forEach(o => {
+                        o.stageCode = s.value;
+                        c._offerService.save(o);
+                    })
+                }}
+            )
+        });
+
+        let menu = {
+            pX: e.pageX,
+            pY: e.pageY,
+            scrollable: false,
+            items: [
+                {class: "entry", disabled: false, icon: "check", label: 'Проверить', callback: () => {
+                    var tab_sys = this._hubService.getProperty('tab_sys');
+                    var rq = [];
+                    this.selectedOffers.forEach(o => {
+                        rq.push(o.person.phones.join(" "));
+                    });
+                    tab_sys.addTab('list_offer', {query: rq.join(" ")});
+                }},
+                {class: "entry", disabled: false, icon: "document", label: 'Открыть', callback: () => {
+                    var tab_sys = this._hubService.getProperty('tab_sys');
+                    this.selectedOffers.forEach(o => {
+                        tab_sys.addTab('offer', {offer: o});
+                    })
+                }},
+                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
+                {class: "delimiter"},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stateOpt},
+                {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
+                {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
+                    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+                    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+                ]},
+                {class: "submenu", disabled: true, icon: "", label: "Реклама", items: [
+                    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+                    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+                ]},
+                {class: "delimiter"},
+                {class: "entry", disabled: false, icon: "tag", label: 'Теги', callback: () => {}},
+            ]
+        };
+
+        this._hubService.shared_var['cm'] = menu;
+        this._hubService.shared_var['cm_hidden'] = false;
+    }
+
+    click(event: MouseEvent, offer: Offer) {
+
+        var cIdx = this.offers.indexOf(offer);
+
+        this.setLocation(offer);
+
+        if (event.button == 2) {    // right click
+            if (this.selectedOffers.indexOf(offer) == -1) { // if not over selected items
+                this.lastClckIdx = cIdx;
+                this.selectedOffers = [offer];
+            }
+        } else {
+            if (event.ctrlKey) {
+                // add to selection
+                this.lastClckIdx = cIdx;
+                this.selectedOffers.push(offer);
+            } else if (event.shiftKey) {
+                this.selectedOffers = [];
+                var idx = cIdx;
+                var idx_e = this.lastClckIdx;
+                if (cIdx > this.lastClckIdx) {
+                    idx = this.lastClckIdx;
+                    idx_e = cIdx;
+                }
+                while (idx <= idx_e) {
+                    var oi = this.offers[idx++];
+                    this.selectedOffers.push(oi);
+                }
+            } else {
+                this.lastClckIdx = cIdx;
+                this.selectedOffers = [offer];
+            }
+        }
+    }
+
+    dblClick(offer: Offer) {
+        this.openOffer(offer);
+    }
+
+    tStart(offer: Offer) {
+        clearTimeout(this.to);
+        this.to = setTimeout(() => {
+            this.openOffer(offer);
+        }, 1000);
+    }
+
+    tEnd(offer: Offer) {
+        clearTimeout(this.to);
+    }
+
+    setLocation(o: Offer) {
         if (o.locationLat && o.locationLon) {
             this.lat = o.locationLat;
             this.lon = o.locationLon;
         }
     }
 
+    openOffer(offer: Offer) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('offer', {offer: offer});
+    }
+
     scroll(e) {
         if (e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight) {
-
+            this.page += 1;
+            this.listOffers();
         }
     }
 
+    docClick() {
+        this.sgList = [];
+    }
+
+    select(itm) {
+        this.searchQuery = itm;
+        this.sgList = [];
+    }
+
     searchParamChanged(e) {
+        if (this.searchQuery.length > 0) {
+            let sq = this.searchQuery.split(" ");
+            let lp = sq.pop()
+            let q = sq.join(" ");
+            this.sgList = [];
+            if (lp.length > 0) {
+                // запросить варианты
+                console.log(this.searchQuery);
+                this._suggestionService.list(this.searchQuery).subscribe(sgs => {
+                    sgs.forEach(e => {
+                        this.sgList.push(e);
+                    })
+                })
+            }
+        }
+        this.page = 0;
+        this.listOffers();
+    }
+
+    sortChanged(e) {
+        if (e.order == 0) {
+            delete this.sort[e.field];
+        } else {
+            if (e.order == 1) {
+                this.sort[e.field] = "ASC";
+            } else {
+                this.sort[e.field] = "DESC";
+            }
+        }
+
         this.page = 0;
         this.listOffers();
     }
@@ -397,7 +805,33 @@ export class TabListOfferComponent {
         } else {
             this.source = OfferSource.IMPORT;
         }
-
+        this.page = 0;
         this.listOffers();
+    }
+
+    getImage(s: string){
+        if (s == 'local') {
+          if(this.isImport)
+            return "url(res/base.png)";
+          else
+            return "url(res/base_color.png)";
+        } else {
+          if(this.isImport)
+            return "url(res/base_plus_color.png)";
+          else
+            return "url(res/base_plus.png)";
+        }
+    }
+
+    getInputWidth(){
+        if(this.tableMode)
+            return '100%';
+        else return '90%';
+    }
+
+    getSearchPosition(){
+        if(this.tableMode)
+            return '10px';
+        else return '85px';
     }
 }

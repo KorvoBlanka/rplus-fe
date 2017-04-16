@@ -22,7 +22,7 @@ var RequestService = (function () {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/request/';
     }
     ;
-    RequestService.prototype.list = function (page, perPage, offerTypeCode, agentId, personId, searchQuery) {
+    RequestService.prototype.list = function (page, perPage, offerTypeCode, stageCode, agentId, personId, searchQuery) {
         console.log('request list');
         var query = [];
         var user = this._sessionService.getUser();
@@ -30,10 +30,30 @@ var RequestService = (function () {
         query.push('page=' + page);
         query.push('per_page=' + perPage);
         query.push('offerTypeCode=' + offerTypeCode);
+        query.push('stageCode=' + stageCode);
         query.push('agent_id=' + (agentId ? agentId : ''));
         query.push('person_id=' + (personId ? personId : ''));
         query.push('search_query=' + searchQuery);
         var _resourceUrl = this.RS + 'list?' + query.join("&");
+        var ret_subj = new AsyncSubject_1.AsyncSubject();
+        this._http.get(_resourceUrl, { withCredentials: true })
+            .map(function (res) { return res.json(); }).subscribe(function (data) {
+            var requests = data.result;
+            ret_subj.next(requests);
+            ret_subj.complete();
+        }, function (err) { return console.log(err); });
+        return ret_subj;
+    };
+    RequestService.prototype.listForOffer = function (offer) {
+        console.log('request list for offer');
+        var page = 0;
+        var perPage = 16;
+        var query = [];
+        var user = this._sessionService.getUser();
+        query.push('accountId=' + user.accountId);
+        query.push('page=' + page);
+        query.push('per_page=' + perPage);
+        var _resourceUrl = this.RS + 'list_for_offer/' + offer.id + '?' + query.join("&");
         var ret_subj = new AsyncSubject_1.AsyncSubject();
         this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {

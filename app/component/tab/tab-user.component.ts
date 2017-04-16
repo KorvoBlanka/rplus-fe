@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit, trigger, state, style, transition, animate } from '@angular/core';
 
 import {FormatDatePipe} from '../../pipe/format-date.pipe';
 
@@ -21,26 +21,43 @@ import {HistoryService} from '../../service/history.service';
 import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
 import {AnalysisService} from '../../service/analysis.service';
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
     selector: 'tab-user',
     inputs: ['tab'],
     styles: [`
-
+        .header1{
+            width: 100%;
+            height: 110px;
+            line-height: 30px;
+            border-bottom: 4px solid rgba(61, 155, 233, 1);;
+            display: flex;
+        }
+        .header_col{
+            width: calc(100% - 10px);
+            height: 40px;
+            background-color: #f7f7f7;
+            padding-left: 20px;
+            text-transform: uppercase;
+            font-size: 10pt;
+            color: #5f5d5d;
+            line-height: 40px;
+            margin-bottom: 10px;
+        }
         .pane {
             float: left;
             width: 370px;
             height: 100%;
-            border-right: 1px solid #ccc;
         }
-        
+
         .work-area {
             float: left;
             width: 100%;
             height: 100%;
         }
-        
+
         .tab-button {
             width: 30px;
             height: 30px;
@@ -50,54 +67,53 @@ import {AnalysisService} from '../../service/analysis.service';
             cursor: pointer;
             color: #666;
         }
-        
+
         .fixed-button {
             position: fixed;
             top: 0;
             left: 0;
         }
-        
+
         .sebm-google-map-container {
             height: 100%;
         }
-        
+
         .offer-prop {
             overflow-y: scroll;
         }
 
         .view-group {
             margin-bottom: 5px;
-
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
         }
-        
+
         .view-label {
             white-space: nowrap;
-            color: #bbb;
-    
-            font-size: 15px;
+            color: rgb(80, 80, 80);
+            margin-top: 5px;
+            font-size: 10pt;
         }
-        
+
         .view-value {
             width: 100%;
             text-align: right;
             color: #696969;
-            font-size: 15px;
-    
+            font-size: 10pt;
+            margin-top: 5px;
             height: 19px; /* костыль */
+            margin-right: 17px;
         }
-        
+
         .edit-value {
             width: 100%;
             text-align: right;
             color: #696969;
-            font-size: 15px;
-    
+            font-size: 10pt;
+            margin-right: 15px;
             height: 19px; /* костыль */
-    
             border: none !important;
-            border-bottom: 1px solid #E5E5E5 !important;
         }
 
         .text-value {
@@ -105,8 +121,10 @@ import {AnalysisService} from '../../service/analysis.service';
             border: 1px solid #E5E5E5 !important;
         }
 
-        .edit-block > .view-group {
-            margin-bottom: 26px;
+        .edit-block > .view-group, .view-block > .view-group {
+            height: 30px;
+            height: 30px;
+            margin-left: 57px;
         }
 
         .tile-x {
@@ -121,21 +139,21 @@ import {AnalysisService} from '../../service/analysis.service';
             margin: 0;
             margin-right: 10px;
         }
-        
+
         .icon {
             line-height: 64px;
         }
-        
+
         .tile-content.iconic .icon {
             width: 128px;
             margin-left: -64px;
         }
-        
+
         .chart-block {
             overflow:hidden;
             border: 1px solid #e5e5e5;
         }
-        
+
         .chart-header {
             swidth: 100%;
             height: 30px;
@@ -144,21 +162,29 @@ import {AnalysisService} from '../../service/analysis.service';
             color: #fff;
         }
 
+        .array-container{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
         .array-container > span {
             display: block;
             margin-bottom: 5px;
         }
-        
+
         .array-container > input {
             margin-bottom: 5px;
+            width: 80%;
         }
-        
+
         .two-way-switch {
             display: table;
             border: 1px solid #3366cc;
             cursor: pointer;
+            display: none;
         }
-        
+
         .two-way-switch > div {
             display: table-cell;
             width: 90px;
@@ -167,12 +193,12 @@ import {AnalysisService} from '../../service/analysis.service';
             background-color: #fff;
             color: #333;
         }
-        
+
         .two-way-switch > div.active {
             background-color: #3366cc;
             color: #fff;
         }
-        
+
         .button {
             text-align: center;
             padding: 5px 15px;
@@ -181,9 +207,114 @@ import {AnalysisService} from '../../service/analysis.service';
             cursor: pointer;
         }
 
+        .person_face{
+            height: 220px;
+            background-color: #f7f7f7;
+        }
+
+        .person_face > .rate{
+            height: 20px;
+            background-image: url(res/star_rate.png);
+            background-size: contain;
+            width: 100px;
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .person_face > img{
+            width: 120px;
+            height: 90px;
+            margin: 20px 0 10 20px;
+        }
+
+        .person_face  .name{
+            margin: 0 0 0 20px;
+            border: 0 !important;
+            font-size: 16pt;
+            text-align: left;
+            background-color: transparent;
+            color: #595a5a;
+            height: 23px;
+            line-height: 23px;
+        }
+
+        .head{
+            width: 100%;
+            height: 31px;
+            display: block;
+            border-bottom: 4px solid rgba(61, 155, 233, 1);
+        }
+
+        .view_icon{
+            width: 28px;
+            height: 25px;
+            background-size: contain;
+            float: left;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 12px;
+            margin-top: 2px;
+            margin-left: 17px;
+        }
+
+        .edit-block >hr, .view-block >hr{
+                margin: 5px -10px 5px 55px;
+        }
+
+        .arrow{
+            background-image: url(res/arrow.png);
+            width: 18px;
+            height: 10px;
+            background-size: cover;
+            margin: 0 10px;
+            background-position: center;
+            flex: 0 0 18px;
+            position: absolute;
+            top: 5px;
+            right: -10px;
+        }
+
+        .show_value{
+            flex: 0 0 190px;
+            margin-right: 30px;
+            position: relative;
+            text-align: right;
+            height: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .show_value > span:first-child{
+            height: 10px;
+            font-size: 8pt;
+        }
+        .show_value > span:last-child{
+            font-size: 10pt;
+            color: #959595;
+        }
+
+        .add_button{
+            height: 25px;
+            margin-left: 0;
+            margin-right: auto;
+            font-size: 10pt;
+            text-align: right;
+            line-height: 25px;
+            color: #29ac3b;
+        }
+
+        .multiply{
+            position: relative;
+            display: block;
+            height: 30px;
+            width: 287px;
+            margin-right: 15px;
+            margin-left: 0;
+            overflow: hidden;
+        }
+
     `],
     template: `
-
         <div class="tab-button fixed-button" (click)="toggleLeftPane()">
             <span [ngClass]="{'icon-arrow-right': paneHidden, 'icon-arrow-left': !paneHidden}"></span>
         </div>
@@ -193,139 +324,361 @@ import {AnalysisService} from '../../service/analysis.service';
             <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
 
             <div class="pane" [hidden]="paneHidden" [style.width.px]="paneWidth">
-                <div class="header">
+                <div class="header1">
                     <div class="header-label">{{ tab.header }}</div>
                 </div>
-                <div class="person-prop" [style.height]="paneHeight">
-                    <div style="margin: 5px;">
-                        <div class="pull-container">
-                            <div class="font-sz-2 pull-left"><span class="color-g1"><a href="" target="_blank"></a></span></div>
-                            <div class="font-sz-1 color-g2 pull-right"> {{ user.add_date | formatDate }} </div>
-                        </div>
-                        <hr>
-                        <div class="pull-container" style="margin: 0 10px;">
-                            <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()"><a href="#" >Изменить</a></div>
-                            <div class="pull-right" [hidden]="!editEnabled" (click)="save()"><a href="#" >Готово</a></div>
-                        </div>
 
+                <div style="overflow: scroll; overflow-x: hidden; height: calc(100% - 111px);
+                        border-right: 1px solid #cccccc;">
+                    <div class = "person_face">
+                        <img src="">
+                        <div class="view-group" style="flex-wrap: wrap;margin-top: -1px;">
+                            <div class="view-value name" style="text-transform: uppercase;"> {{ user.name?.split(' ')[0] + ''}}</div>
+                            <div class="view-value name" style="font-size: 14pt; margin-top: 3px;"> {{ user.name?.split(' ')[1] + ' '
+                                + user.name?.split(' ')[2]}}</div>
+                        </div>
+                        <div class="rate"></div>
+                    </div>
+                    <div class="pull-container">
+                        <div class="font-sz-2 pull-left"><span class="color-g1" ><a  href="" target="_blank"></a></span></div>
+                        <div class="font-sz-1 color-g2 pull-right"> {{ user.add_date | formatDate }} </div>
+                    </div>
+                    <div class="pull-container" style="margin: 20px 10px 0px;">
+                        <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()" style="font-size: 10pt;"><a href="#" >Изменить</a></div>
+                        <div class="pull-right" [hidden]="!editEnabled" (click)="save()" style="font-size: 10pt;"><a href="#" >Готово</a></div>
+                    </div>
+                    <div class="person-prop">
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: НАЧАЛО -->
 
-                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 20px 10px;">
-                            <div class="view-group">
-                                <span class="view-label">Логин</span>
-                                <input type="text" class="view-value edit-value" [(ngModel)]="user.login">
+                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 10px 10px 0px;">
+                            <div class="header_col">Информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'ФИО'" [value] = "user.name"
+                                    [width] = "'225px'" (onChange)= "user.name = $event">
+                                </ui-input-line>
                             </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Пароль</span>
-                                <input type="password" class="view-value edit-value" [(ngModel)]="user.password">
-                            </div>
-                        
-                        
-                            <div class="view-group">
-                                <span class="view-label">Имя</span>
-                                <input type="text" class="view-value edit-value" [(ngModel)]="user.name">
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label">Роль</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Офис:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "[
+                                        {value: 'NOA', label: 'Не указан'},
+                                        {value: 'AGENT', label: 'Центральный'},
+                                        {value: 'MANAGER', label: 'Головной'}
+                                    ]"
+                                    [value]="user.office"
+                                    (onChange)="user.office = $event.selected.value">
+                                </ui-slidingMenu>
+
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Отдел:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 'AGENT', label: 'Жилая недвижимость'},
+                                        {value: 'MANAGER', label: 'Коммерческая недвижимость'},
+                                        {value: 'TOP', label: 'Загородная недвижимость'}
+                                    ]"
+                                    [value]="user.department"
+                                    (onChange)="user.department = $event.selected.value">
+                                </ui-slidingMenu>
+
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Должность:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 'TRAINEE', label: 'Стажер'},
+                                        {value: 'TRAINEE', label: 'Оператор Call-центра'},
                                         {value: 'AGENT', label: 'Агент'},
                                         {value: 'MANAGER', label: 'Менеджер'},
-                                        {value: 'TOP', label: 'Директор'}
+                                        {value: 'TOP_MANAGER', label: 'Топ Менеджер'},
+                                        {value: 'DIRECTOR', label: 'Директор'}
                                     ]"
                                     [value]="user.role"
-                                    (onChange)="user.role = $event.selected.value"
-                                >
-                                </ui-select>
+                                    (onChange)="user.role = $event.selected.value">
+                                </ui-slidingMenu>
                             </div>
+                            <hr>
+
+                            <div class='view_icon' *ngIf="user.role == 'AGENT'" [style.background-image]="'url(res/user_icon/post.png)'"></div>
                             <div class="view-group" *ngIf="user.role == 'AGENT'">
                                 <span class="view-label">Менеджер</span>
-                                <ui-select class="view-value edit-value"
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "superiorOpts"
                                     [value]="superior?.id"
                                     (onChange)="superiorChanged($event)"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Телефон <a *ngIf="user.phones.length < 3" href="#" (click)="addPhone()"><span class="icon-add"></span></a></span>
-                                <div class="array-container">
-                                    <input *ngIf="user.phones.length > 0" type="text" class="view-value edit-value" [(ngModel)]="user.phones[0]">
-                                    <input *ngIf="user.phones.length > 1" type="text" class="view-value edit-value" [(ngModel)]="user.phones[1]">
-                                    <input *ngIf="user.phones.length > 2" type="text" class="view-value edit-value" [(ngModel)]="user.phones[2]">
-                                    <!--<input *ngFor="let phone of user.phones; let i = index" type="text" class="view-value edit-value" [ngModel]="user.phones[i]">-->
+                            <hr  *ngIf="user.role == 'AGENT'">
 
-                                </div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/date_start.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Дата приёма'" [value] = "user.date"
+                                    [width] = "'225px'" (onChange)= "user.date = $event">
+                                </ui-input-line>
                             </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/date_end.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Дата увольнения'" [value] = "user.dateEnd"
+                                    [width] = "'225px'" (onChange)= "user.dateEnd = $event">
+                                </ui-input-line>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/responsible.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">e-mail <a *ngIf="user.emails.length < 3" href="#" (click)="addEmail()" ><span class="icon-add"></span></a></span>
-                                <div class="array-container">
-                                    <input *ngIf="user.emails.length > 0" type="text" class="view-value edit-value" [(ngModel)]="user.emails[0]">
-                                    <input *ngIf="user.emails.length > 1" type="text" class="view-value edit-value" [(ngModel)]="user.emails[1]">
-                                    <input *ngIf="user.emails.length > 2" type="text" class="view-value edit-value" [(ngModel)]="user.emails[2]">
-                                    <!--<input *ngFor="let email of user.emails; let i = index" type="text" class="view-value edit-value" [(ngModel)]="user.emails[i]">-->
-                                </div>
+                                <span class="view-label">Ответственный:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "agentOpts"
+                                    [value]="agent?.id"
+                                    (onChange)="agentChanged($event)"
+                                >
+                                </ui-slidingMenu>
+
                             </div>
-                            <br>
-                            <div class="view-group" style="flex-wrap: wrap;">
-                                <span class="view-label">Иформация</span>
-                                <textarea class="view-value text-value" placeholder="" [(ngModel)]="user.description" style="text-align: left;"></textarea>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
+                            <div class="view-group" >
+                                <span class="view-label">Статус:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 'ACTIVE', label: 'Активно'},
+                                        {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                        {value: 'ARCHIVE', label: 'Архив'}
+                                    ]"
+                                [value]="user.condition"
+                                (onChange)="user.condition = $event.selected.value">
+                                >
+                                </ui-slidingMenu>
+                            </div>
+
+                            <div class="header_col">Контакты</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                            <div class="view-group multiply">
+                                <span class="view-label pull-left">Телефоны:</span>
+                                <div class="show_value">
+                                    <span>{{ user.phones[0]|| " "}}</span>
+                                    <span>{{ user.phones[0] ||" "}}</span>
+                                </div>
+                                <div class='arrow' (click)="showMenu($event)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'MOBILE', label: 'Мобильный'},
+                                        {value: 'HOME', label: 'Домашний'},
+                                        {value: 'WORK', label: 'Рабочий'},
+                                        {value: 'MAIN', label: 'Основной'},
+                                        {value: 'SAME', label: 'Другой'}
+                                    ]"
+                                    [masks] = "['+_ (___) ___-__-__',
+                                                '+_ (____) __-__-__',
+                                                '+_ (___) ___-__-__',
+                                                '+_ (____) ___-___',
+                                                '+_ (____) __-__-__']"
+                                    [values]="user.phones"
+                                    [width]="'43%'"
+                                    (onChange)="user.phones = $event.selected.value">
+                                </ui-multiselect>
+                                    <!--<input *ngIf="user.phones.length > 0" type="text" placeholder="+7(___)___-__-__"
+                                        class="view-value edit-value"  [(ngModel)]="user.phones[0]">-->
+                            </div>
+
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
+                            <div class="view-group multiply">
+                                <span class="view-label pull-left">E-mail:</span>
+                                <div class="show_value">
+                                    <span>{{user.emails[0]?.split("$")[0] || " "}}</span>
+                                    <span>{{user.emails[0]?.split("$")[1] || " "}}</span>
+                                </div>
+                                <div class='arrow' (click)="showMenu($event)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'MOBILE', label: 'Рабочий'},
+                                        {value: 'PERSON', label: 'Личный'},
+                                        {value: 'OTHER', label: 'Другой'}
+                                        ]"
+                                    [masks] = "['', '', '']"
+                                    [values]="user.emails"
+                                    [width]="'36%'"
+                                    (onChange)="user.emails = $event.selected.value">
+                                </ui-multiselect>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                            <div class="view-group multiply">
+                                <span class="view-label pull-left">Адрес проживания:</span>
+                                <div class="show_value">{{user.phones[0] || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'KRAY', label: 'Регион'},
+                                        {value: 'CITY', label: 'Нас. пункт'},
+                                        {value: 'DISTRICT', label: 'Район'},
+                                        {value: 'STREET', label: 'Улица'},
+                                        {value: 'HOUSE', label: 'Дом'},
+                                        {value: 'HOUSING', label: 'Корпус'},
+                                        {value: 'FLAT', label: 'Квартира'}
+                                    ]"
+                                    [masks] = "['',
+                                                '',
+                                                '',
+                                                '',
+                                                '',
+                                                '',
+                                                '']"
+                                    [values]="user.phones"
+                                    [width]="'36%'"
+                                    (onChange)="user.address = $event.selected.value">
+                                </ui-multiselect>
+                                    <!--<input *ngIf="user.phones.length > 0" type="text" placeholder="+7(___)___-__-__"
+                                        class="view-value edit-value"  [(ngModel)]="user.phones[0]">-->
+                            </div>
+
+                            <div class="header_col">Вход в систему</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/login.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Логин'" [value] = "user.login"
+                                    [width] = "'225px'" (onChange)= "user.login = $event">
+                                </ui-input-line>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/password.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Пароль'" [value] = "user.password"
+                                    [width] = "'225px'" (onChange)= "user.password = $event">
+                                </ui-input-line>
+                            </div>
+
+                            <div class="header_col">Дополнительная информация</div>
+                            <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
+                                <textarea class="view-value text-value"
+                                    placeholder="Введите информацию о пользователе" [(ngModel)]="user.description"
+                                    style="text-align: left;">
+                                </textarea>
                             </div>
                         </div>
 
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: КОНЕЦ -->
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
 
-                        <div class="view-block" [hidden]="editEnabled" style="margin: 20px 10px;">
+                        <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
+                            <div class="header_col">Информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">ФИО:</span>
+                                <span class="view-value" > {{ user.name || 'Не указан'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Офис:</span>
+                                <span class="view-value" > {{ user.office || 'Не указан'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Отдел:</span>
+                                <span class="view-value"> {{ user.department || 'Не указан'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Должность:</span>
+                                <span class="view-value" *ngIf = "getRole(user.role)"> {{ getRole(user.role) || 'Не указанa'}}</span>
+                                <span class="view-value1" *ngIf = "!getRole(user.role)"> {{ getRole(user.role) || 'Не указанa'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
+                            <div class="view-group" *ngIf="user.role == 'AGENT'">
+                                <span class="view-label">Менеджер:</span>
+                                <span class="view-value"> {{ superior?superior.name:'' }}</span>
+                            </div>
+                            <hr  *ngIf="user.role == 'AGENT'">
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/date_start.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Дата приёма:</span>
+                                <span class="view-value"> {{ user.post || 'Не указанa'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/date_end.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Дата увольнения:</span>
+                                <span class="view-value"> {{ user.post || 'Не указанa'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/responsible.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Ответственный:</span>
+                                <span class="view-value"> {{ user?.agent || 'Окончена'}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Статус:</span>
+                                <span class="view-value"> {{ user.condition || 'Активно'}}</span>
+                            </div>
+
+                            <div class="header_col">Контакты</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Телефон:</span>
+                                <div class="array-container">
+                                    <div style="display: flex; flex-direction: column; height: 32px; margin-right: 15px;
+                                        margin-top: -5px; color: dimgrey;">
+                                        <span style="font-size: 8pt; color: #c0c0c0;">Сотовый</span>
+                                        <span style="margin-top: -3px;">+7 (999) 888-66-66</span>
+                                    </div>
+                                    <!--<span *ngFor="let phone of user.phones" class="view-value"> {{ phone }} </span>-->
+                                </div>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">E-mail:</span>
+                                <div style="display: flex; flex-direction: column; height: 32px; margin-right: 15px;
+                                    margin-top: -5px; color: dimgrey;">
+                                    <span style="font-size: 8pt; color: #c0c0c0;">Рабочий</span>
+                                    <span style="margin-top: -3px;"> {{ email }} </span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Адрес проживания:</span>
+                                <div class="array-container">
+                                    <span *ngFor="let email of user.emails" class="view-value"> Хабаровск... </span>
+                                </div>
+                            </div>
+                            <div class="header_col">Вход в систему</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/login.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Логин</span>
                                 <span class="view-value"> {{ user.login }}</span>
                             </div>
+
+                            <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
-                                <span class="view-label">Имя</span>
-                                <span class="view-value"> {{ user.name }}</span>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label">Роль</span>
-                                <span class="view-value"> {{ user.role }}</span>
-                            </div>
-                            <div class="view-group" *ngIf="user.role == 'AGENT'">
-                                <span class="view-label">Менеджер</span>
-                                <span class="view-value"> {{ superior?superior.name:'' }}</span>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Телефон </span>
-                                <div class="array-container">
-                                    <span *ngFor="let phone of user.phones" class="view-value"> {{ phone }} </span>
-                                </div>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">e-mail</span>
-                                <div class="array-container">
-                                    <span *ngFor="let email of user.emails" class="view-value"> {{ email }} </span>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Информация</span>
                                 <span class="view-value" style="height: initial;"> {{ user.info }} </span>
                             </div>
                         </div>
 
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
-
-                        <div style="margin-bottom: 20px;">
-                            <div class="view-group">
-                                <span class="icon-tag"> Тэги</span>
-                            </div>
+                        <div class="header_col">Тэги</div>
+                        <div style="margin: 0 0 20px 20px;">
                             <ui-tag-block
                                 [value] = "user.tag"
                                 (valueChange) = "user.tag = $event.value"
                             ></ui-tag-block>
                         </div>
-
-                    </div>
                 </div>
+            </div>
             </div>
 
             <!-- Левая СТВОРКА: КОНЕЦ -->
@@ -334,25 +687,28 @@ import {AnalysisService} from '../../service/analysis.service';
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
                     [headerMode]="!paneHidden"
+                    [iconUrls]="['res/main_offers.png', 'res/request1.png', 'res/analitic.png']"
+                    [iconUrls_active]="['res/main_offers_color.png', 'res/request1_color.png', 'res/analitic_color.png']"
                 >
-                    <ui-tab
+                    <!--<ui-tab
                         [title]="'Предложения'"
                         (tabSelect)="offersSelected()"
                     >
-    
+
                         <div class="" style="position: absolute; top: 15px; left: 15px; z-index: 1;">
                             <div class="two-way-switch">
                                 <div [class.active]="requestOfferType == 'sale'" (click)="toggleOffer('sale')">Продажа</div>
                                 <div [class.active]="requestOfferType == 'rent'" (click)="toggleOffer('rent')">Аренда</div>
                             </div>
                         </div>
-    
+
                         <!-- сильное колдунство, св-во right получаем из HubService -->
                         <!-- TODO: сделать это отдельным компонентом -->
-                        <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+                        <!--<div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
                             <div style="width: 330px; background-color: #fff;">
-                                <div class="header">
-                                    <input type="text" style="width: 280px; margin-left: 10px; border: none;"
+                                <div class="head">
+                                    <input type="text" style="width: 280px; margin-left: 10px; border: 1px solid silver;
+                                                                background-color: #f7f7f7;"
                                         (keydown)="offerSearchKeydown($event)"
                                     >
                                     <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
@@ -360,7 +716,7 @@ import {AnalysisService} from '../../service/analysis.service';
                                     ></span>
                                 </div>
                                 <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
-    
+
                                     <digest-offer *ngFor="let offer of offers"
                                         [offer]="offer"
                                         [compact]="true"
@@ -369,9 +725,9 @@ import {AnalysisService} from '../../service/analysis.service';
                                 </div>
                             </div>
                         </div>
-                        <google-map [latitude]="lat" [longitude]="lon" [objects]="offers" [zoom]="zoom">
+                        <!--<google-map [latitude]="lat" [longitude]="lon" [objects]="offers" [zoom]="zoom">
                         </google-map>
-                    </ui-tab>
+                    </ui-tab>-->
 
                     <ui-tab
                         [title]="'Заявки'"
@@ -384,14 +740,14 @@ import {AnalysisService} from '../../service/analysis.service';
                             </div>
                         </div>
                         <div class="" style="max-width: 910px; overflow-y: scroll; " [style.height]="paneHeight">
-        
+
                             <digest-request *ngFor="let request of requests"
                                 [request]="request"
                             >
                             </digest-request>
                         </div>
                     </ui-tab>
-                
+
                     <ui-tab [title]="'Аналитика'"
                         (tabSelect)="analysisSelected()"
                     >
@@ -416,8 +772,8 @@ import {AnalysisService} from '../../service/analysis.service';
                                     </div>
                                 </div>
                             </div>
-        
-                            <div style="padding: 15px;">        
+
+                            <div style="padding: 15px;">
                                 <div style="float: left; display: flex; flex-direction: column;">
                                     <div class="tile bg-gorange fg-white" style="margin-bottom: 5px;">
                                         <div class="tile-content iconic">
@@ -432,7 +788,7 @@ import {AnalysisService} from '../../service/analysis.service';
                                         <span class="tile-label">Потрачено руб.</span>
                                     </div>
                                 </div>
-        
+
                                 <div class="chart-block">
                                     <div class="chart-header bg-gorange">
                                         <span style="margin-left: 25px;">Реклама</span>
@@ -446,7 +802,7 @@ import {AnalysisService} from '../../service/analysis.service';
                                     </div>
                                 </div>
                             </div>
-        
+
                             <div style="padding: 15px;">
                                 <div class="tile bg-gblue fg-white">
                                     <div class="tile-content iconic">
@@ -526,6 +882,8 @@ export class TabUserComponent implements OnInit, AfterViewInit {
 
     historyRecs: HistoryRecord[];
 
+    agentOpts: any[] = [];
+
     paneHidden: boolean = false;
     paneHeight: number;
     paneWidth: number;
@@ -552,9 +910,16 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     ch4_data_v2: number;
 
     log(e) {
-        console.log(e);
+        //console.log(e);
     }
 
+    getRole(val){
+        switch(val){
+            case 'AGENT': return null;
+            case 'MANAGER': return 'Менеджер';
+            case 'TOP': return 'Директор';
+        }
+    }
 
     constructor(private _hubService: HubService,
                 private _userService: UserService,
@@ -565,8 +930,18 @@ export class TabUserComponent implements OnInit, AfterViewInit {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _personService: PersonService,
+                private _sessionService: SessionService,
                 private _organisationService: OrganisationService) {
 
+                _userService.list(null, null, "").subscribe(agents => {
+                    for (let i = 0; i < agents.length; i++) {
+                        var a = agents[i];
+                        this.agentOpts.push({
+                            value: a.id,
+                            label: a.name
+                        });
+                    }
+                });
 
     }
 
@@ -574,9 +949,18 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.user = this.tab.args.user;
 
         var c = this._configService.getConfig();
-        this.zoom = c.map.zoom;
-        this.lat = c.map.lat;
-        this.lon = c.map.lon;
+
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
+        }
 
         if (this.user.id == null) {
             this.editEnabled = true;
@@ -600,9 +984,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.calcSize();
     }
 
-    ngAfterViewInit() {
-        setTimeout(() => {this.tab.header = 'Пользователь'});
-    }
+    ngAfterViewInit() {        setTimeout(() => {            if (this.user.id) {                this.tab.header = 'Пользователь ';            } else {                this.tab.header = 'Новый пользователь';            }        });    }
 
     onResize(e) {
         this.calcSize();
@@ -612,9 +994,9 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         if (this.paneHidden) {
             this.paneWidth = 0;
         } else {
-            this.paneWidth = 420;
+            this.paneWidth = 370;
         }
-        this.mapWidth = document.body.clientWidth - (30 * 2) - this.paneWidth;
+        this.mapWidth = document.body.clientWidth - (31) - this.paneWidth;
         this.paneHeight = document.body.clientHeight - 31;
     }
 
@@ -627,12 +1009,18 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.editEnabled = !this.editEnabled;
     }
 
-    addPhone() {
+    addPhone(event) {
         this.user.phones.push('');
+        let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement.parentElement;
+        let height: number = this.user.phones.length * 30;
+        parent.style.setProperty('height', ""+(height+60)+'px');
     }
 
     addEmail() {
         this.user.emails.push('');
+        let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement.parentElement;
+        let height: number = this.user.emails.length * 30;
+        parent.style.setProperty('height', ""+(height+60)+'px');
     }
 
     superiorChanged(e) {
@@ -645,11 +1033,19 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     }
 
     save() {
-
-        this._userService.save(this.user).subscribe(user => {
-            this.user = user;
-            this.toggleEdit();
-        });
+        /*/let tempArr : string[] = [];
+        for(let i=0; i<this.user.phones.length; ++i){
+            if(this.user.phones[i].trim() != "")
+                tempArr.push(this.user.phones[i].trim());
+        }
+        this.user.phones = tempArr;
+        tempArr = [];
+        for(let i=0; i<this.user.emails.length; ++i){
+            if(this.user.emails[i].trim() != "")
+                tempArr.push(this.user.emails[i].trim());
+        }
+        this.user.emails = tempArr;*/
+        this._userService.save(this.user).subscribe(user => {            setTimeout(() => {                this.user = user;            });            this.toggleEdit();        });
     }
 
     offersSelected() {
@@ -689,14 +1085,10 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.historyRecs = this._historyService.getObjHistory();
     }
 
-    getOffers(page, perPage) {
-        this._offerService.list(0, 32, OfferSource.LOCAL, {agentId: this.user.id, offerTypeCode: this.requestOfferType}, "", []).subscribe(offers => {
-            this.offers = offers;
-        });
-    }
+    getOffers(page, perPage) {        this._offerService.list(0, 32, OfferSource.LOCAL, {agentId: this.user.id, offerTypeCode: this.requestOfferType}, null, "", []).subscribe(offers => {            this.offers = offers.list;        });    }
 
     getRequests(page, perPage) {
-        this._requestService.list(0, 32, this.requestOfferType, this.user.id, null, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, "all", this.user.id, null, "").subscribe(requests => {
             this.requests = requests;
         });
     }
@@ -720,5 +1112,30 @@ export class TabUserComponent implements OnInit, AfterViewInit {
 
     getOfferDigest(r: Offer) {
         return Offer.getDigest(r);
+    }
+
+    showMenu(event){
+        let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
+        let height: number = parent.getElementsByTagName('input').length * 35;
+        if(parent.offsetHeight == 30){
+            console.log(height);
+            parent.style.setProperty('height', ""+(height+60)+'px');
+            parent.style.setProperty('overflow', "visible");
+             (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');
+        }
+        else{
+             parent.style.setProperty('height', "30px");
+             parent.style.setProperty('overflow', "hidden");
+              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(0deg)')
+        }
+    }
+
+    agentChanged(e) {
+        /*this.us.person.userId = e.selected.value;
+        if (this.person.userId != null) {
+            this._userService.get(this.person.userId).subscribe(agent => {
+                this.agent = agent;
+            });
+        }*/
     }
 }

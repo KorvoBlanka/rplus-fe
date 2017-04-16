@@ -16,7 +16,9 @@ var GoogleMapComponent = (function () {
     function GoogleMapComponent(_elem) {
         this._elem = _elem;
         this.markers = [];
+        this.placesMarkers = [];
         this.infoWindows = [];
+        this.placesWindows = new google.maps.InfoWindow();
         this.latitude = 0;
         this.longitude = 0;
         this.zoom = 8;
@@ -34,6 +36,7 @@ var GoogleMapComponent = (function () {
             disableDefaultUI: true
         };
         this.map = new google.maps.Map(this.container, opts);
+        this.service = new google.maps.places.PlacesService(this.map);
         if (this.polygone_points) {
             this.polygone = new google.maps.Polygon({
                 paths: this.toGooglePoints(this.polygone_points),
@@ -51,6 +54,7 @@ var GoogleMapComponent = (function () {
             this.polygone = new google.maps.Polygon();
         }
         this.refreshMarkers();
+        this.refreshPlacesMarkers();
         this.initDrawer();
     };
     GoogleMapComponent.prototype.ngOnChanges = function (changes) {
@@ -61,6 +65,9 @@ var GoogleMapComponent = (function () {
             switch (p_name) {
                 case 'objects':
                     this.refreshMarkers();
+                    break;
+                case 'place':
+                    this.refreshPlacesMarkers();
                     break;
                 case 'latitude':
                 case 'longitude':
@@ -106,8 +113,29 @@ var GoogleMapComponent = (function () {
         });
         this.markers = [];
         var c = this;
+        var minLat = 100000;
+        var minLon = 100000;
+        var maxLat = 0;
+        var maxLon = 0;
+        var mark = 0;
         this.objects.forEach(function (obj) {
             if (obj.locationLat) {
+                if (obj.locationLat > maxLat) {
+                    maxLat = obj.locationLat;
+                    mark++;
+                }
+                if (obj.locationLon > maxLon) {
+                    maxLon = obj.locationLon;
+                    mark++;
+                }
+                if (obj.locationLat < minLat) {
+                    minLat = obj.locationLat;
+                    mark++;
+                }
+                if (obj.locationLon < minLon) {
+                    minLon = obj.locationLon;
+                    mark++;
+                }
                 var m = new google.maps.Marker({
                     map: _this.map,
                     position: new google.maps.LatLng(obj.locationLat, obj.locationLon),
@@ -125,6 +153,50 @@ var GoogleMapComponent = (function () {
                     //c.click.emit(_this);
                 });
             }
+        });
+        if (mark > 3) {
+            var bounds = new google.maps.LatLngBounds();
+            //sw
+            bounds.extend(new google.maps.LatLng(minLat, minLon));
+            //ne
+            bounds.extend(new google.maps.LatLng(maxLat, maxLon));
+            this.map.fitBounds(bounds);
+        }
+    };
+    GoogleMapComponent.prototype.refreshPlacesMarkers = function () {
+        var _this = this;
+        this.placesMarkers = [];
+        if (this.place == null)
+            return;
+        this.placesMarkers.forEach(function (m) {
+            m.setMap(null);
+        });
+        var request = {
+            bounds: this.map.getBounds(),
+            keyword: this.place
+        };
+        this.service.radarSearch(request, function (results, status) {
+            for (var i = 0; i < results.length; i++) {
+                _this.addMark(new google.maps.Marker({
+                    map: _this.map,
+                    position: results[i].geometry.location,
+                    animation: google.maps.Animation.DROP
+                }), results[i], _this.service);
+            }
+        });
+    };
+    GoogleMapComponent.prototype.addMark = function (elem, rez, serv) {
+        var _this = this;
+        this.placesMarkers.push(elem);
+        google.maps.event.addListener(elem, 'mouseover', function () {
+            serv.getDetails(rez, function (result, status) {
+                if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                    console.error(status);
+                    return;
+                }
+                _this.placesWindows.setContent(result.name);
+                _this.placesWindows.open(_this.map, elem);
+            });
         });
     };
     GoogleMapComponent.prototype.initDrawer = function () {
@@ -204,6 +276,7 @@ GoogleMapComponent = __decorate([
             'longitude',
             'zoom',
             'objects',
+            'place',
             'draw_allowed',
             'polygone_points'
         ],

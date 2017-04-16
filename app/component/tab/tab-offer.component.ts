@@ -1,6 +1,5 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 
-
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
 import {OfferService} from '../../service/offer.service';
@@ -20,6 +19,11 @@ import {Photo} from '../../class/photo';
 import {User} from '../../class/user';
 import {PersonService} from "../../service/person.service";
 import {Person} from "../../class/person";
+import {UploadService} from "../../service/upload.service";
+import {SuggestionService} from "../../service/suggestion.service";
+
+import {SessionService} from "../../service/session.service";
+import {GoogleChartComponent} from '../ui/chart/google-chart.component';
 
 
 @Component({
@@ -30,15 +34,15 @@ import {Person} from "../../class/person";
             float: left;
             width: 370px;
             height: 100%;
-            border-right: 1px solid #ccc;
+            //border-right: 1px solid #ccc;
         }
-        
+
         .work-area {
             float: left;
             width: 100%;
             height: 100%;
         }
-        
+
         .tab-button {
             width: 30px;
             height: 30px;
@@ -48,7 +52,7 @@ import {Person} from "../../class/person";
             cursor: pointer;
             color: #666;
         }
-        
+
         .fixed-button {
             position: fixed;
             top: 0;
@@ -60,38 +64,48 @@ import {Person} from "../../class/person";
         }
 
         .view-group {
-            margin-bottom: 5px;    
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
-
+            align-items: flex-start;
+            height: 30px;
         }
-        
+
         .view-label {
             white-space: nowrap;
-            color: #bbb;
-    
-            font-size: 15px;
+            color: rgb(80, 80, 80);
+            margin-top: 5px;
+            font-size: 10pt;
+            width: 115px;
+            display: inline-block;
+            flex: 0 0 115px;
         }
-        
+
         .view-value {
-            width: 100%;;
+            width: 170px;
             text-align: right;
             color: #696969;
-            font-size: 15px;
-    
-            height: 19px; /* костыль */
+            font-size: 10pt;
+            margin-top: 5px;
+            height: 19px;
+            margin-right: 17px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        
+
+        .view-block .view-value {
+            overflow: hidden;
+            margin-right: 0;
+        }
+
         .edit-value {
             width: 100%;
             text-align: right;
             color: #696969;
-            font-size: 15px;
-    
+            font-size: 10pt;
+            margin-right: 15px;
             height: 19px; /* костыль */
-    
             border: none !important;
-            border-bottom: 1px solid #E5E5E5 !important;
         }
 
         .text-value {
@@ -99,8 +113,10 @@ import {Person} from "../../class/person";
             border: 1px solid #E5E5E5 !important;
         }
 
-        .edit-block > .view-group {
-            margin-bottom: 26px;
+        .edit-block > .view-group, .view-block > .view-group {
+            height: 30px;
+            height: 30px;
+            margin-left: 57px;
         }
 
         .tile-x {
@@ -114,21 +130,21 @@ import {Person} from "../../class/person";
         .tile {
             margin: 0 10px 0 0;
         }
-        
+
         .icon {
             line-height: 64px;
         }
-        
+
         .tile-content.iconic .icon {
             width: 128px;
             margin-left: -64px;
         }
-        
+
         .chart-block {
             overflow:hidden;
             border: 1px solid #e5e5e5;
         }
-        
+
         .chart-header {
             width: 100%;
             height: 30px;
@@ -136,6 +152,328 @@ import {Person} from "../../class/person";
             line-height: 30px;
             color: #fff;
         }
+        .title_row{
+            width: calc(100% - 20px);
+            height: 30px;
+            line-height: 30px;
+            background-color: #f1f1f1;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            color: #464646;
+            font-size: 11pt;
+            margin-top: 30px;
+        }
+
+        .head{
+            width: 100%;
+            height: 73px;
+            display: block;
+            background-color: #f7f7f7;
+        }
+
+        .view_icon{
+            width: 28px;
+            height: 25px;
+            background-size: contain;
+            float: left;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 12px;
+            margin-top: 2px;
+            margin-left: 17px;
+        }
+
+        .edit-block hr, .view-block hr{
+                margin: 5px -10px 5px 55px;
+        }
+
+        .graph{
+            width: 350px;
+            float: left;
+            position: relative;
+        }
+        .graph > .price{
+            position: absolute;
+            z-index: 100;
+            margin-left: 10px;
+            color: dimgrey;
+        }
+
+        .arrow{
+            background-image: url(res/arrow.png);
+            width: 18px;
+            height: 10px;
+            background-size: cover;
+            margin: 0 10px;
+            background-position: center;
+            flex: 0 0 18px;
+            position: absolute;
+            top: 5px;
+            right: -10px;
+        }
+
+        .show_value{
+            flex: 0 0 190px;
+            margin-right: 30px;
+            position: relative;
+            text-align: right;
+            height: 30px;
+            display: flex;
+            flex-direction: column;
+            font-size: 10pt;
+            color: dimgrey;
+        }
+
+        .gm_container{
+            width: calc(100% - 370px);
+            height: 500px;
+            display:flex;
+        }
+
+        .map_menu{
+            width: 150px;
+            background-color: #f7f7f7;
+            border-right: 1px solid silver;
+            border-top: 1px solid silver;
+        }
+        .map_menu >div {
+            height: 30px;
+            width: 80%;
+            text-align: left;
+            background-color: rgba(0, 140, 219, 1);
+            color: #ffffff;
+            margin: 3px auto;
+            line-height: 30px;
+            font-size: 10pt;
+            padding-left: 20px;
+        }
+
+        .map_menu >div:hover, .active_map_menu {
+            background-color: rgba(18, 54, 120, 1) !important;
+            color: white !important;
+        }
+
+        .offer_face{
+            height: 220px;
+            background-color: #f7f7f7;
+        }
+
+        .offer_face > .price{
+            font-size: 20pt;
+            text-align: center;
+            color: #3d9be9;
+            margin-top: 5px;
+        }
+
+        .offer_face > .rate{
+            height: 20px;
+            background-image: url(res/star_rate.png);
+            background-size: contain;
+            width: 100px;
+            margin-left: 20px;
+            margin-top: 15px;
+        }
+
+        .offer_face > div{
+            font-size: 11pt;
+            margin: 20px 0 0 20px;
+            text-align: left;
+            display: inline-block;
+            width: 300px;
+        }
+
+        .offer_face > .street{
+            font-size: 17pt;
+            margin-top: 0;
+            color: black;
+        }
+
+        .offer_face > .district{
+            font-size: 10pt;
+            margin: 0px 0 15px 20px;
+            color: dimgrey;
+        }
+
+        .offer_face > .rooms{
+            font-size: 11pt;
+            margin: 0 0 0 20px;
+            text-align: left;
+        }
+        .offer_face > .rooms >div{
+            width: 18px;
+            height: 18px;
+            float: left;
+            background-size: cover;
+            margin-right: 3px;
+        }
+
+        .header_col{
+            width: calc(100% - 10px);
+            height: 40px;
+            background-color: #f7f7f7;
+            padding-left: 20px;
+            text-transform: uppercase;
+            font-size: 10pt;
+            color: #5f5d5d;
+            line-height: 40px;
+            margin-bottom: 10px;
+        }
+
+        .star_container{
+            height: 380px;
+            background-color: #f7f7f7;
+        }
+
+        .statistic{
+            position: relative;
+            height: 380px;
+            border-right: 1px solid silver;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            background-color: #f7f7f7;
+            width: calc(100% - 371px);
+            float: left;
+        }
+
+        .statistic > div{
+            margin-left: 20px;
+            width: 365px;
+        }
+
+        .statistic > div:first-of-type >span{
+            margin-top: 8px;
+            display: block;
+            font-size: 9pt;
+            color: #5b5b5b;
+        }
+
+        .statistic > hr{
+            height: 1px;
+            width: 90%;
+            margin: 0 auto 30px;
+            border: 0;
+            border-top: 1px solid silver;
+        }
+
+        .statistic .rate_line{
+            width: 100%;
+            height: 25px;
+            margin-top: 10px;
+            display: flex;
+        }
+
+        .statistic > div:not(:last-child) >div:first-child {
+            ext-align: left;
+            color: #293c63;
+            width: 360px;
+            margin-bottom: 17px;
+        }
+
+        .statistic .rate_line>div:last-child{
+            line-height: 25px;
+            margin-left: 15px;
+            font-size: 11pt;
+            color: #5b5b5b;
+        }
+
+        .statistic > div:nth-child(3)>span{
+            margin-top: 15px;
+            display: block;
+            font-size: 10pt;
+            color: #5b5b5b;
+            text-align: left;
+        }
+
+        .statistic >div:nth-child(2), .statistic >div:nth-child(3){
+                width: 320px;
+        }
+
+        .statistic > div .rate_line >div:first-child {
+            background-image: url(res/star_rate.png);
+            background-size: 15px 15px;
+            width: 75px;
+            background-position: left center;
+            background-repeat: repeat-x;
+        }
+        .statistic .rate_line>div:first-child>div{
+            background-image: url(res/star_active.png);
+            height: 25px;
+            background-size: 15px 15px;
+            background-position: left center;
+            background-repeat: repeat-x;
+        }
+
+        .statistic >div:nth-child(2):hover .rate_line >div:first-child{
+            background-image: url(res/star_rate_disabled.png);
+            background-size: 20px 20px;
+            width: 101px;
+            background-position: left center;
+            background-repeat: repeat-x;
+        }
+
+        .statistic >div:nth-child(2):hover .rate_line >div:first-child>div{
+            background-image: url();
+        }
+
+        .multiply{
+            position: relative;
+            display: block;
+            height: 30px;
+            width: 284px;
+            margin-right: 0px;
+            margin-left: auto;
+            overflow: hidden;
+        }
+
+        .multiselect{
+            width: 285px;
+            position: relative;
+            display: block;
+            margin-right: 0;
+            margin-left: auto;
+            overflow: hidden;
+        }
+
+        .suggestions {
+            min-width: 160px;
+            margin-top: 27px;
+            padding: 5px 0;
+            background-color: #f7f7f7;
+            border: 1px solid #e3e3e3;
+            width: 88%;
+            position: absolute;
+            z-index: 2;
+            font-size: 11pt;
+        }
+
+        .suggestions > ul {
+            margin: 0 0;
+            list-style: none;
+            padding: 3px 20px;
+        }
+
+        .suggestions > ul:hover {
+            background: #bbbbbb;
+            cursor: default;
+        }
+
+        a {
+            cursor: hand;
+        }
+
+        .a1{
+            margin-right: 18px;
+            width: 143px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: right;
+            font-size: 10pt;
+            margin-top: 5px;
+        }
+
+
     `],
     template: `
         <div class="tab-button fixed-button" (click)="toggleLeftPane()">
@@ -150,380 +488,1806 @@ import {Person} from "../../class/person";
                 <div class="header">
                     <div class="header-label">{{ tab.header }}</div>
                 </div>
-                <div class="offer-prop" [style.height]="paneHeight">
-                    <div style="margin: 5px;">
-                        <div class="pull-container">
-                            <div class="font-sz-2 pull-left">Источник: <span class="color-g1"><a href="" target="_blank">{{ offer.sourceMedia }}</a></span></div>
+                <div class="offer-prop" style="overflow: scroll; overflow-x: hidden; height: calc(100% - 111px);
+                        border-right: 1px solid #cccccc;">
+                    <div class = "offer_face">
+                        <div class="price">{{(offer.ownerPrice === undefined ? " " : split_number(offer.ownerPrice*1000) ) + " Р"}} </div>
+                        <div class="type" style="text-transform: uppercase; color: #696969; height: 19px; margin-top: 0;">
+                            <ui-view-value
+                                [options] = "typeCodeOptions"
+                                [value]="offer.typeCode"
+                                [Style]="{'text-align': 'left', 'width': '300px'}"
+                                    >
+                            </ui-view-value>
+                        </div>
+                        <div class="street"> {{ (offer.street_n === undefined ? " " : offer.street_n) + (offer.house_n === undefined ? " " : (", "+ offer.house_n))}}</div>
+                        <div class="district"> {{ (offer.city_n === undefined ? " " : offer.city_n) +(offer.district === undefined ? " " : (", "+ offer.district))}}</div>
+                        <div class="rooms">
+                            <div [style.background-image]="'url(res/offer_icon/rooms.png)'"></div>
+                            {{ "Комнат "+ (offer.roomsCount === undefined ? " " : offer.roomsCount)}}
+                        </div>
+                        <div class="rooms">
+                            <div [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                            {{ "Этаж "+ (offer.floor === undefined ? " " : offer.floor)}}
+                        </div>
+                        <div class="rate"></div>
+                    </div>
+
+                    <div>
+                        <div class="pull-container" style="margin: 20px 10px 0px;">
+                            <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()" style="font-size: 10pt;"><a href="#" >Изменить</a></div>
+                            <div class="pull-right" [hidden]="!editEnabled" (click)="save()" style="font-size: 10pt;"><a href="#" >Готово</a></div>
+                        </div>
+                        <!--<div class="pull-container">
+
                             <div class="font-sz-1 color-g2 pull-right"> {{offer.lastSeenDate }} </div>
                         </div>
                         <div class="font-sz-2 color-g2 line-clamp line-clamp-2" style="margin: 5px 5px 0 5px;">{{ offer.sourceMediaText }}</div>
-                        <hr>
-    
-                        <div class="pull-container" style="margin: 0 10px;">
-                            <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()"><a href="#" >Изменить</a></div>
-                            <div class="pull-right" [hidden]="!editEnabled" (click)="save()"><a href="#" >Готово</a></div>
-                        </div>
-    
+                        -->
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: НАЧАЛО -->
-    
-                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 20px 10px;">
+
+                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 10px 10px 0px;">
+                            <div class="header_col">Поиск клиента</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                            <div class="view-group multiply" style=' height: 30px;'>
+                                <span class="view-label pull-left">Телефоны:</span>
+                                <div class="show_value"></div><div class='arrow' (click)="showMenu($event, true)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                        [options] = "[
+                                            {value: 'MOBILE', label: 'Мобильный'},
+                                            {value: 'HOME', label: 'Домашний'},
+                                            {value: 'SAME', label: 'Другой'}
+                                        ]"
+                                        [masks] = "['+_ (___) ___-__-__',
+                                                    '+_ (____) __-__-__',
+                                                    '+_ (____) __-__-__']"
+                                        [values]="['+7914444444']"
+                                        [width]="'43%'"
+                                        (onChange)="$event.selected.value">
+                                </ui-multiselect>
+                            </div>
+
+                            <div class="header_col">Сопроводительная информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Ответственный</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Ответственный:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "agentOpts"
                                     [value]="offer.agent?.id"
                                     (onChange)="agentChanged($event)"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "offer.contract"
+                                        [width] = "'225px'" (onChange)= "offer.contract = $event">
+                                </ui-input-line>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Статус</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Стадия:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "stateCodeOptions"
                                     [value]="offer.stateCode"
                                     (onChange)="offer.stateCode = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Стадия</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "stageCodeOptions"
-                                    [value]="1"
-                                    (onChange)="offer.stageCode = $event.selected.value"
+                                <span class="view-label pull-left">Источник:</span>
+                                <ui-slidingMenu class="view-value edit-value" *ngIf="!offer.sourceUrl_n"
+                                    [options] = "sourceOptions"
+                                    [value]="offer.sourceCode_n"
+                                    (onChange)="offer.sourceCode_n = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
+                                <span class="color-g1" *ngIf="offer.sourceUrl_n">
+                                    <a href="" target="_blank" class="a1">{{ offer.sourceUrl_n }}</a>
+                                </span>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/offer.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Собственник</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "personOpts"
-                                    [value]="offer.person?.id"
-                                    (onChange)="personChanged($event)"
-                                >
-                                </ui-select>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label pull-left"></span>
-                                <span class="view-value"> </span>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Договор</span>
-                                <span class="view-value"> ... </span>
-                            </div>
-    
-                            <br>
-    
-                            <div class="view-group">
-                                <span class="view-label pull-left">Предложение</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Предложение:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "offerTypeCodeOptions"
                                     [value]="offer.offerTypeCode"
                                     (onChange)="offer.offerTypeCode = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/property_type.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Тип недвижимости</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "typeCodeOptions"
+                                <span class="view-label">Категория:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 'REZIDENTIAL', label: 'Жилая недвижимость'},
+                                        {value: 'COMMERSIAL', label: 'Коммерческая недвижимость'},
+                                        {value: 'LAND', label: 'Земельный участок'}
+                                    ]"
+                                    [value]="categoryOffer"
+                                    (onChange)="categoryOffer = $event.selected.value"
+                                >
+                                </ui-slidingMenu>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/type2.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Тип объекта:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "getTypeCodeArray()"
                                     [value]="offer.typeCode"
                                     (onChange)="offer.typeCode = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
-    
-                            <div class="view-group">
-                                <span class="view-label">Город</span>
-                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.locality">
-                            </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Район</span>
-                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.district">
-                            </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Адрес</span>
-                                <input type="text" class="view-value edit-value" [(ngModel)]="offer.address">
-                            </div>
-    
-                            <div class="view-group">
+
+                            <!--<div class="view-group">
                                 <span class="view-label">Номер</span>
                                 <input class="view-value edit-value vv-2" [(ngModel)]="offer.houseNum">/
                                 <input class="view-value edit-value vv-2" [(ngModel)]="offer.apNum">
+                            </div>-->
+
+
+                            <div class = "header_col">Описание объекта:</div>
+                    <div *ngIf="offer.typeCode == 'apartment' || offer.typeCode == 'room' || offer.typeCode == 'apartment_small' || offer.typeCode == 'apartment_small'">
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                            <div class="view-group multiselect" style='height: 30px;'>
+                                <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "''"
+                                    [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                </ui-input-line>
+                                <div class='arrow' (click)="showMenu($event, true)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'KRAY', label: 'Регион'},
+                                        {value: 'CITY', label: 'Нас. пункт'},
+                                        {value: 'DISTRICT', label: 'Район'},
+                                        {value: 'STREET', label: 'Улица'},
+                                        {value: 'HOUSE', label: 'Дом'},
+                                        {value: 'HOUSING', label: 'Корпус'},
+                                        {value: 'FLAT', label: 'Квартира'}
+                                    ]"
+                                    [masks] = "['','','','','','','']"
+                                    [values]="offerAddress"
+                                    [width]="'36%'"
+                                    (onChange)="parseArray($event, offerAddress)">
+                                </ui-multiselect>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                            <div class="view-group" >
+                                <span class="view-label">Статус объекта:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 'true', label: 'Новостройка'},
+                                        {value: 'false', label: 'Вторичка'}
+                                    ]"
+                                    [value]="offer.newBuilding_n?.toString()"
+                                    (onChange)="offer.newBuilding_n = ($event.selected.value == 'true')"
+                                >
+                                </ui-slidingMenu>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                            <div class="view-group" >
+                                <span class="view-label">Стадия объекта:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "[
+                                        {value: 'PROJECT', label: 'Проект'},
+                                        {value: 'BUILDING', label: 'Строящийся'},
+                                        {value: 'READY', label: 'Сдан'}
+                                    ]"
+                                    [value]="offer.objectStage_n"
+                                    (onChange)="offer.objectStage_n = $event.selected.value"
+                                >
+                                </ui-slidingMenu>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
+                                        [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
+                                </ui-input-line>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/property_type.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Планировка</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Тип дома:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "apSchemaOptions"
                                     [value]="offer.apSchemeId"
                                     (onChange)="offer.apSchemeId = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Материал стен</span>
-                                <ui-select class="view-value edit-value"
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                            <div class="view-group" >
+                                <span class="view-label">Материал:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "houseTypeOptions"
                                     [value]="offer.houseTypeId"
                                     (onChange)="offer.houseTypeId = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Количество комнат</span>
-                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.roomsOfferCount">/
-                                <input type="number" class="view-value edit-value vv-2" [(ngModel)]="offer.roomsCount">
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/rooms.png)'"></div>
+                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Количество комнат:'" [value] = "offer.roomsCount"
+                                    [width] = "'225px'" (onChange)= "offer.roomsCount = ParseInt($event)">
+                                </ui-input-line>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/room_type.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Тип комнаты</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Тип комнат:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "roomSchemeOptions"
                                     [value]="offer.roomSchemeId"
                                     (onChange)="offer.roomSchemeId = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Этаж</span>
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.floor">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.floorsCount">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.levelsCount">
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                            <div class="view-group multiply">
+                                <span class="view-label pull-left">Этажи:</span>
+                                <div class="show_value">{{" "}}</div>
+                                <div class='arrow' (click)="showMenu($event, true)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'FLOOR', label: 'Этаж'},
+                                        {value: 'FLOORS', label: 'Этажность'},
+                                        {value: 'LEVELS', label: 'Уровней'}
+                                    ]"
+                                    [masks] = "['','','']"
+                                    [values]="offerFloor"
+                                    [width]="'43%'"
+                                    (onChange)="parseArray($event, offerFloor)">
+                                </ui-multiselect>
                             </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Площадь</span>
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.squareTotal">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.squareLiving">/
-                                <input class="view-value edit-value vv-3" [(ngModel)]="offer.squareKitchen">
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                            <div class="view-group multiply">
+                                <span class="view-label pull-left">Площадь:</span>
+                                <div class="show_value">{{" "}}</div>
+                                <div class='arrow' (click)="showMenu($event, true)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'TOTAL', label: 'Общая'},
+                                        {value: 'LIVING', label: 'Жилая'},
+                                        {value: 'KITCHEN', label: 'Кухня'}
+                                    ]"
+                                    [masks] = "['','','','']"
+                                    [values]="offerSquare"
+                                    [width]="'43%'"
+                                    (onChange)="parseArray($event, this.offerSquare)">
+                                </ui-multiselect>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Балкон</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "balconyOptions"
-                                    [value]="offer.balconyId"
-                                    (onChange)="offer.balconyId = $event.selected.value"
+                                <span class="view-label">Лоджия:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "YesNoOptions"
+                                    [value]="offer.loggia_n?.toString()"
+                                    (onChange)="offer.loggia_n = ($event.selected.value == 'true')"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Санузел</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Балкон:</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "YesNoOptions"
+                                    [value]="offer.balcony_n?.toString()"
+                                    (onChange)="offer.balcony_n =  ($event.selected.value == 'true')"
+                                >
+                                </ui-slidingMenu>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/toilet.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Санузел:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "bathroomOptions"
-                                    [value]="offer.bathroomId"
-                                    (onChange)="offer.bathroomId = $event.selected.value"
+                                    [value]="offer.bathroom_n"
+                                    (onChange)="offer.bathroom_n = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Состояние</span>
-                                <ui-select class="view-value edit-value"
+                                <span class="view-label">Состояние:</span>
+                                <ui-slidingMenu class="view-value edit-value"
                                     [options] = "conditionOptions"
-                                    [value]="offer.conditionId"
-                                    (onChange)="offer.conditionId = $event.selected.value"
+                                    [value]="offer.condition_n"
+                                    (onChange)="offer.condition_n = $event.selected.value"
                                 >
-                                </ui-select>
+                                </ui-slidingMenu>
                             </div>
-    
-                            <div class="view-group">
-                                <span class="view-label">Цена</span>
-                                <input class="view-value edit-value vv-2" [(ngModel)]="offer.ownerPrice">/
-                                <input class="view-value edit-value vv-2" [(ngModel)]="offer.agencyPrice">
-                            </div>
-    
-                            <div class="view-group" style="flex-wrap: wrap;">
-                                <span class="view-label">Описание</span>
-                                <textarea class="view-value text-value" placeholder="" [(ngModel)]="offer.description" style="text-align: left;"></textarea>
-                            </div>
-    
+                            <hr>
                         </div>
-    
+                <div *ngIf="offer.typeCode == 'house' || offer.typeCode == 'townhouse' || offer.typeCode == 'cottage' || offer.typeCode == 'dacha' ">
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
+                                <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                    <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
+                                        [width] = "'225px'" (onChange)= "offer.distance_n = $event">
+                                    </ui-input-line>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                    <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement_n"
+                                        [width] = "'225px'" (onChange)= "offer.settlement_n = $event">
+                                    </ui-input-line>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                <div class="view-group multiselect" style='height: 30px;'>
+                                    <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "''"
+                                        [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                    </ui-input-line>
+                                    <div class='arrow' (click)="showMenu($event, true)"></div>
+                                    <ui-multiselect class="view-value edit-value" style=""
+                                        [options] = "[
+                                            {value: 'KRAY', label: 'Регион'},
+                                            {value: 'CITY', label: 'Нас. пункт'},
+                                            {value: 'DISTRICT', label: 'Район'},
+                                            {value: 'STREET', label: 'Улица'},
+                                            {value: 'HOUSE', label: 'Дом'},
+                                            {value: 'HOUSING', label: 'Корпус'},
+                                            {value: 'FLAT', label: 'Квартира'}
+                                        ]"
+                                        [masks] = "['','','','','','','']"
+                                        [values]="offerAddress"
+                                        [width]="'36%'"
+                                        (onChange)="parseArray($event, offerAddress)">
+                                    </ui-multiselect>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Охрана:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.guard"
+                                        (onChange)="$event.selected.value"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                    <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
+                                            [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
+                                    </ui-input-line>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                    <ui-input-line [placeholder] = "'Количество этажей:'" [value] = "offer.floorsCount"
+                                            [width] = "'225px'" (onChange)= "parseArray([{type: 'FLOORS', value: $event}], offerFloor)">
+                                    </ui-input-line>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/rooms.png)'"></div>
+                                <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                    <ui-input-line [placeholder] = "'Количество комнат:'" [value] = "offer.roomsCount"
+                                        [width] = "'225px'" (onChange)= "offer.roomsCount = $event">
+                                    </ui-input-line>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/room_type.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Тип комнат:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "roomSchemeOptions"
+                                        [value]="offer.roomSchemeId"
+                                        (onChange)="offer.roomSchemeId = $event.selected.value"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                <div class="view-group multiply">
+                                    <span class="view-label pull-left">Площадь дома:</span>
+                                    <div class="show_value">{{" "}}</div>
+                                    <div class='arrow' (click)="showMenu($event, true)"></div>
+                                    <ui-multiselect class="view-value edit-value" style=""
+                                        [options] = "[
+                                            {value: 'TOTAL', label: 'Общая'},
+                                            {value: 'LIVING', label: 'Жилая'},
+                                            {value: 'KITCHEN', label: 'Кухня'}
+                                        ]"
+                                        [masks] = "['','','','']"
+                                        [values]="offerSquare"
+                                        [width]="'43%'"
+                                        (onChange)="parseArray($event, this.offerSquare)">
+                                    </ui-multiselect>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Состояние:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "conditionOptions"
+                                        [value]="offer.condition_n"
+                                        (onChange)="offer.condition_n = $event.selected.value"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                                <div class="view-group" >
+                                    <span class="view-label">Материал:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "houseTypeOptions"
+                                        [value]="offer.houseTypeId"
+                                        (onChange)="offer.houseTypeId = $event.selected.value"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Лоджия:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.loggia_n?.toString()"
+                                        (onChange)="offer.loggia_n =  ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Балкон:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.balcony_n?.toString()"
+                                        (onChange)="offer.balcony_n = ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/toilet.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Санузел:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "bathroomOptions"
+                                        [value]="offer.bathroom_n"
+                                        (onChange)="offer.bathroom_n = $event.selected.value"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/water.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Водоснабжение:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.waterSupply_n?.toString()"
+                                        (onChange)="offer.waterSupply_n = ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/gas.png)'"></div>
+                                <div class="view-group">
+                                        <span class="view-label">Газификация:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.gasification_n?.toString()"
+                                        (onChange)="offer.gasification_n = ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/electrification.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Электроснабжение:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.electrification_n?.toString()"
+                                        (onChange)="offer.electrification_n = ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/sewerage.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Канализация:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.sewerage_n?.toString()"
+                                        (onChange)="offer.sewerage_n = ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Отопление:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "YesNoOptions"
+                                        [value]="offer.centralHeating_n?.toString()"
+                                        (onChange)="offer.centralHeating_n = ($event.selected.value == 'true')"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                <div class="view-group multiply">
+                                    <span class="view-label pull-left">Площадь участка:</span>
+                                    <div class="show_value">{{offer.squareLand}}</div>
+                                    <div class='arrow' (click)="showMenu($event, true)"></div>
+                                    <ui-multiselect class="view-value edit-value" style=""
+                                        [options] = "[
+                                            {value: '0', label: 'Сотки'},
+                                            {value: '1', label: 'Гектары'}
+                                        ]"
+                                        [masks] = "['','']"
+                                        [values]="landSquare"
+                                        [width]="'43%'"
+                                        (onChange)="parseArray($event, landSquare)">
+                                    </ui-multiselect>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Назначение земель:</span>
+                                    <ui-slidingMenu class="view-value edit-value"
+                                        [options] = "landOption"
+                                        [value]="offer.landPurpose_n"
+                                        (onChange)="offer.landPurpose_n = $event.selected.value"
+                                    >
+                                    </ui-slidingMenu>
+                                </div>
+                                <hr>
+                        </div>
+                        <div *ngIf="offer.typeCode == 'land'">
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
+                                    <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                        <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
+                                            [width] = "'225px'" (onChange)= "offer.distance_n = $event">
+                                        </ui-input-line>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                    <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                        <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement_n"
+                                            [width] = "'225px'" (onChange)= "offer.settlement_n = $event">
+                                        </ui-input-line>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                    <div class="view-group multiselect" style='height: 30px;'>
+                                        <ui-input-line [placeholder] = "'Адрес участка:'" [value] = "''"
+                                            [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                        </ui-input-line>
+                                        <div class='arrow' (click)="showMenu($event, true)"></div>
+                                        <ui-multiselect class="view-value edit-value" style=""
+                                            [options] = "[
+                                                {value: 'KRAY', label: 'Регион'},
+                                                {value: 'CITY', label: 'Нас. пункт'},
+                                                {value: 'DISTRICT', label: 'Район'},
+                                                {value: 'STREET', label: 'Улица'},
+                                                {value: 'HOUSE', label: 'Дом'},
+                                                {value: 'HOUSING', label: 'Корпус'},
+                                                {value: 'FLAT', label: 'Квартира'}
+                                            ]"
+                                            [masks] = "['','','','','','','']"
+                                            [values]="offerAddress"
+                                            [width]="'36%'"
+                                            (onChange)="parseArray($event, offerAddress)">
+                                        </ui-multiselect>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Охрана:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.guard"
+                                            (onChange)="offer.guard = $event.selected.value"
+                                        >
+                                        </ui-slidingMenu>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Назначение земель:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "landOption"
+                                            [value]="offer.landPurpose_n"
+                                            (onChange)="offer.landPurpose_n = $event.selected.value"
+                                        >
+                                        </ui-slidingMenu>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                    <div class="view-group multiply">
+                                        <span class="view-label pull-left">Площадь участка:</span>
+                                        <div class="show_value">{{offer.squareLand}}</div>
+                                        <div class='arrow' (click)="showMenu($event, true)"></div>
+                                        <ui-multiselect class="view-value edit-value" style=""
+                                            [options] = "[
+                                                {value: '0', label: 'Сотки'},
+                                                {value: '1', label: 'Гектары'}
+                                            ]"
+                                            [masks] = "['','']"
+                                            [values]="landSquare"
+                                            [width]="'43%'"
+                                            (onChange)="parseArray($event, landSquare)">
+                                        </ui-multiselect>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/water.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Водоснабжение:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.waterSupply_n?.toString()"
+                                            (onChange)="offer.waterSupply_n = ($event.selected.value == 'true')"
+                                        >
+                                        </ui-slidingMenu>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/gas.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Газификация:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.gasification_n?.toString()"
+                                            (onChange)="offer.gasification_n = ($event.selected.value == 'true')"
+                                        >
+                                        </ui-slidingMenu>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/electrification.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Электроснабжение:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.electrification_n?.toString()"
+                                            (onChange)="offer.electrification_n = ($event.selected.value == 'true')"
+                                        >
+                                        </ui-slidingMenu>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/sewerage.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Канализация:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.sewerage_n?.toString()"
+                                            (onChange)="offer.sewerage_n =($event.selected.value == 'true')"
+                                        >
+                                    </ui-slidingMenu>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Отопление:</span>
+                                        <ui-slidingMenu class="view-value edit-value"
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.centralHeating_n?.toString()"
+                                            (onChange)="offer.centralHeating_n = ($event.selected.value == 'true')"
+                                        >
+                                        </ui-slidingMenu>
+                                    </div>
+                        </div>
+
+                        <div *ngIf="offer.typeCode == 'market_place' || offer.typeCode == 'production_place' || offer.typeCode == 'warehouse_place' ||
+                        offer.typeCode == 'service_place'|| offer.typeCode == 'gpurpose_place' || offer.typeCode == 'building'  || offer.typeCode == 'other'">
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
+                                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                            <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
+                                                [width] = "'225px'" (onChange)= "offer.distance_n = $event">
+                                            </ui-input-line>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                            <ui-input-line [placeholder] = "'Название:'" [value] = "offer.objectName_n"
+                                                [width] = "'225px'" (onChange)= "offer.objectName_n = $event">
+                                            </ui-input-line>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                        <div class="view-group multiselect" style='height: 30px;'>
+                                            <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "''"
+                                                [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                            </ui-input-line>
+                                            <div class='arrow' (click)="showMenu($event, true)"></div>
+                                            <ui-multiselect class="view-value edit-value" style=""
+                                                [options] = "[
+                                                    {value: 'KRAY', label: 'Регион'},
+                                                    {value: 'CITY', label: 'Нас. пункт'},
+                                                    {value: 'DISTRICT', label: 'Район'},
+                                                    {value: 'STREET', label: 'Улица'},
+                                                    {value: 'HOUSE', label: 'Дом'},
+                                                    {value: 'HOUSING', label: 'Корпус'},
+                                                    {value: 'FLAT', label: 'Квартира'}
+                                                ]"
+                                                [masks] = "['','','','','','','']"
+                                                [values]="offerAddress"
+                                                [width]="'36%'"
+                                                (onChange)="parseArray($event, offerAddress)">
+                                            </ui-multiselect>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                                        <div class="view-group" >
+                                            <span class="view-label">Статус объекта:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "[
+                                                    {value: 'true', label: 'Новостройка'},
+                                                    {value: 'false', label: 'Вторичка'}
+                                                ]"
+                                                [value]="offer.newBuilding_n?.toString()"
+                                                (onChange)="offer.newBuilding_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                                        <div class="view-group" >
+                                            <span class="view-label">Стадия объекта:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "[
+                                                    {value: 'PROJECT', label: 'Проект'},
+                                                    {value: 'BUILDING', label: 'Строящийся'},
+                                                    {value: 'READY', label: 'Сдан'}
+                                                ]"
+                                                [value]="offer.objectStage_n"
+                                                (onChange)="offer.objectStage_n = $event.selected.value"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                            <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
+                                                    [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
+                                            </ui-input-line>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/property_type.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Тип здания:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "[
+                                                    {value: 'NEW', label: 'Бизнес центр'},
+                                                    {value: 'N1EW', label: 'Торгово-развлекательный комплекс'},
+                                                    {value: 'TRE', label: 'Не жилой фонд'},
+                                                    {value: 'OLD', label: 'Жилой фонд'}
+                                                ]"
+                                                [value]="offer.buildingType_n"
+                                                (onChange)="offer.buildingType_n = $event.selected.value"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/layout.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Класс здания:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "[
+                                                    {value: '1', label: 'А'},
+                                                    {value: '2W', label: 'А+'},
+                                                    {value: 'T3', label: 'Б'},
+                                                    {value: '4', label: 'Б+'},
+                                                    {value: '5', label: 'С'},
+                                                    {value: '6', label: 'С+'}
+                                                ]"
+                                                [value]="offer.buildingClass_n"
+                                                (onChange)="offer.buildingClass_n = $event.selected.value"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                                        <div class="view-group" >
+                                            <span class="view-label">Материал:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "houseTypeOptions"
+                                                [value]="offer.houseTypeId"
+                                                (onChange)="offer.houseTypeId = $event.selected.value"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class="view-group multiply">
+                                            <span class="view-label pull-left">Этажи:</span>
+                                            <div class="show_value">{{" "}}</div>
+                                            <div class='arrow' (click)="showMenu($event, true)"></div>
+                                            <ui-multiselect class="view-value edit-value" style=""
+                                                [options] = "[
+                                                    {value: 'FLOOR', label: 'Этаж'},
+                                                    {value: 'FLOORS', label: 'Этажность'},
+                                                    {value: 'LEVELS', label: 'Уровней'}
+                                                ]"
+                                                [masks] = "['','','']"
+                                                [values]="offerFloor"
+                                                [width]="'43%'"
+                                                (onChange)="parseArray($event, offerFloor)">
+                                            </ui-multiselect>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/water.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Водоснабжение:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.waterSupply_n?.toString()"
+                                                (onChange)="offer.waterSupply_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/gas.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Газификация:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.gasification_n?.toString()"
+                                                (onChange)="offer.gasification_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/electrification.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Электроснабжение:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.electrification_n?.toString()"
+                                                (onChange)="offer.electrification_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/sewerage.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Канализация:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.sewerage_n?.toString()"
+                                                (onChange)="offer.sewerage_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Отопление:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.centralHeating_n?.toString()"
+                                                (onChange)="offer.centralHeating_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                        <div class="view-group multiply">
+                                            <span class="view-label pull-left">Площадь помещения:</span>
+                                            <div class="show_value">{{" "}}</div>
+                                            <div class='arrow' (click)="showMenu($event)"></div>
+                                            <ui-multiselect class="view-value edit-value" style=""
+                                                [options] = "[
+                                                    {value: 'TOTAL', label: 'Общая'},
+                                                    {value: 'LIVING', label: 'Жилая'},
+                                                    {value: 'KITCHEN', label: 'Кухня'}
+                                                ]"
+                                                [masks] = "['','','','']"
+                                                [values]="offerSquare"
+                                                [width]="'43%'"
+                                                (onChange)="parseArray($event, offerSquare)">
+                                            </ui-multiselect>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                            <ui-input-line [placeholder] = "'Высота потолков:'" [value] = "offer.ceilingHeight_n"
+                                                [width] = "'225px'" (onChange)= "offer.ceilingHeight_n = $event">
+                                            </ui-input-line>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Состояние помещения:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "conditionOptions"
+                                                [value]="offer.condition_n"
+                                                (onChange)="offer.condition_n = $event.selected.value"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Охрана:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.guard_n?.toString()"
+                                                (onChange)="offer.guard_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Лифт:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.lift_n?.toString()"
+                                                (onChange)="offer.lift_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class="view-group">
+                                            <span class="view-label">Парковка:</span>
+                                            <ui-slidingMenu class="view-value edit-value"
+                                                [options] = "YesNoOptions"
+                                                [value]="offer.parking_n?.toString()"
+                                                (onChange)="offer.parking_n = ($event.selected.value == 'true')"
+                                            >
+                                            </ui-slidingMenu>
+                                        </div>
+                                        <hr>
+                                </div>
+
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/cost.png)'"></div>
+                            <div class="view-group" style='position: relative; display: block; height: 30px; width: 275px;
+                                    margin-right: 15px; margin-left: auto; overflow: hidden;'>
+                                <span class="view-label" style = 'float: left;'>Цена</span>
+                                <div class="show_value">{{' '+(+(offer.ownerPrice || 0) + (offer.agencyPrice || 0))+ ' т.руб.'}}</div>
+                                <div class='arrow' (click)="showMenu($event, true)"></div>
+                                <ui-multiselect class="view-value edit-value" style=""
+                                    [options] = "[
+                                        {value: 'OWNER', label: 'Собственника'},
+                                        {value: 'RUBLES', label: 'Коммисия (руб)'},
+                                        {value: 'PERSENT', label: 'Коммисия (%)'}
+                                    ]"
+                                    [masks] = "['','',''    ]"
+                                    [values]="offerPrice"
+                                    [width]="'39%'"
+                                    (onChange)="parseArray($event, offerPrice)">
+                                </ui-multiselect>
+                            </div>
+                            <div class="header_col">Дополнительная информация</div>
+                            <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
+                                <textarea class="view-value text-value"
+                                placeholder="" [(ngModel)]="offer.description"
+                                style="text-align: left;"></textarea>
+                            </div>
+                        </div>
+
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: ???? -->
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
-    
-                        <div class="view-block" [hidden]="editEnabled" style="margin: 20px 10px;">
-    
+
+                        <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
+                            <div class="header_col">Контактная информация:</div>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Ответственный</span>
+                                <span class="view-label pull-left">Тип:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'CLIENT', label: 'Клиент'},
+                                        {value: 'KONK', label: 'Конкурент'},
+                                        {value: 'OUR', label: 'Наша компания'},
+                                        {value: 'PARTHER', label: 'Партнер'}
+                                    ]"
+                                    [value]="'Клиент'"
+                                >
+                                </ui-view-value>
+                            </div>
+                            <hr>
+                            <div *ngIf='offer.person'>
+                                <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">ФИО:</span>
+                                    <span class="view-value">  {{ offer.person?.name }} </span>
+                                </div>
+                            </div>
+                            <div *ngIf='offer.organisation'>
+                                <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Название:</span>
+                                    <span class="view-value">  {{ offer.organisation?.name }} </span>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Контактное лицо:</span>
+                                    <span class="view-value">  {{ offer.organisation?.name }} </span>
+                                </div>
+                                <hr>
+                                <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">Должность:</span>
+                                    <span class="view-value">  {{ offer.organisation?.name }} </span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Телефон:</span>
+                                <span class="view-value"> +79144174361 </span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">E-mail:</span>
+                                <span class="view-value"> 123@mail.ru </span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Web-сайт:</span>
+                                <span class="view-value">  </span>
+                            </div>
+
+                            <div class="header_col">Сопроводительная информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Ответственный:</span>
                                 <span class="view-value"> {{ offer.agent?.name }} </span>
                             </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/contract.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Статус</span>
+                                <span class="view-label">Договор:</span>
+                                <span class="view-value"> {{offer.contract}} </span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Стадия:</span>
                                 <ui-view-value
                                     [options] = "stateCodeOptions"
                                     [value]="offer.stateCode"
-                                > 
-                                </ui-view-value>
-                            </div>
-                            <div class="view-group">
-                                <span class="view-label">Стадия</span>
-                                <ui-view-value
-                                    [options] = "stageCodeOptions"
-                                    [value]="offer.stageCode"
                                 >
                                 </ui-view-value>
                             </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Собственник</span>
-                                <span class="view-value"> {{ offer.person?.name }} </span>
+                                <span class="view-label pull-left">Источник:</span>
+                                <span class="color-g1" *ngIf="offer.sourceUrl">
+                                    <a href="{{offer.sourceUrl}}" target="_blank" class="a1">
+                                        {{getSourceName()}}
+                                    </a>
+                                </span>
+                                <ui-view-value *ngIf="!offer.sourceUrl"
+                                    [options] = "sourceOptions"
+                                    [value]="offer.sourceCode_n"
+                                >
+                                </ui-view-value>
                             </div>
-        
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/offer.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left"></span>
-                                <span class="view-value"> </span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Договор</span>
-                                <span class="view-value"> </span>
-                            </div>
-        
-                            <br>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Предложение</span>
+                                <span class="view-label pull-left">Предложение:</span>
                                 <ui-view-value
                                     [options] = "offerTypeCodeOptions"
                                     [value]="offer.offerTypeCode"
                                 >
                                 </ui-view-value>
                             </div>
-        
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/property_type.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Тип недвижимости</span>
+                                <span class="view-label pull-left">Категория:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'REZIDENTIAL', label: 'Жилая недвижимость'},
+                                        {value: 'COMMERSIAL', label: 'Коммерческая недвижимость'},
+                                        {value: 'LAND', label: 'Земельный участок'}
+                                    ]"
+                                    [value]="categoryOffer"
+                                >
+                                </ui-view-value>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/type2.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Тип объекта:</span>
                                 <ui-view-value
                                     [options] = "typeCodeOptions"
                                     [value]="offer.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
-        
+
+                            <div class = "header_col">Описание объекта:</div>
+                            <div *ngIf="offer.typeCode == 'apartment' || offer.typeCode == 'room' || offer.typeCode == 'apartment_small' || offer.typeCode == 'apartment_small'">
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Адрес объекта:</span>
+                                        <span class="view-value"> {{ offer.address }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                                    <div class="view-group" >
+                                        <span class="view-label">Статус объекта:</span>
+                                        <ui-view-value
+                                            [options] = "[
+                                                {value: 'true', label: 'Новостройка'},
+                                                {value: 'false', label: 'Вторичка'}
+                                            ]"
+                                            [value]="offer.newBuilding_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                                    <div class="view-group" >
+                                        <span class="view-label">Стадия объекта:</span>
+                                        <ui-view-value
+                                            [options] = "[
+                                                {value: 'PROJECT', label: 'Проект'},
+                                                {value: 'BUILDING', label: 'Строящийся'},
+                                                {value: 'READY', label: 'Сдан'}
+                                            ]"
+                                            [value]="offer.objectStage_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Год постройки:</span>
+                                        <span class="view-value"> {{ offer.buildYear_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/property_type.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Тип дома:</span>
+                                        <ui-view-value
+                                            [options] = "apSchemaOptions"
+                                            [value]="offer.apSchemeId"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Материал стен:</span>
+                                        <ui-view-value
+                                            [options] = "houseTypeOptions"
+                                            [value]="offer.houseTypeId"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/rooms.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Количество комнат:</span>
+                                        <span class="view-value" style="font-size: 15px;"> {{ offer.roomsCount }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/room_type.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Тип комнат:</span>
+                                        <ui-view-value
+                                            [options] = "roomSchemeOptions"
+                                            [value]="offer.roomSchemeId"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                    <div class="view-group">
+                                    <span class="view-label pull-left" style="width: 113px">Этаж/Этажность:</span>
+                                        <ui-multi-view
+                                            [values] = "[
+                                                {type:'Этаж' , value: offer.floor},
+                                                {type:'Этажность' , value: offer.floorsCount},
+                                                {type:'Уровень' , value: offer.levelsCount}
+                                            ]"
+                                        >
+                                        </ui-multi-view>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Площадь:</span>
+                                        <ui-multi-view
+                                            [values] = "[
+                                                {type:'Общая' , value: offer.squareTotal},
+                                                {type:'Жилая' , value: offer.squareLiving},
+                                                {type:'Кухня' , value: offer.squareKitchen}
+                                            ]"
+                                        >
+                                        </ui-multi-view>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Лоджия:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.loggia_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Балкон:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.balcony_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/toilet.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Санузел:</span>
+                                        <ui-view-value
+                                            [options] = "bathroomOptions"
+                                            [value]="offer.bathroom_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Состояние:</span>
+                                        <ui-view-value
+                                            [options] = "conditionOptions"
+                                            [value]="offer.condition_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                </div>
+                                <div *ngIf="offer.typeCode == 'house' || offer.typeCode == 'townhouse' || offer.typeCode == 'cottage' || offer.typeCode == 'dacha' ">
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Удаленность:</span>
+                                        <span class="view-value"> {{ offer.distance_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Наименование поселения:</span>
+                                        <span class="view-value"> {{ offer.settlement_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Адрес объекта:</span>
+                                        <span class="view-value"> {{ offer.address }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Охрана:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.guard_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Год постройки:</span>
+                                        <span class="view-value"> {{ offer.buildYear_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Этаж/Этажность:</span>
+                                        <ui-multi-view
+                                            [values] = "[
+                                                {type:'Этаж' , value: offer.floor},
+                                                {type:'Этажность' , value: offer.floorsCount},
+                                                {type:'Уровень' , value: offer.levelsCount}
+                                            ]"
+                                        >
+                                        </ui-multi-view>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/rooms.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Количество комнат:</span>
+                                        <span class="view-value"  style="font-size: 15px;"> {{ offer.roomsCount }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/room_type.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Тип комнат:</span>
+                                        <ui-view-value
+                                            [options] = "roomSchemeOptions"
+                                            [value]="offer.roomSchemeId"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Площадь дома:</span>
+                                        <ui-multi-view
+                                            [values] = "[
+                                                {type:'Общая' , value: offer.squareTotal},
+                                                {type:'Жилая' , value: offer.squareLiving},
+                                                {type:'Кухня' , value: offer.squareKitchen}
+                                            ]"
+                                        >
+                                        </ui-multi-view>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Состояние:</span>
+                                        <ui-view-value
+                                            [options] = "conditionOptions"
+                                            [value]="offer.condition_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Материал:</span>
+                                        <ui-view-value
+                                            [options] = "houseTypeOptions"
+                                            [value]="offer.houseTypeId"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Лоджия:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.loggia_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/balcony.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Балкон:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.balcony_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/toilet.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Санузел:</span>
+                                        <ui-view-value
+                                            [options] = "bathroomOptions"
+                                            [value]="offer.bathroom_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/water.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Водоснабжение:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.waterSupply_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/gas.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Газификация:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.gasification_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/electrification.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Электроснабжение:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.electrification_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/sewerage.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Канализация:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.sewerage_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Отопление:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.centralHeating_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Площадь участка:</span>
+                                        <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType_n == 0 ? "cот" : "га") }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Назначение земель:</span>
+                                        <ui-view-value
+                                            [options] = "landOption"
+                                            [value]="offer.landPurpose_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                </div>
+                                <div *ngIf="offer.typeCode == 'land'">
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Удаленность:</span>
+                                        <span class="view-value"> {{ offer.distance_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Наименование поселения:</span>
+                                        <span class="view-value"> {{ offer.settlement_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Адрес участка:</span>
+                                        <span class="view-value"> {{ offer.address }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Охрана:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.guard_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Назначение:</span>
+                                        <ui-view-value
+                                            [options] = "landOption"
+                                            [value]="offer.landPurpose_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Площадь участка:</span>
+                                        <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType_n == 0 ? "cот" : "га") }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/water.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Водоснабжение:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.waterSupply_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/gas.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Газификация:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.gasification_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/electrification.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Электроснабжение:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.electrification_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/sewerage.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Канализация:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.sewerage_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Отопление:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.centralHeating_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                </div>
+                                <div *ngIf="offer.typeCode == 'market_place' || offer.typeCode == 'production_place' || offer.typeCode == 'warehouse_place' ||
+                                offer.typeCode == 'service_place'|| offer.typeCode == 'gpurpose_place' || offer.typeCode == 'building'  || offer.typeCode == 'other'">
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Удаленность:</span>
+                                        <span class="view-value"> {{ offer.distance_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Название:</span>
+                                        <span class="view-value"> {{ offer.objectName_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label">Адрес объекта:</span>
+                                        <span class="view-value"> {{ offer.address }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                                    <div class="view-group" >
+                                        <span class="view-label">Статус объекта:</span>
+                                        <ui-view-value
+                                            [options] = "[
+                                                {value: 'true', label: 'Новостройка'},
+                                                {value: 'false', label: 'Вторичка'}
+                                            ]"
+                                            [value]="offer.newBuilding_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                                    <div class="view-group" >
+                                        <span class="view-label">Стадия объекта:</span>
+                                        <ui-view-value
+                                            [options] = "[
+                                                {value: 'PROJECT', label: 'Проект'},
+                                                {value: 'BUILDING', label: 'Строящийся'},
+                                                {value: 'READY', label: 'Сдан'}
+                                            ]"
+                                            [value]="offer.objectStage_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Год постройки:</span>
+                                        <span class="view-value"> {{ offer.buildYear_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/property_type.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Тип здания:</span>
+                                        <ui-view-value
+                                        [options] = "[
+                                            {value: 'NEW', label: 'Бизнес центр'},
+                                            {value: 'N1EW', label: 'Торгово-развлекательный комплекс'},
+                                            {value: 'TRE', label: 'Не жилой фонд'},
+                                            {value: 'OLD', label: 'Жилой фонд'}
+                                        ]"
+                                        [value]="'N1EW'"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Класс здания:</span>
+                                        <ui-view-value
+                                        [options] = "[
+                                            {value: '1', label: 'А'},
+                                            {value: '2W', label: 'А+'},
+                                            {value: 'T3', label: 'Б'},
+                                            {value: '4', label: 'Б+'},
+                                            {value: '5', label: 'С'},
+                                            {value: '6', label: 'С+'}
+                                        ]"
+                                        [value]="'2W'"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/material.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Материал здания:</span>
+                                        <ui-view-value
+                                            [options] = "houseTypeOptions"
+                                            [value]="offer.houseTypeId"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Этаж/Этажность:</span>
+                                        <ui-multi-view
+                                            [values] = "[
+                                                {type:'Этаж' , value: offer.floor},
+                                                {type:'Этажность' , value: offer.floorsCount},
+                                                {type:'Уровень' , value: offer.levelsCount}
+                                            ]"
+                                        >
+                                        </ui-multi-view>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/water.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Водоснабжение:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.waterSupply_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/gas.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Газификация:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.gasification_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/electrification.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Электроснабжение:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.electrification_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/sewerage.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Канализация:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.sewerage_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Отопление:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.centralHeating_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/square.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Площадь помещения:</span>
+                                        <span class="view-value"> {{ offer.squareTotal }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Высота потолков:</span>
+                                        <span class="view-value"> {{ offer.ceilingHeight_n }} </span>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Состояние:</span>
+                                        <ui-view-value
+                                            [options] = "conditionOptions"
+                                            [value]="offer.condition_n"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Охрана:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.guard_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Лифт:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.lift_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class="view-group">
+                                        <span class="view-label pull-left">Парковка:</span>
+                                        <ui-view-value
+                                            [options] = "YesNoOptions"
+                                            [value]="offer.parking_n?.toString()"
+                                        >
+                                        </ui-view-value>
+                                    </div>
+                                    <hr>
+                                </div>
+
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/cost.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Город</span>
-                                <span class="view-value"> {{ offer.locality }} </span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Район</span>
-                                <span class="view-value"> {{ offer.district }} </span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Адрес</span>
-                                <span class="view-value"> {{ offer.address + ' ' + offer.houseNum || '' }} </span>
-                            </div>
-                            
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Планировка</span>                               
-                                <ui-view-value
-                                    [options] = "apSchemaOptions"
-                                    [value]="offer.apSchemeId"
+                                <span class="view-label pull-left" style="flex: 0 0 50px;">Цена:</span>
+                                <ui-multi-view
+                                    [values] = "[
+                                        {type:'Владельца' , value: offer.ownerPrice},
+                                        {type:'Коммисия(руб)' , value: offer.comission_n},
+                                        {type:'Коммисия(%)' , value: offer.comissionPerc_n}
+                                    ]"
                                 >
-                                </ui-view-value>
+                                </ui-multi-view>
                             </div>
-        
+                            <div class = "header_col">Дополнительное описание</div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Материал стен</span>
-                                <ui-view-value
-                                    [options] = "houseTypeOptions"
-                                    [value]="offer.houseTypeId"
-                                >
-                                </ui-view-value>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Количество комнат</span>
-                                <span class="view-value"> {{ offer.roomsCount }} </span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Тип комнат</span>
-                                <ui-view-value
-                                    [options] = "roomSchemeOptions"
-                                    [value]="offer.roomSchemeId"
-                                >
-                                </ui-view-value>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Этаж</span>
-                                <span class="view-value"> {{ offer.floor }} </span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Площадь</span>
-                                <span class="view-value"> {{ offer.squareTotal }} </span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Балкон</span>
-                                <ui-view-value
-                                    [options] = "balconyOptions"
-                                    [value]="offer.balconyId"
-                                >
-                                </ui-view-value>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Санузел</span>
-                                <ui-view-value
-                                    [options] = "bathroomOptions"
-                                    [value]="offer.bathroomId"
-                                >
-                                </ui-view-value>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Состояние</span>
-                                <ui-view-value
-                                    [options] = "conditionOptions"
-                                    [value]="offer.conditionId"
-                                >
-                                </ui-view-value>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Цена</span>
-                                <span class="color-attention view-value"> {{ offer.ownerPrice }} тыс. руб.</span>
-                            </div>
-        
-                            <div class="view-group">
-                                <span class="view-label pull-left">Описание</span>
                                 <span class="view-value" style="height: initial;"> {{ offer.description }} </span>
                             </div>
-        
                         </div>
-    
+
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
-            
-                        <div style="margin-bottom: 20px;">
-                            <div class="view-group">
-                                <span class="icon-tag"> Тэги</span>
-                            </div>
+                        <div class="header_col">Тэги</div>
+                        <div style="margin: 0 0 20px 20px;">
                             <ui-tag-block
                                 [value] = "offer.tag"
                                 (valueChange) = "offer.tag = $event.value"
                             ></ui-tag-block>
                         </div>
-            
+
+                        <div class="header_col">Фотографии</div>
                         <div style="margin-bottom: 20px;">
-                            <div class="view-group">
-                                <span class="icon-photo"> Фотографии</span>
-                            </div>
                             <ui-carousel
                                 [photos] = "offer.photoUrl"
                             >
@@ -539,58 +2303,146 @@ import {Person} from "../../class/person";
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
                     [headerMode]="!paneHidden"
+                    [iconUrls]="['res/main_offers.png', 'res/analitic.png', 'res/history.png']"
+                    [iconUrls_active]="['res/main_offers_color.png', 'res/analitic_color.png', 'res/history_color.png']"
                 >
                     <ui-tab
-                        [title]="'Карта'"
+                        [title]="'Главная'"
                     >
-                        <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom">
-                            <google-map-marker
-                                *ngIf="offer.locationLat"
-                                (markerClick)="markerClick(offer)"
-                                [latitude]="offer.locationLat"
-                                [longitude]="offer.locationLon"
-                                [info_str]=""
+                        <div class = "gm_container">
+
+                            <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" *ngIf="!sameObject"
+                                style="width: 100%;border-top: 1px solid silver;" [place]="mapQuery"
                             >
-                            </google-map-marker>
-                        </google-map>
-                    </ui-tab>
-                    <ui-tab
-                        [title]="'Похожие объекты'"
-                        (tabSelect)="similarObjSelected()"
-                    >
-                    <!-- сильное колдунство, св-во right получаем из HubService -->
-                    <!-- TODO: сделать это отдельным компонентом -->
-                        <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
-                            <div style="width: 330px; background-color: #fff;">
-                                <div class="header">
-                                    <input type="text" style="width: 280px; margin-left: 10px; border: none;"
-                                        (keydown)="simSearchKeydown($event)"
+                                <google-map-marker
+                                    *ngIf="offer.locationLat"
+                                    (markerClick)="markerClick(offer)"
+                                    [latitude]="offer.locationLat"
+                                    [longitude]="offer.locationLon"
+                                    [info_str]=""
+                                >
+                                </google-map-marker>
+                            </google-map>
+                            <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" [objects]="similarOffers" *ngIf="sameObject"
+                                style="width: 100%;border-top: 1px solid silver;"
+                            >
+                                <google-map-marker
+                                    *ngIf="offer.locationLat"
+                                    (markerClick)="markerClick(offer)"
+                                    [latitude]="offer.locationLat"
+                                    [longitude]="offer.locationLon"
+                                    [info_str]=""
+                                >
+                                </google-map-marker>
+                            </google-map>
+                            <div class="map_menu">
+                                <div [class.active_map_menu]="selectMapMenu == 1" (click)="setMenu(1)">Фото</div>
+                                <div [class.active_map_menu]="selectMapMenu == 2" (click)="setMenu(2)">Карта</div>
+                                <div [class.active_map_menu]="selectMapMenu == 3" (click)="setMenu(3)">Понорама</div>
+                                <div [class.active_map_menu]="selectMapMenu == 4" (click)="setMenu(4)">Маршруты</div>
+                                <div [class.active_map_menu]="selectMapMenu == 5" (click)="similarObjSelected()">Похожие</div>
+                                <div [class.active_map_menu]="selectMapMenu == 6" (click)="requestsSelected()">Заявки</div>
+                                <div [class.active_map_menu]="selectMapMenu == 7" (click)="setMenu(7)">Реклама</div>
+                                <div [class.active_map_menu]="selectMapMenu == 8" (click)="setMenu(8)">Документы</div>
+                                <div [class.active_map_menu]="selectMapMenu == 9" (click)="setMapQuery('Образование', 9)">Образование</div>
+                                <div [class.active_map_menu]="selectMapMenu == 10" (click)="setMapQuery('магазины', 10)">Продукты</div>
+                                <div [class.active_map_menu]="selectMapMenu == 11" (click)="setMapQuery('спортзал', 11)">Спорт клубы</div>
+                                <div [class.active_map_menu]="selectMapMenu == 12" (click)="setMapQuery('больница', 12)">Здоровье</div>
+                                <div [class.active_map_menu]="selectMapMenu == 13" (click)="setMapQuery('музей', 13)">Культура</div>
+                                <div [class.active_map_menu]="selectMapMenu == 14" (click)="setMapQuery('кинотеатр', 14)">Досуг</div>
+                                <div [class.active_map_menu]="selectMapMenu == 15" (click)="setMapQuery('кафе', 15)">Общепит</div>
+                            </div>
+                            <div style="position: absolute;z-index: 1;border-left: 1px solid rgb(204, 204, 204);right: 1px;
+                                    height: 500px; overflow: hidden;"
+                                [style.right]="_hubService.shared_var['nb_width']"
+                                *ngIf="sameObject"
+                            >
+                                <div style="width: 369px; background-color: #fff;">
+                                    <div class="head">
+                                        <input type="text" style="width: 319px; margin-left: 10px; border: none; margin-top: 10px;"
+                                            (keydown)="simSearchKeydown($event)"
+                                        >
+                                        <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
+                                            (click)="simSearch()"
+                                        ></span>
+                                    </div>
+                                    <div class="" style="width: 100%; overflow-y: scroll; height: 425px;">
+                                        <div *ngFor="let offer of similarOffers">
+                                            <digest-offer
+                                                [offer]="offer"
+                                                [compact]="true"
+                                            >
+                                            </digest-offer>
+                                            <hr style="margin: 0;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="position: absolute;z-index: 1;border-left: 1px solid rgb(204, 204, 204);right: 1px;
+                                    height: 500px; overflow: hidden;"
+                                [style.right]="_hubService.shared_var['nb_width']"
+                                *ngIf="!sameObject"
+                            >
+                                <div class="head">
+                                    <input type="text" style="width: 319px; margin-left: 10px; border: none; margin-top: 10px;"
+                                        (keydown)="console.log($event)"
                                     >
                                     <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
                                         (click)="simSearch()"
                                     ></span>
                                 </div>
-                                <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
-                                    <digest-offer *ngFor="let offer of similarOffers"
-                                        [offer]="offer"
+                                <div class="" style="width: 369px; background-color: #fff; overflow-y: scroll; height: 500px">
+                                    <digest-request *ngFor="let request of requests"
+                                        [request]="request"
                                         [compact]="true"
+                                        [color]="'#0e60c5'"
                                     >
-                                    </digest-offer>
+                                    </digest-request>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="star_container">
+                            <div class='statistic'>
+                                <hr>
+                                <div on-mouseenter='inRate($event)' on-mouseleave='outRate($event)'>
+                                    <div>ОЦЕНКА ЛОКАЦИИ:</div>
+                                    <div class="rate_line" *ngFor="let rat of rate; let i = index">
+                                        <div on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'><div [ngStyle]="{'width': rat.persent+'%'}"></div></div>
+                                        <div>{{rat.text}}</div>
+                                    </div>
+                                    <span>Внимание, ваш голос будет учтен только один раз.</span>
+                                </div>
+                                <div on-mouseenter='inRate($event)' on-mouseleave='outRate($event)'>
+                                    <div>ОЦЕНКА ЛОКАЦИИ:</div>
+                                    <div class="rate_line" *ngFor="let rat of rate; let i = index">
+                                        <div on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'><div [ngStyle]="{'width': rat.persent+'%'}"></div></div>
+                                        <div>{{rat.text}}</div>
+                                    </div>
+                                    <span>Внимание, ваш голос будет учтен только один раз.</span>
+                                </div>
+                            </div>
+                             <div class="graph" *ngIf="sameObject">
+                                <div *ngIf = "max" class ='price' style="top: 36px;">МАКС : {{split_number(max)}}</div>
+                                <div *ngIf = "min" class ='price' style="top: 59px;">МИН  : {{split_number(min)}}</div>
+                                <div *ngIf = "average" class ='price'
+                                        style="top: 172px;left: 123px;width: 110px;text-align: center;"
+                                >
+                                    Средняя:<br>{{split_number(average)}}
+                                </div>
+                                <div id={{chartID}}
+                                    [data]="pie_ChartData"
+                                    [chartOptions] = "pie_ChartOptions"
+                                    chartType="PieChart" GoogleChart
+                                    style="margin: 96px 0 0px 86px;"
+                                    >
                                 </div>
                             </div>
                         </div>
-                        <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" [objects]="similarOffers">
-                            <google-map-marker
-                                *ngIf="offer.locationLat"
-                                (markerClick)="markerClick(offer)"
-                                [latitude]="offer.locationLat"
-                                [longitude]="offer.locationLon"
-                                [info_str]=""
-                            >
-                            </google-map-marker>
-                        </google-map>
                     </ui-tab>
-                    <ui-tab
+
+                    <!--<ui-tab
                         [title]="'Заявки'"
                         (tabSelect)="requestsSelected()"
                     >
@@ -600,7 +2452,7 @@ import {Person} from "../../class/person";
                             >
                             </digest-request>
                         </div>
-                    </ui-tab>
+                    </ui-tab>-->
                     <ui-tab [title]="'Аналитика'"
                         (tabSelect)="analysisSelected()"
                     >
@@ -625,7 +2477,7 @@ import {Person} from "../../class/person";
                                     </div>
                                 </div>
                             </div>
-        
+
                             <div style="padding: 15px;">
                                 <div style="float: left; display: flex; flex-direction: column;">
                                     <div class="tile bg-gorange fg-white" style="margin-bottom: 5px;">
@@ -641,7 +2493,7 @@ import {Person} from "../../class/person";
                                         <span class="tile-label">Потрачено руб.</span>
                                     </div>
                                 </div>
-        
+
                                 <div class="chart-block">
                                     <div class="chart-header bg-gorange">
                                         <span style="margin-left: 25px;">Реклама</span>
@@ -655,7 +2507,7 @@ import {Person} from "../../class/person";
                                     </div>
                                 </div>
                             </div>
-        
+
                             <div style="padding: 15px;">
                                 <div class="tile bg-gblue fg-white">
                                     <div class="tile-content iconic">
@@ -676,8 +2528,8 @@ import {Person} from "../../class/person";
                                     </div>
                                 </div>
                             </div>
-        
-        
+
+
                             <div style="padding: 15px;">
                                 <div style="float: left; display: flex; flex-direction: column;">
                                     <div class="tile bg-ggreen fg-white" style="margin-bottom: 5px;">
@@ -706,10 +2558,10 @@ import {Person} from "../../class/person";
                                     </div>
                                 </div>
                             </div>
-        
+
                         </div>
                     </ui-tab>
-                    
+
                     <ui-tab
                         [title]="'История'"
                         (tabSelect)="historySelected()"
@@ -721,7 +2573,7 @@ import {Person} from "../../class/person";
                             </digest-history>
                         </div>
                     </ui-tab>
-                    
+
                 </ui-tabs>
             </div>
 
@@ -737,6 +2589,8 @@ export class TabOfferComponent implements OnInit {
     public offer: Offer;
     public photos: Photo[];
 
+    sgList: string[] = [];
+    selectMapMenu: number = 1;
     agentOpts: any[] = [];
 
     personOpts: any[] = [];
@@ -752,11 +2606,13 @@ export class TabOfferComponent implements OnInit {
 
     editEnabled: boolean = false;
 
+    mapQuery: string;
 
     lat: number;
     lon: number;
     zoom: number;
 
+    uploadPhoto: any;
 
     ch1_data: any[] = [];
     ch2_data: any[] = [];
@@ -771,17 +2627,36 @@ export class TabOfferComponent implements OnInit {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
+    offerFloor: any[]=[];
+    offerSquare: any[]=[];
+    offerPrice: any[]=[];
+    offerAddress: any[]=[];
+    landSquare: any[]=[];
+
     offerTypeCodeOptions = [
         {value: 'sale', label: 'Продажа'},
         {value: 'rent', label: 'Аренда'}
     ];
 
     stateCodeOptions = [
-        {value: 'raw', label: 'Не активен'},
-        {value: 'active', label: 'Активен'},
-        {value: 'work', label: 'В работе'},
-        {value: 'suspended', label: 'Приостановлен'},
+        {value: 'raw', label: 'Не активно'},
+        {value: 'active', label: 'Активно'},
+        {value: 'work', label: 'Прайс'},
+        {value: 'ok', label: 'Сделка'},
+        {value: 'suspended', label: 'Приостановленно'},
         {value: 'archive', label: 'Архив'}
+    ];
+
+    sourceOptions = [
+        {value: 'input', label: 'Входящий звонок'},
+        {value: 'internet', label: 'Интернет'},
+        {value: 'print', label: 'Печатное издание'},
+        {value: 'spam', label: 'Рассылка'},
+        {value: 'reccomend_cl', label: 'Рекомендация клиента'},
+        {value: 'reccomend_pt', label: 'Рекомендация парнера'},
+        {value: 'social', label: 'Социальные сети'},
+        {value: 'excelent', label: 'Успешный опыт сотрудничества'},
+        {value: 'cold', label: 'Холодная база'}
     ];
 
     stageCodeOptions = [
@@ -795,79 +2670,131 @@ export class TabOfferComponent implements OnInit {
     ];
 
     typeCodeOptions = [
+        {value: 'other', label: 'Другое'},
+
         {value: 'room', label: 'Комната'},
         {value: 'apartment', label: 'Квартира'},
-        {value: 'house', label: 'Дом'},
-        {value: 'townhouse', label: 'Таунхаус'}
+        {value: 'house', label: 'Дом/Коттедж'},
+
+        {value: 'townhouse', label: 'Таунхаус'},
+        {value: 'land', label: 'Земельный участок'},
+
+        {value: 'market_place', label: 'Торговое помещение'},
+        {value: 'production_place', label: 'Производственное помещение'},
+        {value: 'warehouse_place', label: 'Складское помещение'},
+        {value: 'service_place', label: 'Помещение под сферу услуг'},
+        {value: 'gpurpose_place', label: 'Универсальное помещение'},
+        {value: 'building', label: 'Отдельно стоящее здание'}
     ];
 
     apSchemaOptions = [
         {value: 0, label: '-'},
-        {value: 1, label: 'Индивидуальная'},
-        {value: 2, label: 'Новая'},
-        {value: 3, label: 'Общежитие'},
+        {value: 1, label: 'Элиткласс'},
+        {value: 2, label: 'Бизнес класс'},
+        {value: 12, label: 'Эконом класс'},
+        {value: 3, label: 'Ленинградский проект'},
         {value: 4, label: 'Сталинка'},
-        {value: 5, label: 'Улучшенная'},
-        {value: 6, label: 'Хрущевка'}
+        {value: 5, label: 'Брежневка'},
+        {value: 6, label: 'Хрущевка'},
+        {value: 7, label: 'Пентагон'},
+        {value: 8, label: 'Малосемейка'},
+        {value: 9, label: 'Гостинка'},
+        {value: 10, label: 'Общежитие'},
+        {value: 11, label: 'Старый фонд'}
     ];
 
     roomSchemeOptions = [
         {value: 0, label: '-'},
-        {value: 1, label: 'Икарус'},
-        {value: 2, label: 'Кухня-гостинная'},
         {value: 3, label: 'Раздельные'},
-        {value: 4, label: 'Смежно-раздельные'},
         {value: 5, label: 'Смежные'},
-        {value: 6, label: 'Студия'}
+        {value: 4, label: 'Смежно-раздельные'},
+        {value: 6, label: 'Студия'},
+        {value: 1, label: 'Свободная'},
+        {value: 2, label: 'Другое'}
     ];
 
     houseTypeOptions = [
         {value: 0, label: '-'},
-        {value: 1, label: 'Брус'},
+        {value: 4, label: 'Кирпичный'},
+        {value: 1, label: 'Панель'},
+        {value: 5, label: 'Монолит'},
+        {value: 6, label: 'Кирпично-монолитный'},
+        {value: 7, label: 'Блочный'},
         {value: 2, label: 'Деревянный'},
-        {value: 3, label: 'Каркасно-засыпной'},
-        {value: 4, label: 'Кирпичный'}
+        {value: 3, label: 'Шлакоблочный'}
+
+    ];
+
+    YesNoOptions = [
+        {value: 'false', label: 'Нет'},
+        {value: 'true', label: 'Да'}
     ];
 
     conditionOptions = [
-        {value: 0, label: '-'},
-        {value: 1, label: 'социальный ремонт'},
-        {value: 2, label: 'сделан ремонт'},
-        {value: 3, label: 'дизайнерский ремонт'},
-        {value: 4, label: 'требуется ремонт'},
-        {value: 5, label: 'требуется косм. ремонт'},
-        {value: 6, label: 'после строителей'},
-        {value: 7, label: 'евроремонт'},
-        {value: 8, label: 'удовлетворительное'},
-        {value: 9, label: 'нормальное'}
-    ];
-
-    balconyOptions = [
-        {value: 0, label: '-'},
-        {value: 1, label: 'без балкона'},
-        {value: 2, label: 'балкон'},
-        {value: 3, label: 'лоджия'},
-        {value: 4, label: '2 балкона'},
-        {value: 5, label: '2 лоджии'},
-        {value: 6, label: 'балкон и лоджия'},
-        {value: 7, label: 'балкон застеклен'},
-        {value: 8, label: 'лоджия застеклена'}
+        {value: "0", label: 'Не указано'},
+        {value: "6", label: 'После строителей'},
+        {value: "1", label: 'Социальный ремонт'},
+        {value: "2", label: 'Сделан ремонт'},
+        {value: "7", label: 'Евроремонт'},
+        {value: "3", label: 'Дизайнерский ремонт'},
+        {value: "4", label: 'Требуется ремонт'}
     ];
 
     bathroomOptions = [
-        {value: 0, label: '-'},
-        {value: 1, label: 'без удобств'},
-        {value: 2, label: 'туалет'},
-        {value: 3, label: 'с удобствами'},
-        {value: 4, label: 'душ и туалет'},
-        {value: 5, label: '2 смежных санузла'},
-        {value: 6, label: '2 раздельных санузла'},
-        {value: 7, label: 'санузел совмещенный'}
+        {value: "NO", label: 'Нет'},
+        {value: "SPLITED", label: 'Раздельный'},
+        {value: "COMBINED", label: 'Совмещенный'}
     ];
 
-    log(e) {
-        console.log(e);
-    }
+    landOption = [
+        {value: 'IGS', label: 'Индивидуальное жилищное строительство'},
+        {value: 'GARDEN', label: 'Садоводство'},
+        {value: 'FARM', label: 'Фермерское хозяйство'},
+        {value: 'FARM_COMN', label: 'Дачное некоммерческое партнерство'},
+        {value: 'GARDEN_COMN', label: 'Садовое неккомерческое товарищество'},
+        {value: 'PROM_LAND', label: 'Земля промназначения'},
+        {value: 'SH_LAND', label: 'Участок сельхоз назначения'},
+        {value: 'FOREST_LAND', label: 'Участок лесного фонда'},
+        {value: 'STOCK_LAND', label: 'Участок особо охраняемых категорий'},
+        {value: 'STOCK_LAND', label: 'Участок запаса'},
+        {value: 'WATER_LAND', label: 'Участок водного фонда'}
+    ];
+
+    rate = [
+        {persent: 10, text: "Сообщества и безопасность", isRated: false},
+        {persent: 25, text: "Развлечения и ночная жизнь", isRated: true},
+        {persent: 50, text: "Парки, кинотеатры и отдых", isRated: false},
+        {persent: 75, text: "Рестораны и шопинг", isRated: false},
+        {persent: 90, text: "Школы и общественные услуги", isRated: false},
+        {persent: 100, text: "Транспорт и путешествия", isRated: false},
+    ];
+    mediator = 'NO';
+    mainRate=this.countMainRate();
+
+    categoryOffer: string = "REZIDENTIAL";
+    categoryOwner: string = "CLIENT";
+
+    sameObject: boolean = false;
+
+    pie_ChartData = [
+        ['', ''],
+        ['Нет объектов', 0]
+    ];
+
+    pie_ChartOptions  = {
+        width: 216,
+        height: 216,
+        pieHole: 0.6,
+        legend: 'none',
+        chartArea: {left:8,top:8,width:200,height:200},
+        backgroundColor: '#f7f7f7'
+    };
+
+    max : number;
+    min: number;
+    average: number;
+
+    chartID: string = "Chart"+Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
     constructor(private _hubService: HubService,
                 private _configService: ConfigService,
@@ -878,10 +2805,17 @@ export class TabOfferComponent implements OnInit {
                 private _historyService: HistoryService,
                 private _photoService: PhotoService,
                 private _userService: UserService,
-                private _personService: PersonService) {
-
+                private _personService: PersonService,
+                private _uploadService: UploadService,
+                private _suggestionService: SuggestionService,
+                private _sessionService: SessionService
+            ) {
         setTimeout(() => {
-            this.tab.header = 'Объект ' + this.offer.id;
+            if (this.offer.id) {
+                this.tab.header = 'Предложение ';
+            } else {
+                this.tab.header = 'Новый Объект';
+            }
         });
 
         this._userService.list(null, null, "").subscribe(agents => {
@@ -908,15 +2842,61 @@ export class TabOfferComponent implements OnInit {
     ngOnInit() {
         this.offer = this.tab.args.offer;
 
-        var c = this._configService.getConfig();
+        this.offer.openDate = Math.round((Date.now() / 1000));
 
-        this.zoom = c.map.zoom;
+        var c = this._configService.getConfig();
+        let loc = this._sessionService.getAccount().location;
+
+        this.offerFloor=[
+            {type: 'FLOOR', value: this.offer.floor},
+            {type: 'FLOORS', value: this.offer.floorsCount},
+            {type: 'LEVELS', value: this.offer.levelsCount}
+        ];
+
+        this.offerSquare=[
+            {type: 'TOTAL', value: this.offer.squareTotal},
+            {type: 'LIVING', value: this.offer.squareLiving},
+            {type: 'KITCHEN', value: this.offer.squareKitchen}
+        ];
+
+        this.offerPrice=[
+            {type: 'OWNER', value: this.offer.ownerPrice},
+            {type: 'RUBLES', value: this.offer.comission_n},
+            {type: 'PERSENT', value: this.offer.comissionPerc_n}
+        ];
+        let needSave = false;
+        if(!this.offer.region_n && this.offer.address){
+            this.offerAddress = Offer.parseAddress(this.offer.address);
+            needSave = true;
+        } else{
+            this.offerAddress=[
+                {type: 'KRAY', value: this.offer.region_n},
+                {type: 'CITY', value: this.offer.city_n},
+                {type: 'DISTRICT', value: this.offer.area_n},
+                {type: 'STREET', value: this.offer.street_n},
+                {type: 'HOUSE', value: this.offer.house_n},
+                {type: 'HOUSING', value: this.offer.housing_n},
+                {type: 'FLAT', value: this.offer.apartment_n}
+            ];
+        }
+        this.landSquare=[
+            {type: this.offer.squareLandType_n, value: this.offer.squareLand}
+        ];
+
         if (this.offer.locationLat) {
             this.lat = this.offer.locationLat;
             this.lon = this.offer.locationLon;
+            this.zoom = 14;
         } else {
-            this.lat = c.map.lat;
-            this.lon = c.map.lon;
+            if (c.map[loc]) {
+                this.lat = c.map[loc].lat;
+                this.lon = c.map[loc].lon;
+                this.zoom = c.map[loc].zoom;
+            } else {
+                this.lat = c.map['default'].lat;
+                this.lon = c.map['default'].lon;
+                this.zoom = c.map['default'].zoom;
+            }
         }
 
         if (this.offer.id == null && this.offer.sourceUrl == null) {
@@ -928,10 +2908,56 @@ export class TabOfferComponent implements OnInit {
 
             this.editEnabled = true;
         }
+        let num = 0;
+        for(let i = 0; i< this.typeCodeOptions.length; i++){
+            if (this.offer.typeCode == this.typeCodeOptions[i].value) {
+                num = i;
+            }
+        }
 
+        if(num > 1 && num < 4)
+            this.categoryOffer = 'REZIDENTIAL';
+        else if(num >= 4 && num < 6)
+            this.categoryOffer = 'LAND';
+        else
+            this.categoryOffer = 'COMMERSIAL';
         this.calcSize();
+        console.log(this.offer);
+        if(needSave)
+            this.save();
     }
 
+    select(itm) {
+        this.offer.address = itm;
+        this.sgList = [];
+    }
+
+    docClick() {
+        this.sgList = [];
+    }
+
+    addrChanged() {
+        this.sgList = [];
+        if (this.offer.address.length > 0) {
+
+            // запросить варианты
+
+            this._suggestionService.list(this.offer.address).subscribe(sgs => {
+                sgs.forEach(e => {
+                    this.sgList.push(e);
+                })
+            })
+        }
+    }
+
+    photoChanges(event) {
+        let file = event.srcElement.files;
+        let postData = {field1:"field1", field2:"field2"}; // Put your form data variable. This is only example.
+
+        this._uploadService.uploadPhoto(postData, file).then(result => {
+            console.log(result);
+        });
+    }
 
     onResize(e) {
         this.calcSize();
@@ -941,9 +2967,9 @@ export class TabOfferComponent implements OnInit {
         if (this.paneHidden) {
             this.paneWidth = 0;
         } else {
-            this.paneWidth = 420;
+            this.paneWidth = 370;
         }
-        this.mapWidth = document.body.clientWidth - (30 * 2) - this.paneWidth;
+        this.mapWidth = document.body.clientWidth - (16 * 2) - this.paneWidth;
         this.paneHeight = document.body.clientHeight - 31;
     }
 
@@ -975,18 +3001,76 @@ export class TabOfferComponent implements OnInit {
     }
 
     save() {
+        this.offer.changeDate = Math.round((Date.now() / 1000));
+
+        let tem = this.getIndex(this.offerSquare, "TOTAL");
+        this.offer.squareTotal =  tem > -1 ? parseInt(this.offerSquare[tem].value) : null;
+        tem =  this.getIndex(this.offerSquare, "KITCHEN");
+        this.offer.squareKitchen =  tem > -1 ? parseInt(this.offerSquare[tem].value) : null;
+        tem = this.getIndex(this.offerSquare, "LIVING");
+        this.offer.squareLiving =  tem > -1 ? parseInt(this.offerSquare[tem].value) : null;
+
+        tem = this.getIndex(this.offerAddress, "KRAY");
+        this.offer.region_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        tem = this.getIndex(this.offerAddress, "CITY");
+        this.offer.city_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        tem = this.getIndex(this.offerAddress, "DISTRICT");
+        this.offer.area_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        tem = this.getIndex(this.offerAddress, "STREET");
+        this.offer.street_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        tem = this.getIndex(this.offerAddress, "HOUSE");
+        this.offer.house_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        tem = this.getIndex(this.offerAddress, "HOUSING");
+        this.offer.housing_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        tem = this.getIndex(this.offerAddress, "FLAT");
+        this.offer.apartment_n =  tem > -1 ? this.offerAddress[tem].value : null;
+
+        tem = this.getIndex(this.offerFloor, "FLOOR");
+        this.offer.floor =  tem > -1 ? parseInt(this.offerFloor[tem].value) : null;
+        tem =  this.getIndex(this.offerFloor, "FLOORS");
+        this.offer.floorsCount =  tem > -1 ? parseInt(this.offerFloor[tem].value) : null;
+        tem = this.getIndex(this.offerFloor, "LEVELS");
+        this.offer.levelsCount =  tem > -1 ? parseInt(this.offerFloor[tem].value) : null;
+
+        tem = this.getIndex(this.offerPrice, "OWNER");
+        this.offer.ownerPrice =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
+        tem =  this.getIndex(this.offerPrice, "RUBLES");
+        this.offer.comission_n =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
+        tem = this.getIndex(this.offerPrice, "PERSENT");
+        this.offer.comissionPerc_n =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
+
+
+        this.offer.squareLand = this.landSquare[0].value;
+        this.offer.squareLandType_n =  this.ParseInt(this.landSquare[0].type);
+
         this._offerService.save(this.offer).subscribe(offer => {
-            this.offer = offer;
+            setTimeout(() => {
+                this.offer = offer;
+            });
             this.toggleEdit();
         });
     }
 
     similarObjSelected() {
-        this.getSimilarOffers(1, 16);
+        this.sameObject = !this.sameObject;
+        if(this.sameObject){
+            this.getSimilarOffers(0, 16);
+        }
+        this.mapQuery = null;
+        this.selectMapMenu = 5;
+
     }
 
     requestsSelected() {
-        //this.requests = this._requestService.list(1, 16, "", "");
+        this.sameObject = !this.sameObject;
+        this._requestService.listForOffer(this.offer).subscribe(
+            data => {
+                this.requests = data;
+                this.setDonutData('requests');
+            }
+        )
+        this.selectMapMenu = 6;
+        this.mapQuery = null;
     }
 
     analysisSelected() {
@@ -1019,26 +3103,173 @@ export class TabOfferComponent implements OnInit {
     }
 
     getSimilarOffers(page, per_page) {
-        this._offerService.getSimilar(page, per_page).subscribe(
-            data => {
-                this.similarOffers = data;
-            },
-            err => console.log(err)
-        );
-    }
-
-    simSearch() {
-        this.getSimilarOffers(Math.floor(Math.random() * 4), 16);
-    }
-
-    simSearchKeydown(e: KeyboardEvent) {
-        if (e.keyCode == 13) {
-            this.simSearch();
-        }
+            this._offerService.getSimilar(this.offer, page, per_page).subscribe(
+                data => {
+                    this.similarOffers = data.list;
+                    this.setDonutData('similar');
+                },
+                err => console.log(err)
+            );
     }
 
     markerClick(o: Offer) {
         //r.selected = !r.selected;
         // scroll to object ???
     }
+
+    openPerson(person: Person) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('person', {person: person});
+    }
+
+    openUser(user: User) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('user', {user: user});
+    }
+
+    countMainRate(){
+        var temp=0;
+        for(var i=0; i<this.rate.length; i++){
+            temp+=this.rate[i].persent;
+        }
+        return Math.round(temp/this.rate.length*100)/100;
+    }
+    showMenu(event, up?){
+        let parent: HTMLElement;
+        if (up)
+            parent = (<HTMLElement>event.currentTarget).parentElement;
+        else
+            parent = (<HTMLElement>event.currentTarget).parentElement.parentElement;
+        let height: number = parent.getElementsByTagName('input').length * 35;
+        if(parent.offsetHeight == 30){
+            console.log(height);
+            parent.style.setProperty('height', ""+(height+60)+'px');
+            parent.style.setProperty('overflow', "visible");
+             (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');
+        }
+        else{
+             parent.style.setProperty('height', "30px");
+             parent.style.setProperty('overflow', "hidden");
+              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(0deg)')
+        }
+    }
+
+    setDonutData(data: string){
+        this.pie_ChartData = [
+            ['', ''],
+            ['Нет объектов', 0]
+        ];
+        if(data == 'similar'){
+            if(this.similarOffers.length == 1){
+                    this.pie_ChartData.push(["–Ю–±—К–µ–Ї—В–Њ–≤:", 1]);
+                    this.max = this.min = this.average = this.similarOffers[0].ownerPrice * 1000;
+            } else if(this.similarOffers.length > 1){
+                let arr :number[] = [];
+                for(var i=0 ; i< this.similarOffers.length; ++i)
+                    if(this.similarOffers[i].ownerPrice)
+                        arr.push(this.similarOffers[i].ownerPrice);
+                arr.sort(this.compareNumeric);
+                this.max = arr[arr.length-1] * 1000;
+                this.min = arr[0] * 1000;
+                this.average = (this.max + this.min)/2;
+                arr[arr.length-1]+=1;
+                let lent: number = (arr[arr.length -1] - arr[0])/4;
+                for(var i=arr[0]; i< arr[arr.length -1]; i+=lent){
+                    this.pie_ChartData.push(this.getCount(i,i+lent));
+                }
+            }
+        } else if(data == 'similar'){
+            if(this.requests.length == 1){
+                    this.pie_ChartData.push(["–Ч–∞—П–≤–Њ–Ї:", 1]);
+                    console.log(this.pie_ChartData);
+                    this.max = this.min = this.average = this.similarOffers[0].ownerPrice * 1000;
+            } else if(this.similarOffers.length > 1){
+                let arr :number[] = [];
+                for(var i=0 ; i< this.similarOffers.length; ++i)
+                    if(this.similarOffers[i].ownerPrice)
+                        arr.push(this.similarOffers[i].ownerPrice);
+                arr.sort(this.compareNumeric);
+                this.max = arr[arr.length-1] * 1000;
+                this.min = arr[0] * 1000;
+                this.average = (this.max + this.min)/2;
+                arr[arr.length-1]+=1;
+                let lent: number = (arr[arr.length -1] - arr[0])/4;
+                for(var i=arr[0]; i< arr[arr.length -1]; i+=lent){
+                    this.pie_ChartData.push(this.getCount(i,i+lent));
+                }
+            }
+        }
+    }
+
+    split_number(n): string {
+        n += "";
+        n = new Array(4 - n.length % 3).join("U") + n;
+        return n.replace(/([0-9U]{3})/g, "$1 ").replace(/U/g, "");
+    }
+
+    compareNumeric(a, b) {
+        if (a > b) return 1;
+        if (a < b) return -1;
+    }
+    getCount(min:number, max: number): Array<any>{
+        let count: number=0;
+        for(var i = 0 ; i< this.similarOffers.length; ++i){
+            if(this.similarOffers[i].ownerPrice >= min && this.similarOffers[i].ownerPrice<max)
+                count++;
+        }
+        return ["от "+Math.round(min)+" т.руб. до "+ Math.round(max)+ " т.руб.", count];
+    }
+    getTypeCodeArray(): Array<any>{
+        switch(this.categoryOffer){
+            case "REZIDENTIAL": return this.typeCodeOptions.slice(1, 4);
+            case "COMMERSIAL": {
+                let temp = this.typeCodeOptions.slice(6,10);
+                temp.push(this.typeCodeOptions[0]);
+                return temp;
+            }
+            case "LAND": return this.typeCodeOptions.slice(4, 6);
+        }
+    }
+    setMapQuery(qw: string, num: number){
+        this.mapQuery = qw;
+        this.selectMapMenu = num;
+    }
+    setMenu(num:number){
+        this.selectMapMenu = num;
+        this.mapQuery = null;
+    }
+
+    parseArray(values: Array<any>, obj){
+        console.log(values);
+        for(let val of values){
+            let no = true;
+            for(let en of obj){
+                if(val.type == en.type){
+                    en.value = val.value;
+                    no = false;
+                }
+            }
+            if(no)
+                obj.push(val);
+        }
+    }
+
+    getIndex(array: Array<any>, str: string){
+        for(let i =0; i<array.length; ++i){
+            if(array[i].type == str)
+                return i;
+        }
+        return -1;
+    }
+    ParseInt(val){
+        if(isNaN(parseInt(val,10)))
+            return null;
+        else
+            return parseInt(val,10);
+    }
+
+    getSourceName(): string{
+        return this.offer.sourceUrl.match(/www\.(.{1,10})\..{1,5}/i)[1];
+    }
+
 }

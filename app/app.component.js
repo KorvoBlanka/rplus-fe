@@ -22,6 +22,8 @@ var history_service_1 = require("./service/history.service");
 var photo_service_1 = require("./service/photo.service");
 var account_service_1 = require("./service/account.service");
 var session_service_1 = require("./service/session.service");
+var upload_service_1 = require("./service/upload.service");
+var suggestion_service_1 = require("./service/suggestion.service");
 var AppComponent = (function () {
     function AppComponent() {
     }
@@ -32,7 +34,7 @@ AppComponent = __decorate([
         selector: 'rplus-app',
         styles: [""],
         template: "\n        <login-screen></login-screen>\n        <router-outlet></router-outlet>\n    ",
-        providers: [hub_service_1.HubService, config_service_1.ConfigService, user_service_1.UserService, organisation_service_1.OrganisationService, person_service_1.PersonService, request_service_1.RequestService, offer_service_1.OfferService, task_service_1.TaskService, analysis_service_1.AnalysisService, history_service_1.HistoryService, photo_service_1.PhotoService, account_service_1.AccountService, session_service_1.SessionService]
+        providers: [hub_service_1.HubService, config_service_1.ConfigService, suggestion_service_1.SuggestionService, user_service_1.UserService, organisation_service_1.OrganisationService, person_service_1.PersonService, request_service_1.RequestService, offer_service_1.OfferService, task_service_1.TaskService, analysis_service_1.AnalysisService, history_service_1.HistoryService, photo_service_1.PhotoService, account_service_1.AccountService, session_service_1.SessionService, upload_service_1.UploadService]
     }),
     __metadata("design:paramtypes", [])
 ], AppComponent);

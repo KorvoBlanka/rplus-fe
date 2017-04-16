@@ -76,7 +76,7 @@ export class Offer {
 
 
     addDate: number;
-
+    openDate: number;
     changeDate: number;
 
     deleteDate: number;
@@ -104,6 +104,111 @@ export class Offer {
     agent: any;
 
     accountId: number;
+
+
+    // new stuff
+    stageCode_n: string;
+
+    sourceCode_n: string;
+
+    contract: string;
+
+    sourceUrl_n: string;
+
+    offerTypeCode_n: string;
+
+    typeCode_n: string;;
+
+    region_n: string;
+
+    city_n: string;
+
+    area_n: string;
+
+    admArea_n: string;
+
+    street_n: string;
+
+    house_n: string;
+
+    housing_n: string;
+
+    apartment_n: string;
+
+    settlement_n: string;
+
+    newBuilding_n: boolean;
+
+    objectStage_n: string;
+
+    buildYear_n: string;
+
+    houseType_n: string;
+
+    houseMaterial_n: string;
+
+    roomsCount_n: number;
+
+    roomsType_n: string;
+
+    floor_n: number;
+
+    floorsCount_n: number;
+
+    levelsCount_n: number;
+
+    squareTotal_n: number;
+
+    squareLiving_n: number;
+
+    squareKitchen_n: number;
+
+    squareLand_n: number;
+
+    squareLandType_n: number;
+
+    balcony_n: boolean;
+
+    loggia_n: boolean;
+
+    bathroom_n: boolean;
+
+    condition_n: string;
+
+    price_n: number;
+
+    comission_n: number;
+
+    comissionPerc_n: number;
+
+    distance_n: number;
+
+    guard_n: boolean;
+
+    waterSupply_n: boolean;
+
+    gasification_n: boolean;
+
+    electrification_n: boolean;
+
+    sewerage_n: boolean;
+
+    centralHeating_n: boolean;
+
+    lift_n: boolean;
+
+    parking_n: boolean;
+
+    landPurpose_n: string;
+
+    objectName_n: string;
+
+    buildingType_n: string;
+
+    buildingClass_n: string;
+
+    ceilingHeight_n: number;
+
 
 
     constructor () {
@@ -146,5 +251,64 @@ export class Offer {
         if (o.ownerPrice) digest.push('<span class="text-primary">' + o.ownerPrice + ' тыс. руб.' + '</span>');
 
         return digest.join(' ');
+    }
+
+    public static parseAddress(itm: string){
+        let fullAddress: Array<any> = [];
+        let address: Array<string> = itm.split(',');
+        for(var i=0; i< address.length; ++i)
+            address[i] = address[i].trim();
+        if(parseInt(address[1]) > 0) {
+            fullAddress.push({type:"HOUSE", value: address[1]});
+            fullAddress.push({type:"STREET", value: address[0]});
+            if(address.length == 5){
+                if(address[4].indexOf("Москва") != -1){
+                    fullAddress.push({type:"DISTRICT", value: address[2]});
+                    fullAddress.push({type:"CITY", value: address[4]});
+                }
+                else if(address[3].indexOf("р-н") != -1){
+                    fullAddress.push({type:"CITY", value: address[2]});
+                    fullAddress.push({type:"DISTRICT", value: address[3].split(" ")[0]});
+                    fullAddress.push({type:"KRAY", value: address[4]});
+                } else{
+                    fullAddress.push({type:"CITY", value: address[3]});
+                    fullAddress.push({type:"KRAY", value: address[4]});
+                }
+
+            } else if(address.length == 4 && address[3].indexOf("Санкт-Петербург") != -1){
+                fullAddress.push({type:"CITY", value: address[3].split(" ")[1]});
+            } else if(address.length == 4){
+                fullAddress.push({type:"CITY", value: address[2]});
+                fullAddress.push({type:"KRAY", value: address[3]});
+            }
+        }
+        else if(address.length == 4){
+            fullAddress.push({type:"STREET", value: address[0]});
+            if(address[3].indexOf("Москва") != -1){
+                fullAddress.push({type:"DISTRICT", value: address[1]});
+                fullAddress.push({type:"CITY", value: address[3]});
+            } else{
+                fullAddress.push({type:"CITY", value: address[1]});
+                if(address[2].indexOf("р-н") != -1)
+                    fullAddress.push({type:"DISTRICT", value: address[2]});
+                fullAddress.push({type:"KRAY", value: address[3]});
+            }
+
+        } else if(address.length == 3){
+            if(address[1].indexOf("р-н") != -1){
+                fullAddress.push({type:"CITY", value: address[0]});
+                fullAddress.push({type:"DISTRICT", value: address[1]});
+                fullAddress.push({type:"KRAY", value: address[2]});
+            } else if(address[2].indexOf("Санкт-Петербург") != -1){
+                fullAddress.push({type:"STREET", value: address[0]});
+                fullAddress.push({type:"CITY", value: address[2].split(" ")[1]});
+            }
+            else{
+                fullAddress.push({type:"STREET", value: address[0]});
+                fullAddress.push({type:"CITY", value: address[1]});
+                fullAddress.push({type:"KRAY", value: address[2]});
+            }
+        }
+        return fullAddress;
     }
 }

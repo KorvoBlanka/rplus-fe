@@ -30,24 +30,24 @@ import {Observable} from "rxjs";
         .login-form > .form-header {
             font-size: 26px;
         }
-    
+
         .input-control {
             margin-top: 5px;
         }
-    
+
         .input-control > label {
-    
+
         }
-    
+
         .input-control > input {
             width: 100%;
             height: 28px;
         }
-    
+
         .action-block {
             margin-top: 25px;
         }
-    
+
         .button {
             text-align: center;
             padding: 5px 15px;
@@ -56,18 +56,28 @@ import {Observable} from "rxjs";
             cursor: pointer;
         }
 
+        .ver-str {
+            color: #eeeeee;
+        }
+
+        .login-msg {
+            color: #eeeeee;
+        }
+
     `],
     template: `
         <div class="login-screen bg-darkTeal" [hidden]="authorized | async">
-            <div class="login-form">
+            <div class="ver-str"><span>v: {{_configService.getConfig().version}}</span></div>
+            <div class="login-msg"><span>msg: {{msg | async}}</span></div>
+            <div class="login-form" (keyup.enter)="_login();">
                 <div class="form-header">Добро пожаловать</div>
                 <hr>
-                
+
                 <div class="input-control">
                     <label>Аккаунт</label>
                     <input [(ngModel)]="account">
                 </div>
-                
+
                 <div class="input-control">
                     <label>Логин пользователя</label>
                     <input [(ngModel)]="login">
@@ -87,22 +97,33 @@ import {Observable} from "rxjs";
 export class LoginScreenComponent {
 
     public authorized: Observable<boolean>;
-
+    public msg: Observable<string>;
 
     public account: string;
     public login: string;
     public password: string;
 
-    constructor(private _sessionService: SessionService) {
+    constructor(private _sessionService: SessionService, private _configService: ConfigService) {
         this.authorized = _sessionService.authorized;
+        this.msg = _sessionService.msg;
+        this.account  = "";
+        this.login = "";
+        this.password = "";
     }
 
 
     ngOnInit() {
+        let cuStr = localStorage.getItem('currentUser');
+        if (cuStr) {
+            let cu = JSON.parse(cuStr);
+            this.account = cu.account;
+            this.login = cu.login;
+        }
         this.checkSession();
     }
 
     _login() {
+        localStorage.setItem('currentUser', JSON.stringify({ account: this.account, login: this.login }));
         this._sessionService.login(this.account, this.login, this.password);
     }
 

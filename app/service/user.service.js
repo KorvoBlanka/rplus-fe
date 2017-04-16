@@ -19,31 +19,45 @@ var UserService = (function () {
         this._configService = _configService;
         this._sessionService = _sessionService;
         this.RS = "";
+        this.cache = {};
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/user/';
     }
     ;
+    UserService.prototype.listCached = function (role, superiorId, searchQuery) {
+        return this.cache[role + superiorId + searchQuery];
+    };
     UserService.prototype.list = function (role, superiorId, searchQuery) {
+        var _this = this;
         console.log('user list');
         var query = [];
         var user = this._sessionService.getUser();
-        query.push("accountId=" + user.accountId);
-        if (role) {
-            query.push("role=" + role);
-        }
-        if (superiorId) {
-            query.push("superiorId=" + superiorId.toString());
-        }
-        if (searchQuery) {
-            query.push("searchQuery=" + searchQuery);
-        }
-        var _resourceUrl = this.RS + 'list?' + query.join("&");
         var ret_subj = new AsyncSubject_1.AsyncSubject();
-        this._http.get(_resourceUrl, { withCredentials: true })
-            .map(function (res) { return res.json(); }).subscribe(function (data) {
-            var users = data.result;
+        if (this.cache[role + superiorId + searchQuery] == null) {
+            query.push("accountId=" + user.accountId);
+            if (role) {
+                query.push("role=" + role);
+            }
+            if (superiorId) {
+                query.push("superiorId=" + superiorId.toString());
+            }
+            if (searchQuery) {
+                query.push("searchQuery=" + searchQuery);
+            }
+            var _resourceUrl = this.RS + 'list?' + query.join("&");
+            this._http.get(_resourceUrl, { withCredentials: true })
+                .map(function (res) { return res.json(); }).subscribe(function (data) {
+                var users = data.result;
+                _this.cache[role + superiorId + searchQuery] = users;
+                console.log(_this.cache);
+                ret_subj.next(users);
+                ret_subj.complete();
+            }, function (err) { return console.log(err); });
+        }
+        else {
+            var users = this.cache[role + superiorId + searchQuery];
             ret_subj.next(users);
             ret_subj.complete();
-        }, function (err) { return console.log(err); });
+        }
         return ret_subj;
     };
     UserService.prototype.listX = function (accountId, role, superiorId, searchQuery) {

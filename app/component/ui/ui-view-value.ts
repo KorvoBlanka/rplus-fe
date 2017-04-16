@@ -7,13 +7,25 @@ import {UISelectOption} from "./ui-select.component";
 
 @Component({
     selector: 'ui-view-value',
-    inputs: ['options', 'value'],
+    inputs: ['options', 'value', 'Style'],
     template: `
-        <div class="ui-view-value">
+        <div class="ui-view-value" [ngStyle]="Style">
                 {{ selected?.label }}
         </div>
     `,
     styles: [`
+        .ui-view-value{
+            width: 170px;
+            text-align: right;
+            color: #696969;
+            font-size: 10pt;
+            margin-top: 5px;
+            height: 19px;
+            margin-right: 20px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
     `]
 })
 
@@ -34,5 +46,10 @@ export class UIViewValue implements OnInit {
             this.selected = this.options[0];
         }
     }
-}
 
+    getStyle(){
+        if(this.Style)
+            return this.Style;
+        else return "";
+    }
+}

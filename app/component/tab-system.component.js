@@ -36,7 +36,7 @@ var TabSystemComponent = (function () {
     };
     TabSystemComponent.prototype.selectTab = function (tab) {
         this.selectedTab = tab;
-        tab.refresh("tabSys");
+        this.selectedTab.refresh("tabSys");
     };
     TabSystemComponent.prototype.addTab = function (type, args) {
         if (this.tabs.length < 10) {
@@ -56,6 +56,7 @@ var TabSystemComponent = (function () {
         else {
             if (this.selectedTab == tab) {
                 this.selectedTab = this.tabs[idx ? (idx - 1) : 0];
+                this.selectedTab.refresh("tabSys");
             }
         }
         clearTimeout(this.to);
@@ -68,8 +69,8 @@ var TabSystemComponent = (function () {
 TabSystemComponent = __decorate([
     core_1.Component({
         selector: 'tab-system',
-        styles: ["\n    .tab-content {\n      margin-left: 30px;\n    }\n    .tab-list {\n      position: absolute;\n      top: 0;\n      left: 0;\n      height: 100%;\n      overflow: hidden;\n      background-color: #ccc;\n    }\n    .tab {\n      width: 30px;\n      border-bottom: 1px solid #aaa;\n      cursor: pointer;\n    }\n    \n    .tab:hover {\n      background-color: #efefef;\n    }\n    \n    .tab.selected {\n      background-color: #fff;\n      border-bottom: 1px solid #fff;\n    }\n    .tab-button {\n      width: 30px;\n      height: 30px;\n      text-align: center;\n      line-height: 30px;\n      font-size: 12px !important;\n      cursor: pointer;\n      color: #666;\n    }\n    .tab-icon {\n      width: 30px;\n      height: 30px;\n      text-align: center;\n      line-height: 30px;\n      font-size: 16px !important;\n      color: #666;\n    }\n    .vertical-text-container {\n      position: relative;\n      text-overflow: ellipsis;\n      white-space: nowrap;\n      overflow: hidden;\n    }\n    .vertical-text {\n      transform: rotate(-90deg);\n      transform-origin: 0 0;\n      position: absolute;\n      bottom: -25px;\n      line-height: 30px;\n    }\n    .header {\n      width: 100%;\n      height: 30px;\n      border-bottom: 1px solid rgba(0,0,0,.2);\n    }\n    "],
-        template: "\n    <div class=\"tab-list\">\n    \n      <div class=\"header\">\n        <div class=\"tab-button\">\n        </div>\n      </div>\n    \n      <div class=\"tab\" *ngFor=\"let tab of tabs\"\n        [class.selected]=\"tab === selectedTab\"\n        (click)=\"selectTab(tab)\">\n        <div class=\"tab-button close-button\" (click)=\"closeTab(tab)\"><span class=\"icon-cancel\"></span></div>\n        <div class=\"vertical-text-container\" [style.height]=\"vtHeight\">\n          <div class=\"vertical-text\">{{ tab.header }}</div>\n        </div>\n        <div class=\"tab-icon\" style=\"display: block;\"><span class=\"icon-start\"></span></div>\n      </div>\n      <div class=\"tab-button\" (click)=\"addTab('main', {})\">\n        <span class=\"icon-add\"></span>\n      </div>\n    </div>\n    <div class=\"tab-content\">\n      <tab-root *ngFor=\"let tab of tabs\"\n        [hidden]=\"tab !== selectedTab\"\n        [tab]=\"tab\">\n      </tab-root>\n    </div>\n    "
+        styles: ["\n    .tab-content {\n      margin-left: 30px;\n    }\n    .tab-list {\n      position: absolute;\n      top: 0;\n      left: 0;\n      height: 100%;\n      overflow: hidden;\n      background-color: #ccc;\n    }\n    .tab {\n      width: 30px;\n      border-bottom: 1px solid #aaa;\n      cursor: pointer;\n    }\n\n    .tab:hover {\n      background-color: #efefef;\n    }\n\n    .tab.selected {\n      background-color: #fff;\n      border-bottom: 1px solid #fff;\n    }\n    .tab-button {\n      width: 30px;\n      height: 30px;\n      text-align: center;\n      line-height: 30px;\n      font-size: 12px !important;\n      cursor: pointer;\n      color: #666;\n    }\n    .tab-icon {\n      width: 30px;\n      height: 30px;\n      text-align: center;\n      line-height: 30px;\n      font-size: 16px !important;\n      color: #666;\n    }\n    .vertical-text-container {\n      position: relative;\n      text-overflow: ellipsis;\n      white-space: nowrap;\n      overflow: hidden;\n    }\n    .vertical-text {\n      transform: rotate(-90deg);\n      transform-origin: 0 0;\n      position: absolute;\n      bottom: -25px;\n      line-height: 30px;\n    }\n    .header {\n      width: 100%;\n      height: 30px;\n      border-bottom: 1px solid rgba(0,0,0,.2);\n    }\n    "],
+        template: "\n    <div class=\"tab-list\">\n\n      <div class=\"header\">\n        <div class=\"tab-button\">\n        </div>\n      </div>\n\n      <div class=\"tab\" *ngFor=\"let tab of tabs\"\n        [class.selected]=\"tab === selectedTab\"\n        (click)=\"selectTab(tab)\">\n        <div class=\"tab-button close-button\" (click)=\"closeTab(tab)\"><span class=\"icon-cancel\"></span></div>\n        <div class=\"vertical-text-container\" [style.height]=\"vtHeight\">\n          <div class=\"vertical-text\">{{ tab.header }}</div>\n        </div>\n        <div class=\"tab-icon\" style=\"display: block;\"><span class=\"icon-start\"></span></div>\n      </div>\n      <div class=\"tab-button\" (click)=\"addTab('main', {})\">\n        <span class=\"icon-add\"></span>\n      </div>\n    </div>\n    <div class=\"tab-content\">\n      <tab-root *ngFor=\"let tab of tabs\"\n        [hidden]=\"tab !== selectedTab\"\n        [tab]=\"tab\">\n      </tab-root>\n    </div>\n    "
     }),
     __metadata("design:paramtypes", [hub_service_1.HubService])
 ], TabSystemComponent);

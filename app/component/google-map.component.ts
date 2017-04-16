@@ -18,6 +18,7 @@ import {Offer} from "../class/offer";
         'longitude',
         'zoom',
         'objects',
+        'place',
         'draw_allowed',
         'polygone_points'
     ],
@@ -39,13 +40,16 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     map: google.maps.Map;
 
     markers: google.maps.Marker[] = [];
+    placesMarkers: google.maps.Marker[] = [];
     infoWindows: google.maps.InfoWindow[] = [];
-
+    placesWindows: google.maps.InfoWindow = new google.maps.InfoWindow();
+    service: google.maps.places.PlacesService;
     latitude: number = 0;
     longitude: number = 0;
     zoom: number = 8;
 
     objects: Offer[] = [];
+    place: string;
 
     id: number = Math.round(Math.random() * 1000);
     p_w: number;
@@ -72,7 +76,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
             disableDefaultUI: true
         };
         this.map = new google.maps.Map(this.container, opts);
-
+        this.service =  new google.maps.places.PlacesService(this.map);
         if (this.polygone_points) {
             this.polygone = new google.maps.Polygon({
                 paths: this.toGooglePoints(this.polygone_points),
@@ -90,7 +94,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
         }
 
         this.refreshMarkers();
-
+        this.refreshPlacesMarkers();
         this.initDrawer();
     }
 
@@ -101,6 +105,9 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
             switch (p_name) {
                 case 'objects':
                     this.refreshMarkers();
+                    break;
+                case 'place':
+                    this.refreshPlacesMarkers();
                     break;
                 case 'latitude':
                 case 'longitude':
@@ -147,8 +154,31 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
 
         var c = this;
 
+        let minLat = 100000;
+        let minLon = 100000;
+        let maxLat = 0;
+        let maxLon = 0;
+        let mark = 0;
+
         this.objects.forEach(obj => {
             if(obj.locationLat) {
+
+                if (obj.locationLat > maxLat) {
+                    maxLat = obj.locationLat;
+                    mark ++;
+                }
+                if (obj.locationLon > maxLon) {
+                    maxLon = obj.locationLon;
+                    mark ++;
+                }
+                if (obj.locationLat < minLat) {
+                    minLat = obj.locationLat;
+                    mark ++;
+                }
+                if (obj.locationLon < minLon) {
+                    minLon = obj.locationLon;
+                    mark ++;
+                }
 
                 var m = new google.maps.Marker({
                     map: this.map,
@@ -173,6 +203,57 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
 
             }
         });
+
+
+        if (mark > 3) {
+            var bounds = new google.maps.LatLngBounds();
+            //sw
+            bounds.extend(new google.maps.LatLng(minLat, minLon));
+            //ne
+            bounds.extend(new google.maps.LatLng(maxLat, maxLon));
+
+            this.map.fitBounds(bounds);
+        }
+    }
+
+    refreshPlacesMarkers() {
+        this.placesMarkers = [];
+
+        if (this.place == null) return;
+        this.placesMarkers.forEach(m => {
+            m.setMap(null);
+        });
+
+        var request = {
+            bounds: this.map.getBounds(),
+            keyword: this.place
+        };
+
+        this.service.radarSearch(request,  (results, status) => {
+            for (var i = 0; i < results.length; i++) {
+                this.addMark(new google.maps.Marker({
+                    map: this.map,
+                    position: results[i].geometry.location,
+                    animation: google.maps.Animation.DROP
+                    //icon: 'src/icons/googleTarget.png'
+                }), results[i], this.service);
+            }
+        });
+    }
+
+    addMark(elem: any, rez: any,  serv: any) {
+            this.placesMarkers.push(elem);
+            google.maps.event.addListener(elem, 'mouseover', () => {
+                serv.getDetails(rez, (result, status) => {
+                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                        console.error(status);
+                        return;
+                    }
+                    this.placesWindows.setContent(result.name);
+                    this.placesWindows.open(this.map, elem);
+                });
+             });
+
     }
 
     initDrawer() {

@@ -11,6 +11,8 @@ var HubService = (function () {
         this.shared_var = {};
         this.stash = {
             some_prop: 'some_val',
+            seenOffers: [],
+            modifiedOffers: []
         };
     }
     HubService.prototype.getProperty = function (name) {

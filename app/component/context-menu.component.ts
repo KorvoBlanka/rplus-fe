@@ -3,23 +3,54 @@ import {
     SimpleChange,
     Output,
     EventEmitter,
-    OnChanges, OnInit
+    OnChanges, OnInit, ElementRef
 } from '@angular/core';
 
 
 @Component({
     selector: 'context-menu',
-    inputs: ['posX', 'posY', 'items', 'hidden'],
+    inputs: ['menu', 'hidden'],
     styles: [`
         .context-menu-wrapper {
 
             max-height: 450px;
-            overflow-y: auto;
 
-            position: fixed;
+            position: absolute;
             background-color: #fff;
             border: 1px solid #eee;
             z-index: 10;
+        }
+
+        .context-menu-scrollable {
+            overflow-y: auto;
+        }
+
+        .submenu-wrapper {
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 100%;
+
+            background-color: #fff;
+            border: 1px solid #eee;
+        }
+
+        .submenu-sc:hover:not(.disabled) > .submenu-wrapper {
+            display: block;
+        }
+
+        .submenu-sc:after {
+            display: block;
+            float: right;
+            width: 0;
+            height: 0;
+            margin-top: 11px;
+            margin-right: -10px;
+            border-color: transparent;
+            border-left-color: #666;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            content: " ";
         }
 
         .entry {
@@ -50,22 +81,49 @@ import {
             cursor: not-allowed;
         }
 
+        .flip {
+            left: -101%;
+        }
+
         hr {
             margin: 5px;
         }
     `],
     template: `
         <div class="context-menu-wrapper"
-            [style.left]="posX"
-            [style.top]="posY"
+            [style.left]="menu?.pX"
+            [style.top]="menu?.pY"
+            [class.context-menu-scrollable]="menu?.scrollable"
             [hidden]="hidden"
         (document:click)="docClick()"
         >
             <div
-                *ngFor="let i of items"
+                *ngFor="let i of menu?.items"
                 [ngSwitch]="i.class"
                 (click)="click($event, i)"
             >
+                <div *ngSwitchCase="'submenu'" class="entry submenu-sc" [class.disabled]="i.disabled" style="position: relative;">
+                    <span *ngIf="i.icon" class="icon-{{ i.icon }}"></span>
+                    {{ i.label }}
+                    <div class="submenu-wrapper" [class.flip]="flip">
+                        <div
+                            *ngFor="let si of i.items"
+                            [ngSwitch]="si.class"
+                            (click)="click($event, si)"
+                        >
+                            <div *ngSwitchCase="'entry'" class="entry" [class.disabled]="si.disabled">
+                                <span *ngIf="si.icon" class="icon-{{ si.icon }}"></span>
+                                {{ si.label }}
+                            </div>
+                            <div *ngSwitchCase="'entry_cb'" class="entry" [class.disabled]="si.disabled">
+                                <span *ngIf="si.value" class="icon-check"></span>
+                                <span *ngIf="!si.value" class="icon-none"></span>
+                                {{ si.label }}
+                            </div>
+                            <hr *ngSwitchCase="'delimiter'">
+                        </div>
+                    </div>
+                </div>
                 <div *ngSwitchCase="'entry'" class="entry" [class.disabled]="i.disabled">
                     <span *ngIf="i.icon" class="icon-{{ i.icon }}"></span>
                     {{ i.label }}
@@ -82,10 +140,15 @@ import {
 })
 
 export class ContextMenuComponent implements OnInit, OnChanges {
-    posX: number;
-    posY: number;
+
     hidden: boolean = true;
-    items: any [];
+    menu: any = {
+        pX: 0,
+        pY: 0,
+        scrollable: false,
+        items: []
+    };
+    flip: boolean = false;
 
     @Output() dummy: EventEmitter<any> = new EventEmitter();
 
@@ -105,13 +168,36 @@ export class ContextMenuComponent implements OnInit, OnChanges {
     docClick() {
     }
 
-    constructor() {
+    constructor(private elementRef: ElementRef) {
     }
 
     ngOnInit() {
+
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
+
+        var cm_element = this.elementRef.nativeElement.querySelector('.context-menu-wrapper');
+
+
+        console.log(this.hidden);
+
+        if (this.menu && !this.hidden) {
+            var pY = this.menu.pY;
+            this.menu.pY = 1000;
+
+            setTimeout(t => {
+                this.menu.pY = pY;
+                if (cm_element.offsetHeight + this.menu.pY > document.body.clientHeight) {
+                    this.menu.pY -= cm_element.offsetHeight;
+                }
+                if (cm_element.offsetWidth + this.menu.pX > document.body.clientWidth) {
+                    this.menu.pX -= cm_element.offsetWidth;
+                    this.flip = true;
+                }
+            }, 0);
+        }
+
     }
 }
 
@@ -124,6 +210,10 @@ export class ContextMenuComponent implements OnInit, OnChanges {
  this._hubService.shared_var['cm_hidden'] = false;
  this._hubService.shared_var['cm_items'] = [
  {class: "entry_cb", disabled: true, value: true, label: "пункт 1", callback: function() {alert('yay 1!')}},
+ {class: "submenu", disabled: true, label: "пункт x", items: [
+    {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
+    {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
+ ]},
  {class: "entry_cb", disabled: false, value: false, label: "пункт 2", callback: function() {alert('yay 2!')}},
  {class: "entry_cb", disabled: true, value: true, label: "пункт 3", callback: function() {alert('yay 3!')}},
  {class: "entry", disabled: false, icon: "cancel", label: "пункт 4", callback: function() {alert('yay 4!')}},

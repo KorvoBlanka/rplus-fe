@@ -12,21 +12,24 @@ import {UserService} from "../../service/user.service";
 
 @Component({
     selector: 'digest-request',
-    inputs: ['request'],
+    inputs: ['request', 'compact', 'color'],
     styles: [`
-        .billet {
+        .billet, .billet_small {
             background-color: inherit;
             color: #696969;
             font-weight: 200;
             font-size: 14px;
             position: relative;
-    
             border-bottom: 1px solid #e5e5e5;
             overflow: hidden;
-    
             padding: 10px 20px;
+
         }
-    
+
+        .billet_small {
+            padding: 10px;
+        }
+
         .billet-label {
             font-weight: 400;
             color:  #666;
@@ -34,23 +37,31 @@ import {UserService} from "../../service/user.service";
             white-space: nowrap;
             margin-left: 20px;
         }
-    
+
+        .billet_small .billet-label{
+            font-size: 13px;
+            width: calc(100% - 20px);
+            margin-left: 0px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .billet.selected {
             background-color: #157ad3;
             color: #fff !important;
         }
-    
+
         .billet-block {
             display: inline-block;
             width: 32%;
         }
-    
+
         .entry-header {
             display: inline-block;
             width: 80px;
             color: #aaa;
         }
-    
+
         .badge-gray {
             display: inline-block;
             width: 85px;
@@ -80,12 +91,13 @@ import {UserService} from "../../service/user.service";
              (dblclick)="open()"
              (touchstart)="tStart()"
              (touchend)="tEnd()"
+             *ngIf="!compact"
         >
             <div style="display: flex; justify-content: space-between;">
                 <span>Заявка {{ request._id }}
                   <span class="billet-label">{{ request.request }} ( {{ request.offerTypeCode }} )</span>
                 </span>
-        
+
                 <span></span>
             </div>
             <table style="width: 100%;">
@@ -120,7 +132,7 @@ import {UserService} from "../../service/user.service";
                 </tr>
                 <tr>
                     <td>
-                        <span class="entry-header" style="width: 105px;">Стадия:</span> 
+                        <span class="entry-header" style="width: 105px;">Стадия:</span>
                     </td>
                     <td></td>
                     <td>
@@ -129,6 +141,28 @@ import {UserService} from "../../service/user.service";
                 </tbody>
             </table>
         </div>
+        <div class="billet_small"
+             [class.selected]="selected"
+             (click)="select()"
+             (dblclick)="open()"
+             (touchstart)="tStart()"
+             (touchend)="tEnd()"
+             *ngIf="compact"
+        >
+            <div class="billet-label" style="font-style: italic; white-space: normal;" [style.color]="color">
+                <span class="billet-label" style="margin-right: 7px; font-style: normal;">
+                    {{ (request.addDate | formatDate).toString().split(" ")[0]}}
+                </span>
+                {{ request.request }}
+            </div>
+            <div class="billet-label" style="width: calc(100% - 32px); color: #a9a8a8 ;">
+                Ответственный: <span [style.color]="color">{{ agent.name || person.name }}</span>
+            </div>
+            <div class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
+                Контакты: {{ agent.phones[0] || person.phones[0] }}
+            </div>
+        </div>
+
     `
 })
 

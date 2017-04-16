@@ -12,6 +12,18 @@ var core_1 = require("@angular/core");
 var ui_tab_component_1 = require("./ui-tab.component");
 var UITabs = (function () {
     function UITabs() {
+        var _this = this;
+        this.iconUrls = [];
+        this.iconUrls_active = [];
+        this.currentUrl = [];
+        setTimeout(function () {
+            if (_this.iconUrls) {
+                _this.currentUrl[0] = _this.iconUrls_active[0];
+                for (var i = 1; i < _this.iconUrls.length; ++i) {
+                    _this.currentUrl.push(_this.iconUrls[i]);
+                }
+            }
+        }, 300);
     }
     UITabs.prototype.ngAfterContentInit = function () {
         if (!_hasActiveTab(this.tabs)) {
@@ -23,10 +35,34 @@ var UITabs = (function () {
         }
     };
     UITabs.prototype.selectTab = function (tab) {
-        _deactivateAllTabs(this.tabs.toArray());
+        this._deactivateAllTabs(this.tabs.toArray());
+        this.currentUrl[0] = this.iconUrls[0];
+        this.currentUrl[1] = this.iconUrls[1];
+        this.currentUrl[2] = this.iconUrls[2];
         tab.selectTab();
-        function _deactivateAllTabs(tabs) {
-            tabs.forEach(function (tab) { return tab.active = false; });
+    };
+    UITabs.prototype._deactivateAllTabs = function (tabs) {
+        tabs.forEach(function (tab) { return tab.active = false; });
+    };
+    UITabs.prototype.selectedIcon = function (act, i) {
+        //if(iconUrls_active && iconUrls){
+        if (act)
+            return this.iconUrls_active[i] || '';
+        else {
+            return this.currentUrl[i];
+        }
+        ;
+        //}
+    };
+    UITabs.prototype.setIcon = function (i, act, event) {
+        if (event.target.classList[0] == "tab-header") {
+            if (event.target.className != "tab-header active") {
+                if (act)
+                    this.currentUrl[i] = this.iconUrls_active[i];
+                else {
+                    this.currentUrl[i] = this.iconUrls[i];
+                }
+            }
         }
     };
     return UITabs;
@@ -38,9 +74,9 @@ __decorate([
 UITabs = __decorate([
     core_1.Component({
         selector: 'ui-tabs',
-        inputs: ['headerMode'],
-        template: "\n        <div class=\"header\">\n            <div class=\"tabs\" [class.align-left]=\"headerMode\">\n                <div *ngFor=\"let tab of tabs\" class=\"tab-header\" (click)=\"selectTab(tab)\" [class.active]=\"tab.active\">\n                    <a href=\"#\">{{tab.title}}</a>\n                </div>\n            </div>\n        </div>\n        <ng-content></ng-content>\n    ",
-        styles: ["\n        .tabs {\n            display: flex;\n            justify-content: center;\n        }\n        .tabs.align-left {\n            justify-content: flex-start; \n        }\n        .tab-header {\n            display: inline-block;\n            position: relative;\n            width: 180px;\n            border-right: 1px solid #eee;\n            text-align: center;\n        }\n        .tab-header:first-child {\n            border-left: 1px solid #eee;\n        }\n        .tab-header > a {\n            color: #aaa;\n        }\n        .tab-header.active > a {\n            color: #157ad3;\n        }\n        .tab-header.active::after {\n            content: '';\n            position: absolute;\n            left: 0;\n            top: 26px;\n            width: 80%;\n            margin-left: 10%;\n            height: 2px;\n            background-color: #157ad3;\n        }\n  "]
+        inputs: ['headerMode', 'iconUrls', 'iconUrls_active'],
+        template: "\n        <div class=\"head\">\n            <div class=\"tabs\" [class.align-left]=\"headerMode\">\n                <div *ngFor=\"let tab of tabs; let i = index;\" class=\"tab-header\"\n                 (click)=\"selectTab(tab)\" [class.active]=\"tab.active\"\n                 [ngStyle]=\"{'background-image': 'url(' + selectedIcon(tab.active, i) + ')'}\"\n                 (mouseover) = \"setIcon(i, true, $event)\"\n                 (mouseout) = \"setIcon(i, false, $event)\">\n                    {{tab.title}}\n                </div>\n            </div>\n        </div>\n        <ng-content></ng-content>\n    ",
+        styles: ["\n        .head{\n            height: 110px;\n            display: flex;\n            border-bottom: 4px solid rgba(61, 155, 233, 1);\n        }\n        .tabs {\n            display: flex;\n            margin-top: 15px;\n            height: 70px;\n            width: 230px;\n            justify-content: center;\n            margin-left: 45px;\n        }\n        .tabs.align-left {\n            justify-content: flex-start;\n        }\n        .tab-header {\n            width: 70px;\n            height: 50px;\n            font-size: 9pt;\n            background-size: contain;\n            background-repeat: no-repeat;\n            background-position: center;\n            color: #aaa;\n            line-height: 120px;\n            text-align: center;\n        }\n        .tab-header:first-child {\n            //width: 80px;\n        }\n\n        .tab-header:hover {\n        }\n\n        .tab-header > span {\n            color: #aaa;\n            margin-top: 40px;\n            margin-left: -15px;\n            display: block;\n        }\n        .tab-header.active > a {\n            color: #157ad3;\n        }\n        .tab-header.active::after {\n            /*content: '';\n            position: absolute;\n            left: 0;\n            top: 26px;\n            width: 80%;\n            margin-left: 10%;\n            height: 2px;\n            background-color: #157ad3;/*\n        }\n  "]
     }),
     __metadata("design:paramtypes", [])
 ], UITabs);

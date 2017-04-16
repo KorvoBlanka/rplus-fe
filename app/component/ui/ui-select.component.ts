@@ -16,6 +16,7 @@ import {Output, EventEmitter} from '@angular/core';
             </div>
             <ul class="dropdown-menu pull-right" [hidden]="hidden">
                 <li *ngFor="let opt of options"
+                    [class.bold]="opt.bold == true"
                     [class.selected]="opt.value == selected?.value"
                     (click)="select(opt)"
                 >
@@ -29,7 +30,7 @@ import {Output, EventEmitter} from '@angular/core';
         .ui-select {
             position: relative;
         }
-        
+
         .dropdown-menu {
             position: absolute;
             top: 100%;
@@ -46,7 +47,7 @@ import {Output, EventEmitter} from '@angular/core';
             border: 1px solid rgba(0,0,0,0.15);
             background-clip: padding-box;
         }
-        
+
         .dropdown-menu.pull-right {
             right: 0;
             left: auto;
@@ -56,17 +57,23 @@ import {Output, EventEmitter} from '@angular/core';
             display: inline-block;
             width: 100%;
             height: 100%;
-    
+
             max-width: 200px;
             white-space: nowrap;
             overflow: hidden;
-    
+
             text-align: right;
-    
+
             background: #fff;
             cursor: pointer;
+            color: #c0c0c0;
+            font-size: 11px;
         }
-        
+
+        .bold>label {
+            font-weight: 600 !important;
+        }
+
         .dropdown-menu>li>label {
             display: block;
             padding: 3px 20px;
@@ -76,11 +83,11 @@ import {Output, EventEmitter} from '@angular/core';
             color: #333;
             white-space: nowrap;
         }
-    
+
         .dropdown-menu>li:hover {
             background-color: #efefef;
         }
-        
+
         .dropdown-menu>li.selected>label {
             background-color: #3366CC;
             color: #fff;
@@ -95,6 +102,7 @@ import {Output, EventEmitter} from '@angular/core';
             font-weight: 200;
             font-size: 14px;
         }
+
     `]
 })
 

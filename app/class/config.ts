@@ -1,4 +1,5 @@
 export interface Config {
-    map: {lat: number, lon: number, zoom: number};
-    RESTServer: String;
+    version: string;
+    map: any;
+    RESTServer: string;
 }

@@ -328,7 +328,13 @@ export class TabListOfferComponent {
 
     sort: any = {};
 
-    agentOpts = [];
+    agentOpts = [
+        {value: 'all', label: 'Все объекты', bold: true},
+        {value: 'realtor', label: 'Конкуренты', bold: true},
+        {value: 'private', label: 'Собственники', bold: true},
+        {value: 'company', label: 'Наша компания', bold: true},
+        {value: 'my', label: 'Мои объекты', bold: true}
+    ];
 
     stageCodeOptions = [
         {value: 'all', label: 'Все'},
@@ -395,18 +401,13 @@ export class TabListOfferComponent {
         this.page = 0;
         this.listOffers();
 
-        this.agentOpts.push({value: 'all', label: 'Все объекты', bold: true});
-        this.agentOpts.push({value: 'realtor', label: 'Конкуренты', bold: true});
-        this.agentOpts.push({value: 'private', label: 'Собственники', bold: true});
-        this.agentOpts.push({value: 'company', label: 'Наша компания', bold: true});
-        this.agentOpts.push({value: 'my', label: 'Мои объекты', bold: true});
-
         this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
                 var a = agents[i];
                 this.agentOpts.push({
                     value: '' + a.id,
-                    label: a.name
+                    label: a.name,
+                    bold: false
                 });
             }
         });

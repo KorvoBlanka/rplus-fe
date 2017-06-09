@@ -26,28 +26,25 @@ import {User} from "../../class/user";
             padding-top: 40px;
             position: relative;
         }
+
+        .user-badge {
+            color: #eeeeee;
+        }
     `],
     template: `
         <div class="tile-board" style="">
-        
+
             <div class="user-badge">
                 <span> {{ (user | async)?.login }} </span>  <span (click)="logout()"> выйти </span>
             </div>
-        
+
             <div class="tile-group">
 
-                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer' , {offerTypeCode: 'sale'})">
+                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-home"></span>
                     </div>
-                    <span class="tile-label">Недвижимость - Продажа</span>
-                </div>
-
-                <div class="tile bg-red fg-white" (click)="turnTo('list_offer', {offerTypeCode: 'rent'})">
-                    <div class="tile-content iconic">
-                        <span class="icon icon-home"></span>
-                    </div>
-                    <span class="tile-label">Недвижимость - Аренда</span>
+                    <span class="tile-label">Недвижимость</span>
                 </div>
 
                 <div class="tile bg-green fg-white" (click)="turnTo('list_request', {})">
@@ -98,7 +95,14 @@ import {User} from "../../class/user";
                     </div>
                     <span class="tile-label">Пользователи</span>
                 </div>
-                
+
+                <div class="tile bg-puple fg-white" (click)="turnTo('advertising', {})">
+                    <div class="tile-content iconic">
+                        <span class="icon icon-adver"></span>
+                    </div>
+                    <span class="tile-label">Реклама</span>
+                </div>
+
             </div>
         </div>
     `

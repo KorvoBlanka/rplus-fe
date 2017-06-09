@@ -66,7 +66,7 @@ import {Output, EventEmitter} from '@angular/core';
 
             background: #fff;
             cursor: pointer;
-            color: #c0c0c0;
+            color: #78797a;
             font-size: 11px;
         }
 
@@ -82,6 +82,7 @@ import {Output, EventEmitter} from '@angular/core';
             line-height: 1.42857143;
             color: #333;
             white-space: nowrap;
+            font-size: 12px;
         }
 
         .dropdown-menu>li:hover {

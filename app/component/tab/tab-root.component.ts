@@ -16,10 +16,10 @@ import {Tab} from '../../class/tab';
         <tab-organisation [tab]="tab" *ngSwitchCase="'organisation'"></tab-organisation>
         <tab-list-request [tab]="tab" *ngSwitchCase="'list_request'"></tab-list-request>
         <tab-request [tab]="tab" *ngSwitchCase="'request'"></tab-request>
-    
+        <tab-advertising [tab]="tab" *ngSwitchCase="'advertising'"></tab-advertising>
         <tab-list-user [tab]="tab" *ngSwitchCase="'list_users'"></tab-list-user>
         <tab-user [tab]="tab" *ngSwitchCase="'user'"></tab-user>
-    
+
         <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>
     </div>
     `

@@ -61,6 +61,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
 
         .offer-prop {
             overflow-y: scroll;
+            height: calc(100% - 111px);
         }
 
         .view-group {
@@ -103,7 +104,6 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
             text-align: right;
             color: #696969;
             font-size: 10pt;
-            margin-right: 15px;
             height: 19px; /* костыль */
             border: none !important;
         }
@@ -114,7 +114,6 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
         }
 
         .edit-block > .view-group, .view-block > .view-group {
-            height: 30px;
             height: 30px;
             margin-left: 57px;
         }
@@ -188,15 +187,18 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
         }
 
         .graph{
-            width: 350px;
+            width: 359px;
             float: left;
             position: relative;
         }
         .graph > .price{
             position: absolute;
             z-index: 100;
-            margin-left: 10px;
             color: dimgrey;
+            background: #f7f7f7;
+            width: 100%;
+            height: 53px;
+            padding-left: 10px;
         }
 
         .arrow{
@@ -204,7 +206,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
             width: 18px;
             height: 10px;
             background-size: cover;
-            margin: 0 10px;
+            margin: 5px 13px 0;
             background-position: center;
             flex: 0 0 18px;
             position: absolute;
@@ -222,18 +224,19 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
             flex-direction: column;
             font-size: 10pt;
             color: dimgrey;
+            line-height: 30px;
         }
 
         .gm_container{
             width: calc(100% - 370px);
-            height: 500px;
+            height: 495px;
             display:flex;
         }
 
         .map_menu{
             width: 150px;
             background-color: #f7f7f7;
-            border-right: 1px solid silver;
+            //border-right: 1px solid silver;
             border-top: 1px solid silver;
         }
         .map_menu >div {
@@ -256,22 +259,40 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
         .offer_face{
             height: 220px;
             background-color: #f7f7f7;
+            padding-top: 5px;
+            position: relative;
         }
 
         .offer_face > .price{
+            display: flex;
+            margin: 0;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .offer_face > .price > div{
             font-size: 20pt;
             text-align: center;
             color: #3d9be9;
-            margin-top: 5px;
+            margin: 5px 0;
+        }
+        .offer_face > .price > div:after{
+            content: " ";
+            background-image: url(res/ruble1.png);
+            width: 28px;
+            height: 28px;
+            background-size: 27px;
+            float: right;
+            margin: 5px 0 0 2px
         }
 
         .offer_face > .rate{
             height: 20px;
-            background-image: url(res/star_rate.png);
+            background-image: url(res/star_active.png);
             background-size: contain;
             width: 100px;
             margin-left: 20px;
-            margin-top: 15px;
+            margin-top: 6px;
         }
 
         .offer_face > div{
@@ -284,13 +305,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
 
         .offer_face > .street{
             font-size: 17pt;
-            margin-top: 0;
+            margin-top: -2px;
             color: black;
         }
 
         .offer_face > .district{
             font-size: 10pt;
-            margin: 0px 0 15px 20px;
+            margin: -4px 0 22px 20px;
             color: dimgrey;
         }
 
@@ -307,8 +328,19 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
             margin-right: 3px;
         }
 
+        .offer_face > .date{
+            right: 0;
+            width: 159px;
+            position: absolute;
+            text-align: right;
+            margin-right: 20px;
+            color: #cccaca;
+            font-size: 9pt;
+            bottom: 23px;
+        }
+
         .header_col{
-            width: calc(100% - 10px);
+            width: 100%;
             height: 40px;
             background-color: #f7f7f7;
             padding-left: 20px;
@@ -320,31 +352,31 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
         }
 
         .star_container{
-            height: 380px;
-            background-color: #f7f7f7;
+            height: 340px;
         }
 
         .statistic{
             position: relative;
-            height: 380px;
-            border-right: 1px solid silver;
+            height: calc(100% - 0px);
+            //border-right: 1px solid silver;
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
             background-color: #f7f7f7;
             width: calc(100% - 371px);
             float: left;
+            padding-top: 29px;
         }
 
         .statistic > div{
             margin-left: 20px;
-            width: 365px;
+            width: 356px;
         }
 
         .statistic > div:first-of-type >span{
             margin-top: 8px;
             display: block;
-            font-size: 9pt;
+            font-size: 10pt;
             color: #5b5b5b;
         }
 
@@ -359,21 +391,19 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
         .statistic .rate_line{
             width: 100%;
             height: 25px;
-            margin-top: 10px;
             display: flex;
         }
 
         .statistic > div:not(:last-child) >div:first-child {
-            ext-align: left;
+            text-align: left;
             color: #293c63;
             width: 360px;
-            margin-bottom: 17px;
         }
 
         .statistic .rate_line>div:last-child{
             line-height: 25px;
             margin-left: 15px;
-            font-size: 11pt;
+            font-size: 9pt;
             color: #5b5b5b;
         }
 
@@ -385,14 +415,10 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
             text-align: left;
         }
 
-        .statistic >div:nth-child(2), .statistic >div:nth-child(3){
-                width: 320px;
-        }
-
         .statistic > div .rate_line >div:first-child {
-            background-image: url(res/star_rate.png);
+            background-image: url(res/star_disable.png);
             background-size: 15px 15px;
-            width: 75px;
+            width: 74px;
             background-position: left center;
             background-repeat: repeat-x;
         }
@@ -404,7 +430,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
             background-repeat: repeat-x;
         }
 
-        .statistic >div:nth-child(2):hover .rate_line >div:first-child{
+        /*.statistic >div:nth-child(2):hover .rate_line >div:first-child{
             background-image: url(res/star_rate_disabled.png);
             background-size: 20px 20px;
             width: 101px;
@@ -414,24 +440,15 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
 
         .statistic >div:nth-child(2):hover .rate_line >div:first-child>div{
             background-image: url();
-        }
+        }*/
 
         .multiply{
             position: relative;
             display: block;
             height: 30px;
-            width: 284px;
-            margin-right: 0px;
-            margin-left: auto;
-            overflow: hidden;
-        }
-
-        .multiselect{
-            width: 285px;
-            position: relative;
-            display: block;
-            margin-right: 0;
-            margin-left: auto;
+            //width: 280px;
+            margin-right: 5px;
+            margin-left: 58px;
             overflow: hidden;
         }
 
@@ -463,7 +480,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
         }
 
         .a1{
-            margin-right: 18px;
+            //margin-right: 18px;
             width: 143px;
             display: inline-block;
             overflow: hidden;
@@ -488,10 +505,10 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                 <div class="header">
                     <div class="header-label">{{ tab.header }}</div>
                 </div>
-                <div class="offer-prop" style="overflow: scroll; overflow-x: hidden; height: calc(100% - 111px);
-                        border-right: 1px solid #cccccc;">
+                <div class="offer-prop" style="overflow-x: hidden;">
                     <div class = "offer_face">
-                        <div class="price">{{(offer.ownerPrice === undefined ? " " : split_number(offer.ownerPrice*1000) ) + " Р"}} </div>
+                        <div class="price"><div>{{offer.ownerPrice === undefined ? " " : split_number(offer.ownerPrice*1000)}}</div></div>
+                        <span style=""></span>
                         <div class="type" style="text-transform: uppercase; color: #696969; height: 19px; margin-top: 0;">
                             <ui-view-value
                                 [options] = "typeCodeOptions"
@@ -511,6 +528,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             {{ "Этаж "+ (offer.floor === undefined ? " " : offer.floor)}}
                         </div>
                         <div class="rate"></div>
+                        <div class="date">{{offer.addDate | formatDate}}</div>
                     </div>
 
                     <div>
@@ -526,25 +544,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                         -->
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: НАЧАЛО -->
 
-                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 10px 10px 0px;">
+                        <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 0px 50px 0px;">
                             <div class="header_col">Поиск клиента</div>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                            <div class="view-group multiply" style=' height: 30px;'>
-                                <span class="view-label pull-left">Телефоны:</span>
-                                <div class="show_value"></div><div class='arrow' (click)="showMenu($event, true)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                        [options] = "[
-                                            {value: 'MOBILE', label: 'Мобильный'},
-                                            {value: 'HOME', label: 'Домашний'},
-                                            {value: 'SAME', label: 'Другой'}
-                                        ]"
-                                        [masks] = "['+_ (___) ___-__-__',
-                                                    '+_ (____) __-__-__',
-                                                    '+_ (____) __-__-__']"
-                                        [values]="['+7914444444']"
-                                        [width]="'43%'"
-                                        (onChange)="$event.selected.value">
-                                </ui-multiselect>
+                            <div class="view-group" style='position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Телефон:'" [value] = "offer.person?.name"
+                                    [width] = "'225px'" (onChange)= "offer.person = $event" [queryTipe]="'person'">
+                                </ui-input-line>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
@@ -566,7 +572,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </ui-input-line>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Стадия:</span>
                                 <ui-slidingMenu class="view-value edit-value"
@@ -617,7 +623,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </ui-slidingMenu>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/type2.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/type.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Тип объекта:</span>
                                 <ui-slidingMenu class="view-value edit-value"
@@ -638,16 +644,16 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div class = "header_col">Описание объекта:</div>
                     <div *ngIf="offer.typeCode == 'apartment' || offer.typeCode == 'room' || offer.typeCode == 'apartment_small' || offer.typeCode == 'apartment_small'">
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "''"
-                                    [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                            <div class="view-group multiply" style='height: 30px;'>
+                                <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "addressStr"
+                                    [width] = "'225px'" (onChange)= "parseArray($event, offerAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event,true)">
                                 </ui-input-line>
-                                <div class='arrow' (click)="showMenu($event, true)"></div>
+                                <div class='arrow' (click)="showMenu($event, true)" *ngIf="offerAddress[0] && offerAddress[0].value !== undefined"></div>
                                 <ui-multiselect class="view-value edit-value" style=""
                                     [options] = "[
                                         {value: 'KRAY', label: 'Регион'},
                                         {value: 'CITY', label: 'Нас. пункт'},
-                                        {value: 'DISTRICT', label: 'Район'},
+                                        {value: 'DISTRICT', label: 'Адм. район'},
                                         {value: 'STREET', label: 'Улица'},
                                         {value: 'HOUSE', label: 'Дом'},
                                         {value: 'HOUSING', label: 'Корпус'},
@@ -656,11 +662,11 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     [masks] = "['','','','','','','']"
                                     [values]="offerAddress"
                                     [width]="'36%'"
-                                    (onChange)="parseArray($event, offerAddress)">
+                                    (onChange)="parseArray($event, offerAddress, true)">
                                 </ui-multiselect>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/state.png)'"></div>
                             <div class="view-group" >
                                 <span class="view-label">Статус объекта:</span>
                                 <ui-slidingMenu class="view-value edit-value"
@@ -674,8 +680,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </ui-slidingMenu>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
-                            <div class="view-group" >
+                            <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>
+                            <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
                                 <span class="view-label">Стадия объекта:</span>
                                 <ui-slidingMenu class="view-value edit-value"
                                     [options] = "[
@@ -688,8 +694,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 >
                                 </ui-slidingMenu>
                             </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                            <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/year.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                 <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
                                         [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
@@ -805,7 +811,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </ui-slidingMenu>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Состояние:</span>
                                 <ui-slidingMenu class="view-value edit-value"
@@ -825,7 +831,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </ui-input-line>
                                 </div>
                                 <hr>
-                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/name.png)'"></div>
                                 <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                     <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement_n"
                                         [width] = "'225px'" (onChange)= "offer.settlement_n = $event">
@@ -833,16 +839,16 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </div>
                                 <hr>
                                 <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                                <div class="view-group multiselect" style='height: 30px;'>
-                                    <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "''"
-                                        [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                <div class="view-group multiply" style='height: 30px;'>
+                                    <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "addressStr"
+                                        [width] = "'225px'" (onChange)= "parseArray($event, offerAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event,true)">
                                     </ui-input-line>
-                                    <div class='arrow' (click)="showMenu($event, true)"></div>
+                                    <div class='arrow' (click)="showMenu($event, true)" *ngIf="offerAddress[0] && offerAddress[0].value !== undefined"></div>
                                     <ui-multiselect class="view-value edit-value" style=""
                                         [options] = "[
                                             {value: 'KRAY', label: 'Регион'},
                                             {value: 'CITY', label: 'Нас. пункт'},
-                                            {value: 'DISTRICT', label: 'Район'},
+                                            {value: 'DISTRICT', label: 'Адм. район'},
                                             {value: 'STREET', label: 'Улица'},
                                             {value: 'HOUSE', label: 'Дом'},
                                             {value: 'HOUSING', label: 'Корпус'},
@@ -851,7 +857,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         [masks] = "['','','','','','','']"
                                         [values]="offerAddress"
                                         [width]="'36%'"
-                                        (onChange)="parseArray($event, offerAddress)">
+                                        (onChange)="parseArray($event, offerAddress, true)">
                                     </ui-multiselect>
                                 </div>
                                 <hr>
@@ -866,7 +872,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </ui-slidingMenu>
                                 </div>
                                 <hr>
-                                <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/year.png)'"></div>
                                 <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                     <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
                                             [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
@@ -916,7 +922,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </ui-multiselect>
                                 </div>
                                 <hr>
-                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Состояние:</span>
                                     <ui-slidingMenu class="view-value edit-value"
@@ -1015,7 +1021,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </ui-slidingMenu>
                                 </div>
                                 <hr>
-                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/heating.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Отопление:</span>
                                     <ui-slidingMenu class="view-value edit-value"
@@ -1043,7 +1049,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </ui-multiselect>
                                 </div>
                                 <hr>
-                                <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                <div class='view_icon' [style.background-image]="'url(res/offer_icon/land.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Назначение земель:</span>
                                     <ui-slidingMenu class="view-value edit-value"
@@ -1055,7 +1061,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </div>
                                 <hr>
                         </div>
-                        <div *ngIf="offer.typeCode == 'land'">
+                        <div *ngIf="offer.typeCode == 'land' || offer.typeCode == 'land1' || offer.typeCode == 'land2'">
                                     <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
                                     <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                         <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
@@ -1063,7 +1069,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-input-line>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/name.png)'"></div>
                                     <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                         <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement_n"
                                             [width] = "'225px'" (onChange)= "offer.settlement_n = $event">
@@ -1071,16 +1077,16 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                                    <div class="view-group multiselect" style='height: 30px;'>
-                                        <ui-input-line [placeholder] = "'Адрес участка:'" [value] = "''"
-                                            [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                    <div class="view-group multiply" style='height: 30px;'>
+                                        <ui-input-line [placeholder] = "'Адрес участка:'" [value] = "addressStr"
+                                            [width] = "'225px'" (onChange)= "parseArray($event, offerAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event,true)">
                                         </ui-input-line>
-                                        <div class='arrow' (click)="showMenu($event, true)"></div>
+                                        <div class='arrow' (click)="showMenu($event, true)" *ngIf="offerAddress[0] && offerAddress[0].value !== undefined"></div>
                                         <ui-multiselect class="view-value edit-value" style=""
                                             [options] = "[
                                                 {value: 'KRAY', label: 'Регион'},
                                                 {value: 'CITY', label: 'Нас. пункт'},
-                                                {value: 'DISTRICT', label: 'Район'},
+                                                {value: 'DISTRICT', label: 'Адм. район'},
                                                 {value: 'STREET', label: 'Улица'},
                                                 {value: 'HOUSE', label: 'Дом'},
                                                 {value: 'HOUSING', label: 'Корпус'},
@@ -1089,7 +1095,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             [masks] = "['','','','','','','']"
                                             [values]="offerAddress"
                                             [width]="'36%'"
-                                            (onChange)="parseArray($event, offerAddress)">
+                                            (onChange)="parseArray($event, offerAddress, true)">
                                         </ui-multiselect>
                                     </div>
                                     <hr>
@@ -1104,7 +1110,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-slidingMenu>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/land.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label">Назначение земель:</span>
                                         <ui-slidingMenu class="view-value edit-value"
@@ -1176,7 +1182,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     </ui-slidingMenu>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/heating.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label">Отопление:</span>
                                         <ui-slidingMenu class="view-value edit-value"
@@ -1186,10 +1192,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         >
                                         </ui-slidingMenu>
                                     </div>
+                                    <hr>
                         </div>
 
-                        <div *ngIf="offer.typeCode == 'market_place' || offer.typeCode == 'production_place' || offer.typeCode == 'warehouse_place' ||
-                        offer.typeCode == 'service_place'|| offer.typeCode == 'gpurpose_place' || offer.typeCode == 'building'  || offer.typeCode == 'other'">
+                        <div *ngIf="offer.typeCode == 'market_place' || offer.typeCode == 'production_place' || offer.typeCode == 'warehouse_place'
+                                || offer.typeCode == 'service_place'|| offer.typeCode == 'gpurpose_place' || offer.typeCode == 'building'
+                                || offer.typeCode == 'other' || offer.typeCode == 'office' || offer.typeCode == 'cosial_place'"
+                        >
                                         <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                             <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
@@ -1205,16 +1214,16 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </div>
                                         <hr>
                                         <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                                        <div class="view-group multiselect" style='height: 30px;'>
-                                            <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "''"
-                                                [width] = "'225px'" (onChange)= "parseArray($event, offerAddress)" [isAddress]="true" (clicked)="showMenu($event,true)">
+                                        <div class="view-group multiply" style='height: 30px;'>
+                                            <ui-input-line [placeholder] = "'Адрес объекта:'" [value] = "addressStr"
+                                                [width] = "'225px'" (onChange)= "parseArray($event, offerAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event,true)">
                                             </ui-input-line>
-                                            <div class='arrow' (click)="showMenu($event, true)"></div>
+                                            <div class='arrow' (click)="showMenu($event, true)" *ngIf="offerAddress[0] && offerAddress[0].value !== undefined"></div>
                                             <ui-multiselect class="view-value edit-value" style=""
                                                 [options] = "[
                                                     {value: 'KRAY', label: 'Регион'},
                                                     {value: 'CITY', label: 'Нас. пункт'},
-                                                    {value: 'DISTRICT', label: 'Район'},
+                                                    {value: 'DISTRICT', label: 'Адм. район'},
                                                     {value: 'STREET', label: 'Улица'},
                                                     {value: 'HOUSE', label: 'Дом'},
                                                     {value: 'HOUSING', label: 'Корпус'},
@@ -1223,11 +1232,11 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                 [masks] = "['','','','','','','']"
                                                 [values]="offerAddress"
                                                 [width]="'36%'"
-                                                (onChange)="parseArray($event, offerAddress)">
+                                                (onChange)="parseArray($event, offerAddress, true)">
                                             </ui-multiselect>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/state.png)'"></div>
                                         <div class="view-group" >
                                             <span class="view-label">Статус объекта:</span>
                                             <ui-slidingMenu class="view-value edit-value"
@@ -1241,8 +1250,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             </ui-slidingMenu>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
-                                        <div class="view-group" >
+                                        <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>
+                                        <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
                                             <span class="view-label">Стадия объекта:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "[
@@ -1255,8 +1264,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             >
                                             </ui-slidingMenu>
                                         </div>
-                                        <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                        <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/year.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                             <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
                                                     [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
@@ -1267,12 +1276,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <div class="view-group">
                                             <span class="view-label">Тип здания:</span>
                                             <ui-slidingMenu class="view-value edit-value"
-                                                [options] = "[
-                                                    {value: 'NEW', label: 'Бизнес центр'},
-                                                    {value: 'N1EW', label: 'Торгово-развлекательный комплекс'},
-                                                    {value: 'TRE', label: 'Не жилой фонд'},
-                                                    {value: 'OLD', label: 'Жилой фонд'}
-                                                ]"
+                                                [options] = "getBuldingOptionsArray()"
                                                 [value]="offer.buildingType_n"
                                                 (onChange)="offer.buildingType_n = $event.selected.value"
                                             >
@@ -1370,7 +1374,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             </ui-slidingMenu>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/heating.png)'"></div>
                                         <div class="view-group">
                                             <span class="view-label">Отопление:</span>
                                             <ui-slidingMenu class="view-value edit-value"
@@ -1399,14 +1403,14 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             </ui-multiselect>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/height.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                             <ui-input-line [placeholder] = "'Высота потолков:'" [value] = "offer.ceilingHeight_n"
                                                 [width] = "'225px'" (onChange)= "offer.ceilingHeight_n = $event">
                                             </ui-input-line>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition.png)'"></div>
                                         <div class="view-group">
                                             <span class="view-label">Состояние помещения:</span>
                                             <ui-slidingMenu class="view-value edit-value"
@@ -1428,7 +1432,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             </ui-slidingMenu>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/lift.png)'"></div>
                                         <div class="view-group">
                                             <span class="view-label">Лифт:</span>
                                             <ui-slidingMenu class="view-value edit-value"
@@ -1439,7 +1443,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             </ui-slidingMenu>
                                         </div>
                                         <hr>
-                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/floor.png)'"></div>
+                                        <div class='view_icon' [style.background-image]="'url(res/offer_icon/parking.png)'"></div>
                                         <div class="view-group">
                                             <span class="view-label">Парковка:</span>
                                             <ui-slidingMenu class="view-value edit-value"
@@ -1451,10 +1455,9 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </div>
                                         <hr>
                                 </div>
-
                             <div class='view_icon' [style.background-image]="'url(res/offer_icon/cost.png)'"></div>
-                            <div class="view-group" style='position: relative; display: block; height: 30px; width: 275px;
-                                    margin-right: 15px; margin-left: auto; overflow: hidden;'>
+                            <div class="view-group" style='position: relative; display: block; height: 30px; width: 290px;
+                                    margin-left: 50px; overflow: hidden;'>
                                 <span class="view-label" style = 'float: left;'>Цена</span>
                                 <div class="show_value">{{' '+(+(offer.ownerPrice || 0) + (offer.agencyPrice || 0))+ ' т.руб.'}}</div>
                                 <div class='arrow' (click)="showMenu($event, true)"></div>
@@ -1470,18 +1473,27 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     (onChange)="parseArray($event, offerPrice)">
                                 </ui-multiselect>
                             </div>
-                            <div class="header_col">Дополнительная информация</div>
-                            <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
-                                <textarea class="view-value text-value"
+
+                            <div class="header_col">Тэги</div>
+                            <div style="margin: 0 0 20px 20px;">
+                                <ui-tag-block
+                                    [value] = "offer.tag"
+                                    (valueChange) = "offer.tag = $event.value"
+                                ></ui-tag-block>
+                            </div>
+
+                            <div class="header_col">Дополнительное описание</div>
+                            <div class="view-group" style="flex-wrap: wrap; height: 90px; margin: 0 20px;">
+                                <textarea class="text-value"
                                 placeholder="" [(ngModel)]="offer.description"
-                                style="text-align: left;"></textarea>
+                                style="text-align: left; width: 100%; height: 100%; font-size: 10pt; color: dimgrey;"></textarea>
                             </div>
                         </div>
 
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: ???? -->
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
 
-                        <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
+                        <div class="view-block" [hidden]="editEnabled" style="margin: 10px 20px 50px 0px;">
                             <div class="header_col">Контактная информация:</div>
                             <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
                             <div class="view-group">
@@ -1524,7 +1536,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-value">  {{ offer.organisation?.name }} </span>
                                 </div>
                             </div>
-                            <hr>
+                            <hr  *ngIf='offer.person || offer.organisation'>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Телефон:</span>
@@ -1556,7 +1568,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-value"> {{offer.contract}} </span>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Стадия:</span>
                                 <ui-view-value
@@ -1605,7 +1617,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </ui-view-value>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/type2.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/type.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Тип объекта:</span>
                                 <ui-view-value
@@ -1619,11 +1631,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div *ngIf="offer.typeCode == 'apartment' || offer.typeCode == 'room' || offer.typeCode == 'apartment_small' || offer.typeCode == 'apartment_small'">
                                     <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
                                     <div class="view-group">
-                                        <span class="view-label">Адрес объекта:</span>
-                                        <span class="view-value"> {{ offer.address }} </span>
+                                        <ui-view-line
+                                            [placeholder]= "'Адрес объекта:'" [value]="addressStr"
+                                        >
+                                        </ui-view-line>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/state.png)'"></div>
                                     <div class="view-group" >
                                         <span class="view-label">Статус объекта:</span>
                                         <ui-view-value
@@ -1636,8 +1650,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
-                                    <div class="view-group" >
+                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>
+                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
                                         <span class="view-label">Стадия объекта:</span>
                                         <ui-view-value
                                             [options] = "[
@@ -1649,8 +1663,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         >
                                         </ui-view-value>
                                     </div>
-                                    <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                    <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/year.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Год постройки:</span>
                                         <span class="view-value"> {{ offer.buildYear_n }} </span>
@@ -1748,7 +1762,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Состояние:</span>
                                         <ui-view-value
@@ -1766,7 +1780,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-value"> {{ offer.distance_n }} </span>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/name.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Наименование поселения:</span>
                                         <span class="view-value"> {{ offer.settlement_n }} </span>
@@ -1774,8 +1788,10 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
                                     <div class="view-group">
-                                        <span class="view-label">Адрес объекта:</span>
-                                        <span class="view-value"> {{ offer.address }} </span>
+                                        <ui-view-line
+                                            [placeholder]= "'Адрес объекта:'" [value]="addressStr"
+                                        >
+                                        </ui-view-line>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
@@ -1788,7 +1804,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/year.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Год постройки:</span>
                                         <span class="view-value"> {{ offer.buildYear_n }} </span>
@@ -1836,7 +1852,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-multi-view>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Состояние:</span>
                                         <ui-view-value
@@ -1926,7 +1942,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/heating.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Отопление:</span>
                                         <ui-view-value
@@ -1942,7 +1958,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType_n == 0 ? "cот" : "га") }} </span>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/land.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Назначение земель:</span>
                                         <ui-view-value
@@ -1952,14 +1968,14 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                 </div>
-                                <div *ngIf="offer.typeCode == 'land'">
+                                <div *ngIf="offer.typeCode == 'land' || offer.typeCode == 'land1' || offer.typeCode == 'land2'">
                                     <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Удаленность:</span>
                                         <span class="view-value"> {{ offer.distance_n }} </span>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/settlement.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/name.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Наименование поселения:</span>
                                         <span class="view-value"> {{ offer.settlement_n }} </span>
@@ -1967,8 +1983,10 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
                                     <div class="view-group">
-                                        <span class="view-label">Адрес участка:</span>
-                                        <span class="view-value"> {{ offer.address }} </span>
+                                        <ui-view-line
+                                            [placeholder]= "'Адрес участка:'" [value]="addressStr"
+                                        >
+                                        </ui-view-line>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(res/offer_icon/secure.png)'"></div>
@@ -1981,7 +1999,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/land.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label">Назначение:</span>
                                         <ui-view-value
@@ -2037,7 +2055,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/heating.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Отопление:</span>
                                         <ui-view-value
@@ -2047,8 +2065,10 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                 </div>
-                                <div *ngIf="offer.typeCode == 'market_place' || offer.typeCode == 'production_place' || offer.typeCode == 'warehouse_place' ||
-                                offer.typeCode == 'service_place'|| offer.typeCode == 'gpurpose_place' || offer.typeCode == 'building'  || offer.typeCode == 'other'">
+                                <div *ngIf="offer.typeCode == 'market_place' || offer.typeCode == 'production_place' || offer.typeCode == 'warehouse_place'
+                                        || offer.typeCode == 'service_place'|| offer.typeCode == 'gpurpose_place' || offer.typeCode == 'building'
+                                        || offer.typeCode == 'other' || offer.typeCode == 'office' || offer.typeCode == 'cosial_place'"
+                                >
                                     <div class='view_icon' [style.background-image]="'url(res/offer_icon/distance.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Удаленность:</span>
@@ -2063,11 +2083,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
                                     <div class="view-group">
-                                        <span class="view-label">Адрес объекта:</span>
-                                        <span class="view-value"> {{ offer.address }} </span>
+                                        <ui-view-line
+                                            [placeholder]= "'Адрес объекта:'" [value]="addressStr"
+                                        >
+                                        </ui-view-line>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/status.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/state.png)'"></div>
                                     <div class="view-group" >
                                         <span class="view-label">Статус объекта:</span>
                                         <ui-view-value
@@ -2080,8 +2102,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage2.png)'"></div>
-                                    <div class="view-group" >
+                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>
+                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
                                         <span class="view-label">Стадия объекта:</span>
                                         <ui-view-value
                                             [options] = "[
@@ -2093,8 +2115,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         >
                                         </ui-view-value>
                                     </div>
-                                    <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                                    <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/year.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Год постройки:</span>
                                         <span class="view-value"> {{ offer.buildYear_n }} </span>
@@ -2104,13 +2126,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class="view-group">
                                         <span class="view-label pull-left">Тип здания:</span>
                                         <ui-view-value
-                                        [options] = "[
-                                            {value: 'NEW', label: 'Бизнес центр'},
-                                            {value: 'N1EW', label: 'Торгово-развлекательный комплекс'},
-                                            {value: 'TRE', label: 'Не жилой фонд'},
-                                            {value: 'OLD', label: 'Жилой фонд'}
-                                        ]"
-                                        [value]="'N1EW'"
+                                            [options] = "getBuldingOptionsArray()"
+                                            [value]="offer.buildingType_n"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2195,7 +2212,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/Heating.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/heating.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Отопление:</span>
                                         <ui-view-value
@@ -2211,13 +2228,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-value"> {{ offer.squareTotal }} </span>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/height.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Высота потолков:</span>
                                         <span class="view-value"> {{ offer.ceilingHeight_n }} </span>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition2.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/condition.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Состояние:</span>
                                         <ui-view-value
@@ -2237,7 +2254,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/lift.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Лифт:</span>
                                         <ui-view-value
@@ -2247,7 +2264,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div class='view_icon' [style.background-image]="'url(res/agent_icon/live_place.png)'"></div>
+                                    <div class='view_icon' [style.background-image]="'url(res/offer_icon/parking.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Парковка:</span>
                                         <ui-view-value
@@ -2271,28 +2288,22 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 >
                                 </ui-multi-view>
                             </div>
+
+                            <div class="header_col">Тэги</div>
+                            <div style="margin: 0 0 20px 20px;">
+                                <ui-tag-block
+                                    [value] = "offer.tag"
+                                    (valueChange) = "offer.tag = $event.value"
+                                ></ui-tag-block>
+                            </div>
+
                             <div class = "header_col">Дополнительное описание</div>
-                            <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ offer.description }} </span>
+                            <div style="margin-left: 20px;">
+                                <span class="view-value" style="height: initial; white-space: normal;"> {{ offer.description }} </span>
                             </div>
                         </div>
 
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
-                        <div class="header_col">Тэги</div>
-                        <div style="margin: 0 0 20px 20px;">
-                            <ui-tag-block
-                                [value] = "offer.tag"
-                                (valueChange) = "offer.tag = $event.value"
-                            ></ui-tag-block>
-                        </div>
-
-                        <div class="header_col">Фотографии</div>
-                        <div style="margin-bottom: 20px;">
-                            <ui-carousel
-                                [photos] = "offer.photoUrl"
-                            >
-                            </ui-carousel>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -2310,9 +2321,30 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                         [title]="'Главная'"
                     >
                         <div class = "gm_container">
+                            <div *ngIf="selectMapMenu == 1" style="width: 100%;border-top: 1px solid silver; position: relative; overflow: hidden;">
+                                <div style="width: 100%; position: absolute; z-index: 1; height: 100%; filter: blur(20px);"
+                                        [style.background-image]="'url(' + offer.photoUrl[currentPhoto]+ ')'" *ngIf="!editEnabled">
+                                </div>
+                                <div [style.background-image]="'url(' + offer.photoUrl[currentPhoto]+ ')'"
+                                    style=" width: calc(100% - 78px);height: 100%;background-repeat: no-repeat;background-size: contain; float: left;
+                                            z-index: 10;position: relative; background-position: center;" *ngIf="!editEnabled"
+                                > </div>
+                                <div style="width: calc(100% - 78px); height: 100%; float: left;" *ngIf="editEnabled">
+                                    <ui-upload-file [activeColor]="'orangered'" [baseColor]="'lightgray'" [type]="'image'"></ui-upload-file>
+                                </div>
+                                <hr style="margin: 0; width: 3px; height: 500px; float: left; z-index: 10; display: block;
+                                    position: relative; background-color: #f7f7f7;"
+                                >
+                                <ui-carousel
+                                    [photos] = "offer.photoUrl"
+                                    (getIndex) = "currentPhoto = $event"
+                                    style="z-index: 10;position: relative; display: block; float: right;"
+                                >
+                                </ui-carousel>
 
-                            <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" *ngIf="!sameObject"
-                                style="width: 100%;border-top: 1px solid silver;" [place]="mapQuery"
+                            </div>
+                            <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" *ngIf="!sameObject && selectMapMenu != 1"
+                                style="width:100%;height: 105%;border-top: 1px solid silver;" [place]="mapQuery"
                             >
                                 <google-map-marker
                                     *ngIf="offer.locationLat"
@@ -2323,7 +2355,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 >
                                 </google-map-marker>
                             </google-map>
-                            <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" [objects]="similarOffers" *ngIf="sameObject"
+                            <google-map [latitude]="lat" [longitude]="lon" [zoom]="zoom" [objects]="similarOffers" *ngIf="sameObject && selectMapMenu != 1"
                                 style="width: 100%;border-top: 1px solid silver;"
                             >
                                 <google-map-marker
@@ -2336,7 +2368,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </google-map-marker>
                             </google-map>
                             <div class="map_menu">
-                                <div [class.active_map_menu]="selectMapMenu == 1" (click)="setMenu(1)">Фото</div>
+                                <div [class.active_map_menu]="selectMapMenu == 1" (click)="setMenu(1)" style="margin-top: 1px;">Фото</div>
                                 <div [class.active_map_menu]="selectMapMenu == 2" (click)="setMenu(2)">Карта</div>
                                 <div [class.active_map_menu]="selectMapMenu == 3" (click)="setMenu(3)">Понорама</div>
                                 <div [class.active_map_menu]="selectMapMenu == 4" (click)="setMenu(4)">Маршруты</div>
@@ -2355,7 +2387,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div style="position: absolute;z-index: 1;border-left: 1px solid rgb(204, 204, 204);right: 1px;
                                     height: 500px; overflow: hidden;"
                                 [style.right]="_hubService.shared_var['nb_width']"
-                                *ngIf="sameObject"
+                                *ngIf="sameObject && selectMapMenu == 5"
                             >
                                 <div style="width: 369px; background-color: #fff;">
                                     <div class="head">
@@ -2381,7 +2413,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div style="position: absolute;z-index: 1;border-left: 1px solid rgb(204, 204, 204);right: 1px;
                                     height: 500px; overflow: hidden;"
                                 [style.right]="_hubService.shared_var['nb_width']"
-                                *ngIf="!sameObject"
+                                *ngIf="!sameObject && selectMapMenu == 6"
                             >
                                 <div class="head">
                                     <input type="text" style="width: 319px; margin-left: 10px; border: none; margin-top: 10px;"
@@ -2401,33 +2433,67 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </div>
                             </div>
 
+                            <div style="position: absolute;z-index: 1;border-left: 1px solid rgb(204, 204, 204);right: 1px;
+                                    height: 500px; width: 370px; overflow: hidden;"
+                                *ngIf="selectMapMenu == 8"
+                            >
+                                <div style="width: 100%;height: 70px;" *ngIf="editEnabled">
+                                    <ui-upload-file [activeColor]="'orangered'"
+                                                    [baseColor]="'lightgray'"
+                                                    [type]="'document'"
+                                                    (fileChange)="documents.push($event)"
+                                    ></ui-upload-file>
+                                </div>
+                                <div style="display: flex;flex-wrap: wrap;justify-content: space-around;">
+                                    <ui-document *ngFor='let doc of documents' [doc]="doc"></ui-document>
+                                </div>
+                            </div>
+                            <div style="position: absolute;z-index: 1;right: 1px;
+                                    height: 833px; width: 370px; overflow: scroll;"
+                                *ngIf="selectMapMenu == 7"
+                            >
+                                <div class="head">
+                                    <input type="text" style="width: 319px; margin-left: 10px; border: none; margin-top: 10px;"
+                                        (keydown)="console.log($event)"
+                                    >
+                                    <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
+                                        (click)="simSearch()"
+                                    ></span>
+                                </div>
+                                <ui-advertising>    </ui-advertising>
+                            </div>
+
                         </div>
 
                         <div class="star_container">
                             <div class='statistic'>
-                                <hr>
                                 <div on-mouseenter='inRate($event)' on-mouseleave='outRate($event)'>
-                                    <div>ОЦЕНКА ЛОКАЦИИ:</div>
+                                    <div>ОБЩИЙ РЕЙТИНГ:</div>
+                                    <div style="font-size: 8pt; color: #5b5b5b; margin: 6px 0;">Разбивка по категориям</div>
                                     <div class="rate_line" *ngFor="let rat of rate; let i = index">
                                         <div on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'><div [ngStyle]="{'width': rat.persent+'%'}"></div></div>
                                         <div>{{rat.text}}</div>
                                     </div>
-                                    <span>Внимание, ваш голос будет учтен только один раз.</span>
                                 </div>
-                                <div on-mouseenter='inRate($event)' on-mouseleave='outRate($event)'>
-                                    <div>ОЦЕНКА ЛОКАЦИИ:</div>
-                                    <div class="rate_line" *ngFor="let rat of rate; let i = index">
-                                        <div on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'><div [ngStyle]="{'width': rat.persent+'%'}"></div></div>
-                                        <div>{{rat.text}}</div>
+                                <div on-mouseenter='inRate($event)' on-mouseleave='outRate($event)' style="margin-right: 125px; margin-left: auto;">
+                                    <div style="margin: 0px 0 0 12px; height: 7px;">{{' '}}</div>
+                                    <div style="font-size: 8pt; color: #5b5b5b; margin: 5px 0 6px 13px;">Расскажите, что вы думаете об этом районе, используя оценки категорий.</div>
+                                    <div class="rate_line" *ngFor="let rat of rate1; let i = index">
+                                        <div style="order: 2; margin-right: 0;margin-left: auto;"
+                                            on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'>
+                                            <div [ngStyle]="{'width': rat.persent+'%'}"></div>
+                                        </div>
+                                        <div style="order: 1;">{{rat.text}}</div>
                                     </div>
-                                    <span>Внимание, ваш голос будет учтен только один раз.</span>
                                 </div>
                             </div>
                              <div class="graph" *ngIf="sameObject">
-                                <div *ngIf = "max" class ='price' style="top: 36px;">МАКС : {{split_number(max)}}</div>
-                                <div *ngIf = "min" class ='price' style="top: 59px;">МИН  : {{split_number(min)}}</div>
+                                <div class ='price'>
+                                    <div *ngIf = "max"  style="margin-top: 4px;">МАКС : {{split_number(max)}}</div>
+                                    <div *ngIf = "min" >МИН  : {{split_number(min)}}</div>
+                                </div>
                                 <div *ngIf = "average" class ='price'
-                                        style="top: 172px;left: 123px;width: 110px;text-align: center;"
+                                        style="top: 172px; left: 146px; width: 110px;t ext-align: center; background-color: transparent;"
                                 >
                                     Средняя:<br>{{split_number(average)}}
                                 </div>
@@ -2590,9 +2656,9 @@ export class TabOfferComponent implements OnInit {
     public photos: Photo[];
 
     sgList: string[] = [];
-    selectMapMenu: number = 1;
+    selectMapMenu: number = 0;
     agentOpts: any[] = [];
-
+    documents: any[] =[];
     personOpts: any[] = [];
 
     similarOffers: Offer[];
@@ -2626,6 +2692,8 @@ export class TabOfferComponent implements OnInit {
     ch3_data_v2: number;
     ch4_data_v1: number;
     ch4_data_v2: number;
+
+    currentPhoto: number = 0;
 
     offerFloor: any[]=[];
     offerSquare: any[]=[];
@@ -2670,41 +2738,41 @@ export class TabOfferComponent implements OnInit {
     ];
 
     typeCodeOptions = [
-        {value: 'other', label: 'Другое'},
+        {value: 'other', label: 'Не указано'},
 
         {value: 'room', label: 'Комната'},
         {value: 'apartment', label: 'Квартира'},
         {value: 'house', label: 'Дом/Коттедж'},
 
-        {value: 'townhouse', label: 'Таунхаус'},
-        {value: 'land', label: 'Земельный участок'},
+        {value: 'land', label: 'Садовый земельный участок'},
+        {value: 'land1', label: 'Огородный земельный участок'},
+        {value: 'land2', label: 'Дачный земельный участок'},
 
-        {value: 'market_place', label: 'Торговое помещение'},
-        {value: 'production_place', label: 'Производственное помещение'},
-        {value: 'warehouse_place', label: 'Складское помещение'},
-        {value: 'service_place', label: 'Помещение под сферу услуг'},
-        {value: 'gpurpose_place', label: 'Универсальное помещение'},
-        {value: 'building', label: 'Отдельно стоящее здание'}
+        {value: 'gpurpose_place', label: 'Свободного назначения'},
+        {value: 'market_place', label: 'Розничная торговля'},
+        {value: 'office', label: 'Офисная'},
+        {value: 'production_place', label: 'Индустриальная'},
+        {value: 'building', label: 'Аппартаменты'},
+        {value: 'cosial_place', label: 'Социальная'}
     ];
 
     apSchemaOptions = [
-        {value: 0, label: '-'},
+        {value: 0, label: 'Не указан'},
         {value: 1, label: 'Элиткласс'},
         {value: 2, label: 'Бизнес класс'},
         {value: 12, label: 'Эконом класс'},
-        {value: 3, label: 'Ленинградский проект'},
-        {value: 4, label: 'Сталинка'},
+        {value: 3, label: 'Улучшенная'},
         {value: 5, label: 'Брежневка'},
         {value: 6, label: 'Хрущевка'},
-        {value: 7, label: 'Пентагон'},
+        {value: 4, label: 'Сталинка'},
+        {value: 11, label: 'Старый фонд'},
         {value: 8, label: 'Малосемейка'},
-        {value: 9, label: 'Гостинка'},
         {value: 10, label: 'Общежитие'},
-        {value: 11, label: 'Старый фонд'}
+        {value: 7, label: 'Таунхаус'}
     ];
 
     roomSchemeOptions = [
-        {value: 0, label: '-'},
+        {value: 0, label: 'Не указано'},
         {value: 3, label: 'Раздельные'},
         {value: 5, label: 'Смежные'},
         {value: 4, label: 'Смежно-раздельные'},
@@ -2714,7 +2782,7 @@ export class TabOfferComponent implements OnInit {
     ];
 
     houseTypeOptions = [
-        {value: 0, label: '-'},
+        {value: 0, label: 'Не указан'},
         {value: 4, label: 'Кирпичный'},
         {value: 1, label: 'Панель'},
         {value: 5, label: 'Монолит'},
@@ -2747,26 +2815,69 @@ export class TabOfferComponent implements OnInit {
     ];
 
     landOption = [
-        {value: 'IGS', label: 'Индивидуальное жилищное строительство'},
-        {value: 'GARDEN', label: 'Садоводство'},
-        {value: 'FARM', label: 'Фермерское хозяйство'},
-        {value: 'FARM_COMN', label: 'Дачное некоммерческое партнерство'},
-        {value: 'GARDEN_COMN', label: 'Садовое неккомерческое товарищество'},
-        {value: 'PROM_LAND', label: 'Земля промназначения'},
-        {value: 'SH_LAND', label: 'Участок сельхоз назначения'},
-        {value: 'FOREST_LAND', label: 'Участок лесного фонда'},
-        {value: 'STOCK_LAND', label: 'Участок особо охраняемых категорий'},
-        {value: 'STOCK_LAND', label: 'Участок запаса'},
-        {value: 'WATER_LAND', label: 'Участок водного фонда'}
+        {value: 'NO', label: 'Не указано'},
+        {value: 'IGS', label: 'Земли сельскохозяйственного назначения'},
+        {value: 'GARDEN', label: 'Земли населённых пунктов'},
+        {value: 'PROM_LAND', label: 'Земли промышленного назначения'},
+        {value: 'FARM_COMN', label: 'Земли охраняемых территорий'},
+        {value: 'GARDEN_COMN', label: 'Земли лесного фонда'},
+        {value: 'WH_KAND', label: 'Земли водного фонда'},
+        {value: 'SH_LAND', label: 'Земли запаса'}
     ];
 
+    buildingOption = [
+        {value: 'NO', label: 'Не выбрано'},
+        //свободного назначечение
+        {value: 'HOTEL', label: 'Отель'},
+        {value: 'RESTAURANT', label: 'Ресторан'},
+        {value: 'KAFE', label: 'Кафе'},
+        {value: 'SPORT_BUILDING', label: 'Спортивное сооружение'},
+        //розничная торговля
+        {value: 'SHOP', label: 'Магазин'},
+        {value: 'SHOPS_CENTER', label: 'Торговый центр'},
+        {value: 'SHOP_ENTERTAINMENT', label: 'Торгово-развлекательный комплекс'},
+        //Офисная
+        {value: 'CABINET', label: 'Кабинет'},
+        {value: 'OFFICE_SPACE', label: 'Офисное помещение'},
+        {value: 'OFFICE_BUILDING', label: 'Офисное здание'},
+        {value: 'BUSINESS_CENTER', label: 'Бизнес-центр'},
+        //Индустриальная
+        {value: 'MANUFACTURE_BUILDING', label: 'Производственное здание'},
+        {value: 'WAREHOUSE_SPACE', label: 'Складское помещение'},
+        {value: 'INDUSTRIAL_ENTERPRICE', label: 'Промышленное предприятие'},
+        //Аппартаменты
+        {value: 'APARTMENT_HOUSE', label: 'Многоквартирный дом'},
+        //Социальное
+        {value: 'MEDICAL_CENTER', label: 'Медицинский центр'},
+        {value: 'POOL', label: 'Бассейн'},
+        {value: 'GOLF_CLUB', label: 'Гольф-клуб'},
+        {value: 'BOWLING_CENTER', label: 'Боулинг-центр'},
+        {value: 'AIRPORT', label: 'Аэропорт'}
+    ];
+
+    addressStr: string = '';
     rate = [
-        {persent: 10, text: "Сообщества и безопасность", isRated: false},
-        {persent: 25, text: "Развлечения и ночная жизнь", isRated: true},
+        {persent: 10, text: "Предприятия и промышленность", isRated: false},
+        {persent: 25, text: "Образование, школы, д/сады", isRated: true},
         {persent: 50, text: "Парки, кинотеатры и отдых", isRated: false},
+        {persent: 55, text: "Здоровье, поликлиники, аптеки", isRated: false},
+        {persent: 45, text: "Спорт и фитнес", isRated: false},
+        {persent: 40, text: "Развлечения и ночная жизнь", isRated: false},
         {persent: 75, text: "Рестораны и шопинг", isRated: false},
-        {persent: 90, text: "Школы и общественные услуги", isRated: false},
-        {persent: 100, text: "Транспорт и путешествия", isRated: false},
+        {persent: 90, text: "Красота", isRated: false},
+        {persent: 65, text: "Культура", isRated: false},
+    ];
+
+    rate1 = [
+        {persent: 10, text: "Удаленность от центра", isRated: false},
+        {persent: 25, text: "Престижность района", isRated: true},
+        {persent: 50, text: "Оформление придомовой территории", isRated: false},
+        {persent: 55, text: "Наличие парковки", isRated: false},
+        {persent: 45, text: "Отделка помещения общего пользования", isRated: false},
+        {persent: 40, text: "Вид из окон", isRated: false},
+        {persent: 75, text: "Наличие системы безопасности", isRated: false},
+        {persent: 90, text: "Социальная однородность дома", isRated: false},
+        {persent: 65, text: "Транспортная доступность", isRated: false},
     ];
     mediator = 'NO';
     mainRate=this.countMainRate();
@@ -2786,8 +2897,7 @@ export class TabOfferComponent implements OnInit {
         height: 216,
         pieHole: 0.6,
         legend: 'none',
-        chartArea: {left:8,top:8,width:200,height:200},
-        backgroundColor: '#f7f7f7'
+        chartArea: {left:8,top:8,width:200,height:200}
     };
 
     max : number;
@@ -2872,13 +2982,14 @@ export class TabOfferComponent implements OnInit {
             this.offerAddress=[
                 {type: 'KRAY', value: this.offer.region_n},
                 {type: 'CITY', value: this.offer.city_n},
-                {type: 'DISTRICT', value: this.offer.area_n},
+                {type: 'DISTRICT', value: this.offer.area_n === undefined ? this.offer.district : this.offer.area_n},
                 {type: 'STREET', value: this.offer.street_n},
                 {type: 'HOUSE', value: this.offer.house_n},
                 {type: 'HOUSING', value: this.offer.housing_n},
                 {type: 'FLAT', value: this.offer.apartment_n}
             ];
         }
+        this.getAddressStr();
         this.landSquare=[
             {type: this.offer.squareLandType_n, value: this.offer.squareLand}
         ];
@@ -2922,7 +3033,6 @@ export class TabOfferComponent implements OnInit {
         else
             this.categoryOffer = 'COMMERSIAL';
         this.calcSize();
-        console.log(this.offer);
         if(needSave)
             this.save();
     }
@@ -3001,7 +3111,6 @@ export class TabOfferComponent implements OnInit {
     }
 
     save() {
-        this.offer.changeDate = Math.round((Date.now() / 1000));
 
         let tem = this.getIndex(this.offerSquare, "TOTAL");
         this.offer.squareTotal =  tem > -1 ? parseInt(this.offerSquare[tem].value) : null;
@@ -3024,7 +3133,7 @@ export class TabOfferComponent implements OnInit {
         this.offer.housing_n =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "FLAT");
         this.offer.apartment_n =  tem > -1 ? this.offerAddress[tem].value : null;
-
+        this.offer.district = this.offer.area_n;
         tem = this.getIndex(this.offerFloor, "FLOOR");
         this.offer.floor =  tem > -1 ? parseInt(this.offerFloor[tem].value) : null;
         tem =  this.getIndex(this.offerFloor, "FLOORS");
@@ -3042,10 +3151,16 @@ export class TabOfferComponent implements OnInit {
 
         this.offer.squareLand = this.landSquare[0].value;
         this.offer.squareLandType_n =  this.ParseInt(this.landSquare[0].type);
-
+        if(!this.offer.locality)
+            this.offer.locality = this.offer.city_n;
+        if(!this.offer.address)
+            this.offer.address = this.offer.street_n;
+        this.offer.changeDate = Math.round((Date.now() / 1000));
+        console.log(this.offer);
         this._offerService.save(this.offer).subscribe(offer => {
             setTimeout(() => {
                 this.offer = offer;
+                this.getAddressStr();
             });
             this.toggleEdit();
         });
@@ -3134,6 +3249,7 @@ export class TabOfferComponent implements OnInit {
         }
         return Math.round(temp/this.rate.length*100)/100;
     }
+
     showMenu(event, up?){
         let parent: HTMLElement;
         if (up)
@@ -3142,9 +3258,8 @@ export class TabOfferComponent implements OnInit {
             parent = (<HTMLElement>event.currentTarget).parentElement.parentElement;
         let height: number = parent.getElementsByTagName('input').length * 35;
         if(parent.offsetHeight == 30){
-            console.log(height);
             parent.style.setProperty('height', ""+(height+60)+'px');
-            parent.style.setProperty('overflow', "visible");
+            parent.style.setProperty('overflow','visible');
              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');
         }
         else{
@@ -3211,6 +3326,7 @@ export class TabOfferComponent implements OnInit {
         if (a > b) return 1;
         if (a < b) return -1;
     }
+
     getCount(min:number, max: number): Array<any>{
         let count: number=0;
         for(var i = 0 ; i< this.similarOffers.length; ++i){
@@ -3219,17 +3335,68 @@ export class TabOfferComponent implements OnInit {
         }
         return ["от "+Math.round(min)+" т.руб. до "+ Math.round(max)+ " т.руб.", count];
     }
+
     getTypeCodeArray(): Array<any>{
+        let temp;
         switch(this.categoryOffer){
-            case "REZIDENTIAL": return this.typeCodeOptions.slice(1, 4);
-            case "COMMERSIAL": {
-                let temp = this.typeCodeOptions.slice(6,10);
-                temp.push(this.typeCodeOptions[0]);
+            case "REZIDENTIAL": {
+                temp = this.typeCodeOptions.slice(1, 4);
+                temp.unshift(this.typeCodeOptions[0]);
                 return temp;
             }
-            case "LAND": return this.typeCodeOptions.slice(4, 6);
+            case "COMMERSIAL": {
+                temp = this.typeCodeOptions.slice(7,13);
+                temp.unshift(this.typeCodeOptions[0]);
+                return temp;
+            }
+            case "LAND": {
+                temp = this.typeCodeOptions.slice(4, 7);
+                temp.unshift(this.typeCodeOptions[0]);
+                return temp;
+            }
         }
     }
+
+    getBuldingOptionsArray(): Array<any>{
+        let temp;
+        switch(this.offer.typeCode){
+            case "gpurpose_place": {
+                temp = this.buildingOption.slice(1, 5);
+                temp.unshift(this.buildingOption[0]);
+                return temp;
+            }
+            case "market_place": {
+                temp = this.buildingOption.slice(5,8);
+                temp.unshift(this.buildingOption[0]);
+                return temp;
+            }
+            case "office": {
+                temp = this.buildingOption.slice(8, 12);
+                temp.unshift(this.buildingOption[0]);
+                return temp;
+            }
+            case "production_place": {
+                temp = this.buildingOption.slice(12, 15);
+                temp.unshift(this.buildingOption[0]);
+                return temp;
+            }
+            case "building": {
+                temp = this.buildingOption.slice(15, 16);
+                temp.unshift(this.buildingOption[0]);
+                return temp;
+            }
+            case "cosial_place": {
+                temp = this.buildingOption.slice(16, 21);
+                temp.unshift(this.buildingOption[0]);
+                return temp;
+            }
+            default:
+                return [this.buildingOption[0]];
+
+        }
+    }
+
+
     setMapQuery(qw: string, num: number){
         this.mapQuery = qw;
         this.selectMapMenu = num;
@@ -3239,8 +3406,7 @@ export class TabOfferComponent implements OnInit {
         this.mapQuery = null;
     }
 
-    parseArray(values: Array<any>, obj){
-        console.log(values);
+    parseArray(values: Array<any>, obj, isAddress?: boolean){
         for(let val of values){
             let no = true;
             for(let en of obj){
@@ -3249,8 +3415,17 @@ export class TabOfferComponent implements OnInit {
                     no = false;
                 }
             }
-            if(no)
+            if(no && val.value)
                 obj.push(val);
+        }
+        for(let i=0 ; i< obj.length; ++i){
+            if(obj[i].value === undefined || obj[i].value === null){
+                obj.splice(i,1);
+                i--;
+            }
+        }
+        if(isAddress){
+            this.getAddressStr();
         }
     }
 
@@ -3261,6 +3436,7 @@ export class TabOfferComponent implements OnInit {
         }
         return -1;
     }
+
     ParseInt(val){
         if(isNaN(parseInt(val,10)))
             return null;
@@ -3272,4 +3448,23 @@ export class TabOfferComponent implements OnInit {
         return this.offer.sourceUrl.match(/www\.(.{1,10})\..{1,5}/i)[1];
     }
 
+    inRate(sd,ad){
+
+    }
+
+    outRate(sd,ad){
+
+    }
+
+    estimate(sd,ad){
+
+    }
+
+    getAddressStr(){
+            this.addressStr = this.offer.city_n !== undefined ? ""+this.offer.city_n : '';
+            this.addressStr += this.offer.street_n !== undefined ? ", " + this.offer.street_n : '';
+            this.addressStr += this.offer.house_n !== undefined ? ", " + this.offer.house_n : '';
+            if(this.offerAddress.length == 0)
+                this.addressStr = '';
+    }
 }

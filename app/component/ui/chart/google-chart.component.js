@@ -43,7 +43,6 @@ var GoogleChartComponent = (function () {
                     containerId: ele.id
                 });
                 wrapper.draw();
-                console.log(chartData);
             }
         }, 10);
     };

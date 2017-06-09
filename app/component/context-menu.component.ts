@@ -12,9 +12,9 @@ import {
     inputs: ['menu', 'hidden'],
     styles: [`
         .context-menu-wrapper {
-
+            padding: 5 0;
             max-height: 450px;
-
+            font-size: 12px;
             position: absolute;
             background-color: #fff;
             border: 1px solid #eee;
@@ -44,7 +44,7 @@ import {
             float: right;
             width: 0;
             height: 0;
-            margin-top: 11px;
+            margin-top: 5px;
             margin-right: -10px;
             border-color: transparent;
             border-left-color: #666;
@@ -56,8 +56,8 @@ import {
         .entry {
             padding: 3px 20px;
             font-weight: normal;
-            line-height: 30px;
-            height: 30px;
+            line-height: 20px;
+            height: 20px;
             color: #333;
             white-space: nowrap;
             min-width: 120px;
@@ -69,6 +69,16 @@ import {
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+        }
+
+        .entry_line {
+            padding: 3px 20px;
+            font-weight: normal;
+            line-height: 20px;
+            height: 40px;
+            color: #333;
+            white-space: nowrap;
+            min-width: 120px;
         }
 
         .entry:hover {
@@ -132,6 +142,16 @@ import {
                     <span *ngIf="i.value" class="icon-check"></span>
                     <span *ngIf="!i.value" class="icon-none"></span>
                     {{ i.label }}
+                </div>
+                <div *ngSwitchCase="'tag'" class="entry_line">
+                    <span *ngIf="i.icon" class="icon-{{ i.icon }}"></span>
+                    {{ i.label }}
+                    <div>
+                        <span *ngFor="let si of i.items" (click)="click($event, si)"
+                            class="icon-{{ si.icon }}"
+                        >
+                        </span>
+                    </div>
                 </div>
                 <hr *ngSwitchCase="'delimiter'">
             </div>

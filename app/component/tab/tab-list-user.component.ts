@@ -26,7 +26,7 @@ import {Observable} from "rxjs";
             background: #fff;
             z-index: 1;
             width: 38%;
-            margin-left: 655;
+            margin-left: 610px;
             margin-top: 27px;
         }
 
@@ -36,10 +36,10 @@ import {Observable} from "rxjs";
         }
 
         .round_menu{
-            width: 210;
+            width: 170;
             height: 50px;
             position: absolute;
-            left: 445px;
+            left: 450px;
             top: 15px;
             text-align: center;
             z-index: 10;
@@ -57,7 +57,7 @@ import {Observable} from "rxjs";
             padding-top: 25px;
             max-width: 1200px;
             margin: 0 auto;
-            height: 100%;
+            height: calc(100vh - 23px);
             width: 100%;
         }
 
@@ -92,27 +92,23 @@ import {Observable} from "rxjs";
         .plus {
             background-image: url(res/Plus.png);
         }
-        .import:hover{
-            background-image: url(res/base_plus_color.png) !important;
+
+        .main:hover{
+            background-image: url(res/main_offers_color.png) !important;
         }
 
-        .import {
-            background-image: url(res/base_plus.png);
-        }
-        .local:hover{
-            background-image: url(res/base_color.png) !important;
+
+        .analitic:hover{
+            background-image: url(res/analitic_color.png) !important;
         }
 
-        .local {
-            background-image: url(res/base.png);
-        }
     `],
     template: `
         <div class="header-label-abs">{{ tab.header }}</div>
         <div class = "round_menu">
             <div class="button plus"  (click) ="addUser()">Добавить</div>
-            <div (click)="toggleSource('import')" [style.background-image]="getImage('import')" class="button import" style="">Общая</div>
-            <div (click)="toggleSource('local')"  class="button local"  [style.background-image1]="getImage('local')">Компания</div>
+            <div (click)="toggleSource('main')"      class="button main"      [style.background-image]="iconSource[0]">Главная</div>
+            <div (click)="toggleSource('analitic')"  class="button analitic"  [style.background-image]="iconSource[1]">Аналитика</div>
         </div>
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
@@ -185,6 +181,7 @@ export class TabListUserComponent implements OnInit {
     searchQuery: string;
     superiorId: number;
     role: string;
+    iconSource: string[]=["url(res/main_offers_color.png)", "url(res/analitic.png)"];
 
     superiorOpts = [{
         value: 0,
@@ -224,6 +221,16 @@ export class TabListUserComponent implements OnInit {
         );
     }
 
+    toggleSource(s: string) {
+        if (s == 'main') {
+            this.iconSource[0]="url(res/main_offers_color.png)";
+            this.iconSource[1]="url(res/analitic.png)";
+        } else {
+            this.iconSource[0]="url(res/main_offers.png)";
+            this.iconSource[1]="url(res/analitic_color.png)";
+        }
+    }
+
     addUser() {
         var tab_sys = this._hubService.getProperty('tab_sys');
         tab_sys.addTab('user', {user: new User()});
@@ -237,14 +244,14 @@ export class TabListUserComponent implements OnInit {
     getImage(s: string){
         if (s == 'local') {
           if(this.isImport)
-            return "url(res/base.png)";
+            return "url(res/main_offers.png)";
           else
-            return "url(res/base_color.png)";
+            return "url(res/main_offers_color.png)";
         } else {
           if(this.isImport)
-            return "url(res/base_plus_color.png)";
+            return "url(res/main_offers_color.png)";
           else
-            return "url(res/base_plus.png)";
+            return "url(res/main_offers.png)";
         }
     }
 }

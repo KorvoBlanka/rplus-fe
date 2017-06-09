@@ -51,10 +51,12 @@ var OfferService = (function () {
         this._http.get(_resourceUrl, { withCredentials: true })
             .map(function (res) { return res.json(); }).subscribe(function (data) {
             var obj = new listResult_1.ListResult();
-            obj.hitsCount = data.result.hitsCount;
-            obj.list = data.result.list;
-            ret_subj.next(obj);
-            ret_subj.complete();
+            if (data.result) {
+                obj.hitsCount = data.result.hitsCount;
+                obj.list = data.result.list;
+                ret_subj.next(obj);
+                ret_subj.complete();
+            }
         }, function (err) { return console.log(err); });
         return ret_subj;
     };

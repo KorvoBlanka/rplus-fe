@@ -17,13 +17,13 @@ import {Observable} from "rxjs";
             margin: 0;
             border: 2px solid;
             margin-top: 16px;
-            color: rgb(61, 155, 233);
+            color: #8F5128;
         }
         .search-form {
             background: #fff;
             z-index: 1;
             width: 38%;
-            margin-left: 655;
+            margin-left: 610px;
             margin-top: 27px;
         }
 
@@ -33,10 +33,10 @@ import {Observable} from "rxjs";
         }
 
         .round_menu{
-            width: 210;
+            width: 170;
             height: 50px;
             position: absolute;
-            left: 445px;
+            left: 450px;
             top: 15px;
             text-align: center;
             z-index: 10;
@@ -93,23 +93,16 @@ import {Observable} from "rxjs";
             background-image: url(res/base_plus_color.png) !important;
         }
 
-        .import {
-            background-image: url(res/base_plus.png);
-        }
         .local:hover{
             background-image: url(res/base_color.png) !important;
-        }
-
-        .local {
-            background-image: url(res/base.png);
         }
     `],
     template: `
         <div class="header-label-abs">{{ tab.header }}</div>
         <div class = "round_menu">
             <div class="button plus"  (click) ="addOrganisation()">Добавить</div>
-            <div (click)="toggleSource('import')" [style.background-image]="getImage('import')" class="button import" style="">Общая</div>
-            <div (click)="toggleSource('local')"  class="button local"  [style.background-image1]="getImage('local')">Компания</div>
+            <div (click)="toggleSource('import')" class="button import" [style.background-image]="iconSource[0]">Общая</div>
+            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="iconSource[1]">Компания</div>
         </div>
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
@@ -175,6 +168,8 @@ export class TabListOrganisationComponent implements OnInit {
     organisations: Organisation[];
     searchQuery: string = "";
     isImport: boolean = true;
+    iconSource: string[]=["url(res/base_plus.png)", "url(res/base_color.png)"];
+
     constructor(private _configService: ConfigService, private _hubService: HubService, private _organisationService: OrganisationService) {
         setTimeout(() => {
             this.tab.header = 'Контрагенты';
@@ -199,6 +194,16 @@ export class TabListOrganisationComponent implements OnInit {
             },
             err => console.log(err)
         );
+    }
+
+    toggleSource(s: string) {
+        if (s == 'local') {
+            this.iconSource[0]="url(res/base_plus.png)";
+            this.iconSource[1]="url(res/base_color.png)";
+        } else {
+            this.iconSource[0]="url(res/base_plus_color.png)";
+            this.iconSource[1]="url(res/base.png)";
+        }
     }
 
     addOrganisation() {

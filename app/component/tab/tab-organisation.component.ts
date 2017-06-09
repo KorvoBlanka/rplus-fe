@@ -3,6 +3,7 @@ import {Component} from '@angular/core';
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
 import {Offer} from '../../class/offer';
+import {User} from '../../class/user';
 import {Person} from '../../class/person';
 import {Organisation} from '../../class/organisation';
 import {Request} from '../../class/request';
@@ -20,6 +21,7 @@ import {PersonService} from '../../service/person.service';
 
 
 import {Observable} from 'rxjs/Observable';
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -123,6 +125,7 @@ import {Observable} from 'rxjs/Observable';
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            height: 30px;
         }
 
         .view-label {
@@ -139,7 +142,6 @@ import {Observable} from 'rxjs/Observable';
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
-            margin-right: 17px;
         }
 
         .edit-value {
@@ -147,7 +149,6 @@ import {Observable} from 'rxjs/Observable';
             text-align: right;
             color: #696969;
             font-size: 10pt;
-            margin-right: 15px;
             height: 19px; /* костыль */
             border: none !important;
         }
@@ -166,15 +167,27 @@ import {Observable} from 'rxjs/Observable';
             flex: 0 0 190px;
             margin-right: 30px;
             position: relative;
-            margin-top: 5px;
             text-align: right;
             height: 30px;
-            font-size: 11pt;
-            color: #696969;
+            display: flex;
+            flex-direction: column;
+            width: 143px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .edit-block >hr, .view-block >hr{
                 margin: 5px -10px 5px 55px;
+        }
+
+        .show_value > span:first-child{
+            height: 10px;
+            font-size: 8pt;
+        }
+        .show_value > span:last-child{
+            font-size: 10pt;
+            color: #959595;
         }
 
         .arrow{
@@ -288,10 +301,20 @@ import {Observable} from 'rxjs/Observable';
         }
 
         .multiselect{
-            width: 287px;
+            width: 280px;
             position: relative;
             display: block;
             margin-right: 15px;
+            overflow: hidden;
+        }
+
+        .multiply{
+            position: relative;
+            display: block;
+            height: 30px;
+            width: 280px;
+            margin-right: 15px;
+            margin-left: 0;
             overflow: hidden;
         }
     `],
@@ -305,7 +328,7 @@ import {Observable} from 'rxjs/Observable';
         <!-- ЛЕВАЯ СТВОРКА: НАЧАЛО -->
 
             <div class="pane" [hidden]="paneHidden" [style.width.px]="paneWidth">
-                <div class="header">
+                <div class="header" [style.border-bottom-color]="'#8F5128'">
                     <div class="header-label">{{ tab.header }}</div>
                 </div>
                 <div style="overflow: scroll; overflow-x: hidden; height: calc(100% - 111px);
@@ -337,144 +360,50 @@ import {Observable} from 'rxjs/Observable';
 
                     <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 10px 10px 0px">
                         <div class="header_col">Общая информация</div>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
-                        <div class="view-group multiselect" style='height: 30px;'>
-                            <span class="view-label pull-left">Название:</span>
-                            <div class="show_value">{{organisation.name || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                            <ui-multiselect class="view-value edit-value" style=""
-                                [options] = "[
-                                    {value: 'OOO', label: 'ООО'},
-                                    {value: 'ZAO', label: 'ЗАО'},
-                                    {value: 'ZAO', label: 'АО'},
-                                    {value: 'PAO', label: 'ПАО'},
-                                    {value: 'IP', label: 'ИП'},
-                                    {value: 'OAO', label: 'ОАО'}]"
-                                [masks] = "['', '', '', '', '']"
-                                [values]="[organisation.name]"
-                                [width]="'36%'"
-                                (onChange)="organisation.name = $event.selected.value">
-                            </ui-multiselect>
-                        </div>
-                        <hr>
                         <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
                         <div class="view-group">
                             <span class="view-label pull-left">Тип:</span>
                             <ui-slidingMenu class="view-value edit-value"
                                 [options] = "[
+                                    {value: 'NOT', label: 'Не указан'},
                                     {value: 'CLIENT', label: 'Клиент'},
                                     {value: 'KONK', label: 'Конкурент'},
                                     {value: 'OUR', label: 'Наша компания'},
                                     {value: 'PARTHER', label: 'Партнер'}
                                 ]"
-                                [value]="'Партнер'"
-                                (onChange)="$event.selected.value">
+                                [value]="organisation.typeCode_n"
+                                (onChange)="organisation.typeCode_n = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
                         <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/person_icon/requisites.png)'"></div>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
                         <div class="view-group multiselect" style='height: 30px;'>
-                            <span class="view-label pull-left">Реквизиты:</span>
-                            <div class="show_value">{{'Показать...' || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
+                            <span class="view-label pull-left">Название:</span>
+                            <div class="show_value">
+                                {{" "}}
+                            </div><div class='arrow' (click)="showMenu($event)"></div>
                             <ui-multiselect class="view-value edit-value" style=""
                                 [options] = "[
-                                    {value: 'INN', label: 'ИНН'},
-                                    {value: 'KPP', label: 'КПП'},
-                                    {value: 'KS', label: 'Кор.счет'},
-                                    {value: 'BIK', label: 'БИК'},
-                                    {value: 'OTHER', label: 'Другое'}]"
+                                    {value: 'OOO', label: 'ООО'},
+                                    {value: 'ZAO', label: 'ЗАО'},
+                                    {value: 'AO', label: 'АО'},
+                                    {value: 'PAO', label: 'ПАО'},
+                                    {value: 'IP', label: 'ИП'},
+                                    {value: 'OAO', label: 'ОАО'}]"
                                 [masks] = "['', '', '', '', '']"
-                                [values]="['555555555']"
+                                [values]="orgNameArray"
                                 [width]="'36%'"
-                                (onChange)="$event.selected.value">
+                                (onChange)="parseArray($event, orgNameArray)">
                             </ui-multiselect>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Руководитель:'" [value] = ""
-                                [width] = "'225px'" (onChange)= "user.date = $event">
-                            </ui-input-line>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
-                        <div class="view-group">
-                            <span class="view-label pull-left">Источник:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "[
-                                    {value: 'CLIENT', label: 'Входящий звонок'},
-                                    {value: 'KONK', label: 'Интернет'},
-                                    {value: 'OUR', label: 'Печатное издание'},
-                                    {value: 'OUR', label: 'Рекомендация клиента'},
-                                    {value: 'OUR', label: 'Рекомендация партнера'},
-                                    {value: 'OUR', label: 'Соц. сети'},
-                                    {value: 'OUR', label: 'Успешный опыт сотрудничества'},
-                                    {value: 'PARTHER', label: 'Рассылка'}
-                                ]"
-                                [value]="'Партнер'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
-                        </div>
-                        <div class="header_col">Контакты</div>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                        <div class="view-group multiselect" style='height: 30px;'>
-                            <span class="view-label pull-left">Телефон:</span>
-                            <div class="show_value">{{'+7 (914) 123-45-67' || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                            <ui-multiselect class="view-value edit-value" style=""
-                                [options] = "[
-                                    {value: 'MOBILE', label: 'Мобильный'},
-                                    {value: 'HOME', label: 'Домашний'},
-                                    {value: 'WORK', label: 'Рабочий'},
-                                    {value: 'MAIN', label: 'Основной'},
-                                    {value: 'FAKS', label: 'Факс'},
-                                    {value: 'SAME', label: 'Другой'}
-                                ]"
-                                [masks] = "['+_ (___) ___-__-__',
-                                            '+_ (____) __-__-__',
-                                            '+_ (___) ___-__-__',
-                                            '+_ (____) ___-___',
-                                            '+_ (____) __-__-__']"
-                            [values]="['+7 (914) 123-45-67']"
-                            [width]="'43%'"
-                            (onChange)="$event.selected.value">
-                            </ui-multiselect>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                        <div class="view-group multiselect" style='height: 30px;'>
-                            <span class="view-label pull-left">E-mail:</span>
-                            <div class="show_value">{{'123@mail.ru' || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                            <ui-multiselect class="view-value edit-value" style=""
-                                [options] = "[
-                                    {value: 'MOBILE', label: 'Рабочий'},
-                                    {value: 'HOME', label: 'Основной'}
-                                ]"
-                                [masks] = "['', '']"
-                                [values]="['123@mail.ru']"
-                                [width]="'36%'"
-                                (onChange)="$event.selected.value">
-                            </ui-multiselect>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
-                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "'www.google.ru'"
-                                [width] = "'225px'" (onChange)= "$event">
-                            </ui-input-line>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Контактное лицо:'" [value] = "'Петров Иван'"
-                                [width] = "'225px'" (onChange)= "$event">
-                            </ui-input-line>
                         </div>
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
                         <div class="view-group multiselect" style='height: 30px;'>
-                            <span class="view-label pull-left">Адрес:</span>
-                            <div class="show_value">{{" " || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
+                            <ui-input-line [placeholder] = "'Адрес:'" [value] = "addressStr"
+                                [width] = "'225px'" (onChange)= "parseArray($event, orgAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event)">
+                            </ui-input-line>
+                            <div class='arrow' (click)="showMenu($event)" *ngIf="orgAddress[0] && orgAddress[0].value !== undefined"></div>
                             <ui-multiselect class="view-value edit-value" style=""
                                 [options] = "[
                                     {value: 'KRAY', label: 'Регион'},
@@ -483,37 +412,96 @@ import {Observable} from 'rxjs/Observable';
                                     {value: 'STREET', label: 'Улица'},
                                     {value: 'HOUSE', label: 'Дом'},
                                     {value: 'HOUSING', label: 'Корпус'},
-                                    {value: 'OFFICE', label: 'Офис'}
+                                    {value: 'FLAT', label: 'Офис'}
                                 ]"
                                 [masks] = "['','','','','','','']"
-                                [values]="[]"
+                                [values]="orgAddress"
                                 [width]="'36%'"
-                                (onChange)="$event.selected.value">
+                                (onChange)="parseArray($event, orgAddress, true)">
                             </ui-multiselect>
                         </div>
-                        <div class="header_col">Взаимодействие</div>
-                        <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                        <div class="view-group multiply">
+                            <span class="view-label pull-left">Телефоны:</span>
+                            <div class="show_value">{{" "}}</div>
+                            <div class='arrow' (click)="showMenu($event)"></div>
+                            <ui-multiselect class="view-value edit-value" style=""
+                                [options] = "[
+                                    {value: 'MOBILE', label: 'Мобильный'},
+                                    {value: 'HOME', label: 'Домашний'},
+                                    {value: 'WORK', label: 'Рабочий'},
+                                    {value: 'MAIN', label: 'Основной'},
+                                    {value: 'SAME', label: 'Другой'}
+                                ]"
+                                [masks] = "['+_ (___) ___-__-__',
+                                            '+_ (____) __-__-__',
+                                            '+_ (___) ___-__-__',
+                                            '+_ (____) ___-___',
+                                            '+_ (____) __-__-__']"
+                                [values]="orgPhone"
+                                [width]="'43%'"
+                                (onChange)="parseArray($event, orgPhone)">
+                            </ui-multiselect>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
+                        <div class="view-group multiply">
+                            <span class="view-label pull-left">E-mail:</span>
+                            <div class="show_value">{{" "}}</div>
+                            <div class='arrow' (click)="showMenu($event)"></div>
+                            <ui-multiselect class="view-value edit-value" style=""
+                                [options] = "[
+                                    {value: 'WORK', label: 'Рабочий'},
+                                    {value: 'MAIN', label: 'Личный'}
+                                    ]"
+                                [masks] = "['', '']"
+                                [values]="orgEmail"
+                                [width]="'36%'"
+                                (onChange)="parseArray($event, orgEmail)">
+                            </ui-multiselect>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Договор № от'" [value] = "''"
-                                    [width] = "'225px'" (onChange)= "$event">
+                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "organisation.webSite_n"
+                                [width] = "'225px'" (onChange)= "organisation.webSite_n = $event">
                             </ui-input-line>
                         </div>
                         <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
-                        <div class="view-group">
-                            <span class="view-label pull-left">Статус:</span>
-                            <ui-slidingMenu class="view-value edit-value"
+                        <div class='view_icon' [style.background-image]="'url(res/person_icon/requisites.png)'"></div>
+                        <div class="view-group multiselect" style='height: 30px;'>
+                            <span class="view-label pull-left">Реквизиты:</span>
+                            <div class="show_value">{{" "}}</div><div class='arrow' (click)="showMenu($event)"></div>
+                            <ui-multiselect class="view-value edit-value" style=""
                                 [options] = "[
-                                    {value: 'ACTIVE', label: 'Активно'},
-                                    {value: 'NOT_ACTIVE', label: 'Не активно'},
-                                    {value: 'ARCHIVE', label: 'Архив'}
-                                ]"
-                                [value]="'Архив'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
+                                    {value: 'INN', label: 'ИНН'},
+                                    {value: 'KPP', label: 'КПП'},
+                                    {value: 'KS', label: 'Кор.счет'},
+                                    {value: 'BIK', label: 'БИК'},
+                                    {value: 'OTHER', label: 'Другое'}]"
+                                [masks] = "['', '', '', '', '']"
+                                [values]="orgRequisit"
+                                [width]="'36%'"
+                                (onChange)="parseArray($event, orgRequisit)">
+                            </ui-multiselect>
                         </div>
                         <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                        <div class="view-group" style='position: relative; display: block;'>
+                            <ui-input-line [placeholder] = "'Руководитель:'" [value] = "organisation.head_n?.name"
+                                [width] = "'225px'" (onChange)= "organisation.head_n = $event" [queryTipe]="'person'">
+                            </ui-input-line>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                        <div class="view-group" style='position: relative; display: block;'>
+                            <ui-input-line [placeholder] = "'Контактное лицо:'" [value] = "organisation.contact_n?.name"
+                                [width] = "'225px'" (onChange)= "organisation.contact_n = $event" [queryTipe]="'person'">
+                            </ui-input-line>
+                        </div>
+
+                        <div class="header_col">Сопроводительная информация</div>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
                         <div class="view-group">
                             <span class="view-label pull-left">Ответственный:</span>
@@ -521,6 +509,51 @@ import {Observable} from 'rxjs/Observable';
                                 [options] = "agentOpts"
                                 [value]="agent?.id"
                                 (onChange)="agentChanged($event)"
+                            >
+                            </ui-slidingMenu>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
+                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                            <ui-input-line [placeholder] = "'Договор № от'" [value] = "organisation.contract_n"
+                                    [width] = "'225px'" (onChange)= "organisation.contract_n = $event">
+                            </ui-input-line>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
+                        <div class="view-group">
+                            <span class="view-label pull-left">Состояние:</span>
+                            <ui-slidingMenu class="view-value edit-value"
+                                [options] = "[
+                                    {value: 'NOT', label: 'Не указано'},
+                                    {value: 'ACTIVE', label: 'Активно'},
+                                    {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                    {value: 'ARCHIVE', label: 'Архив'}
+                                ]"
+                                [value]="organisation.stateCode_n"
+                                (onChange)="organisation.stateCode_n = $event.selected.value">
+                            >
+                            </ui-slidingMenu>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                        <div class="view-group">
+                            <span class="view-label pull-left">Источник:</span>
+                            <ui-slidingMenu class="view-value edit-value"
+                                [options] = "[
+                                    {value: 'NOT', label: 'Не указан'},
+                                    {value: 'input', label: 'Входящий звонок'},
+                                    {value: 'internet', label: 'Интернет'},
+                                    {value: 'print', label: 'Печатное издание'},
+                                    {value: 'spam', label: 'Рассылка'},
+                                    {value: 'reccomend_cl', label: 'Рекомендация клиента'},
+                                    {value: 'reccomend_pt', label: 'Рекомендация парнера'},
+                                    {value: 'social', label: 'Социальные сети'},
+                                    {value: 'excelent', label: 'Успешный опыт сотрудничества'},
+                                    {value: 'cold', label: 'Холодная база'}
+                                ]"
+                                [value]="organisation.sourceCode_n"
+                                (onChange)="organisation.sourceCode_n = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -538,97 +571,142 @@ import {Observable} from 'rxjs/Observable';
 
                         <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
                             <div class="header_col">Общая информация</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Название:</span>
-                                <span class="view-value"> {{ organisation.name }}</span>
-                            </div>
-                            <hr>
                             <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Тип:</span>
-                                <span class="view-value"> Партнер</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указан'},
+                                        {value: 'CLIENT', label: 'Клиент'},
+                                        {value: 'KONK', label: 'Конкурент'},
+                                        {value: 'OUR', label: 'Наша компания'},
+                                        {value: 'PARTHER', label: 'Партнер'}
+                                    ]"
+                                    [value]="organisation.typeCode_n"
+                                >
+                                </ui-view-value>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/requisites.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Реквизиты:</span>
-                                <span class="view-value"> ИНН: 423552...</span>
+                                <span class="view-label pull-left">Название:</span>
+                                <span class="view-value"> {{getTypeName(organisation.orgName_n)}}
+                                     &laquo;{{ organisation.name }}&raquo;
+                                </span>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Руководитель:</span>
-                                <span class="view-value"> Завьявлов Дмит ...</span>
+                                <ui-view-line
+                                    [placeholder]= "'Адрес:'" [value]="addressStr"
+                                >
+                                </ui-view-line>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Источник:</span>
-                                <span class="view-value"> Соц. сети</span>
-                            </div>
-                            <div class="header_col">Контакты</div>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Телефон:</span>
-                                <div class="array-container">
-                                    <div style="display: flex; flex-direction: column; height: 32px; margin-right: 15px;
-                                        margin-top: -5px; color: dimgrey;">
-                                        <span style="font-size: 8pt; color: #c0c0c0;">Сотовый</span>
-                                        <span style="margin-top: -3px;">+7 (999) 888-66-66</span>
-                                    </div>
-                                    <!--<span *ngFor="let phone of user.phones" class="view-value"> {{ phone }} </span>-->
-                                </div>
+                                <ui-multi-view
+                                    [options] = "[
+                                        {value: 'MOBILE', label: 'Мобильный'},
+                                        {value: 'HOME', label: 'Домашний'},
+                                        {value: 'WORK', label: 'Рабочий'},
+                                        {value: 'MAIN', label: 'Основной'},
+                                        {value: 'SAME', label: 'Другой'}
+                                    ]"
+                                    [values] = "[
+                                        {type: getDateUser(orgPhone).type, value: getDateUser(orgPhone).value}
+                                    ]"
+                                >
+                                </ui-multi-view>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">E-mail:</span>
-                                <div class="array-container">
-                                    <div style="display: flex; flex-direction: column; height: 32px; margin-right: 15px;
-                                        margin-top: -5px; color: dimgrey;">
-                                        <span style="font-size: 8pt; color: #c0c0c0;">Основной</span>
-                                        <span style="margin-top: -3px;">123@mail.ru</span>
-                                    </div>
-                                    <!--<span *ngFor="let phone of user.phones" class="view-value"> {{ phone }} </span>-->
-                                </div>
+                                <ui-multi-view
+                                    [options] = "[
+                                        {value: 'WORK', label: 'Рабочий'},
+                                        {value: 'MAIN', label: 'Личный'}
+                                        ]"
+                                    [values] = "[
+                                        {type: getDateUser(orgEmail).type, value: getDateUser(orgEmail).value}
+                                    ]"
+                                >
+                                </ui-multi-view>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">WEB-сайт:</span>
-                                <span class="view-value"> www.google.ru</span>
+                                <span class="view-value"> <a [href]="'http://'+organisation.webSite_n" target="_blank">{{organisation.webSite_n}}</a></span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/requisites.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Реквизиты:</span>
+                                <span class="view-value"> {{"ИНН: "+ (organisation.inn_n === undefined ? " ": organisation.inn_n) + "; КПП: " + organisation.kpp_n}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Руководитель:</span>
+                                <span class="view-value">{{organisation.head_n?.name}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Контактное лицо:</span>
-                                <span class="view-value"> Петров Иван</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Адрес:</span>
-                                <span class="view-value"> {{ organisation.address }}</span>
+                                <span class="view-value">{{organisation.contact_n?.name}}</span>
                             </div>
 
-                            <div class="header_col">Взаимодействие</div>
+                            <div class="header_col">Сопроводительная информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Ответственный:</span>
+                                <span class="view-value"> </span>
+                            </div>
+                            <hr>
                             <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор:</span>
-                                <span class="view-value">Отсутствует</span>
+                                <span class="view-value">{{organisation.contract_n}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Состояние:</span>
-                                <span class="view-value">Активно</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указано'},
+                                        {value: 'ACTIVE', label: 'Активно'},
+                                        {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                        {value: 'ARCHIVE', label: 'Архив'}
+                                    ]"
+                                    [value]="organisation.stateCode_n"
+                                >
+                                </ui-view-value>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Ответственный:</span>
-                                <span class="view-value"> </span>
+                                <span class="view-label pull-left">Источник:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указан'},
+                                        {value: 'input', label: 'Входящий звонок'},
+                                        {value: 'internet', label: 'Интернет'},
+                                        {value: 'print', label: 'Печатное издание'},
+                                        {value: 'spam', label: 'Рассылка'},
+                                        {value: 'reccomend_cl', label: 'Рекомендация клиента'},
+                                        {value: 'reccomend_pt', label: 'Рекомендация парнера'},
+                                        {value: 'social', label: 'Социальные сети'},
+                                        {value: 'excelent', label: 'Успешный опыт сотрудничества'},
+                                        {value: 'cold', label: 'Холодная база'}
+                                    ]"
+                                    [value]="organisation.sourceCode_n"
+                                >
+                                </ui-view-value>
                             </div>
 
                             <div class="header_col">Дополнительная информация</div>
@@ -657,6 +735,7 @@ import {Observable} from 'rxjs/Observable';
                     [headerMode]="!paneHidden"
                     [iconUrls]="['res/main_offers.png', 'res/base.png', 'res/base_plus.png']"
                     [iconUrls_active]="['res/main_offers_color.png', 'res/base_color.png', 'res/base_plus_color.png']"
+                    [color]="'#8F5128'"
                 >
                     <ui-tab
                       [title]="'Главная'"
@@ -832,6 +911,8 @@ export class TabOrganisationComponent {
     public tab: Tab;
     public organisation: Organisation;
 
+    getDateUser = User.getData;
+
     persons: Observable<Person[]>;
     offers: Offer[];
 
@@ -847,6 +928,11 @@ export class TabOrganisationComponent {
     paneWidth: number;
     mapWidth: number;
 
+    orgNameArray: Array<any> = [];
+    orgRequisit: Array<any> = [];
+    orgEmail: Array<any> = [];
+    orgPhone: Array<any> = [];
+    orgAddress: Array<any> = [];
 
     lat: number = 48.480007;
     lon: number = 135.054954;
@@ -864,6 +950,7 @@ export class TabOrganisationComponent {
     ch3_data_v2: number;
     ch4_data_v1: number;
     ch4_data_v2: number;
+    addressStr: string = '';
 
     log(e) {
         console.log(e);
@@ -877,7 +964,9 @@ export class TabOrganisationComponent {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _personService: PersonService,
-                private _organisationService: OrganisationService) {
+                private _organisationService: OrganisationService,
+                private _sessionService: SessionService
+    ) {
         setTimeout(() => {
             this.tab.header = 'Контрагент'
         });
@@ -897,6 +986,21 @@ export class TabOrganisationComponent {
         this.organisation = this.tab.args.organisation;
         if (this.organisation.id == null) {
             this.toggleEdit();
+        }
+
+        this.updateArrays();
+
+        var c = this._configService.getConfig();
+        let loc = this._sessionService.getAccount().location;
+
+        if (c.map[loc]) {
+           this.lat = c.map[loc].lat;
+           this.lon = c.map[loc].lon;
+           this.zoom = c.map[loc].zoom;
+        } else {
+           this.lat = c.map['default'].lat;
+           this.lon = c.map['default'].lon;
+           this.zoom = c.map['default'].zoom;
         }
 
         this.calcSize();
@@ -926,12 +1030,62 @@ export class TabOrganisationComponent {
     }
 
     save() {
+        this.organisation.name = this.orgNameArray[0].value;
+        this.organisation.orgName_n = this.orgNameArray[0].type;
+        let tem = this.getIndex(this.orgPhone, "MOBILE");
+        this.organisation.cellPhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        tem =  this.getIndex(this.orgPhone, "HOME");
+        this.organisation.homePhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        tem = this.getIndex(this.orgPhone, "WORK");
+        this.organisation.officePhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        tem = this.getIndex(this.orgPhone, "MAIN");
+        this.organisation.mainPhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        tem = this.getIndex(this.orgPhone, "SAME");
+        this.organisation.otherPhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        tem = this.getIndex(this.orgPhone, "FAX");
+        this.organisation.fax_n =  tem > -1 ? this.orgPhone[tem].value : null;
+
+        tem = this.getIndex(this.orgAddress, "KRAY");
+        this.organisation.region_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        tem = this.getIndex(this.orgAddress, "CITY");
+        this.organisation.city_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        tem = this.getIndex(this.orgAddress, "DISTRICT");
+        this.organisation.area_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        tem = this.getIndex(this.orgAddress, "STREET");
+        this.organisation.street_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        tem = this.getIndex(this.orgAddress, "HOUSE");
+        this.organisation.house_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        tem = this.getIndex(this.orgAddress, "HOUSING");
+        this.organisation.housing_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        tem = this.getIndex(this.orgAddress, "FLAT");
+        this.organisation.apartment_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+
+        tem =  this.getIndex(this.orgEmail, "MAIN");
+        this.organisation.mainEmail_n =  tem > -1 ? this.orgEmail[tem].value : null;
+        tem = this.getIndex(this.orgEmail, "WORK");
+        this.organisation.workEmail_n =  tem > -1 ? this.orgEmail[tem].value : null;
+
+        tem = this.getIndex(this.orgRequisit, "INN");
+        this.organisation.inn_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        tem = this.getIndex(this.orgRequisit, "KPP");
+        this.organisation.kpp_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        tem = this.getIndex(this.orgRequisit, "KS");
+        this.organisation.cor_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        tem = this.getIndex(this.orgRequisit, "BIK");
+        this.organisation.bic_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        tem = this.getIndex(this.orgRequisit, "OTHER");
+        this.organisation.other_n =  tem > -1 ? this.orgRequisit[tem].value : null;
 
         this._organisationService.save(this.organisation).subscribe(org => {
-            this.organisation = org;
+            setTimeout(() => {
+                this.organisation = org;
+            });
         });
-
         this.toggleEdit();
+
+        setTimeout(()=> {
+            this.updateArrays();
+        },1000);
     }
 
     offersSelected() {
@@ -1007,6 +1161,15 @@ export class TabOrganisationComponent {
         return Offer.getDigest(r);
     }
 
+    agentChanged(e) {
+        /*this.organisation.agentId = e.selected.value;
+        if (this.organisation.agentId != null) {
+            this._userService.get(this.organisation.agentId).subscribe(agent => {
+                this.organisation.agent = agent;
+            });
+        }*/
+    }
+
     showMenu(event){
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByTagName('input').length * 35;
@@ -1021,5 +1184,94 @@ export class TabOrganisationComponent {
              parent.style.setProperty('overflow', "hidden");
               (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(0deg)')
         }
+    }
+
+    parseArray(values: Array<any>, obj, isAddress?: boolean){
+        for(let val of values){
+            let no = true;
+            for(let en of obj){
+                if(val.type == en.type){
+                    en.value = val.value;
+                    no = false;
+                }
+            }
+            if(no && val.value)
+                obj.push(val);
+        }
+        for(let i=0 ; i< obj.length; ++i){
+            if(obj[i].value === undefined || obj[i].value === null){
+                obj.splice(i,1);
+                i--;
+            }
+        }
+        if(isAddress){
+            this.getAddressStr();
+        }
+
+    }
+
+    getIndex(array: Array<any>, str: string){
+        for(let i =0; i<array.length; ++i){
+            if(array[i].type == str)
+                return i;
+        }
+        return -1;
+    }
+
+    getTypeName(type){
+        switch(type){
+            case "OOO": return "ООО";
+            case "ZAO": return "ЗАО";
+            case "AO": return "АО";
+            case "PAO": return "ПАО";
+            case "IP": return "ИП";
+            case "OAO": return "ОАО";
+            default: return "";
+        }
+    }
+
+    getAddressStr(){
+            this.addressStr = this.organisation.city_n !== undefined ? ""+this.organisation.city_n : '';
+            this.addressStr += this.organisation.street_n !== undefined ? ", " + this.organisation.street_n : '';
+            this.addressStr += this.organisation.house_n !== undefined ? ", " + this.organisation.house_n : '';
+            if(this.orgAddress.length == 0)
+                this.addressStr = '';
+    }
+
+    updateArrays(){
+        this.orgNameArray = [{type: this.organisation.orgName_n, value: this.organisation.name}];
+        this.orgRequisit =[
+            {type: "INN", value: this.organisation.inn_n},
+            {type: "KPP", value: this.organisation.kpp_n},
+            {type: "KS", value: this.organisation.cor_n},
+            {type: "BIK", value: this.organisation.bic_n},
+            {type: "OTHER", value: this.organisation.other_n}
+        ];
+        this.orgAddress=[
+            {type: 'KRAY', value: this.organisation.region_n},
+            {type: 'CITY', value: this.organisation.city_n},
+            {type: 'DISTRICT', value: this.organisation.area_n},
+            {type: 'STREET', value: this.organisation.street_n},
+            {type: 'HOUSE', value: this.organisation.house_n},
+            {type: 'HOUSING', value: this.organisation.housing_n},
+            {type: 'FLAT', value: this.organisation.apartment_n}
+        ];
+
+        this.getAddressStr();
+
+        this.orgPhone=[
+            {type: 'MOBILE', value:  this.organisation.cellPhone_n},
+            {type: 'HOME', value:  this.organisation.homePhone_n},
+            {type: 'WORK', value: this.organisation.officePhone_n},
+            {type: 'MAIN', value:  this.organisation.mainPhone_n},
+            {type: 'SAME', value:  this.organisation.otherPhone_n},
+            {type: 'FAX', value:  this.organisation.fax_n}
+        ];
+        this.orgEmail=[
+            {type: 'WORK', value:  this.organisation.workEmail_n},
+            {type: 'MAIN', value:  this.organisation.mainEmail_n}
+        ];
+
+        this.getAddressStr();
     }
 }

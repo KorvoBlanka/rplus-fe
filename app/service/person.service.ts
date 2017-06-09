@@ -39,7 +39,7 @@ export class PersonService {
             query.push("organisationId=" + organisationId.toString());
         }
         if (searchQuery) {
-            query.push("searchQuery=" + searchQuery);
+            query.push("searchQuery=" + searchQuery); 
         }
 
 

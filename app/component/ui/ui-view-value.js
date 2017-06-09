@@ -23,6 +23,9 @@ var UIViewValue = (function () {
             this.selected = this.options[0];
         }
     };
+    UIViewValue.prototype.ngOnChanges = function () {
+        this.ngOnInit();
+    };
     UIViewValue.prototype.getStyle = function () {
         if (this.Style)
             return this.Style;
@@ -36,7 +39,7 @@ UIViewValue = __decorate([
         selector: 'ui-view-value',
         inputs: ['options', 'value', 'Style'],
         template: "\n        <div class=\"ui-view-value\" [ngStyle]=\"Style\">\n                {{ selected?.label }}\n        </div>\n    ",
-        styles: ["\n        .ui-view-value{\n            width: 170px;\n            text-align: right;\n            color: #696969;\n            font-size: 10pt;\n            margin-top: 5px;\n            height: 19px;\n            margin-right: 20px;\n            text-overflow: ellipsis;\n            overflow: hidden;\n            white-space: nowrap;\n        }\n    "]
+        styles: ["\n        .ui-view-value{\n            width: 170px;\n            text-align: right;\n            color: #696969;\n            font-size: 10pt;\n            margin-top: 5px;\n            height: 19px;\n            text-overflow: ellipsis;\n            overflow: hidden;\n            white-space: nowrap;\n        }\n    "]
     })
 ], UIViewValue);
 exports.UIViewValue = UIViewValue;

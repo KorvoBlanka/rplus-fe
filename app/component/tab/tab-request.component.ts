@@ -20,6 +20,7 @@ import {PersonService} from '../../service/person.service';
 import {UserService} from '../../service/user.service';
 import {AnalysisService} from '../../service/analysis.service'
 import {Observable} from "rxjs";
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -40,17 +41,23 @@ import {Observable} from "rxjs";
 
         .search-form {
             position: absolute;
-            width: 50%;
-            margin-left: 25%;
-            margin-top: 10px;
-            background: #fff;
+            width: 41%;
+            margin-left: 610;
+            margin-top: 15px;
             z-index: 1;
-            border: 1px solid #eee;
         }
 
-        .search-form > input {
+        .search-box > a {
+            font-size: 10pt;
+            color: #fbfbfb;
+            background-color: #0e60c5;
             height: 28px;
-            width: 100%;
+            line-height: 28px;
+            width: 80px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+            float: left;
         }
 
         .with-button {
@@ -59,17 +66,18 @@ import {Observable} from "rxjs";
 
         .with-button > input {
             float: left;
-            width: calc(100% - 120px);
+            width: calc(100% - 184px);
         }
 
         .search-button {
-            float: right;
-            width: 120px;
-            height: 24px;
-            background-color: #3366cc;
+            width: 90px;
+            height: 28px;
+            background-color: #0b9700;
             color: #fff;
-            text-align: center;
             cursor: pointer;
+            font-size: 10pt;
+            float: left;
+            text-align: center;
         }
 
         .search-form.table-mode {
@@ -83,8 +91,7 @@ import {Observable} from "rxjs";
 
         .search-box {
             position: relative;
-            margin: 12px;
-            margin-bottom: 8px;
+            margin: 12px 12 0 12;
         }
 
         .pane {
@@ -136,7 +143,6 @@ import {Observable} from "rxjs";
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
-            margin-right: 17px;
         }
 
         .edit-value {
@@ -298,6 +304,63 @@ import {Observable} from "rxjs";
             margin-right: 15px;
             overflow: hidden;
         }
+
+        .head{
+            width: 100%;
+            height: 73px;
+            display: block;
+            background-color: #f7f7f7;
+        }
+        .new-request .rate{
+            width: 370px;
+            min-height: 150px;
+            height: calc(100vh - 500px);
+            background: white;
+            overflow: scroll;
+        }
+
+        .new-request .rate >div:first-child{
+            height: 40px;
+            background: #f7f7f7;
+            line-height: 40px;
+            padding-left: 15px;
+            text-transform: uppercase;
+            font-size: 10pt;
+            color: #5f5d5d;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .new-request .rate_line{
+            width: 350px;
+            margin-left: 15px;
+            height: 20px;
+            margin-top: 0px;
+            display: flex;
+        }
+
+        .new-request .rate_line>div:last-child{
+            line-height: 20px;
+            margin-left: 15px;
+            font-size: 9pt;
+            color: #5b5b5b;
+        }
+
+        .new-request .rate_line >div:first-child {
+            background-image: url(res/star_rate.png);
+            background-size: 13px 13px;
+            width: 64px;
+            background-position: left center;
+            background-repeat: repeat-x;
+        }
+
+        .new-request .rate_line>div:first-child>div{
+            background-image: url(res/star_active.png);
+            height: 20px;
+            background-size: 13px 13px;
+            background-position: left center;
+            background-repeat: repeat-x;
+        }
     `],
     template: `
 
@@ -306,49 +369,66 @@ import {Observable} from "rxjs";
         </div>
 
         <div class="new-request" [hidden]="!newRequest">
-            <div class="search-form" [class.table-mode]="tableMode">
-                <div class="search-box with-button">
-                    <input type="text" class="" placeholder="" [(ngModel)]="request.request" (keydown)="offer_search_keydown($event)">
-                    <div class="search-button" (click)="createRequest()">Создать</div>
-                </div>
-                <div class="tool-box">
-                    <div class="pull-left">
-                        <div class="inline-select">
-                            <ui-select class="view-value edit-value"
-                                [options] = "offerTypeCodeOptions"
-                                [value]="request.offerTypeCode"
-                                [config]="{icon: 'icon-', draw_arrow: true}"
-                                (onChange)="request.offerTypeCode = $event.selected.value; offer_search();"
-                                >
-                            </ui-select>
-                        </div>
+            <div class="header">
+                <div class="header-label">{{ tab.header }}</div>
+                <div class="search-form" [class.table-mode]="tableMode">
+                    <div class="search-box with-button">
+                        <input type="text" class="" placeholder="" [(ngModel)]="request.request" (keydown)="offer_search_keydown($event)"
+                            style="height: 28px; background-color: rgb(247, 247, 247); border: 1px solid rgba(204, 204, 204, 0.47);"
+                        >
+                        <span class="icon-search" style="position: absolute; right: 190px;"></span>
+                        <a (click)="toggleDraw()"><span>Обвести</span></a>
+                        <div class="search-button" (click)="createRequest()">Добавить</div>
                     </div>
-                    <div class="pull-right">
-                        <a (click)="toggleDraw()" [hidden]="tableMode">
-                            <span
-                                [ngClass]="{'icon-cancel': mapDrawAllowed, 'icon-edit': !mapDrawAllowed}"
-                            ></span>
-                        </a>
+                    <div class="tool-box">
+                        <div class="pull-left">
+                            <div class="inline-select">
+                                <ui-select class="view-value edit-value"
+                                    [options] = "offerTypeCodeOptions"
+                                    [value]="request.offerTypeCode"
+                                    [config]="{icon: 'icon-', draw_arrow: true}"
+                                    (onChange)="request.offerTypeCode = $event.selected.value; offer_search();"
+                                    >
+                                </ui-select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+
             <!-- сильное колдунство, св-во right получаем из HubService -->
             <!-- TODO: сделать это отдельным компонентом -->
-            <div  style="position: absolute; top: 0px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
-                <div style="width: 330px; background-color: #fff;">
-                    <div class="header">
-                        <input type="text" style="width: 280px; margin-left: 10px; border: none;">
+            <div  style="position: absolute; top: 114px; z-index: 1; " [style.right]="_hubService.shared_var['nb_width']">
+                <div style="width: 370px; background-color: #fff; height: 500px; overflow: hidden;">
+                    <div class="head">
+                        <input type="text" style="width: 319px; margin-left: 10px; border: none; margin-top: 10px;"
+                            (keydown)="offer_search_keydown($event)"
+                        >
                         <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
                             (click)="offer_search()"
                         ></span>
+                        <div style="margin-top: 8px; margin-right: 35px; margin-left: auto; width: 126px; display: flex; align-items: center;">
+                            <span style="margin-top: 0;margin-right: 5px;color: rgb(80, 80, 80);font-size: 10pt;">Общая база</span>
+                            <ui-switch-button (newValue)="toggleSource($event)" [value]="source > 1 ? true : false"> </ui-switch-button>
+                        </div>
+
                     </div>
-                    <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
+                    <div class="" style="width: 100%; overflow-y: scroll; height: 427px;">
                         <digest-offer *ngFor="let offer of offers"
                             [offer]="offer"
                             [compact]="true"
                         >
                         </digest-offer>
+                    </div>
+                </div>
+                <div class="rate">
+                    <div>Рейтинг локации</div>
+                    <div class="rate_line" *ngFor="let rat of rate; let i = index">
+                        <div on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'>
+                            <div [ngStyle]="{'width': rat.persent+'%'}"></div>
+                        </div>
+                        <div>{{rat.text}}</div>
                     </div>
                 </div>
             </div>
@@ -394,7 +474,7 @@ import {Observable} from "rxjs";
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: НАЧАЛО -->
 
                         <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 10px 10px 0px;">
-                            <div class="header_col">Общее</div>
+                            <div class="header_col">Контактная информация</div>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/date_start.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                                 <ui-input-line [placeholder] = "'Дата заявки:'" [value] = "request.changeDate | formatDate"
@@ -402,19 +482,35 @@ import {Observable} from "rxjs";
                                 </ui-input-line>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                            <div class="view-group" style='position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Телефон:'" [value] = "person.name"
+                                    [width] = "'225px'" (onChange)= "person = $event" [queryTipe]="'person'">
+                                </ui-input-line>
+                            </div>
+                            <div class="header_col">Сопроводительная информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Тип:</span>
-                                <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.offerTypeCode">
-
+                                <span class="view-label">Ответственный</span>
+                                <ui-slidingMenu class="view-value edit-value"
+                                    [options] = "agentOpts"
+                                    [value]="agent?.id"
+                                    (onChange)="agentChanged($event)"
+                                >
+                                </ui-slidingMenu>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Стадия:</span>
                                 <ui-slidingMenu class="view-value edit-value"
-                                    [options] = "stateCodeOptions"
-                                    [value]="request?.stateCode"
+                                    [options] = "[
+                                        {value: 'NO', label: '-'},
+                                        {value: 'ACTIVE', label: 'Активно'},
+                                        {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                        {value: 'ARCHIVE', label: 'Архив'}
+                                    ]"
+                                    [value]="request.stateCode"
                                     (onChange)="request.stateCode = $event.selected.value">
                                 </ui-slidingMenu>
                             </div>
@@ -433,225 +529,36 @@ import {Observable} from "rxjs";
                                         {value: 'SOCIAL', label: 'Соц. сети'},
                                         {value: 'OTHER', label: 'Успешный опыт сотрудничества'}
                                     ]"
-                                    [value]="'Партнер'"
-                                    (onChange)="$event.selected.value">
+                                    [value]="request.stageCode"
+                                    (onChange)="request.stageCode = $event.selected.value">
                                 </ui-slidingMenu>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/offer.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Ответственный</span>
+                                <span class="view-label">Тип:</span>
                                 <ui-slidingMenu class="view-value edit-value"
-                                    [options] = "agentOpts"
-                                    [value]="agent?.id"
-                                    (onChange)="agentChanged($event)"
-                                >
+                                    [options] = "[
+                                        {value: 'sale', label: 'Продажа'},
+                                        {value: 'rent', label: 'Аренда'}
+                                    ]"
+                                    [value]="request.offerTypeCode"
+                                    (onChange)="request.offerTypeCode = $event.selected.value">
                                 </ui-slidingMenu>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/date_start.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Запрос</span>
+                                <span class="view-label">Заявка:</span>
                                 <input type="text" class="view-value edit-value" readonly [(ngModel)]="request.request">
                             </div>
 
-                            <div class="header_col">Контакт</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">ФИО:</span>
-                                <ui-slidingMenu class="view-value edit-value"
-                                    [options] = "personOpts"
-                                    [value] = "person?.id"
-                                    (onChange) = "personChanged($event)"
-                                >
-                                </ui-slidingMenu>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">Телефон:</span>
-                                <div class="show_value">{{person?.phones[0] || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'MOBILE', label: 'Мобильный'},
-                                        {value: 'HOME', label: 'Домашний'},
-                                        {value: 'WORK', label: 'Рабочий'},
-                                        {value: 'MAIN', label: 'Основной'},
-                                        {value: 'FAKS', label: 'Факс'},
-                                        {value: 'SAME', label: 'Другой'}
-                                    ]"
-                                    [masks] = "['+_ (___) ___-__-__',
-                                                '+_ (____) __-__-__',
-                                                '+_ (___) ___-__-__',
-                                                '+_ (____) ___-___',
-                                                '+_ (____) __-__-__']"
-                                [values]="person?.phones"
-                                [width]="'43%'"
-                                (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">E-mail:</span>
-                                <div class="show_value">{{person?.emails[0] || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'MOBILE', label: 'Рабочий'},
-                                        {value: 'HOME', label: 'Основной'}
-                                    ]"
-                                    [masks] = "['', '']"
-                                    [values]="person?.emails"
-                                    [width]="'36%'"
-                                    (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
-                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "person?.site"
-                                    [width] = "'225px'" (onChange)= "$event">
-                                </ui-input-line>
-                                    <div class="pensil"></div>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">Адрес:</span>
-                                <div class="show_value">{{" "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'KRAY', label: 'Регион'},
-                                        {value: 'CITY', label: 'Нас. пункт'},
-                                        {value: 'DISTRICT', label: 'Район'},
-                                        {value: 'STREET', label: 'Улица'},
-                                        {value: 'HOUSE', label: 'Дом'},
-                                        {value: 'HOUSING', label: 'Корпус'},
-                                        {value: 'FLAT', label: 'Квартира'}
-                                    ]"
-                                    [masks] = "['','','','','','','']"
-                                    [values]="[]"
-                                    [width]="'36%'"
-                                    (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">Тип контакта:</span>
-                                <ui-slidingMenu class="view-value edit-value"
-                                    [options] = "[
-                                        {value: 'CLIENT', label: 'Клиент'},
-                                        {value: 'KONK', label: 'Конкурент'},
-                                        {value: 'OUR', label: 'Наша компания'},
-                                        {value: 'PARTHER', label: 'Партнер'}
-                                    ]"
-                                    [value]="'Партнер'"
-                                    (onChange)="$event.selected.value">
-                                >
-                                </ui-slidingMenu>
-                            </div>
-
-                            <div class="header_col">Контрагент</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">Название:</span>
-                                <div class="show_value">{{" " || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'OOO', label: 'ООО'},
-                                        {value: 'ZAO', label: 'ЗАО'},
-                                        {value: 'ZAO', label: 'АО'},
-                                        {value: 'PAO', label: 'ПАО'},
-                                        {value: 'IP', label: 'ИП'},
-                                        {value: 'OAO', label: 'ОАО'}]"
-                                    [masks] = "['', '', '', '', '']"
-                                    [values]="[]"
-                                    [width]="'36%'"
-                                    (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">Адрес:</span>
-                                <div class="show_value">{{" " || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'KRAY', label: 'Регион'},
-                                        {value: 'CITY', label: 'Нас. пункт'},
-                                        {value: 'DISTRICT', label: 'Район'},
-                                        {value: 'STREET', label: 'Улица'},
-                                        {value: 'HOUSE', label: 'Дом'},
-                                        {value: 'HOUSING', label: 'Корпус'},
-                                        {value: 'OFFICE', label: 'Офис'}
-                                    ]"
-                                    [masks] = "['','','','','','','']"
-                                    [values]="[]"
-                                    [width]="'36%'"
-                                    (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Руководитель:'" [value] = "organisation?.shef"
-                                    [width] = "'225px'" (onChange)= "$event">
-                                </ui-input-line>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Контактное лицо:'" [value] = "organisation?.contact"
-                                    [width] = "'225px'" (onChange)= "$event">
-                                </ui-input-line>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">Телефон:</span>
-                                <div class="show_value">{{' ' || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'MOBILE', label: 'Мобильный'},
-                                        {value: 'HOME', label: 'Домашний'},
-                                        {value: 'WORK', label: 'Рабочий'},
-                                        {value: 'MAIN', label: 'Основной'},
-                                        {value: 'FAKS', label: 'Факс'},
-                                        {value: 'SAME', label: 'Другой'}
-                                    ]"
-                                    [masks] = "['+_ (___) ___-__-__',
-                                                '+_ (____) __-__-__',
-                                                '+_ (___) ___-__-__',
-                                                '+_ (____) ___-___',
-                                                '+_ (____) __-__-__']"
-                                [values]="[]"
-                                [width]="'43%'"
-                                (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                            <div class="view-group multiselect" style='height: 30px;'>
-                                <span class="view-label pull-left">E-mail:</span>
-                                <div class="show_value">{{" " || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
-                                    [options] = "[
-                                        {value: 'MOBILE', label: 'Рабочий'},
-                                        {value: 'HOME', label: 'Основной'}
-                                    ]"
-                                    [masks] = "['', '']"
-                                    [values]="[]"
-                                    [width]="'36%'"
-                                    (onChange)="$event.selected.value">
-                                </ui-multiselect>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
-                            <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "organisation?.site"
-                                    [width] = "'225px'" (onChange)= "$event">
-                                </ui-input-line>
+                            <div class="header_col">Тэги</div>
+                            <div style="margin: 0 0 20px 20px;">
+                                <ui-tag-block
+                                    [value] = "person.tag"
+                                    (valueChange) = "person.tag = $event.value"
+                                ></ui-tag-block>
                             </div>
 
                             <div class="header_col">Дополнительная информация</div>
@@ -660,39 +567,48 @@ import {Observable} from "rxjs";
                                 placeholder="" [(ngModel)]="request.info"
                                 style="text-align: left;"></textarea>
                             </div>
-                            <!--<div class="view-group">
-                                <span class="view-label">Стадия</span>
-                                <ui-select class="view-value edit-value"
-                                    [options] = "stageCodeOptions"
-                                    [value]="request?.stageCode"
-                                    (onChange)="request.stageCode = $event.selected.value"
-                                >
-                                </ui-select>
-                            </div>-->
                         </div>
 
                         <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: КОНЕЦ -->
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
 
                         <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
-                            <div class="header_col">Общее</div>
+                            <div class="header_col">Контактная информация</div>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/date_start.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Дата заявки:</span>
                                 <span class="view-value"> {{ request.changeDate | formatDate }} </span>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Тип:</span>
-                                <span class="view-value"> {{ request.offerTypeCode }}</span>
+                                <span class="view-label">Контакт:</span>
+                                <span class="view-value"> {{ person.name }} </span>
+                            </div>
+
+                            <div class="header_col">Сопроводительная информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Ответственный:</span>
+                                <span class="view-value"> {{ agent.name }} </span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Договор:</span>
+                                <span class="view-value">{{person.contract_n}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Стадия:</span>
                                 <ui-view-value
-                                    [options] = "stateCodeOptions"
+                                    [options] = "[
+                                        {value: 'NO', label: '-'},
+                                        {value: 'ACTIVE', label: 'Активно'},
+                                        {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                        {value: 'ARCHIVE', label: 'Архив'}
+                                    ]"
                                     [value]="request.stateCode"
                                 >
                                 </ui-view-value>
@@ -701,100 +617,49 @@ import {Observable} from "rxjs";
                             <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Источник:</span>
-                                <span class="view-value"> {{ 'Входящий звонок' }}</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'CALL', label: 'Входящий звонок'},
+                                        {value: 'INTERNET', label: 'Интернет'},
+                                        {value: 'PRINT', label: 'Печатное издание'},
+                                        {value: 'PARTHER', label: 'Рассылка'},
+                                        {value: 'CL_RECOMMEND', label: 'Рекомендация клиента'},
+                                        {value: 'PAR_RECOMMEND', label: 'Рекомендация партнера'},
+                                        {value: 'SOCIAL', label: 'Соц. сети'},
+                                        {value: 'OTHER', label: 'Успешный опыт сотрудничества'}
+                                    ]"
+                                    [value]="request.stageCode"
+                                >
+                                </ui-view-value>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(res/offer_icon/offer.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Ответственный:</span>
-                                <span class="view-value"> {{ agent.name }} </span>
+                                <span class="view-label">Тип:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'sale', label: 'Продажа'},
+                                        {value: 'rent', label: 'Аренда'}
+                                    ]"
+                                    [value]="request.offerTypeCode"
+                                >
+                                </ui-view-value>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/user_icon/date_end.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label pull-left">Запрос</span>
+                                <span class="view-label pull-left">Заявка:</span>
                                 <span class="view-value"> {{ request.request }}</span>
                             </div>
 
-                            <div class="header_col">Контакт</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/post.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">ФИО:</span>
-                                <span class="view-value">{{ person.name }}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">Телефон:</span>
-                                <span class="view-value">{{ person.phones[0] || ''}}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">E-mail:</span>
-                                <span class="view-value">{{ person.emails[0] || ''}}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">Web-сайт:</span>
-                                <span class="view-value">{{ person.phones[0] || ''}}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">Адрес:</span>
-                                <span class="view-value">{{ person.address || ''}}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label">Тип контакта:</span>
-                                <span class="view-value">{{ person.type || ''}}</span>
+                            <div class="header_col">Тэги</div>
+                            <div style="margin: 0 0 20px 20px;">
+                                <ui-tag-block
+                                    [value] = "person.tag"
+                                    (valueChange) = "person.tag = $event.value"
+                                ></ui-tag-block>
                             </div>
 
-                            <div class="header_col">Контрагент</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Организация:</span>
-                                <span class="view-value"></span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Адрес:</span>
-                                <span class="view-value"></span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Руководитель:</span>
-                                <span class="view-value"></span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Контактное лицо:</span>
-                                <span class="view-value"></span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Телефон:</span>
-                                <span class="view-value"></span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">E-mail:</span>
-                                <span class="view-value"></span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Web-сайт:</span>
-                                <span class="view-value"></span>
-                            </div>
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
                                 <span class="view-value" style="height: initial;"> {{ request.info }} </span>
@@ -802,13 +667,7 @@ import {Observable} from "rxjs";
                         </div>
 
                     <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
-                        <div class="header_col">Тэги</div>
-                        <div style="margin: 0 0 20px 20px;">
-                            <ui-tag-block
-                                [value] = "person.tag"
-                                (valueChange) = "person.tag = $event.value"
-                            ></ui-tag-block>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -828,16 +687,20 @@ import {Observable} from "rxjs";
                     >
                         <!-- сильное колдунство, св-во right получаем из HubService -->
                         <!-- TODO: сделать это отдельным компонентом -->
-                        <div  style="position: absolute; top: -31px; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
-                            <div style="width: 330px; background-color: #fff;">
-                                <div class="header">
-                                    <input type="text" style="width: 280px; margin-left: 10px; border: none;"
-                                        (keydown)="offer_search_keydown($event)"
-                                    >
-                                    <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
-                                        (click)="offer_search()"
-                                    ></span>
-                                </div>
+                        <div  style="position: absolute; z-index: 1; border-left: 1px solid #ccc;" [style.right]="_hubService.shared_var['nb_width']">
+                            <div style="width: 370px; background-color: #fff;">
+                                    <div class="head">
+                                        <input type="text" style="width: 319px; margin-left: 10px; border: none; margin-top: 10px;"
+                                            (keydown)="offer_search_keydown($event)"
+                                        >
+                                        <span class="icon-search" style="margin-left: 10px; cursor: pointer;"
+                                            (click)="offer_search()"
+                                        ></span>
+                                        <div style="margin-top: 8px; margin-right: 35px; margin-left: auto; width: 126px; display: flex; align-items: center;">
+                                            <span style="margin-top: 0;margin-right: 5px;color: rgb(80, 80, 80);font-size: 10pt;">Общая база</span>
+                                            <ui-switch-button (newValue)="toggleSource($event)" [value]="source > 1 ? true : false"> </ui-switch-button>
+                                        </div>
+                                    </div>
                                 <div class="" style="width: 100%; overflow-y: scroll;" [style.height]="paneHeight">
                                     <digest-offer *ngFor="let offer of offers"
                                         [offer]="offer"
@@ -980,6 +843,9 @@ export class TabRequestComponent {
     public tab: Tab;
     public request: Request;
 
+    page: number = 0;
+    perPage: number = 16;
+    source: OfferSource = OfferSource.LOCAL;
     offers: Offer[];
 
     agent: User = new User();
@@ -1021,14 +887,28 @@ export class TabRequestComponent {
         {value: 'rent', label: 'Аренда'}
     ];
 
-    stateCodeOptions = [
+    stageCodeOptions = [
         {value: 'raw', label: 'Не активен'},
         {value: 'active', label: 'Активен'},
-        {value: 'work', label: 'В работе'},
+        {value: 'listing', label: 'Листинг'},
+        {value: 'deal', label: 'Сделка'},
         {value: 'suspended', label: 'Приостановлен'},
         {value: 'archive', label: 'Архив'}
     ];
 
+    rate = [
+        {persent: 10, text: "Предприятия и промышленность", isRated: false},
+        {persent: 25, text: "Образование, школы, д/сады", isRated: true},
+        {persent: 50, text: "Парки, кинотеатры и отдых", isRated: false},
+        {persent: 55, text: "Здоровье, поликлиники, аптеки", isRated: false},
+        {persent: 45, text: "Спорт и фитнес", isRated: false},
+        {persent: 40, text: "Развлечения и ночная жизнь", isRated: false},
+        {persent: 75, text: "Рестораны и шопинг", isRated: false},
+        {persent: 90, text: "Красота", isRated: false},
+        {persent: 65, text: "Культура", isRated: false},
+    ];
+
+    /*
     stageCodeOptions = [
         {value: 'contact', label: 'Первичный контакт'},
         {value: 'pre_deal', label: 'Заключение договора'},
@@ -1038,7 +918,7 @@ export class TabRequestComponent {
         {value: 'negs', label: 'Переговоры'},
         {value: 'deal', label: 'Сделка'}
     ];
-
+    */
 
     constructor(private _hubService: HubService,
                 private _configService: ConfigService,
@@ -1048,7 +928,9 @@ export class TabRequestComponent {
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
                 private _personService: PersonService,
-                private _userService: UserService) {
+                private _userService: UserService,
+                private _sessionService: SessionService
+    ) {
 
         this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
@@ -1061,7 +943,7 @@ export class TabRequestComponent {
         });
 
 
-        this._personService.list(null, null, "").subscribe(persons => {
+        /*this._personService.list(null, null, "").subscribe(persons => {
             for (let i = 0; i < persons.length; i++) {
                 var p = persons[i];
                 this.personOpts.push({
@@ -1069,13 +951,13 @@ export class TabRequestComponent {
                     label: p.name
                 });
             }
-        });
+        });*/
 
         setTimeout(() => {
             if (this.request.id) {
-                this.tab.header = 'Запрос';
+                this.tab.header = 'Заявка';
             } else {
-                this.tab.header = 'Новый запрос';
+                this.tab.header = 'Новая заявка';
             }
         });
     }
@@ -1084,8 +966,7 @@ export class TabRequestComponent {
         this.request = this.tab.args.request;
 
         var c = this._configService.getConfig();
-
-        this.zoom = c.map.zoom;
+        let loc = this._sessionService.getAccount().location;
         if (this.request.searchArea && this.request.searchArea.length > 0) {
 
             var lat: number = 0.0;
@@ -1099,10 +980,16 @@ export class TabRequestComponent {
             this.lon = lon / this.request.searchArea.length;
 
         } else {
-            this.lat = c.map.lat;
-            this.lon = c.map.lon;
+            if (c.map[loc]) {
+                this.lat = c.map[loc].lat;
+                this.lon = c.map[loc].lon;
+                this.zoom = c.map[loc].zoom;
+            } else {
+                this.lat = c.map['default'].lat;
+                this.lon = c.map['default'].lon;
+                this.zoom = c.map['default'].zoom;
+            }
         }
-
         if (this.request.id == null) {
             this.newRequest = true;
         } else {
@@ -1144,7 +1031,7 @@ export class TabRequestComponent {
         } else {
             this.paneWidth = 370;
         }
-        this.mapWidth = document.body.clientWidth - (30) - this.paneWidth;
+        this.mapWidth = document.body.clientWidth - (31) - this.paneWidth;
         this.paneHeight = document.body.clientHeight - 31;
     }
 
@@ -1218,7 +1105,7 @@ export class TabRequestComponent {
     }
 
     getOffers(page, per_page) {
-        this._offerService.list(page, per_page, OfferSource.LOCAL, {offerTypeCode: this.request.offerTypeCode}, null, this.request.request, this.request.searchArea).subscribe(
+        this._offerService.list(page, per_page, this.source, {offerTypeCode: this.request.offerTypeCode}, null, this.request.request, this.request.searchArea).subscribe(
             offers => {
                 this.offers = offers.list;
             },
@@ -1226,13 +1113,13 @@ export class TabRequestComponent {
         );
     }
 
-    offer_search() {
-        this.getOffers(0, 16);
+    offerSearch() {
+        this.getOffers(this.page, this.perPage);
     }
 
     offer_search_keydown(e: KeyboardEvent) {
         if (e.keyCode == 13) {
-            this.offer_search();
+            this.offerSearch();
         }
     }
 
@@ -1243,14 +1130,14 @@ export class TabRequestComponent {
 
     drawFinished(e) {
         this.request.searchArea = e;
-        this.offer_search();
+        this.offerSearch();
     }
 
     toggleDraw() {
         this.mapDrawAllowed = !this.mapDrawAllowed;
         if (!this.mapDrawAllowed) {
             this.request.searchArea = [];
-            this.offer_search();
+            this.offerSearch();
         }
     }
 
@@ -1263,6 +1150,17 @@ export class TabRequestComponent {
     getOfferDigest(r: Offer) {
         return Offer.getDigest(r);
     }
+
+    toggleSource(bool: boolean) {
+        if (!bool) {
+            this.source = OfferSource.LOCAL;
+        } else {
+            this.source = OfferSource.IMPORT;
+        }
+        this.page = 0;
+        this.offerSearch();
+    }
+
     showMenu(event){
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByTagName('input').length * 35;

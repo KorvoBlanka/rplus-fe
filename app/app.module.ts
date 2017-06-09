@@ -5,7 +5,7 @@ import {NgModule}      from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule}   from '@angular/forms';
 import {HttpModule} from "@angular/http";
-import { RouterModule, Routes } from '@angular/router';
+import {RouterModule, Routes } from '@angular/router';
 
 import {AppComponent} from "./app.component";
 
@@ -26,9 +26,11 @@ import {TabListRequestComponent} from "./component/tab/tab-list-request.componen
 import {TabRequestComponent} from "./component/tab/tab-request.component";
 import {TabListUserComponent} from "./component/tab/tab-list-user.component";
 import {TabUserComponent} from "./component/tab/tab-user.component";
+import {TabAdvertisingComponent} from "./component/tab/tab-advertising.component";
 import {UISelect} from "./component/ui/ui-select.component";
 import {UIMultiSelect} from "./component/ui/ui-multiselect.component";
 import {UIInputLine} from "./component/ui/ui-input-line.component";
+import {UIViewLine} from "./component/ui/ui-view-line.component";
 import {UISlidingMenu} from "./component/ui/ui-slidingMenu.component";
 import {OfferTableComponent} from "./component/offer-table.component";
 import {DigestOfferComponent} from "./component/digest/digest-offer.component";
@@ -47,8 +49,15 @@ import {UITagBlock} from "./component/ui/ui-tag-block.component";
 import {DigestPersonComponent} from "./component/digest/digest-person.component";
 import {UITag} from "./component/ui/ui-tag.component";
 import {UIViewValue} from "./component/ui/ui-view-value";
+import {UIUploadFile} from "./component/ui/ui-upload-file.component";
 import {UIMultiView} from "./component/ui/ui-multi-view";
 import {OffClickDirective} from "./component/ui/off-click";
+import {UIDocument} from "./component/ui/ui-document.component";
+import {UIAdvertising} from "./component/ui/ui-advertising.component";
+import {UISwitchButton} from "./component/ui/ui-switch-button";
+import {DigestPieChartComponent} from "./component/digest/digest-pie-chart.component";
+import {DigestColumnChartComponent} from "./component/digest/digest-column-chart.component";
+import {DigestAreaChartComponent} from "./component/digest/digest-area-chart.component";
 
 import {LoginScreenComponent} from "./login-screen.component";
 import {AdminPageComponent} from "./admin-page.component";
@@ -99,6 +108,7 @@ const appRoutes: Routes = [
         TabRequestComponent,
         TabListUserComponent,
         TabUserComponent,
+        TabAdvertisingComponent,
         OfferTableComponent,
         DigestOfferComponent,
         GoogleMapComponent,
@@ -110,12 +120,16 @@ const appRoutes: Routes = [
         DigestOrganisationComponent,
         DigestRequestComponent,
         DigestPersonComponent,
+        DigestPieChartComponent,
+        DigestColumnChartComponent,
+        DigestAreaChartComponent,
 
         UISelect,
         UIMultiSelect,
         UISlidingMenu,
         UIInputLine,
         UIViewValue,
+        UIViewLine,
         UIMultiView,
         UITabs,
         UITab,
@@ -125,8 +139,11 @@ const appRoutes: Routes = [
         UIBarChart,
         UIPieChart,
         UICarousel,
-
+        UIUploadFile,
+        UIDocument,
         GoogleChartComponent,
+        UIAdvertising,
+        UISwitchButton,
 
         OffClickDirective
     ],

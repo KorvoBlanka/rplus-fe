@@ -1,5 +1,5 @@
-import {Component, OnInit, OnChanges} from '@angular/core';
-import {Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, OnChanges, DoCheck} from '@angular/core';
+import {Output, Input, EventEmitter} from '@angular/core';
 
 @Component({
     selector: 'ui-multiselect',
@@ -141,39 +141,41 @@ import {Output, EventEmitter} from '@angular/core';
 })
 
 
-export class UIMultiSelect implements OnInit, OnChanges {
+export class UIMultiSelect implements OnChanges, OnInit, DoCheck {
     public options: Array<UISelectOption>;
     public masks: Array<String>;
     public values: Array<UIValuetOption>;
-    public current_values: Array<String>;
 
     @Output() onChange: EventEmitter<any> = new EventEmitter();
 
     ngOnInit() {
-        this.current_values = [];
+
         for(let i=0; i< this.values.length; ++i){
-            if(!this.values[i].value)
-               this.values.splice(i,1);
+            if(!this.values[i].value || this.values[i].value == "" || this.values[i].value === undefined || this.values[i].value.length == 0){
+                this.values.splice(i,1);
+                i--;
+            }
+
         }
-        /*if(this.values)
-            for(let i = 0; i < this.values.length; ++i){
-                if(this.values[i].indexOf(':') != -1)
-                    this.current_values.push(this.values[i].split(":")[0]);
-                else
-                    this.current_values.push(this.options[i].value);
-            }*/
+        if(this.values.length == 1 && this.values[0].value === undefined){
+            this.values.pop();
+        }
     }
 
     ngOnChanges() {
         this.ngOnInit();
     }
 
+    ngDoCheck(){
+        this.ngOnInit();
+    }
+
+
     add_field(event){
         let parent: HTMLElement =  event.target.parentElement.parentElement.parentElement;
         let height: number = parent.getElementsByClassName('input_field').length*36;
         parent.style.setProperty('height', ""+(height+90)+'px');
-        this.values.push({type: this.options[0].value, value:''});
-        //this.current_values.push(this.options[0].value);
+        this.values.push({type: this.options[0].value, value:' '});
     }
 
     //Array.prototype.forEach.call(document.body.querySelectorAll("*[data-mask]"), applyDataMask);
@@ -216,7 +218,7 @@ export class UIMultiSelect implements OnInit, OnChanges {
     }
 
     delete(event, i){
-        if (i > -1) {
+        if (i >= 0) {
             this.values[i].value = null;
             this.onChange.emit(this.values);
             this.values.splice(i, 1);
@@ -240,7 +242,19 @@ export class UIMultiSelect implements OnInit, OnChanges {
     resize_min(event){
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement.parentElement.parentElement.parentElement;;
         let height: number = parent.getElementsByClassName('input_field').length * 35;
-        parent.style.setProperty('height', ""+(height+18)+'px');
+        let arrow = parent.getElementsByClassName('arrow').length;
+        if(arrow > 0 && this.values.length == 0){
+            (<HTMLInputElement>parent.getElementsByClassName('input_line').item(0)).value = "";
+            parent.style.setProperty('height', ""+(height)+'px');
+            let field: HTMLElement = <HTMLElement>parent.getElementsByTagName('ui-multiselect').item(0);
+            let inputs  = field.getElementsByTagName('input');
+            if(inputs.length == 1){
+                    field.style.setProperty('visibility','hidden');
+            }
+        } else{
+            parent.style.setProperty('height', ""+(height+18)+'px');
+
+        }
         parent.style.setProperty('overflow', "visible");
     }
 

@@ -31,9 +31,11 @@ var tab_list_request_component_1 = require("./component/tab/tab-list-request.com
 var tab_request_component_1 = require("./component/tab/tab-request.component");
 var tab_list_user_component_1 = require("./component/tab/tab-list-user.component");
 var tab_user_component_1 = require("./component/tab/tab-user.component");
+var tab_advertising_component_1 = require("./component/tab/tab-advertising.component");
 var ui_select_component_1 = require("./component/ui/ui-select.component");
 var ui_multiselect_component_1 = require("./component/ui/ui-multiselect.component");
 var ui_input_line_component_1 = require("./component/ui/ui-input-line.component");
+var ui_view_line_component_1 = require("./component/ui/ui-view-line.component");
 var ui_slidingMenu_component_1 = require("./component/ui/ui-slidingMenu.component");
 var offer_table_component_1 = require("./component/offer-table.component");
 var digest_offer_component_1 = require("./component/digest/digest-offer.component");
@@ -52,8 +54,15 @@ var ui_tag_block_component_1 = require("./component/ui/ui-tag-block.component");
 var digest_person_component_1 = require("./component/digest/digest-person.component");
 var ui_tag_component_1 = require("./component/ui/ui-tag.component");
 var ui_view_value_1 = require("./component/ui/ui-view-value");
+var ui_upload_file_component_1 = require("./component/ui/ui-upload-file.component");
 var ui_multi_view_1 = require("./component/ui/ui-multi-view");
 var off_click_1 = require("./component/ui/off-click");
+var ui_document_component_1 = require("./component/ui/ui-document.component");
+var ui_advertising_component_1 = require("./component/ui/ui-advertising.component");
+var ui_switch_button_1 = require("./component/ui/ui-switch-button");
+var digest_pie_chart_component_1 = require("./component/digest/digest-pie-chart.component");
+var digest_column_chart_component_1 = require("./component/digest/digest-column-chart.component");
+var digest_area_chart_component_1 = require("./component/digest/digest-area-chart.component");
 var login_screen_component_1 = require("./login-screen.component");
 var admin_page_component_1 = require("./admin-page.component");
 var main_component_1 = require("./main.component");
@@ -101,6 +110,7 @@ AppModule = __decorate([
             tab_request_component_1.TabRequestComponent,
             tab_list_user_component_1.TabListUserComponent,
             tab_user_component_1.TabUserComponent,
+            tab_advertising_component_1.TabAdvertisingComponent,
             offer_table_component_1.OfferTableComponent,
             digest_offer_component_1.DigestOfferComponent,
             google_map_component_1.GoogleMapComponent,
@@ -111,11 +121,15 @@ AppModule = __decorate([
             digest_organisation_component_1.DigestOrganisationComponent,
             digest_request_component_1.DigestRequestComponent,
             digest_person_component_1.DigestPersonComponent,
+            digest_pie_chart_component_1.DigestPieChartComponent,
+            digest_column_chart_component_1.DigestColumnChartComponent,
+            digest_area_chart_component_1.DigestAreaChartComponent,
             ui_select_component_1.UISelect,
             ui_multiselect_component_1.UIMultiSelect,
             ui_slidingMenu_component_1.UISlidingMenu,
             ui_input_line_component_1.UIInputLine,
             ui_view_value_1.UIViewValue,
+            ui_view_line_component_1.UIViewLine,
             ui_multi_view_1.UIMultiView,
             ui_tabs_component_1.UITabs,
             ui_tab_component_1.UITab,
@@ -125,7 +139,11 @@ AppModule = __decorate([
             ui_bar_chart_component_1.UIBarChart,
             ui_pie_chart_component_1.UIPieChart,
             ui_carousel_component_1.UICarousel,
+            ui_upload_file_component_1.UIUploadFile,
+            ui_document_component_1.UIDocument,
             google_chart_component_1.GoogleChartComponent,
+            ui_advertising_component_1.UIAdvertising,
+            ui_switch_button_1.UISwitchButton,
             off_click_1.OffClickDirective
         ],
         bootstrap: [

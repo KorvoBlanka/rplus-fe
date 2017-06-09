@@ -41,6 +41,7 @@ import {SessionService} from "./service/session.service";
 export class MainComponent {
     constructor(private _hubService: HubService) {
         this._hubService.shared_var['cm_hidden'] = true;
+
     }
 
     contextMenu(e) {

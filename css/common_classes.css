@@ -24,11 +24,12 @@
 }
 
 .header-label-abs {
-  position: absolute;
-  font-size: 23px;
-  font-weight: 300;
-  left: 55px;
-  top: -1px;
+    position: absolute;
+    font-weight: 300;
+    font-size: 16pt;
+    display: block;
+    margin: 0 0 0 30px;
+    color: #595a5a;
 }
 
 .tile-content:first-child {
@@ -129,7 +130,7 @@
 
 a {
   text-decoration: none;
-  color: #157ad3;
+  color: #0575b5;
   /*color: #004f8a;*/
 }
 

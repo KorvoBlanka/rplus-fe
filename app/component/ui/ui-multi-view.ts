@@ -2,26 +2,31 @@ import {Component, OnInit, OnChanges} from '@angular/core';
 
 @Component({
     selector: 'ui-multi-view',
-    inputs: ['values'],
+    inputs: ['values' , 'options'],
     template: `
-            <div><div class="total" *ngFor="let val of values">
-                <span *ngIf='val.value'>{{ val.type }}</span>
-                <span>{{ val.value }}</span>
+            <div style= "margin-top: -6px;"><div class="total" *ngFor="let val of values">
+                <span *ngIf="val.value && !options">{{ val.type }}</span>
+                <span *ngIf="val.value && options">{{ type }}</span>
+                <span [class.empty]="val.value.indexOf('Не указан') > -1">{{ val.value }}</span>
+
             </div></div>
     `,
     styles: [`
 
         .total{
-            display: inline-block;
+            display: flex;
             flex-direction: column;
             height: 32px;
             margin-right: 15px;
-            margin-top: -3px;
             color: dimgrey;
+            float: left;
+            align-items: flex-end;
         }
 
-        div>div:last-child{
+        div>span:last-child{
             margin-right: 0;
+            font-size: 9pt;
+            margin-top: -3px;
         }
 
         .total span:first-child{
@@ -30,8 +35,12 @@ import {Component, OnInit, OnChanges} from '@angular/core';
             display: block;
         }
 
-        .total span:last-child{
-            margin-top: -3px;
+        .total:last-child{
+            margin-right: 0;
+        }
+        .empty{
+            margin-top: 10px !important;
+            font-size: 10pt !important;
         }
     `]
 })
@@ -39,10 +48,27 @@ import {Component, OnInit, OnChanges} from '@angular/core';
 
 export class UIMultiView implements OnInit {
     public values: Array<Value>;
-
-
+    public options: Array<any>;
+    type: string;
+    isNull: boolean;
     ngOnInit() {
-        console.log(this.values);
+        let temp=[];
+        for(let val of this.values){
+            if(val.value)
+                temp.push(val);
+        }
+        this.values = temp;
+        if(this.options){
+            for(let opt of this.options){
+                if(opt.value == this.values[0].type){
+                    this.type = opt.label;
+                }
+            }
+        }
+    }
+
+    ngOnChanges(){
+        this.ngOnInit();
     }
 }
 

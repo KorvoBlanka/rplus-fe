@@ -58,12 +58,13 @@ export class OfferService {
             .map(res => res.json()).subscribe(
                 data => {
                     var obj: ListResult = new ListResult();
+                    if(data.result){
+                        obj.hitsCount = data.result.hitsCount;
+                        obj.list = data.result.list;
 
-                    obj.hitsCount = data.result.hitsCount;
-                    obj.list = data.result.list;
-
-                    ret_subj.next(obj);
-                    ret_subj.complete();
+                        ret_subj.next(obj);
+                        ret_subj.complete();
+                    }
                 },
                 err => console.log(err)
             );

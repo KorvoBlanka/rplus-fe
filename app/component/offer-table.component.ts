@@ -29,7 +29,7 @@ import {User} from "../class/user";
 
         .table {
             width: 100%;
-            font-size: 14px;
+            font-size: 10pt;
             border-collapse: collapse;
         }
 
@@ -37,8 +37,8 @@ import {User} from "../class/user";
             padding: 5px;
             font-weight: 200;
             text-align: left;
-            vertical-align: top;
-            border-top: 1px solid #ddd;
+            vertical-align: middle;
+            //border-top: 1px solid #ddd;
         }
 
         .table>thead>tr>th, .table>thead>tr>td {
@@ -61,16 +61,20 @@ import {User} from "../class/user";
         }
 
         .seen > td {
-            background-color: #dbe2f0 !important;
+            background-color: #f1f6f8 !important;
         }
 
         .modified > td {
-            background-color: #dff0d8 !important;
+            background-color: #f5f9ef !important;
         }
 
         .table > tbody > tr.selected > td {
             color: #fff;
             background-color: #3366cc !important;
+        }
+
+        .table > tbody{
+            color: rgba(0, 0, 0, 0.8);
         }
     `],
     template: `
@@ -114,7 +118,12 @@ import {User} from "../class/user";
                             >
                                 <span *ngIf="f.id=='stateCode'" class="icon-{{ f.val(o) }}"></span>
                                 <span *ngIf="f.id=='photo' && o.photoUrl" class="icon-photo"></span>
-                                <span *ngIf="f.id!='stateCode' && f.id!='photo'">{{ f.val(o) }}</span>
+                                <span *ngIf="f.id=='sourceMedia'">
+                                    <a [href]="f.val(o)" style="text-transform: capitalize;">{{f.val(o)}}</a>
+                                </span>
+                                <span *ngIf=
+                                    "f.id!='stateCode' && f.id!='photo' && f.id!='photo' && f.id!='sourceMedia' "
+                                >{{ f.val(o) }}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -545,7 +554,7 @@ export class OfferTableComponent implements OnInit {
             pY: e.pageY,
             scrollable: false,
             items: [
-                {class: "entry", disabled: false, icon: "check", label: 'Проверить', callback: () => {
+                {class: "entry", disabled: false, icon: "dcheck", label: 'Проверить', callback: () => {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
@@ -564,25 +573,33 @@ export class OfferTableComponent implements OnInit {
                         o.stageCode = 'archive';
                         c._offerService.save(o);
                     });
-                    /*
                     setTimeout(function () {
-                        c.listOffers();
+                        //c.listOffers();
                     }, 1200);
-                    */
                 }},
                 {class: "delimiter"},
                 {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
                 {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
-                {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
+                {class: "submenu", disabled: true, icon: "task", label: "Задача", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
                     {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
                 ]},
-                {class: "submenu", disabled: true, icon: "", label: "Реклама", items: [
+                {class: "submenu", disabled: true, icon: "advert", label: "Реклама", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
                     {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
                 ]},
                 {class: "delimiter"},
-                {class: "entry", disabled: false, icon: "tag", label: 'Теги', callback: () => {}},
+                {class: "tag", icon: "tag", label: "Теги:", items: [
+                    {disabled: false, icon: '', callback: function() {}},
+                    {disabled: false, icon: 'circle tag-red' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-orange' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-yellow' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-green' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-blue' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-violet' ,callback: function() {}},
+                    {disabled: false, icon: 'circle tag-gray' , callback: function() {}},
+
+                ]}
             ]
         };
 

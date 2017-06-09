@@ -42,7 +42,6 @@ export class GoogleChartComponent implements OnInit {
                 containerId: ele.id
             });
             wrapper.draw();
-            console.log(chartData);
         }
     },10)
   }

@@ -71,7 +71,7 @@ import {Offer} from '../../class/offer';
 
         .compact{
             height: 68px;
-            background-color: white;
+            background-color: inherit;
         }
     `],
     template: `

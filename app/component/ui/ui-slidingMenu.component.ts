@@ -76,7 +76,7 @@ import {Output, EventEmitter} from '@angular/core';
             clear: both;
             font-weight: 400;
             line-height: 1.42857143;
-            color: #333;
+            color: #0575b5;
             white-space: nowrap;
         }
 

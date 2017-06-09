@@ -7,6 +7,7 @@ import {Tab} from '../../class/tab';
 import {Request} from '../../class/request';
 import {HubService} from "../../service/hub.service";
 import {Observable} from "rxjs";
+import {UserService} from "../../service/user.service";
 
 
 @Component({
@@ -88,23 +89,16 @@ import {Observable} from "rxjs";
             background-image: url(res/base_plus_color.png) !important;
         }
 
-        .import {
-            background-image: url(res/base_plus.png);
-        }
         .local:hover{
             background-image: url(res/base_color.png) !important;
-        }
-
-        .local {
-            background-image: url(res/base.png);
         }
     `],
     template: `
         <div class="header-label-abs">{{ tab.header }}</div>
         <div class = "round_menu">
             <div class="button plus"  (click) ="addRequest()">Добавить</div>
-            <div (click)="toggleSource('import')" [style.background-image]="getImage('import')" class="button import" style="">Общая</div>
-            <div (click)="toggleSource('local')"  class="button local"  [style.background-image1]="getImage('local')">Компания</div>
+            <div (click)="toggleSource('import')" class="button import" [style.background-image]="iconSource[0]">Общая</div>
+            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="iconSource[1]">Компания</div>
         </div>
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
@@ -116,16 +110,36 @@ import {Observable} from "rxjs";
             </div>
             <div class="tool-box">
 
+            <div class="inline-select">
+                <ui-select class="view-value edit-value"
+                    [options] = "[
+                        {value: 'sale', label: 'Продажа'},
+                        {value: 'rent', label: 'Аренда'}
+                    ]"
+                    [value]="filter.offerTypeCode"
+                    [config]="{icon: 'icon-', draw_arrow: true}"
+                    (onChange)="filter.offerTypeCode = $event.selected.value; searchParamChanged();"
+                    >
+                </ui-select>
+            </div>
+
                 <div class="inline-select">
                     <ui-select class="view-value edit-value"
-                        [options] = "[
-                            {value: 'sale', label: 'Продажа'},
-                            {value: 'rent', label: 'Аренда'}
-                        ]"
-                        [value]="sale"
-                        [config]="{icon: 'icon-', draw_arrow: true}"
-                        (onChange)="offerTypeCode = $event.selected.value; searchParamChanged();"
-                        >
+                        [options]="stageCodeOptions"
+                        [value]="filter.stage"
+                        [config]="{icon: 'icon-square', drawArrow: true}"
+                        (onChange)="filter.stageCode = $event.selected.value; searchParamChanged();"
+                    >
+                    </ui-select>
+                </div>
+
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options]="agentOpts"
+                        [value]="filter.agent"
+                        [config]="{icon: 'icon-person', drawArrow: true}"
+                        (onChange)="filter.agentId = $event.selected.value; searchParamChanged();"
+                    >
                     </ui-select>
                 </div>
 
@@ -187,7 +201,31 @@ export class TabListRequestComponent implements OnInit {
     page: number = 0;
     perPage: number = 32;
 
-    constructor(private _configService: ConfigService, private _hubService: HubService, private _requerstService: RequestService) {
+    iconSource: string[]=["url(res/base_plus.png)", "url(res/base_color.png)"];
+
+    filter: any = {
+        agentId: 'all',
+        stageCode: 'all',
+        tag: 'all',
+        changeDate: 90,
+        offerTypeCode: 'sale',
+    };
+
+    stageCodeOptions = [
+        {value: 'all', label: 'Все'},
+        {value: 'raw', label: 'Не активен'},
+        {value: 'active', label: 'Активен'},
+        {value: 'listing', label: 'Листинг'},
+        {value: 'deal', label: 'Сделка'},
+        {value: 'suspended', label: 'Приостановлен'},
+        {value: 'archive', label: 'Архив'}
+    ];
+
+    sort: any = {};
+
+    agentOpts = [];
+
+    constructor(private _configService: ConfigService, private _hubService: HubService, private _requerstService: RequestService, private _userService: UserService) {
         setTimeout(() => {
             this.tab.header = 'Заявки';
         });
@@ -201,11 +239,24 @@ export class TabListRequestComponent implements OnInit {
             }
         )
 
+        this.agentOpts.push({value: 'all', label: 'Все заявки', bold: true});
+        this.agentOpts.push({value: 'my', label: 'Мои заявки', bold: true});
+
+        this._userService.list(null, null, "").subscribe(agents => {
+            for (let i = 0; i < agents.length; i++) {
+                var a = agents[i];
+                this.agentOpts.push({
+                    value: '' + a.id,
+                    label: a.name
+                });
+            }
+        });
+
         this.listRequests();
     }
 
     listRequests() {
-        this._requerstService.list(this.page, this.perPage, this.offerTypeCode, "all",null, null, this.searchQuery).subscribe(
+        this._requerstService.list(this.page, this.perPage, this.filter.offerTypeCode, this.filter.stageCode, this.filter.agentId, null, this.searchQuery).subscribe(
             data => {
                 this.requests = data;
             },
@@ -213,10 +264,20 @@ export class TabListRequestComponent implements OnInit {
         );
     }
 
+    toggleSource(s: string) {
+        if (s == 'local') {
+            this.iconSource[0]="url(res/base_plus.png)";
+            this.iconSource[1]="url(res/base_color.png)";
+        } else {
+            this.iconSource[0]="url(res/base_plus_color.png)";
+            this.iconSource[1]="url(res/base.png)";
+        }
+    }
+
     addRequest() {
         var tab_sys = this._hubService.getProperty('tab_sys');
         var r = new Request();
-        r.offerTypeCode = this.offerTypeCode;
+        r.offerTypeCode = this.filter.offerTypeCode;
         tab_sys.addTab('request', {request: r});
     }
 

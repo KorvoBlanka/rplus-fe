@@ -15,28 +15,27 @@ var UIMultiSelect = (function () {
         this.onChange = new core_2.EventEmitter();
     }
     UIMultiSelect.prototype.ngOnInit = function () {
-        this.current_values = [];
         for (var i = 0; i < this.values.length; ++i) {
-            if (!this.values[i].value)
+            if (!this.values[i].value || this.values[i].value == "" || this.values[i].value === undefined || this.values[i].value.length == 0) {
                 this.values.splice(i, 1);
+                i--;
+            }
         }
-        /*if(this.values)
-            for(let i = 0; i < this.values.length; ++i){
-                if(this.values[i].indexOf(':') != -1)
-                    this.current_values.push(this.values[i].split(":")[0]);
-                else
-                    this.current_values.push(this.options[i].value);
-            }*/
+        if (this.values.length == 1 && this.values[0].value === undefined) {
+            this.values.pop();
+        }
     };
     UIMultiSelect.prototype.ngOnChanges = function () {
+        this.ngOnInit();
+    };
+    UIMultiSelect.prototype.ngDoCheck = function () {
         this.ngOnInit();
     };
     UIMultiSelect.prototype.add_field = function (event) {
         var parent = event.target.parentElement.parentElement.parentElement;
         var height = parent.getElementsByClassName('input_field').length * 36;
         parent.style.setProperty('height', "" + (height + 90) + 'px');
-        this.values.push({ type: this.options[0].value, value: '' });
-        //this.current_values.push(this.options[0].value);
+        this.values.push({ type: this.options[0].value, value: ' ' });
     };
     //Array.prototype.forEach.call(document.body.querySelectorAll("*[data-mask]"), applyDataMask);
     UIMultiSelect.prototype.selectValue = function (event, i) {
@@ -73,7 +72,7 @@ var UIMultiSelect = (function () {
         return maskedData.split('').filter(isDigit);
     };
     UIMultiSelect.prototype.delete = function (event, i) {
-        if (i > -1) {
+        if (i >= 0) {
             this.values[i].value = null;
             this.onChange.emit(this.values);
             this.values.splice(i, 1);
@@ -94,7 +93,19 @@ var UIMultiSelect = (function () {
         var parent = event.currentTarget.parentElement.parentElement.parentElement.parentElement;
         ;
         var height = parent.getElementsByClassName('input_field').length * 35;
-        parent.style.setProperty('height', "" + (height + 18) + 'px');
+        var arrow = parent.getElementsByClassName('arrow').length;
+        if (arrow > 0 && this.values.length == 0) {
+            parent.getElementsByClassName('input_line').item(0).value = "";
+            parent.style.setProperty('height', "" + (height) + 'px');
+            var field = parent.getElementsByTagName('ui-multiselect').item(0);
+            var inputs = field.getElementsByTagName('input');
+            if (inputs.length == 1) {
+                field.style.setProperty('visibility', 'hidden');
+            }
+        }
+        else {
+            parent.style.setProperty('height', "" + (height + 18) + 'px');
+        }
         parent.style.setProperty('overflow', "visible");
     };
     UIMultiSelect.prototype.resize_max = function (event) {

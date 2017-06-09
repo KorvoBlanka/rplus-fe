@@ -42,7 +42,7 @@ UIPieChart = __decorate([
         selector: 'ui-pie-chart',
         inputs: ['title', 'data'],
         template: "\n    <div class=\"ui-pie-chart\">\n    </div>\n  ",
-        styles: ["\n    .class {\n\n    }\n  "]
+        styles: ["\n    .class { \n\n    }\n  "]
     }),
     __metadata("design:paramtypes", [core_1.ElementRef])
 ], UIPieChart);

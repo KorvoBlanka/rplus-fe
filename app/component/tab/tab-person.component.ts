@@ -20,6 +20,7 @@ import {HistoryService} from '../../service/history.service';
 import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
 import {UserService} from '../../service/user.service';
+import {SessionService} from "../../service/session.service";
 
 
 @Component({
@@ -70,6 +71,7 @@ import {UserService} from '../../service/user.service';
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            height: 30px;
         }
 
         .view-label {
@@ -86,7 +88,6 @@ import {UserService} from '../../service/user.service';
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
-            margin-right: 17px;
         }
 
         .edit-value {
@@ -94,7 +95,6 @@ import {UserService} from '../../service/user.service';
             text-align: right;
             color: #696969;
             font-size: 10pt;
-            margin-right: 15px;
             height: 19px; /* костыль */
             border: none !important;
         }
@@ -113,29 +113,29 @@ import {UserService} from '../../service/user.service';
             flex: 0 0 190px;
             margin-right: 30px;
             position: relative;
-            margin-top: 5px;
             text-align: right;
             height: 30px;
-            font-size: 11pt;
-            color: #696969;
+            display: flex;
+            flex-direction: column;
+            width: 143px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .edit-block >hr, .view-block >hr{
                 margin: 5px -10px 5px 55px;
         }
 
-        .arrow{
-            background-image: url(res/arrow.png);
-            width: 18px;
+        .show_value > span:first-child{
             height: 10px;
-            background-size: cover;
-            margin: 7 10px 0;
-            background-position: center;
-            flex: 0 0 18px;
-            position: absolute;
-            top: 5px;
-            right: -10px;
+            font-size: 8pt;
         }
+        .show_value > span:last-child{
+            font-size: 10pt;
+            color: #959595;
+        }
+
 
         .tile-x {
             margin-right: 10px;
@@ -255,10 +255,20 @@ import {UserService} from '../../service/user.service';
         }
 
         .multiselect{
-            width: 270px;
+            width: 280px;
             position: relative;
             display: block;
             margin-right: 15px;
+            overflow: hidden;
+        }
+
+        .multiply{
+            position: relative;
+            display: block;
+            height: 30px;
+            width: 280px;
+            margin-right: 15px;
+            margin-left: 0;
             overflow: hidden;
         }
         .arrow{
@@ -294,8 +304,8 @@ import {UserService} from '../../service/user.service';
                         <div class = "person_face">
                     <img src="">
                     <div class="view-group" *ngIf="!editEnabled" style="flex-wrap: wrap;margin-top: -1px;">
-                        <div class="view-value name" style="text-transform: uppercase;"> {{ person.name.split(' ')[0] }}</div>
-                        <div class="view-value name" style="font-size: 14pt; margin-top: 3px;"> {{ person.name.split(' ')[1]}}</div>
+                        <div class="view-value name" style="text-transform: uppercase;"> {{ person.name}}</div>
+                        <div class="view-value name" style="font-size: 14pt; margin-top: 3px;"> {{ person.name}}</div>
                     </div>
                     <div class="view-group" *ngIf="editEnabled">
                         <input type="text" class="view-value edit-value name" [(ngModel)]="person.name">
@@ -317,6 +327,23 @@ import {UserService} from '../../service/user.service';
                     <div class="edit-block" [hidden]="!editEnabled" style="margin: 10px 10px 10px 0px;">
 
                         <div class="header_col">Общая информация</div>
+                        <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
+                        <div class="view-group">
+                            <span class="view-label pull-left">Тип:</span>
+                            <ui-slidingMenu class="view-value edit-value"
+                                [options] = "[
+                                    {value: 'NOT', label: 'Не указан'},
+                                    {value: 'CLIENT', label: 'Клиент'},
+                                    {value: 'KONK', label: 'Конкурент'},
+                                    {value: 'OUR', label: 'Наша компания'},
+                                    {value: 'PARTHER', label: 'Партнер'}
+                                ]"
+                                [value]="person.typeCode_n"
+                                (onChange)="person.typeCode_n = $event.selected.value">
+                            >
+                            </ui-slidingMenu>
+                        </div>
+                        <hr>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
                             <ui-input-line [placeholder] = "'ФИО:'" [value] = "person.name"
@@ -324,28 +351,12 @@ import {UserService} from '../../service/user.service';
                             </ui-input-line>
                         </div>
                         <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
-                        <div class="view-group" >
-                            <span class="view-label pull-left">Тип:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "[
-                                    {value: 'CLIENT', label: 'Клиент'},
-                                    {value: 'KONK', label: 'Конкурент'},
-                                    {value: 'OUR', label: 'Наша компания'},
-                                    {value: 'PARTHER', label: 'Партнер'}
-                                ]"
-                                [value]="'Клиент'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
-                        </div>
-                        <hr>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                        <div class="view-group multiselect">
-                            <ui-input-line [placeholder] = "'Адрес:'" [value] = "''"
-                                [width] = "'225px'" (onChange)= "person.address = $event" [isAddress]="true" (clicked)="showMenu($event,true)">
+                        <div class="view-group multiselect" style='height: 30px;'>
+                            <ui-input-line [placeholder] = "'Адрес:'" [value] = "addressStr"
+                                [width] = "'225px'" (onChange)= "parseArray($event, personAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event)">
                             </ui-input-line>
-                            <div class='arrow' (click)="showMenu($event)"></div>
+                            <div class='arrow' (click)="showMenu($event)" *ngIf="personAddress[0] && personAddress[0].value !== undefined"></div>
                             <ui-multiselect class="view-value edit-value" style=""
                                 [options] = "[
                                     {value: 'KRAY', label: 'Регион'},
@@ -357,43 +368,23 @@ import {UserService} from '../../service/user.service';
                                     {value: 'FLAT', label: 'Квартира'}
                                 ]"
                                 [masks] = "['','','','','','','']"
-                                [values]="person?.address || []"
-                                [width]="'30%'"
-                                (onChange)="$event.selected.value" isAddress="true">
+                                [values]="personAddress"
+                                [width]="'36%'"
+                                (onChange)="parseArray($event, personAddress, true)">
                             </ui-multiselect>
                         </div>
                         <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
-                        <div class="view-group">
-                            <span class="view-label pull-left">Источник:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "[
-                                    {value: 'CLIENT', label: 'Входящий звонок'},
-                                    {value: 'KONK', label: 'Интернет'},
-                                    {value: 'OUR', label: 'Печатное издание'},
-                                    {value: 'OUR', label: 'Рекомендация клиента'},
-                                    {value: 'OUR', label: 'Рекомендация партнера'},
-                                    {value: 'OUR', label: 'Соц. сети'},
-                                    {value: 'OUR', label: 'Успешный опыт сотрудничества'},
-                                    {value: 'PARTHER', label: 'Рассылка'}
-                                ]"
-                                [value]="'Партнер'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
-                        </div>
-                        <div class="header_col">Контакты</div>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                        <div class="view-group multiselect">
-                            <span class="view-label pull-left">Телефон:</span>
-                            <div class="show_value">{{person.phones[0] || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
-                                <ui-multiselect class="view-value edit-value" style=""
+                        <div class="view-group multiply">
+                            <span class="view-label pull-left">Телефоны:</span>
+                            <div class="show_value">{{" "}}</div>
+                            <div class='arrow' (click)="showMenu($event)"></div>
+                            <ui-multiselect class="view-value edit-value" style=""
                                 [options] = "[
                                     {value: 'MOBILE', label: 'Мобильный'},
                                     {value: 'HOME', label: 'Домашний'},
                                     {value: 'WORK', label: 'Рабочий'},
                                     {value: 'MAIN', label: 'Основной'},
-                                    {value: 'FAKS', label: 'Факс'},
                                     {value: 'SAME', label: 'Другой'}
                                 ]"
                                 [masks] = "['+_ (___) ___-__-__',
@@ -401,99 +392,37 @@ import {UserService} from '../../service/user.service';
                                             '+_ (___) ___-__-__',
                                             '+_ (____) ___-___',
                                             '+_ (____) __-__-__']"
-                                            [values]="person.phones"
-                                            [width]="'43%'"
-                                (onChange)="person.phones[0] = $event.selected.value">
-                                </ui-multiselect>
+                                [values]="personPhone"
+                                [width]="'43%'"
+                                (onChange)="parseArray($event, personPhone)">
+                            </ui-multiselect>
                         </div>
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                        <div class="view-group multiselect" style='height: 30px;'>
+                        <div class="view-group multiply">
                             <span class="view-label pull-left">E-mail:</span>
-                            <div class="show_value">{{person.emails[0] || " "}}</div><div class='arrow' (click)="showMenu($event)"></div>
+                            <div class="show_value">{{" "}}</div>
+                            <div class='arrow' (click)="showMenu($event)"></div>
                             <ui-multiselect class="view-value edit-value" style=""
                                 [options] = "[
-                                    {value: 'MOBILE', label: 'Рабочий'},
-                                    {value: 'HOME', label: 'Основной'}]"
+                                    {value: 'WORK', label: 'Рабочий'},
+                                    {value: 'MAIN', label: 'Личный'}
+                                    ]"
                                 [masks] = "['', '']"
-                                [values]="person.emails"
+                                [values]="personEmail"
                                 [width]="'36%'"
-                                (onChange)="person.emails[0] = $event.selected.value">
+                                (onChange)="parseArray($event, personEmail)">
                             </ui-multiselect>
                         </div>
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "'www.google.ru'"
-                                [width] = "'225px'" (onChange)= "$event">
+                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "person.webSite_n"
+                                [width] = "'225px'" (onChange)= "person.webSite_n = $event">
                             </ui-input-line>
-                                <div class="pensil"></div>
                         </div>
-                        <div class="header_col">Организация</div>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
-                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <span class="view-label pull-left">Название:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "organisationsOpts"
-                                [value]="organisation?.id"
-                                (onChange)="person.organisationId = $event.selected.value"
-                                >
-                                </ui-slidingMenu>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
-                        <div class="view-group">
-                            <span class="view-label pull-left">Отдел:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "[
-                                    {value: 'CLIENT', label: 'Потребительский'},
-                                    {value: 'KONK', label: 'Информационный'},
-                                    {value: 'OUR', label: 'Краткосрочный'},
-                                    {value: 'PARTHER', label: 'Продаж'}
-                                ]"
-                                [value]="'Продаж'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                        <div class="view-group">
-                            <span class="view-label pull-left">Должность:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "[
-                                    {value: 'CLIENT', label: 'Директор'},
-                                    {value: 'KONK', label: 'Менеджер'},
-                                    {value: 'OUR', label: 'Агент'}
-                                ]"
-                                [value]="'Менеджер'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
-                        </div>
-                        <div class="header_col">Взаимодействие</div>
-                        <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
-                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "''"
-                                        [width] = "'225px'" (onChange)= "$event">
-                                </ui-input-line>
-                        </div>
-                        <hr>
-                        <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
-                        <div class="view-group">
-                            <span class="view-label pull-left">Состояние:</span>
-                            <ui-slidingMenu class="view-value edit-value"
-                                [options] = "[
-                                    {value: 'ACTIVE', label: 'Активно'},
-                                    {value: 'NOT_ACTIVE', label: 'Не активно'},
-                                    {value: 'ARCHIVE', label: 'Архив'}
-                                ]"
-                                [value]="'Архив'"
-                                (onChange)="$event.selected.value">
-                            >
-                            </ui-slidingMenu>
-                        </div>
-                        <hr>
+
+                        <div class="header_col">Сопроводительная информация</div>
                         <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
                         <div class="view-group">
                             <span class="view-label pull-left">Ответственный:</span>
@@ -504,136 +433,58 @@ import {UserService} from '../../service/user.service';
                             >
                             </ui-slidingMenu>
                         </div>
-
-                        <div class="header_col">Дополнительная информация</div>
-                        <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
-                            <textarea class="view-value text-value" placeholder=""
-                            [(ngModel)]="person.info" style="text-align: left;"></textarea>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
+                        <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
+                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "person.contract_n"
+                                        [width] = "'225px'" (onChange)= "person.contract_n = $event">
+                                </ui-input-line>
                         </div>
-
-
-
-                    </div>
-
-                        <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: КОНЕЦ -->
-                        <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
-                    <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
-                            <div class="header_col">Общая информация</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">ФИО:</span>
-                                <span class="view-value"> {{ person.name }}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Тип:</span>
-                                <span class="view-value">Клиент</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Адрес:</span>
-                                <span class="view-value"> {{ person?.address }}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Источник:</span>
-                                <span class="view-value"> Соц. сети</span>
-                            </div>
-                            <div class="header_col">Контакты</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Телефон:</span>
-                                <div class="array-container">
-                                    <div style="display: flex; flex-direction: column; height: 32px; margin-right: 15px;
-                                        margin-top: -5px; color: dimgrey;">
-                                        <span style="font-size: 8pt; color: #c0c0c0;">Сотовый</span>
-                                        <span style="margin-top: -3px;">{{person.phones[0]}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">E-mail:</span>
-                                <div class="array-container">
-                                    <div style="display: flex; flex-direction: column; height: 32px; margin-right: 15px;
-                                        margin-top: -5px; color: dimgrey;">
-                                        <span style="font-size: 8pt; color: #c0c0c0;">Основной</span>
-                                        <span style="margin-top: -3px;">{{person.emails[0]}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">WEB-сайт:</span>
-                                <span class="view-value"> www.google.ru</span>
-                            </div>
-
-                            <div class="header_col">Организация</div>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Название организации:</span>
-                                <span class="view-value"> {{ organisation?.name  }}</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/department.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Отдел:</span>
-                                <span class="view-value"> Развития</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Должность:</span>
-                                <span class="view-value"> Юрист</span>
-                            </div>
-                            <hr>
-                            <div class="header_col">Взаимодействие</div>
-                            <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Договор:</span>
-                                <span class="view-value"> отсутствует</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Состояние:</span>
-                                <span class="view-value"> активно</span>
-                            </div>
-                            <hr>
-                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
-                            <div class="view-group">
-                                <span class="view-label pull-left">Ответственный:</span>
-                                <span class="view-value">{{ agent?.name }} </span>
-                            </div>
-
-                            <div class="header_col">Дополнительная информация</div>
-                            <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ person.info }} </span>
-                            </div>
-
-
-                            <!--<div class="view-group">
-                                    <span class="view-label pull-left">Телефон </span>
-                                    <div class="array-container">
-                                        <span *ngFor="let phone of person.phones" class="view-value"> {{ phone }} </span>
-                                    </div>
-                            </div>
-                            <div class="view-group">
-                                    <span class="view-label pull-left">e-mail</span>
-                                    <div class="array-container">
-                                        <span *ngFor="let email of person.emails" class="view-value"> {{ email }} </span>
-                                    </div>
-                            </div>-->
-
-
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
+                        <div class="view-group">
+                            <span class="view-label pull-left">Состояние:</span>
+                            <ui-slidingMenu class="view-value edit-value"
+                                [options] = "[
+                                    {value: 'NOT', label: 'Не указано'},
+                                    {value: 'ACTIVE', label: 'Активно'},
+                                    {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                    {value: 'ARCHIVE', label: 'Архив'}
+                                ]"
+                                [value]="person.stateCode_n"
+                                (onChange)="person.stateCode_n = $event.selected.value">
+                            >
+                            </ui-slidingMenu>
                         </div>
-                        <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
-
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                        <div class="view-group">
+                            <span class="view-label pull-left">Источник:</span>
+                            <ui-slidingMenu class="view-value edit-value"
+                                [options] = "[
+                                    {value: 'NOT', label: 'Не указан'},
+                                    {value: 'input', label: 'Входящий звонок'},
+                                    {value: 'internet', label: 'Интернет'},
+                                    {value: 'print', label: 'Печатное издание'},
+                                    {value: 'spam', label: 'Рассылка'},
+                                    {value: 'reccomend_cl', label: 'Рекомендация клиента'},
+                                    {value: 'reccomend_pt', label: 'Рекомендация парнера'},
+                                    {value: 'social', label: 'Социальные сети'},
+                                    {value: 'excelent', label: 'Успешный опыт сотрудничества'},
+                                    {value: 'cold', label: 'Холодная база'}
+                                ]"
+                                [value]="person.sourceCode_n"
+                                (onChange)="person.sourceCode_n = $event.selected.value">
+                            >
+                            </ui-slidingMenu>
+                        </div>
+                        <hr>
+                        <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
+                        <div class="view-group" style='position: relative; display: block;'>
+                            <ui-input-line [placeholder] = "'Организация:'" [value] = "person.organisation_n?.name"
+                                [width] = "'225px'" (onChange)= "person.organisation_n = $event" [queryTipe]="'organisation'">
+                            </ui-input-line>
+                        </div>
 
                         <div class="header_col">Тэги</div>
                         <div style="margin: 0 0 20px 20px;">
@@ -642,9 +493,163 @@ import {UserService} from '../../service/user.service';
                                 (valueChange) = "person.tag = $event.value"
                             ></ui-tag-block>
                         </div>
+
+                        <div class="header_col">Дополнительная информация</div>
+                        <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
+                            <textarea class="view-value text-value" placeholder=""
+                            [(ngModel)]="person.info" style="text-align: left;"></textarea>
+                        </div>
+
                     </div>
+
+                        <!-- РЕЖИМ РЕДАКТИРОВАНИЯ: КОНЕЦ -->
+                        <!-- РЕЖИМ ОТОБРАЖЕНИЯ: НАЧАЛО -->
+                    <div class="view-block" [hidden]="editEnabled" style="margin: 10px 10px 10px 0px;">
+                            <div class="header_col">Общая информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/category.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Тип:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указан'},
+                                        {value: 'CLIENT', label: 'Клиент'},
+                                        {value: 'KONK', label: 'Конкурент'},
+                                        {value: 'OUR', label: 'Наша компания'},
+                                        {value: 'PARTHER', label: 'Партнер'}
+                                    ]"
+                                    [value]="person.typeCode_n"
+                                >
+                                </ui-view-value>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">ФИО:</span>
+                                <span class="view-value"> {{ person.name }}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/address.png)'"></div>
+                            <div class="view-group">
+                                <ui-view-line
+                                    [placeholder]= "'Адрес:'" [value]="addressStr"
+                                >
+                                </ui-view-line>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/phone.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Телефон:</span>
+                                <ui-multi-view
+                                    [options] = "[
+                                        {value: 'MOBILE', label: 'Мобильный'},
+                                        {value: 'HOME', label: 'Домашний'},
+                                        {value: 'WORK', label: 'Рабочий'},
+                                        {value: 'MAIN', label: 'Основной'},
+                                        {value: 'SAME', label: 'Другой'}
+                                    ]"
+                                    [values] = "[
+                                        {type: getDateUser(personPhone).type, value: getDateUser(personPhone).value}
+                                    ]"
+                                >
+                                </ui-multi-view>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/email.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">E-mail:</span>
+                                <ui-multi-view
+                                    [options] = "[
+                                        {value: 'WORK', label: 'Рабочий'},
+                                        {value: 'MAIN', label: 'Личный'}
+                                        ]"
+                                    [values] = "[
+                                        {type: getDateUser(personEmail).type, value: getDateUser(personEmail).value}
+                                    ]"
+                                >
+                                </ui-multi-view>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/website.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">WEB-сайт:</span>
+                                <span class="view-value">{{person.webSite_n}}</span>
+                            </div>
+
+                            <div class="header_col">Сопроводительная информация</div>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/user.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Ответственный:</span>
+                                <span class="view-value">{{ agent?.name }} </span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Договор:</span>
+                                <span class="view-value">{{person.contract_n}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/status.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Состояние:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указано'},
+                                        {value: 'ACTIVE', label: 'Активно'},
+                                        {value: 'NOT_ACTIVE', label: 'Не активно'},
+                                        {value: 'ARCHIVE', label: 'Архив'}
+                                    ]"
+                                    [value]="person.stateCode_n"
+                                >
+                                </ui-view-value>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/person_icon/source.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Источник:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указан'},
+                                        {value: 'input', label: 'Входящий звонок'},
+                                        {value: 'internet', label: 'Интернет'},
+                                        {value: 'print', label: 'Печатное издание'},
+                                        {value: 'spam', label: 'Рассылка'},
+                                        {value: 'reccomend_cl', label: 'Рекомендация клиента'},
+                                        {value: 'reccomend_pt', label: 'Рекомендация парнера'},
+                                        {value: 'social', label: 'Социальные сети'},
+                                        {value: 'excelent', label: 'Успешный опыт сотрудничества'},
+                                        {value: 'cold', label: 'Холодная база'}
+                                    ]"
+                                    [value]="person.sourceCode_n"
+                                >
+                                </ui-view-value>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(res/user_icon/office.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label pull-left">Организация:</span>
+                                <span class="view-value">
+                                    {{getTypeName(person.organisation_n?.orgName_n)}} &laquo;{{ person.organisation_n?.name }}&raquo;
+                                </span>
+                            </div>
+
+                            <div class="header_col">Тэги</div>
+                            <div style="margin: 0 0 20px 20px;">
+                                <ui-tag-block
+                                    [value] = "person.tag"
+                                    (valueChange) = "person.tag = $event.value"
+                                ></ui-tag-block>
+                            </div>
+
+                            <div class="header_col">Дополнительная информация</div>
+                            <div class="view-group">
+                                <span class="view-value" style="height: initial;"> {{ person.info }} </span>
+                            </div>
                     </div>
+                        <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->
+
+                </div>
             </div>
+        </div>
 
             <!-- Левая СТВОРКА: КОНЕЦ -->
             <!-- РАБОЧАЯ ОБЛАСТЬ: НАЧАЛО -->
@@ -840,6 +845,12 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
     person: Person = new Person();
 
+    getDateUser = User.getData;
+
+    personEmail: Array<any> = [];
+    personPhone: Array<any> = [];
+    personAddress: Array<any> = [];
+
     organisationsOpts: any[] = [];
     agentOpts: any[] = [];
 
@@ -874,6 +885,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     ch3_data_v2: number;
     ch4_data_v1: number;
     ch4_data_v2: number;
+    addressStr: string = '';
 
     log(e) {
         console.log(e);
@@ -888,7 +900,9 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
                 private _historyService: HistoryService,
                 private _personService: PersonService,
                 private _organisationService: OrganisationService,
-                private _userService: UserService) {
+                private _userService: UserService,
+                private _sessionService: SessionService
+    ) {
 
         _organisationService.list("").subscribe(organisations => {
                 for (let i = 0; i < organisations.length; i++) {
@@ -916,9 +930,43 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.person = this.tab.args.person;
 
         var c = this._configService.getConfig();
-        this.zoom = c.map.zoom;
-        this.lat = c.map.lat;
-        this.lon = c.map.lon;
+
+        let loc = this._sessionService.getAccount().location;
+
+        this.personAddress=[
+            {type: 'KRAY', value: this.person.region_n},
+            {type: 'CITY', value: this.person.city_n},
+            {type: 'DISTRICT', value: this.person.area_n},
+            {type: 'STREET', value: this.person.street_n},
+            {type: 'HOUSE', value: this.person.house_n},
+            {type: 'HOUSING', value: this.person.housing_n},
+            {type: 'FLAT', value: this.person.apartment_n}
+        ];
+
+        this.getAddressStr();
+
+        this.personPhone=[
+            {type: 'MOBILE', value:  this.person.cellPhone_n},
+            {type: 'HOME', value:  this.person.homePhone_n},
+            {type: 'WORK', value: this.person.officePhone_n},
+            {type: 'MAIN', value:  this.person.mainPhone_n},
+            {type: 'SAME', value:  this.person.otherPhone_n},
+            {type: 'FAX', value:  this.person.fax_n}
+        ];
+        this.personEmail=[
+            {type: 'WORK', value:  this.person.workEmail_n},
+            {type: 'MAIN', value:  this.person.mainEmail_n}
+        ];
+
+        if (c.map[loc]) {
+            this.lat = c.map[loc].lat;
+            this.lon = c.map[loc].lon;
+            this.zoom = c.map[loc].zoom;
+        } else {
+            this.lat = c.map['default'].lat;
+            this.lon = c.map['default'].lon;
+            this.zoom = c.map['default'].zoom;
+        }
 
         if (this.person.organisationId) {
             this._organisationService.get(this.person.organisationId).subscribe(org => {
@@ -935,7 +983,6 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         if (this.person.id == null) {
             this.toggleEdit();
         }
-
         this.calcSize();
     }
 
@@ -982,18 +1029,53 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     save() {
-        var c = this;
+        let tem = this.getIndex(this.personPhone, "MOBILE");
+        this.person.cellPhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        tem =  this.getIndex(this.personPhone, "HOME");
+        this.person.homePhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        tem = this.getIndex(this.personPhone, "WORK");
+        this.person.officePhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        tem = this.getIndex(this.personPhone, "MAIN");
+        this.person.mainPhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        tem = this.getIndex(this.personPhone, "SAME");
+        this.person.otherPhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        tem = this.getIndex(this.personPhone, "FAX");
+        this.person.fax_n =  tem > -1 ? this.personPhone[tem].value : null;
+
+        tem = this.getIndex(this.personAddress, "KRAY");
+        this.person.region_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        tem = this.getIndex(this.personAddress, "CITY");
+        this.person.city_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        tem = this.getIndex(this.personAddress, "DISTRICT");
+        this.person.area_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        tem = this.getIndex(this.personAddress, "STREET");
+        this.person.street_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        tem = this.getIndex(this.personAddress, "HOUSE");
+        this.person.house_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        tem = this.getIndex(this.personAddress, "HOUSING");
+        this.person.housing_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        tem = this.getIndex(this.personAddress, "FLAT");
+        this.person.apartment_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+
+        tem =  this.getIndex(this.personEmail, "MAIN");
+        this.person.mainEmail_n =  tem > -1 ? this.personEmail[tem].value : null;
+        tem = this.getIndex(this.personEmail, "WORK");
+        this.person.workEmail_n =  tem > -1 ? this.personEmail[tem].value : null;
+
+        console.log(this.person);
         this._personService.save(this.person).subscribe(
             person => {
-                //console.log('Next: ' + x.toString());
+                setTimeout(() => {
+                    this.person = person;
+                    this.getAddressStr();
+                });
+                this.toggleEdit();
             },
             err => {
-                //console.log('Error: ' + err);
-            },
-            () => {
-                c.toggleEdit();
+                console.log('Error: ' + err);
             }
-        )
+        );
+
     }
 
     offersSelected() {
@@ -1003,7 +1085,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     requestsSelected() {
-        this._requestService.list(0, 32, this.requestOfferType, "all", null, null, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, "all", null, this.person.id, "").subscribe(requests => {
             this.requests = requests;
         });
     }
@@ -1084,7 +1166,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
             this.offers = offers.list;
         });
 
-        this._requestService.list(0, 32, this.requestOfferType, "all", null, null, "").subscribe(requests => {
+        this._requestService.list(0, 32, this.requestOfferType, "all", null, this.person.id, "").subscribe(requests => {
             this.requests = requests;
         });
 
@@ -1112,6 +1194,58 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
              parent.style.setProperty('overflow', "hidden");
               (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(0deg)')
         }
+    }
+
+    parseArray(values: Array<any>, obj, isAddress?: boolean){
+        for(let val of values){
+            let no = true;
+            for(let en of obj){
+                if(val.type == en.type){
+                    en.value = val.value;
+                    no = false;
+                }
+            }
+            if(no && val.value)
+                obj.push(val);
+        }
+        for(let i=0 ; i< obj.length; ++i){
+            if(obj[i].value === undefined || obj[i].value === null){
+                obj.splice(i,1);
+                i--;
+            }
+        }
+        if(isAddress){
+            this.getAddressStr();
+        }
+
+    }
+
+    getIndex(array: Array<any>, str: string){
+        for(let i =0; i<array.length; ++i){
+            if(array[i].type == str)
+                return i;
+        }
+        return -1;
+    }
+
+    getTypeName(type){
+        switch(type){
+            case "OOO": return "ООО";
+            case "ZAO": return "ЗАО";
+            case "AO": return "АО";
+            case "PAO": return "ПАО";
+            case "IP": return "ИП";
+            case "OAO": return "ОАО";
+            default: return "";
+        }
+    }
+
+    getAddressStr(){
+            this.addressStr = this.person.city_n !== undefined ? ""+this.person.city_n : '';
+            this.addressStr += this.person.street_n !== undefined ? ", " + this.person.street_n : '';
+            this.addressStr += this.person.house_n !== undefined ? ", " + this.person.house_n : '';
+            if(this.personAddress.length == 0)
+                this.addressStr = '';
     }
 
 }

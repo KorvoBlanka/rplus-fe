@@ -10,16 +10,33 @@ var UIMultiView = (function () {
     function UIMultiView() {
     }
     UIMultiView.prototype.ngOnInit = function () {
-        console.log(this.values);
+        var temp = [];
+        for (var _i = 0, _a = this.values; _i < _a.length; _i++) {
+            var val = _a[_i];
+            if (val.value)
+                temp.push(val);
+        }
+        this.values = temp;
+        if (this.options) {
+            for (var _b = 0, _c = this.options; _b < _c.length; _b++) {
+                var opt = _c[_b];
+                if (opt.value == this.values[0].type) {
+                    this.type = opt.label;
+                }
+            }
+        }
+    };
+    UIMultiView.prototype.ngOnChanges = function () {
+        this.ngOnInit();
     };
     return UIMultiView;
 }());
 UIMultiView = __decorate([
     core_1.Component({
         selector: 'ui-multi-view',
-        inputs: ['values'],
-        template: "\n            <div><div class=\"total\" *ngFor=\"let val of values\">\n                <span *ngIf='val.value'>{{ val.type }}</span>\n                <span>{{ val.value }}</span>\n            </div></div>\n    ",
-        styles: ["\n\n        .total{\n            display: inline-block;\n            flex-direction: column;\n            height: 32px;\n            margin-right: 15px;\n            margin-top: -3px;\n            color: dimgrey;\n        }\n\n        div>div:last-child{\n            margin-right: 0;\n        }\n\n        .total span:first-child{\n            font-size: 8pt;\n            color: #c0c0c0;\n            display: block;\n        }\n\n        .total span:last-child{\n            margin-top: -3px;\n        }\n    "]
+        inputs: ['values', 'options'],
+        template: "\n            <div style= \"margin-top: -6px;\"><div class=\"total\" *ngFor=\"let val of values\">\n                <span *ngIf=\"val.value && !options\">{{ val.type }}</span>\n                <span *ngIf=\"val.value && options\">{{ type }}</span>\n                <span [class.empty]=\"val.value.indexOf('\u041D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D') > -1\">{{ val.value }}</span>\n\n            </div></div>\n    ",
+        styles: ["\n\n        .total{\n            display: flex;\n            flex-direction: column;\n            height: 32px;\n            margin-right: 15px;\n            color: dimgrey;\n            float: left;\n            align-items: flex-end;\n        }\n\n        div>span:last-child{\n            margin-right: 0;\n            font-size: 9pt;\n            margin-top: -3px;\n        }\n\n        .total span:first-child{\n            font-size: 8pt;\n            color: #c0c0c0;\n            display: block;\n        }\n\n        .total:last-child{\n            margin-right: 0;\n        }\n        .empty{\n            margin-top: 10px !important;\n            font-size: 10pt !important;\n        }\n    "]
     })
 ], UIMultiView);
 exports.UIMultiView = UIMultiView;

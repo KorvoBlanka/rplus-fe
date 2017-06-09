@@ -21,7 +21,6 @@ import {UISelectOption} from "./ui-select.component";
             font-size: 10pt;
             margin-top: 5px;
             height: 19px;
-            margin-right: 20px;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -33,6 +32,7 @@ import {UISelectOption} from "./ui-select.component";
 export class UIViewValue implements OnInit {
     public options: Array<UISelectOption>;
     public value: any;
+    public Style: any;
 
     selected: UISelectOption;
 
@@ -45,6 +45,10 @@ export class UIViewValue implements OnInit {
         if (this.selected == null && this.options.length > 0) {
             this.selected = this.options[0];
         }
+    }
+
+    ngOnChanges() {
+        this.ngOnInit();
     }
 
     getStyle(){

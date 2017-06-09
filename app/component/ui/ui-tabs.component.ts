@@ -7,9 +7,9 @@ import {UITab} from './ui-tab.component';
 
 @Component({
     selector: 'ui-tabs',
-    inputs: ['headerMode', 'iconUrls', 'iconUrls_active'],
+    inputs: ['headerMode', 'iconUrls', 'iconUrls_active', 'color'],
     template: `
-        <div class="head">
+        <div class="head" [style.border-bottom-color] = "color">
             <div class="tabs" [class.align-left]="headerMode">
                 <div *ngFor="let tab of tabs; let i = index;" class="tab-header"
                  (click)="selectTab(tab)" [class.active]="tab.active"
@@ -26,15 +26,15 @@ import {UITab} from './ui-tab.component';
         .head{
             height: 110px;
             display: flex;
-            border-bottom: 4px solid rgba(61, 155, 233, 1);
+            border-bottom: 4px solid;
         }
         .tabs {
             display: flex;
             margin-top: 15px;
             height: 70px;
-            width: 230px;
+            width: 170px;
             justify-content: center;
-            margin-left: 45px;
+            margin-left: 50px;
         }
         .tabs.align-left {
             justify-content: flex-start;
@@ -42,11 +42,11 @@ import {UITab} from './ui-tab.component';
         .tab-header {
             width: 70px;
             height: 50px;
-            font-size: 9pt;
+            font-size: 11px;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            color: #aaa;
+            color: #6b6c6d;
             line-height: 120px;
             text-align: center;
         }
@@ -85,6 +85,7 @@ export class UITabs implements  AfterContentInit  {
     iconUrls: String[] = [];
     iconUrls_active: String[] = [];
     currentUrl: String[] = [];
+    color: String = '#3d9be9';
 
     constructor() {
         setTimeout(()=> {
@@ -94,7 +95,7 @@ export class UITabs implements  AfterContentInit  {
                     this.currentUrl.push(this.iconUrls[i]);
                 }
             }
-        },300);
+        },100);
 
     }
 

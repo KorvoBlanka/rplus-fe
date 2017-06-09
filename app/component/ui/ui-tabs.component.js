@@ -16,6 +16,7 @@ var UITabs = (function () {
         this.iconUrls = [];
         this.iconUrls_active = [];
         this.currentUrl = [];
+        this.color = '#3d9be9';
         setTimeout(function () {
             if (_this.iconUrls) {
                 _this.currentUrl[0] = _this.iconUrls_active[0];
@@ -23,7 +24,7 @@ var UITabs = (function () {
                     _this.currentUrl.push(_this.iconUrls[i]);
                 }
             }
-        }, 300);
+        }, 100);
     }
     UITabs.prototype.ngAfterContentInit = function () {
         if (!_hasActiveTab(this.tabs)) {
@@ -74,9 +75,9 @@ __decorate([
 UITabs = __decorate([
     core_1.Component({
         selector: 'ui-tabs',
-        inputs: ['headerMode', 'iconUrls', 'iconUrls_active'],
-        template: "\n        <div class=\"head\">\n            <div class=\"tabs\" [class.align-left]=\"headerMode\">\n                <div *ngFor=\"let tab of tabs; let i = index;\" class=\"tab-header\"\n                 (click)=\"selectTab(tab)\" [class.active]=\"tab.active\"\n                 [ngStyle]=\"{'background-image': 'url(' + selectedIcon(tab.active, i) + ')'}\"\n                 (mouseover) = \"setIcon(i, true, $event)\"\n                 (mouseout) = \"setIcon(i, false, $event)\">\n                    {{tab.title}}\n                </div>\n            </div>\n        </div>\n        <ng-content></ng-content>\n    ",
-        styles: ["\n        .head{\n            height: 110px;\n            display: flex;\n            border-bottom: 4px solid rgba(61, 155, 233, 1);\n        }\n        .tabs {\n            display: flex;\n            margin-top: 15px;\n            height: 70px;\n            width: 230px;\n            justify-content: center;\n            margin-left: 45px;\n        }\n        .tabs.align-left {\n            justify-content: flex-start;\n        }\n        .tab-header {\n            width: 70px;\n            height: 50px;\n            font-size: 9pt;\n            background-size: contain;\n            background-repeat: no-repeat;\n            background-position: center;\n            color: #aaa;\n            line-height: 120px;\n            text-align: center;\n        }\n        .tab-header:first-child {\n            //width: 80px;\n        }\n\n        .tab-header:hover {\n        }\n\n        .tab-header > span {\n            color: #aaa;\n            margin-top: 40px;\n            margin-left: -15px;\n            display: block;\n        }\n        .tab-header.active > a {\n            color: #157ad3;\n        }\n        .tab-header.active::after {\n            /*content: '';\n            position: absolute;\n            left: 0;\n            top: 26px;\n            width: 80%;\n            margin-left: 10%;\n            height: 2px;\n            background-color: #157ad3;/*\n        }\n  "]
+        inputs: ['headerMode', 'iconUrls', 'iconUrls_active', 'color'],
+        template: "\n        <div class=\"head\" [style.border-bottom-color] = \"color\">\n            <div class=\"tabs\" [class.align-left]=\"headerMode\">\n                <div *ngFor=\"let tab of tabs; let i = index;\" class=\"tab-header\"\n                 (click)=\"selectTab(tab)\" [class.active]=\"tab.active\"\n                 [ngStyle]=\"{'background-image': 'url(' + selectedIcon(tab.active, i) + ')'}\"\n                 (mouseover) = \"setIcon(i, true, $event)\"\n                 (mouseout) = \"setIcon(i, false, $event)\">\n                    {{tab.title}}\n                </div>\n            </div>\n        </div>\n        <ng-content></ng-content>\n    ",
+        styles: ["\n        .head{\n            height: 110px;\n            display: flex;\n            border-bottom: 4px solid;\n        }\n        .tabs {\n            display: flex;\n            margin-top: 15px;\n            height: 70px;\n            width: 170px;\n            justify-content: center;\n            margin-left: 50px;\n        }\n        .tabs.align-left {\n            justify-content: flex-start;\n        }\n        .tab-header {\n            width: 70px;\n            height: 50px;\n            font-size: 11px;\n            background-size: contain;\n            background-repeat: no-repeat;\n            background-position: center;\n            color: #6b6c6d;\n            line-height: 120px;\n            text-align: center;\n        }\n        .tab-header:first-child {\n            //width: 80px;\n        }\n\n        .tab-header:hover {\n        }\n\n        .tab-header > span {\n            color: #aaa;\n            margin-top: 40px;\n            margin-left: -15px;\n            display: block;\n        }\n        .tab-header.active > a {\n            color: #157ad3;\n        }\n        .tab-header.active::after {\n            /*content: '';\n            position: absolute;\n            left: 0;\n            top: 26px;\n            width: 80%;\n            margin-left: 10%;\n            height: 2px;\n            background-color: #157ad3;/*\n        }\n  "]
     }),
     __metadata("design:paramtypes", [])
 ], UITabs);

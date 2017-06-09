@@ -1,23 +1,29 @@
 import {Component, OnInit, OnChanges} from '@angular/core';
-import {Output, EventEmitter} from '@angular/core';
+import {Output,Input, EventEmitter} from '@angular/core';
 import {SuggestionService} from "../../service/suggestion.service";
+import {PersonService} from "../../service/person.service";
+import {SessionService} from "../../service/session.service";
+import {OrganisationService} from '../../service/organisation.service';
+
 import {Offer} from '../../class/offer';
 
 @Component({
     selector: 'ui-input-line',
-    inputs: ['placeholder', 'value', 'width' , 'isAddress'],
+    inputs: ['placeholder', 'width' , 'queryTipe', 'type'],
     template: `
         <div class="ui-input-line">
             <span class="label" [style.opacity]="getOpacity()">{{placeholder}}</span>
-            <input type="text" value = "{{ value }}" style = "width: {{width}}" class = "input_line" [(ngModel)]="searchQuery"
+            <input type="{{type}}" value = "{{ value }}" style = "width: {{width}}" class = "input_line" [(ngModel)]="searchQuery"
                 (keydown) = "setOpacity()" (keyup) = "editOpacity($event)" placeholder = "{{placeholder}}"
-                (click) ="isClick($event)" [class.short_field]="isAddress"
+                (click) ="isClick1($event)" [class.short_field]="queryTipe"
             >
 
-            <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0 && isAddress">
+            <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0 && queryTipe">
                 <ul *ngFor="let item of sgList" >
                     <li >
-                        <a (click)="select(item, $event)">{{item}}</a>
+                        <a (click)="select(item, $event)" *ngIf="this.queryTipe == 'address'">{{item}}</a>
+                        <a (click)="select(item, $event)" *ngIf="this.queryTipe == 'organisation'">{{item.name}}</a>
+                        <a (click)="select(item, $event)" *ngIf="this.queryTipe == 'person'">{{item.name}}</a>
                     </li>
                 </ul>
             </div>
@@ -92,40 +98,81 @@ import {Offer} from '../../class/offer';
 })
 
 
-export class UIInputLine implements OnInit, OnChanges {
+export class UIInputLine implements OnInit, OnChanges{
     public placeholder: string;
-    public value: string;
+    @Input() value: string;
     public width: string;
-    public isAddress: boolean;
-
-    searchQuery = '';
-    sgList: string[] = [];
+    public queryTipe: string;
+    public type: string = "text";
+    searchQuery: string ;
+    sgList: any[] = [];
 
     opacity = 1;
     @Output() onChange: EventEmitter<any> = new EventEmitter();
-    constructor(
-        private _suggestionService: SuggestionService
-    ) {
+
+    constructor(private _suggestionService: SuggestionService,
+                private _personService: PersonService,
+                private _sessionService: SessionService,
+                private _organisationService: OrganisationService
+    ){
+
     }
 
     isClick(event){
-        if(this.isAddress){
-            let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement.parentElement.parentElement;
+        if(this.queryTipe && this.queryTipe == "address"){
+            let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
+            while(parent.className.indexOf('view-group')== -1 && parent.className !== null){
+                parent = parent.parentElement;
+            }
+            let field: HTMLElement = <HTMLElement>parent.getElementsByTagName('ui-multiselect').item(0);
+            if(field.style.getPropertyValue('visibility') == 'hidden'){
+                field.style.setProperty('visibility','visible');
+            } else if(field.style.getPropertyValue('visibility') == ''){
+                field.style.setProperty('visibility','hidden');
+            }
             let height: number;
             if(parent.getElementsByTagName('input').length > 0)
                 height = parent.getElementsByTagName('input').length * 35;
             else
                 height = (parent.getElementsByTagName('input').length - 1) * 35;
             if(parent.offsetHeight == 30){
-                parent.style.setProperty('height', ""+(height+15)+'px');
+                //parent.style.setProperty('height', ""+(height+15)+'px');
                 parent.style.setProperty('overflow', "visible");
             }
         }
     }
+
+    isClick1(event){
+        if(this.queryTipe && this.queryTipe == "address"){
+            let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
+            while(parent.className.indexOf('view-group')== -1 && parent.className !== null){
+                parent = parent.parentElement;
+            }
+            let field: HTMLElement = <HTMLElement>parent.getElementsByTagName('ui-multiselect').item(0);
+            let inputs  = field.getElementsByTagName('input');
+            if(inputs.length < 1){
+                if(field.style.getPropertyValue('visibility') == ''){
+                    field.style.setProperty('visibility','hidden');
+                }
+                let height: number;
+
+                if(parent.getElementsByTagName('input').length > 0)
+                    height = parent.getElementsByTagName('input').length * 35;
+                    else
+                    height = (parent.getElementsByTagName('input').length - 1) * 35;
+                    if(parent.offsetHeight == 30){
+                        //parent.style.setProperty('height', ""+(height+15)+'px');
+                        parent.style.setProperty('overflow', "visible");
+                    }
+            }
+        }
+    }
+
     ngOnInit() {
         if(this.value)
             this.opacity = 1;
         else this.opacity = 0;
+        this.searchQuery = this.value;
     }
 
     getOpacity() {
@@ -137,42 +184,85 @@ export class UIInputLine implements OnInit, OnChanges {
     }
 
     editOpacity(event) {
-        if(this.isAddress)
+        if(this.queryTipe){
             this.searchParamChanged(event);
+        }
         if(event.target.value == "")
             this.opacity = 0;
-        else if(!this.isAddress)
+        else if(!this.queryTipe){
             this.onChange.emit(event.target.value);
+        }
     }
 
     ngOnChanges() {
+        this.searchQuery = this.value;
+    }
 
+    docClick(){
+        this.sgList = [];
     }
 
     searchParamChanged(e) {
-        if (this.searchQuery.length > 0) {
+        if (this.searchQuery && this.searchQuery.length > 0) {
             let sq = this.searchQuery.split(" ");
             let lp = sq.pop()
             let q = sq.join(" ");
             this.sgList = [];
             if (lp.length > 0) {
-                this._suggestionService.list(this.searchQuery).subscribe(sgs => {
-                    sgs.forEach(e => {
-                        this.sgList.push(e);
-                    })
-                })
+                if(this.queryTipe == "address"){
+                    this._suggestionService.list(this.searchQuery).subscribe(sgs => {
+                        sgs.forEach(e => {
+                            this.sgList.push(e);
+                        })
+                    });
+                } else if(this.queryTipe == "person"){
+                    this._personService.list(this._sessionService.getUser(), null, this.searchQuery).subscribe(sgs => {
+                        sgs.forEach(e => {
+                            this.sgList.push(e);
+                        })
+                    });
+                } else if(this.queryTipe == "organisation"){
+                    this._organisationService.list(this.searchQuery).subscribe(sgs => {
+                        sgs.forEach(e => {
+                            this.sgList.push(e);
+                        })
+                    });
+                }
             }
+        } else if(this.queryTipe == "address"){
+            let nullAddress=[
+                {type: 'KRAY', value: null},
+                {type: 'CITY', value: null},
+                {type: 'DISTRICT', value: null},
+                {type: 'STREET', value: null},
+                {type: 'HOUSE', value: null},
+                {type: 'HOUSING', value: null},
+                {type: 'FLAT', value: null}
+            ];
+            this.onChange.emit(nullAddress);
+            let parent: HTMLElement =  (<HTMLElement>event.target).parentElement.parentElement.parentElement;
+            parent.style.setProperty('height', ""+(35)+'px');
+            let field: HTMLElement = <HTMLElement>parent.getElementsByTagName('ui-multiselect').item(0);
+            field.style.setProperty('visibility','hidden');
+            parent.style.setProperty('overflow', "visible");
         }
     }
 
-    select(itm: string, event) {
+    select(itm: any, event) {
         this.searchQuery = itm;
-        let fullAddress =  Offer.parseAddress(itm);
-        this.onChange.emit(fullAddress.reverse());
+        if(this.queryTipe && this.queryTipe == "address"){
+            this.isClick(event);
+            let fullAddress =  Offer.parseAddress(itm);
+            this.onChange.emit(fullAddress.reverse());
+            let parent: HTMLElement =  event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+            let height: number = fullAddress.length*36;
+            parent.style.setProperty('height', ""+(height+56)+'px');
+        } else if(this.queryTipe && this.queryTipe == "person"){
+            this.onChange.emit(itm);
+        } else if(this.queryTipe && this.queryTipe == "organisation"){
+            this.onChange.emit(itm);
+        }
         this.sgList = [];
-        let parent: HTMLElement =  event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
-        let height: number = fullAddress.length*36;
-        parent.style.setProperty('height', ""+(height+56)+'px');
     }
 
 }

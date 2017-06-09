@@ -24,7 +24,7 @@ import {Account} from "../../class/account";
             border: 2px solid;
             color: rgb(61, 155, 233);
             position: absolute;
-            top: 92px;
+            top: 91px;
             left: 30;
             width: 100vw;
         }
@@ -95,6 +95,7 @@ import {Account} from "../../class/account";
             overflow-x: scroll;
             border-right: 1px solid #ccc;
             border-top: 1px solid #ccc;
+            background-color: rgb(247,247,247);
         }
 
         .pane {
@@ -120,7 +121,7 @@ import {Account} from "../../class/account";
         .inline-select {
             display: inline-block;
             height: 20px;
-            padding: 0 15px;
+            padding: 0 15px 0 0;
             font-size: 14px;
             color: #666;
         }
@@ -163,17 +164,10 @@ import {Account} from "../../class/account";
             background-image: url(res/base_plus_color.png) !important;
         }
 
-        .import {
-            background-image: url(res/base_plus.png);
-        }
         .local:hover{
             background-image: url(res/base_color.png) !important;
         }
-
-        .local {
-            background-image: url(res/base.png);
-        }
-
+        
         .seen {
             background-color: #dbe2f0 !important;
         }
@@ -217,20 +211,18 @@ import {Account} from "../../class/account";
     template: `
         <div class = "round_menu">
             <div class="button plus"  (click) ="addOffer()">Добавить</div>
-            <div (click)="toggleSource('import')" [style.background-image]="getImage('import')" class="button import" style="">Общая</div>
-            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="getImage('local')">Компания</div>
+            <div (click)="toggleSource('import')" class="button import" [style.background-image]="iconSource[0]">Общая</div>
+            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="iconSource[1]">Компания</div>
         </div>
         <div class="search-form" [class.table-mode]="tableMode">
 
             <div class="search-box">
                 <input type="text" class="" placeholder="" [style.width]="getInputWidth()"
-                    style="height: 28px; background-color: rgb(247, 247, 247); border: 1px solid rgba(204, 204, 204, 0.47);" [(ngModel)]="searchQuery"
-                       (keyup)="searchParamChanged($event)">
-                       <span class="icon-search" style="position: absolute; top: 7px;" [style.right]="getSearchPosition()"></span>
+                    style="height: 28px; background-color: rgb(247, 247, 247); border: 1px solid rgba(204, 204, 204, 0.47);"
+                    [(ngModel)]="searchQuery" (keyup)="searchStringChanged($e)"
+                >
+                <span class="icon-search" style="position: absolute; top: 7px;" [style.right]="getSearchPosition()"></span>
                 <a (click)="toggleDraw()" [hidden]="tableMode">
-                    <!--<span
-                        [ngClass]="{'icon-cancel': mapDrawAllowed, 'icon-edit': !mapDrawAllowed}"
-                    ></span>-->
                     <span>Обвести</span>
                 </a>
                 <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0">
@@ -259,17 +251,17 @@ import {Account} from "../../class/account";
                 </div>
                     <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
-                            [options]="stateCodeOptions"
-                            [value]="filter.state"
+                            [options]="stageCodeOptions"
+                            [value]="filter.stage"
                             [config]="{icon: 'icon-square', drawArrow: true}"
-                            (onChange)="filter.stateCode = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.stageCode = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
                     <div class="inline-select" *ngIf="source == 1">
                         <ui-select class="view-value edit-value"
                             [options]="agentOpts"
-                            [value]="filter.agent"
+                                [value]="filter.agent"
                             [config]="{icon: 'icon-person', drawArrow: true}"
                             (onChange)="filter.agentId = $event.selected.value; searchParamChanged($event);"
                         >
@@ -355,10 +347,9 @@ import {Account} from "../../class/account";
 
                     <digest-offer *ngFor="let offer of offers"
                                   [offer]="offer"
-
+                                style="background-color: #fff"
                                 [class.seen]="offer.openDate > timestamp"
                                 [class.modified]="offer.changeDate > timestamp"
-
                                 [class.selected]="selectedOffers.indexOf(offer) > -1"
                                 (click)="click($event, offer)"
                                 (contextmenu)="click($event, offer)"
@@ -387,15 +378,14 @@ import {Account} from "../../class/account";
 export class TabListOfferComponent {
     public tab: Tab;
     public tableMode: boolean = false;
-    isImport: boolean = false;
     source: OfferSource = OfferSource.LOCAL;
     searchQuery: string = "";
     searchArea: any[] = [];
 
     sgList: string[] = [];
-
+    iconSource: string[]=["url(res/base_plus.png)", "url(res/base_color.png)"];
     filter: any = {
-        stateCode: 'all',
+        stageCode: 'all',
         agentId: 'all',
         tag: 'all',
         changeDate: 90,
@@ -404,7 +394,23 @@ export class TabListOfferComponent {
 
     sort: any = {};
 
-    agentOpts = [];
+    agentOpts = [
+        {value: 'all', label: 'Все объекты', bold: true},
+        {value: 'realtor', label: 'Конкуренты', bold: true},
+        {value: 'private', label: 'Собственники', bold: true},
+        {value: 'company', label: 'Наша компания', bold: true},
+        {value: 'my', label: 'Мои объекты', bold: true}
+    ];
+
+    stageCodeOptions = [
+        {value: 'all', label: 'Все'},
+        {value: 'raw', label: 'Не активен'},
+        {value: 'active', label: 'Активен'},
+        {value: 'price', label: 'Прайс'},
+        {value: 'deal', label: 'Сделка'},
+        {value: 'suspended', label: 'Приостановлен'},
+        {value: 'archive', label: 'Архив'}
+    ];
 
     stateCodeOptions = [
         {value: 'all', label: 'Все'},
@@ -431,6 +437,7 @@ export class TabListOfferComponent {
     page: number = 0;
     perPage: number = 32;
 
+    suggestionTo: any;
     to: any;
     list: HTMLElement;
 
@@ -480,7 +487,8 @@ export class TabListOfferComponent {
                 var a = agents[i];
                 this.agentOpts.push({
                     value: '' + a.id,
-                    label: a.name
+                    label: a.name,
+                    bold: false
                 });
             }
         });
@@ -507,7 +515,7 @@ export class TabListOfferComponent {
         this._offerService.list(this.page, this.perPage, this.source, this.filter, this.sort, this.searchQuery, this.searchArea).subscribe(
             data => {
 
-                this.hitsCount = data.hitsCount;
+                this.hitsCount = data.hitsCount || 0;
 
                 if (this.page == 0) {
                     this.offers = data.list;
@@ -517,9 +525,7 @@ export class TabListOfferComponent {
                     })
                 }
             },
-            err => {
-                console.log(err);
-            }
+            err => console.log(err)
         );
     }
 
@@ -555,7 +561,7 @@ export class TabListOfferComponent {
             this.paneWidth = 370;
         }
         this.mapWidth = document.body.clientWidth - (31) - this.paneWidth;
-        this.paneHeight = document.body.clientHeight - 31;
+        this.paneHeight = document.body.clientHeight - 116;
     }
 
     toggleLeftPane() {
@@ -586,7 +592,10 @@ export class TabListOfferComponent {
                         o.agentId = u.id;
                         o.agent = u;
                         c._offerService.save(o);
-                    })
+                    });
+                    setTimeout(function () {
+                        c.listOffers();
+                    }, 1200);
                 }},
             )
         });
@@ -625,7 +634,10 @@ export class TabListOfferComponent {
                     c.selectedOffers.forEach(o => {
                         o.stageCode = s.value;
                         c._offerService.save(o);
-                    })
+                    });
+                            setTimeout(function () {
+                                c.listOffers();
+                            }, 1200);
                 }}
             )
         });
@@ -635,7 +647,7 @@ export class TabListOfferComponent {
             pY: e.pageY,
             scrollable: false,
             items: [
-                {class: "entry", disabled: false, icon: "check", label: 'Проверить', callback: () => {
+                {class: "entry", disabled: false, icon: "dcheck", label: 'Проверить', callback: () => {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
@@ -649,20 +661,38 @@ export class TabListOfferComponent {
                         tab_sys.addTab('offer', {offer: o});
                     })
                 }},
-                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {}},
+                {class: "entry", disabled: false, icon: "trash", label: 'Удалить', callback: () => {
+                    this.selectedOffers.forEach(o => {
+                        o.stageCode = 'archive';
+                        c._offerService.save(o);
+                    });
+                    setTimeout(function () {
+                        c.listOffers();
+                    }, 1200);
+                }},
                 {class: "delimiter"},
-                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stateOpt},
+                {class: "submenu", disabled: false, icon: "edit", label: "Стадия", items: stageOpt},
                 {class: "submenu", disabled: false, icon: "person", label: "Назначить", items: uOpt},
-                {class: "submenu", disabled: true, icon: "month", label: "Задача", items: [
+                {class: "submenu", disabled: true, icon: "task", label: "Задача", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
                     {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
                 ]},
-                {class: "submenu", disabled: true, icon: "", label: "Реклама", items: [
+                {class: "submenu", disabled: true, icon: "advert", label: "Реклама", items: [
                     {class: "entry", disabled: false, label: "пункт x1", callback: function() {alert('yay s1!')}},
                     {class: "entry", disabled: false, label: "пункт x2", callback: function() {alert('yay s2!')}},
                 ]},
                 {class: "delimiter"},
-                {class: "entry", disabled: false, icon: "tag", label: 'Теги', callback: () => {}},
+                {class: "tag", icon: "tag", label: "Теги:", items: [
+                    {disabled: false, icon: '', callback: function() {}},
+                    {disabled: false, icon: 'circle tag-red' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-orange' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-yellow' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-green' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-blue' , callback: function() {}},
+                    {disabled: false, icon: 'circle tag-violet' ,callback: function() {}},
+                    {disabled: false, icon: 'circle tag-gray' , callback: function() {}},
+
+                ]}
             ]
         };
 
@@ -748,6 +778,14 @@ export class TabListOfferComponent {
         this.sgList = [];
     }
 
+    searchStringChanged(e) {
+        let c = this;
+        clearTimeout(this.suggestionTo);
+        this.suggestionTo = setTimeout(function() {
+            c.searchParamChanged(e);
+        }, 500);
+    }
+
     searchParamChanged(e) {
         if (this.searchQuery.length > 0) {
             let sq = this.searchQuery.split(" ");
@@ -756,11 +794,11 @@ export class TabListOfferComponent {
             this.sgList = [];
             if (lp.length > 0) {
                 // запросить варианты
-                console.log(this.searchQuery);
                 this._suggestionService.list(this.searchQuery).subscribe(sgs => {
                     sgs.forEach(e => {
                         this.sgList.push(e);
                     })
+                    console.log(this.sgList);
                 })
             }
         }
@@ -799,28 +837,17 @@ export class TabListOfferComponent {
     }
 
     toggleSource(s: string) {
-
         if (s == 'local') {
             this.source = OfferSource.LOCAL;
+            this.iconSource[0]="url(res/base_plus.png)";
+            this.iconSource[1]="url(res/base_color.png)";
         } else {
             this.source = OfferSource.IMPORT;
+            this.iconSource[0]="url(res/base_plus_color.png)";
+            this.iconSource[1]="url(res/base.png)";
         }
         this.page = 0;
         this.listOffers();
-    }
-
-    getImage(s: string){
-        if (s == 'local') {
-          if(this.isImport)
-            return "url(res/base.png)";
-          else
-            return "url(res/base_color.png)";
-        } else {
-          if(this.isImport)
-            return "url(res/base_plus_color.png)";
-          else
-            return "url(res/base_plus.png)";
-        }
     }
 
     getInputWidth(){

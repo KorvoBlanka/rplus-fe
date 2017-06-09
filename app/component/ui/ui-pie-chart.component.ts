@@ -12,7 +12,7 @@ import {
     </div>
   `,
   styles: [`
-    .class {
+    .class { 
 
     }
   `]

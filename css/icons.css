@@ -34,7 +34,14 @@
 }
 
 .icon-person::before {
-  content: '\E13D';
+    content: " ";
+    background-image: url("../res/context_menu/appoint.png");
+    background-size: contain;
+      width: 15px;
+      height: 15px;
+      display: block;
+      float: left;
+      margin-right: 5px;
 }
 
 .icon-req-list::before {
@@ -43,6 +50,28 @@
 
 .icon-month:before {
   content: "\E163";
+}
+
+.icon-task:before {
+    content: " ";
+    background-image: url("../res/context_menu/task.png");
+    background-size: contain;
+      width: 15px;
+      height: 15px;
+      display: block;
+      float: left;
+      margin-right: 5px;
+}
+
+.icon-advert:before {
+    content: " ";
+    background-image: url("../res/context_menu/adv.png");
+    background-size: contain;
+      width: 15px;
+      height: 15px;
+      display: block;
+      float: left;
+      margin-right: 5px;
 }
 
 .icon-settings:before {
@@ -94,7 +123,14 @@
 }
 
 .icon-edit:before {
-  content: "\E104";
+    content: " ";
+    background-image: url("../res/context_menu/stage.png");
+    background-size: contain;
+      width: 15px;
+      height: 15px;
+      display: block;
+      float: left;
+      margin-right: 5px;
 }
 
 .icon-table:before {
@@ -107,6 +143,17 @@
 
 .icon-check:before {
   content: "\E001";
+}
+
+.icon-dcheck:before {
+  content: " ";
+  background-image: url("../res/context_menu/check.png");
+  background-size: contain;
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    margin-right: 5px;
 }
 
 .icon-triangle-down:before {
@@ -145,9 +192,43 @@
 
 
 .icon-document:before {
-  content: "\E160";
+    content: " ";
+    background-image: url("../res/context_menu/open.png");
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    margin-right: 5px;
 }
 
 .icon-trash:before {
-  content: "\E107";
+    content: " ";
+    background-image: url("../res/context_menu/remove.png");
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    margin-right: 5px;
+}
+
+.icon-upload:before {
+    content: "\E114";
+}
+
+.icon_plus:before{
+    content: "+";
+}
+
+.icon_minus:before{
+    content: "\2212";
+}
+
+.icon_arrow_up:after{
+    content: "\2191"
+}
+.icon_arrow_bottom:after{
+    content: "\2193"
+
 }

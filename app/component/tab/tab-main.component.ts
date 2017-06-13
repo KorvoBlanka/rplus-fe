@@ -30,6 +30,15 @@ import {User} from "../../class/user";
         .user-badge {
             color: #eeeeee;
         }
+        
+        .tile-group .tile-group-title {
+            color: #ffffff;
+            font-size: 18px;
+            line-height: 20px;
+            position: absolute;
+            top: 10px;
+            left: 0;
+        }
     `],
     template: `
         <div class="tile-board" style="">
@@ -39,21 +48,25 @@ import {User} from "../../class/user";
             </div>
         
             <div class="tile-group">
-
-                <div class="tile bg-darkBlue fg-white" (click)="turnTo('list_offer', {})">
+                <span class="tile-group-title">Группа1</span>
+                <div class="tile t2 bg-darkBlue fg-white" (click)="turnTo('list_offer', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-home"></span>
                     </div>
                     <span class="tile-label">Недвижимость</span>
                 </div>
 
-                <div class="tile bg-green fg-white" (click)="turnTo('list_request', {})">
+                <div class="tile t2 bg-green fg-white" (click)="turnTo('list_request', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-req-list"></span>
                     </div>
                     <span class="tile-label">Заявки</span>
                 </div>
 
+            </div>
+
+            <div class="tile-group">
+                <span class="tile-group-title">Группа2</span>
                 <div class="tile bg-amber fg-white">
                     <div class="tile-content iconic">
                         <span class="icon icon-month"></span>

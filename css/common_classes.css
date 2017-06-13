@@ -11,6 +11,16 @@
   position: relative;
 }
 
+.t2 {
+  width: 310px;
+  height: 150px;
+}
+
+.t4 {
+  width: 310px;
+  height: 310px;
+}
+
 .tile:hover {
   transform: scale(1.01);
 }

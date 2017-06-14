@@ -79,6 +79,7 @@ export class User {
 
     office_n: string;
 
+    info_n: string;
 
     constructor () {
         this.role = 'AGENT';

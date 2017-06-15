@@ -12,6 +12,8 @@ var FormatDatePipe = (function () {
     }
     FormatDatePipe.prototype.transform = function (value, args) {
         var r = '';
+        console.log('!');
+        console.log(value);
         if (value) {
             var d = moment(value * 1000);
             r = d.format('DD.MM.YY hh:mm');

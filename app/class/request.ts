@@ -16,6 +16,7 @@ export class Request {
 
     accountId: number;
 
+    info_n: string;
 
     constructor () {
         // set default vals

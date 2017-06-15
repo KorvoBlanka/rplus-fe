@@ -104,7 +104,6 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
-            overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -552,7 +551,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                                 <textarea class="view-value text-value"
-                                    placeholder="" [(ngModel)]="user.workEmail_n"
+                                    placeholder="" [(ngModel)]="user.info_n"
                                     style="text-align: left;">
                                 </textarea>
                             </div>
@@ -713,7 +712,7 @@ import {SessionService} from "../../service/session.service";
 
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ user.info }} </span>
+                                <span class="view-value" style="height: initial;"> {{ user.info_n }} </span>
                             </div>
                         </div>
 

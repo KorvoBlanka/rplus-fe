@@ -111,8 +111,6 @@ export class Offer {
 
     sourceCode_n: string;
 
-    contract: string;
-
     sourceUrl_n: string;
 
     offerTypeCode_n: string;
@@ -207,8 +205,30 @@ export class Offer {
 
     buildingClass_n: string;
 
-    ceilingHeight_n: number;
+    сeilingHeight_n: number;
 
+    contractStr_n: string;
+
+    // raitings
+    locRaiting0_n: string;
+    locRaiting1_n: string;
+    locRaiting2_n: string;
+    locRaiting3_n: string;
+    locRaiting4_n: string;
+    locRaiting5_n: string;
+    locRaiting6_n: string;
+    locRaiting7_n: string;
+    locRaiting8_n: string;
+
+    offerRaiting0_n: string;
+    offerRaiting1_n: string;
+    offerRaiting2_n: string;
+    offerRaiting3_n: string;
+    offerRaiting4_n: string;
+    offerRaiting5_n: string;
+    offerRaiting6_n: string;
+    offerRaiting7_n: string;
+    offerRaiting8_n: string;
 
 
     constructor () {

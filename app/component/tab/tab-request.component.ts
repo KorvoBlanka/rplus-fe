@@ -564,7 +564,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                                 <textarea class="view-value text-value"
-                                placeholder="" [(ngModel)]="request.info"
+                                placeholder="" [(ngModel)]="request.info_n"
                                 style="text-align: left;"></textarea>
                             </div>
                         </div>
@@ -662,7 +662,7 @@ import {SessionService} from "../../service/session.service";
 
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ request.info }} </span>
+                                <span class="view-value" style="height: initial;"> {{ request.info_n }} </span>
                             </div>
                         </div>
 

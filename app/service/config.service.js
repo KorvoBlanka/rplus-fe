@@ -19,7 +19,7 @@ ConfigService = __decorate([
 ], ConfigService);
 exports.ConfigService = ConfigService;
 var CONFIG = {
-    version: "b16.94",
+    version: "b16.106",
     map: {
         default: {
             lat: 55.755505, lon: 37.617270, zoom: 14

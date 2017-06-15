@@ -567,8 +567,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/person_icon/contract.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "offer.contract"
-                                        [width] = "'225px'" (onChange)= "offer.contract = $event">
+                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "offer.contractStr_n"
+                                        [width] = "'225px'" (onChange)= "offer.contractStr_n = $event">
                                 </ui-input-line>
                             </div>
                             <hr>
@@ -1565,7 +1565,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div class='view_icon' [style.background-image]="'url(res/offer_icon/contract.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Договор:</span>
-                                <span class="view-value"> {{offer.contract}} </span>
+                                <span class="view-value"> {{offer.contractStr_n}} </span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(res/offer_icon/stage.png)'"></div>

@@ -9,23 +9,23 @@ declare var google:any;
     inputs: ['data', 'header', 'hard_data' , 'height', 'width', 'result'],
     styles: [`
         .container {
-            background-color: white;
             font-size: 16px;
             position: relative;
             display: inline-block;
-            min-height: 160px;
+            height: 100%;
+            width: 100%;
         }
         .head{
             text-transform: uppercase;
             color: #4c4c4c;
-            margin: 7px 0 10px 10px;
+            margin: 7px 0 10px 50px;
             position: relative;
             z-index: 10;
         }
         .chart{
             position: absolute;
-            top: 17px;
             right: 0;
+            top: 0;
         }
 
         table{
@@ -36,7 +36,7 @@ declare var google:any;
         .total{
             font-size: 20pt;
             color: rgba(0, 0, 0, 0.67);
-            margin-left: 10px;
+            margin-left: 55px;
             margin-top: 5px;
             height: 30px;
             display: flex;
@@ -72,7 +72,7 @@ declare var google:any;
 
     `],
     template: `
-        <div class="container" [style.height]="height" [style.width]="width">
+        <div class="container" [style.width]="width" [style.height]="getContainerHeight()">
             <div class="head">{{header}}</div>
             <div class="total" *ngIf="result">
                 <div>{{result[0]}}</div>
@@ -100,37 +100,7 @@ export class DigestAreaChartComponent implements OnInit, OnChanges {
     height = "160px";
     width = "300px";
 
-    area_ChartOptions = {
-        backgroundColor: 'transparent',
-        height: '350',
-        width: '900',
-        legend: 'none',
-        axisTitlesPosition: 'in',
-        hAxis: {
-            textStyle: {color: '#ccc', fontName: 'OpenSans', fontSize: '10px'},
-            baselineColor: '#ccc',
-            gridlines: {
-                color: '#ccc',
-                count: 10
-            },
-            format: 'MM.yyyy'
-        },
-        vAxis: {
-                minValue: 0,
-                textStyle: {color: '#ccc', fontName: 'OpenSans', fontSize: '10px'},
-                baselineColor: '#ccc',
-                gridlines: {color: '#ccc', count: 10},
-        },
-        colors: ['#8e44ad', '#dc3912', '#ff9900'],
-        pointSize: 2,
-        chartArea:{
-            backgroundColor: 'transparent',
-            left: 50,
-            top: 10,
-            width: 800,
-            height: 300
-        }
-    };
+    area_ChartOptions: any;
 
     area_ChartData: any;
 
@@ -146,10 +116,14 @@ export class DigestAreaChartComponent implements OnInit, OnChanges {
                 this.pie_ChartData.push([i[0], i[1]]);
 
         this.pie_ChartData.unshift(['', '']);
+        setTimeout(() => {
+            this.getOption();
+        },100);
+
     }
 
     ngOnChanges(){
-
+        this.getOption();
     }
 
     abs(num: number){
@@ -173,6 +147,63 @@ export class DigestAreaChartComponent implements OnInit, OnChanges {
               [new Date(2016, 7, 1),   166,      150,  10],
               [new Date(2016, 8, 1),  74,      100,  20]
          ]);
+    }
+
+    getWidth(str){
+        let par: HTMLElement= document.getElementById(this.chartID);
+        if(par)
+            return ''+(par.parentElement.clientWidth);
+        else return str;
+    }
+
+
+    getHeight(str){
+        let par: HTMLElement= document.getElementById(this.chartID);
+        if(par)
+            return ''+(par.parentElement.parentElement.clientHeight);
+        else return str;
+    }
+
+    getContainerHeight(){
+        let par: HTMLElement= document.getElementById(this.chartID);
+        if(par){
+            return ''+(par.parentElement.parentElement.parentElement.clientHeight - 20);
+        }
+        else return '540px';
+    }
+
+    getOption(){
+        this.area_ChartOptions = {
+            //backgroundColor: 'transparent',
+            height: this.getHeight('330') ,
+            width: this.getWidth('900'),
+            legend: 'none',
+            axisTitlesPosition: 'in',
+            hAxis: {
+                //textStyle: {color: '#ccc', fontName: 'OpenSans', fontSize: '10px'},
+                //baselineColor: '#ccc',
+                //gridlines: {
+                //    color: '#ccc',
+                //    count: 10
+                //},
+                format: 'MM.yyyy'
+            },
+            vAxis: {
+                    minValue: 0,
+                    //textStyle: {color: '#ccc', fontName: 'OpenSans', fontSize: '10px'},
+                    //baselineColor: '#ccc',
+                    //gridlines: {color: '#ccc', count: 10},
+            },
+            //colors: ['#8e44ad', '#dc3912', '#ff9900'],
+            pointSize: 5,
+            chartArea:{
+                //backgroundColor: 'transparent',
+                left: 50,
+                top: 30,
+                width: this.getWidth('900') - 80,
+                height: this.getHeight('330') - 55
+            }
+        };
     }
 
 }

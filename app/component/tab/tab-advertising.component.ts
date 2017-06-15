@@ -102,9 +102,11 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list, .work_list1{
-            width: 100vw;
-            min-height: 100vh;
+            width: calc(100% - 30px);
+            height: calc(100% - 117px);
             background: #f8f8f8;
+            overflow-y: auto;
+            position: absolute;
         }
 
         .work_list > .left_panel{
@@ -117,6 +119,11 @@ import {SessionService} from "../../service/session.service";
             width: 65%;
             height: 100%;
             float: left;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-content: flex-start;
+            overflow: hidden;
         }
 
         .work_list > .central_panel{
@@ -135,6 +142,7 @@ import {SessionService} from "../../service/session.service";
             width: 35%;
             height: 100%;
             float: left;
+            overflow: hidden;
         }
 
         .map{
@@ -169,36 +177,81 @@ import {SessionService} from "../../service/session.service";
             color: white !important;
         }
 
-        table{
+        .work_list table, .work_list1 table{
             display: block;
             width: 100%;
             font-size: 9pt;
             border-spacing: 0;
             text-align: center;
+            height: 50%;
+            min-height: 335px;
         }
 
-        table tr{
+        .work_list1 table{
+            text-align: center;
+            width: calc(100% - 10px);
+            padding-left: 10px;
+            height: 50%;
+            font-size: 10pt;
+        }
+
+        .work_list table tr, .work_list1 table tr{
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        table tbody tr:nth-child(odd){
+        .work_list table tbody tr:nth-child(odd){
             background-color: #f9f9f9;
         }
 
-        table tbody tr:nth-child(even), table thead tr{
+        .work_list1 table tbody tr{
+            color: #828282;
+        }
+
+        .work_list1 .table1 tbody tr:nth-child(odd){
+            background-color: #f7faf3;
+        }
+
+        .work_list1 .table2 tbody tr:nth-child(odd){
+            background-color: #f3f8fd;
+        }
+
+        .work_list table tbody tr:nth-child(even), .work_list table thead tr, .work_list1 table tbody tr:nth-child(even), .work_list1 table thead tr{
             background-color: #ffffff;
         }
 
-        table thead{
+        .work_list table thead, .work_list1 table thead{
             display: block;
         }
 
-        table tbody{
+        .work_list1 table thead {
+            height: 20px;
+            font-size: 10pt;
+            color: #587731;
+            line-height: 20px;
+        }
+
+        .work_list1 .table2 thead {
+            color: #205087;
+        }
+
+        .work_list table tbody{
             display: block;
             overflow: auto;
-            height: calc(100vh - 135px);
+            height: calc(100% - 135px);
+        }
+
+        .work_list1 table tbody{
+            display: block;
+            overflow: auto;
+            height: calc(100% - 79px);
+        }
+
+        digest-pie-chart, digest-column-chart{
+            flex: 1 1 30%;
+            height: 48%;
+            margin: 3px;
         }
 
 
@@ -220,11 +273,12 @@ import {SessionService} from "../../service/session.service";
             </div>
             <div class="tool-box">
 
+
             <div class="inline-select">
                 <ui-select class="view-value edit-value"
                     [options] = "[
-                        {value: 'sale', label: 'Продажа'},
-                        {value: 'rent', label: 'Аренда'}
+                        {value: 'sale', label: 'Мои предложения'},
+                        {value: 'rent', label: 'Не мои предложения'}
                     ]"
                     [value]="'sale'"
                     [config]="{icon: 'icon-', draw_arrow: true}"
@@ -232,7 +286,6 @@ import {SessionService} from "../../service/session.service";
                     >
                 </ui-select>
             </div>
-
             <div class="inline-select">
                     <ui-select class="view-value edit-value"
                         [options] = "[
@@ -266,6 +319,35 @@ import {SessionService} from "../../service/session.service";
                         [config]="{icon: 'icon-month', drawArrow: true}"
                         (onChange)="null"
                     >
+                    </ui-select>
+                </div>
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options]="[
+                            {value: 'all', label: 'Все'},
+                            {value: 'raw', label: 'Не активен'},
+                            {value: 'active', label: 'Активен'},
+                            {value: 'price', label: 'Прайс'},
+                            {value: 'deal', label: 'Сделка'},
+                            {value: 'suspended', label: 'Приостановлен'},
+                            {value: 'archive', label: 'Архив'}
+                        ]"
+                        [value]="filter.stage"
+                        [config]="{icon: 'icon-square', drawArrow: true}"
+                        (onChange)="filter.stageCode = $event.selected.value; searchParamChanged($event);"
+                    >
+                    </ui-select>
+                </div>
+                <div class="inline-select">
+                    <ui-select class="view-value edit-value"
+                        [options] = "[
+                            {value: 'sale', label: 'Продажа'},
+                            {value: 'rent', label: 'Аренда'}
+                        ]"
+                        [value]="'sale'"
+                        [config]="{icon: 'icon-', draw_arrow: true}"
+                        (onChange)="null"
+                        >
                     </ui-select>
                 </div>
             </div>
@@ -419,72 +501,59 @@ import {SessionService} from "../../service/session.service";
 
         <div *ngIf="activeMenu == 1" class="work_list1">
             <div class="left_panel">
-                <digest-pie-chart style="float: left; margin-right: 10px;"
-                    [header]="'Расходы по источникам'"
-                    [data]="[
-                        ['Авито', 8000, 18.7],
-                        ['Фарпост', 4000, -18.7],
-                        ['Презент', 3000, 18.7],
-                        ['Из рук в руки', 2000],
-                        ['ВНХ', 1000, -40.5]
-                    ]"
-                    [hard_data]="true"
-                    [result] = "['14000', -20.2]"
-                    [width] = "'355px'"
-                    [height] = "'195px'"
+                <div style="height: 50%; min-height:335px; display: flex; flex-wrap: wrap; justify-content: space-between;
+                        align-content: space-between;"
+                >
+                    <digest-pie-chart
+                        [header]="'Расходы по источникам'"
+                        [data]="[
+                            ['Авито', 8000, 18.7],
+                            ['Фарпост', 4000, -18.7],
+                            ['Презент', 3000, 18.7],
+                            ['Из рук в руки', 2000],
+                            ['ВНХ', 1000, -40.5]
+                        ]"
+                        [hard_data]="true"
+                        [result] = "['14000', -20.2]"
+                        [width] = "'375px'"
+                        [height] = "calcHeight()"
                     >
-                </digest-pie-chart>
-                <digest-pie-chart style="float: left; margin-right: 10px;"
-                    [header]="'Предложения по районам'"
-                    [data]="[
-                        ['Железнодорожный', 320],
-                        ['Кировский'      , 222],
-                        ['Краснофлотский' , 120],
-                        ['Индустриальный' , 69],
-                        ['Центральный'    , 150]
-                    ]"
-                    [hard_data]="false"
-                    [result] = "['1500']"
-                    [width] = "'315px'"
-                    [height] = "'195px'"
-                >
-                </digest-pie-chart>
+                    </digest-pie-chart>
+                    <digest-pie-chart
+                        [header]="'Предложения по районам'"
+                        [data]="[
+                            ['Железнодорожный', 320],
+                            ['Кировский'      , 222],
+                            ['Краснофлотский' , 120],
+                            ['Индустриальный' , 69],
+                            ['Центральный'    , 150]
+                        ]"
+                        [hard_data]="false"
+                        [result] = "['1500']"
+                        [width] = "'335px'"
+                        [height] = "'180px'"
+                    >
+                    </digest-pie-chart>
 
-                <digest-column-chart style="float: left; margin-right: 10px;"
-                    [header]="'Предложения по типу'"
-                    [data]="[
-                        ['Комната', 48],
-                        ['Квартира', 34],
-                        ['Малосемейка', 18],
-                        ['Гостинка', 20],
-                        ['Коттедж', 25],
-                        ['Участок', 45]
-                    ]"
-                    [hard_data]="false"
-                    [result] = "['1500', 40]"
-                    [height] = "'195px'"
-                    [graph_width] = "200"
-                    [width] = "'340px'"
-                >
-                </digest-column-chart>
+                    <digest-column-chart
+                        [header]="'Предложения по типу'"
+                        [data]="[
+                            ['Комната', 48],
+                            ['Квартира', 34],
+                            ['Малосемейка', 18],
+                            ['Гостинка', 20],
+                            ['Коттедж', 25],
+                            ['Участок', 45]
+                        ]"
+                        [hard_data]="false"
+                        [result] = "['1500', 40]"
+                        [height] = "'180px'"
+                        [graph_width] = "200"
+                        [width] = "'360px'"
+                    >
+                    </digest-column-chart>
 
-                <digest-column-chart style="float: left; margin-right: 10px; margin-top: 10px;"
-                    [header]="'Заявки по районам'"
-                    [data]="[
-                        ['Железнодорожный', 73],
-                        ['Кировский'      , 58],
-                        ['Краснофлотский' , 43],
-                        ['Индустриальный' , 28],
-                        ['Центральный'    , 41]
-                    ]"
-                    [hard_data]="false"
-                    [result] = "['1500', 40]"
-                    [height] = "'176px'"
-                    [graph_width] = "200"
-                    [width] = "'355px'"
-                >
-                </digest-column-chart>
-                <digest-pie-chart style="float: left; margin-right: 10px; margin-top: 10px;"
+                    <digest-pie-chart
                     [header]="'Заявки по типу'"
                     [data]="[
                         ['Квартиры', 15, 3.4],
@@ -495,45 +564,132 @@ import {SessionService} from "../../service/session.service";
                     ]"
                     [hard_data]="true"
                     [result] = "['95', 5.6]"
-                    [width] = "'315px'"
-                    [height] = "'174px'"
-                >
-                </digest-pie-chart>
-                <digest-pie-chart style="float: left; margin-top: 10px; "
-                    [header]="'Заявки по источникам'"
-                    [data]="[
-                        ['Интернет', 329, 13.4],
-                        ['Печатное издание', 270, -14.8],
-                        ['Входящий звонок', 120, 15.3]
-                    ]"
-                    [hard_data]="true"
-                    [result] = "['759', -45.6]"
-                    [width] = "'340px'"
-                    [height] = "'174px'"
-                >
-                </digest-pie-chart>
+                    [width] = "'335px'"
+                    [height] = "'165px'"
+                    >
+                    </digest-pie-chart>
+                    <digest-pie-chart
+                        [header]="'Заявки по источникам'"
+                        [data]="[
+                            ['Интернет', 329, 13.4],
+                            ['Печатное издание', 270, -14.8],
+                            ['Входящий звонок', 120, 15.3]
+                        ]"
+                        [hard_data]="true"
+                        [result] = "['759', -45.6]"
+                        [width] = "'360px'"
+                        [height] = "'165px'"
+                    >
+                    </digest-pie-chart>
+                    <digest-column-chart
+                        [header]="'Заявки по районам'"
+                        [data]="[
+                            ['Железнодорожный', 73],
+                            ['Кировский'      , 58],
+                            ['Краснофлотский' , 43],
+                            ['Индустриальный' , 28],
+                            ['Центральный'    , 41]
+                        ]"
+                        [hard_data]="false"
+                        [result] = "['1500', 40]"
+                        [height] = "'165px'"
+                        [graph_width] = "200"
+                        [width] = "'375px'"
+                    >
+                    </digest-column-chart>
+                </div>
+                <div style="width: 100%; height: 50%; min-height:335px; position: relative;">
+                    <digest-area-chart style="width: 100%;position: absolute;bottom: 0;right: 0;"
+                        [header]="'Реклама в динамике'"
+                        [data]="[
+                            ['Интернет', 329, 13.4],
+                            ['Печатное издание', 270, -14.8],
+                            ['Входящий звонок', 120, 15.3]
+                        ]"
+                        [hard_data]="true"
+                        [result] = "['759', -45.6]"
+                        [width] = "'100%'"
+                    >
+                    </digest-area-chart>
+                </div>
             </div>
             <!------------------------------------------------------------------------------------------------------------------->
 
             <!------------------------------------------------------------------------------------------------------------------->
             <div class="right_panel">
+                <table class="table1">
+                <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
+                    <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
+                            Конверсия рекламы
+                    </div>
+                    <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 19pt;">40%</div>
+                </div>
+                    <thead>
+                        <tr>
+                            <td style="width: calc(100% - 390px)">Источник</td>
+                            <td style="width: 60px">Объект</td>
+                            <td style="width: 60px">Заявки</td>
+                            <td style="width: 60px">Показы</td>
+                            <td style="width: 60px">Цены</td>
+                            <td style="width: 70px">Договора</td>
+                            <td style="width: 80px">Конверсия</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of advArray">
+                            <td style="width: calc(100% - 390px)">{{data[0]}}</td>
+                            <td style="width: 60px">{{data[1]}}</td>
+                            <td style="width: 60px">{{data[2]}}</td>
+                            <td style="width: 60px">{{data[3]}}</td>
+                            <td style="width: 60px">{{data[4]}}</td>
+                            <td style="width: 70px">{{data[5]}}</td>
+                            <td style="width: 80px">{{data[6] + '%'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
+                <table class="table2" style="margin-top: 20px;height: calc(50% - 20px);">
+                    <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
+                        <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
+                            Лидеры спроса
+                        </div>
+                        <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 19pt;"></div>
+                    </div>
+                    <thead>
+                        <tr>
+                            <td style="width: calc(100% - 250px)">Объект</td>
+                            <td style="width: 60px">Заявка</td>
+                            <td style="width: 60px">Интерес</td>
+                            <td style="width: 60px">Дельта</td>
+                            <td style="width: 70px">Показ</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of offers">
+                            <td style="width: calc(100% - 250px)">
+                                <digest-offer
+                                    style="width: 250px; display: block; background-color: transparent;"
+                                    [offer]="data"
+                                    [compact]="true"
+                                    (click)="click($event, data)"
+                                    (contextmenu)="click($event, data)"
+                                    (dblclick)="dblClick(data)"
+                                    (touchstart)="tStart(data)"
+                                    (touchend)="tEnd(data)"
+                                >
+                                </digest-offer>
+                            </td>
+                            <td style="width: 60px">70</td>
+                            <td style="width: 60px">20</td>
+                            <td style="width: 60px">150</td>
+                            <td style="width: 70px">14</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div *ngIf="activeMenu == 2" class="work_list1">
-            <digest-area-chart
-                [header]="'Реклама в динамике'"
-                [data]="[
-                    ['Интернет', 329, 13.4],
-                    ['Печатное издание', 270, -14.8],
-                    ['Входящий звонок', 120, 15.3]
-                ]"
-                [hard_data]="true"
-                [result] = "['759', -45.6]"
-                [width] = "'340px'"
-                [height] = "'174px'"
-            >
-            </digest-area-chart>
+
         </div>
     `
 })
@@ -561,6 +717,21 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     sort: any = {};
     searchQuery: string = "";
     searchArea: any[] = [];
+
+    advArray = [
+        ['Авито', 500, 400, 329, 230, 150, 50],
+        ['Фарпост', 500, 400, 329, 230, 150, -50],
+        ['ВНХ', 500, 400, 329, 230, 150, -24],
+        ['Из рук в руки', 500, 400, 329, 230, 150, -18],
+        ['Презент', 500, 400, 329, 230, 150, 17],
+        ['ЦИАН', 500, 400, 329, 230, 150, 24],
+        ['Барахла', 500, 400, 329, 230, 150, -3],
+        ['Авито', 500, 400, 329, 230, 150, -10]
+    ];
+
+    advArray1=[
+
+    ]
 
 
     constructor(private _hubService: HubService,
@@ -630,6 +801,10 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
 
     rand(max, min){
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    calcHeight(){
+
     }
 
 }

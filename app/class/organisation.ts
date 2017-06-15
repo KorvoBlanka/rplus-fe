@@ -71,4 +71,7 @@ export class Organisation {
     stateCode_n: string;
 
     sourceCode_n: string;
+
+    agent_n: any;
+    
 }

@@ -13,7 +13,10 @@ import {HubService} from '../../service/hub.service';
             font-size: 16px;
             position: relative;
             display: inline-block;
-            min-height: 160px;
+            min-height: 150px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         .head{
             text-transform: uppercase;
@@ -88,9 +91,9 @@ import {HubService} from '../../service/hub.service';
 
     `],
     template: `
-        <div class="container" [style.height]="height" [style.width]="width">
+        <div class="container">
             <div class="head">{{header}}</div>
-            <div style="margin-left: 10px; height: calc(100% - 74px);">
+            <div style=" height: calc(100% - 74px);">
                 <div class="chart">
                     <div *ngFor="let dt of data">
                         <div class="label">{{dt[0]}}</div>

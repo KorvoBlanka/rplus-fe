@@ -3,6 +3,7 @@
 
 # my stuff
 node_modules/
+dist/
 
 # User-specific stuff:
 .idea/workspace.xml

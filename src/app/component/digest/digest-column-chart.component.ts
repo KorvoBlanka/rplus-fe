@@ -41,17 +41,19 @@ import {HubService} from '../../service/hub.service';
         }
 
         .chart .column{
-            height: 20px;
-            background-color: #927bc6;
-            margin-bottom: 3px;
+            height: inherit;
+            background-color: #AB47BC;
+            margin-bottom: 2px;
             align-items: center;
             display: flex;
+            padding: 0;
         }
 
         .chart .column>div{
-            background-color: #e1d4e1;
+            background-color: #EDE7F6;
             height: inherit;
             line-height: 20px;
+            position: relative;
         }
 
         .total{
@@ -91,19 +93,26 @@ import {HubService} from '../../service/hub.service';
 
     `],
     template: `
-        <div class="container">
+        <div class="container" (window:resize)="resize()">
             <div class="head">{{header}}</div>
             <div style=" height: calc(100% - 74px);">
-                <div class="chart">
-                    <div *ngFor="let dt of data">
-                        <div class="label">{{dt[0]}}</div>
-                        <div class="column" [style.width]="graph_width">
-                            <div [style.width]="calcWidth(dt[1])">
-                                <span style="font-size: 13px; color: black; margin-left: 5px;">{{dt[1]+ "%"}}</span>
+                <div class="chart" id={{chartID}}>
+                    <table cellspacing = "0" width="100%">
+                    <tr *ngFor="let dt of data" style="width: calc(100% - 20px);">
+                        <td class="label"  style="padding: 0;">
+                            <div [style.height]="graphHeight" [style.width]="graph_width*0.4" style="overflow: hidden;text-overflow: ellipsis;"
+                            >{{dt[0]}}
                             </div>
-                            <span style="color: white; font-size: 13px; margin-left: 5px;">{{(100-dt[1])+'%'}}</span>
-                        </div>
-                    </div>
+                        </td>
+                        <td class="column" [style.width]="graph_width*0.6"  [style.height]="graphHeight" style="padding: 0;">
+                            <span style="position: absolute; font-size: 10px; color: black; margin-left: 5px;">{{dt[1]+ "%"}}</span>
+                            <div [style.width]="calcWidth(dt[1])" [style.height]="graphHeight">
+                                <span style="color: white; font-size: 10px; margin-left: 5px;position: absolute;">{{(100-dt[1])+'%'}}</span>
+                            </div>
+
+                        </td>
+                    </tr>
+                    </table>
                 </div>
             </div>
             <div class="total" *ngIf="result">
@@ -119,20 +128,25 @@ import {HubService} from '../../service/hub.service';
 })
 
 export class DigestColumnChartComponent implements OnInit, OnChanges {
+    chartID: string = "Chart"+Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
     hard_data: boolean = false;
     data: any[]= [];
     height: string = "160px";
     width: string = "300px"
     graph_width = 100;
+    graphHeight: number;
 
     constructor(private _hubService: HubService) {
     };
 
     ngOnInit() {
-
+        setTimeout(() =>{
+            this.resize();
+        },10);
     }
 
     ngOnChanges(){
+
     }
 
     abs(num: number){
@@ -140,7 +154,19 @@ export class DigestColumnChartComponent implements OnInit, OnChanges {
     }
 
     calcWidth(num: number){
-        return ""+Math.round(this.graph_width*num/100)+'px';
+        return ""+Math.floor(this.graph_width*num/100)+'px';
+    }
+
+    resize(){
+        let container = document.getElementById(this.chartID).parentElement;
+        if(container){
+            let containerHeight = container.parentElement.clientHeight;
+            let containerWidth = container.parentElement.clientWidth;
+            console.log(container.parentElement.clientWidth);
+            this.graphHeight = Math.floor((containerHeight - 74)/this.data.length - 2);
+            this.graph_width = Math.floor(containerWidth - 30);
+
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-import {Directive,ElementRef,Input,OnInit} from '@angular/core';
+import {Directive,ElementRef,Input,OnInit, OnChanges} from '@angular/core';
 
 declare var google:any;
 declare var googleLoaded:any;
@@ -6,7 +6,7 @@ declare var googleLoaded:any;
 @Directive({
   selector: '[GoogleChart]'
 })
-export class GoogleChartComponent implements OnInit {
+export class GoogleChartComponent implements OnInit, OnChanges {
   public _element:any;
   @Input('chartType') public chartType:string;
   @Input('chartOptions') public chartOptions: Object;
@@ -27,7 +27,11 @@ export class GoogleChartComponent implements OnInit {
           this.drawGraph(this.chartOptions,this.chartType,this.chartData,this._element)
         },10);
       },10
-  );
+    );
+  }
+
+  ngOnChanges(){
+       this.drawGraph(this.chartOptions,this.chartType,this.chartData,this._element);
   }
 
   drawGraph (chartOptions,chartType,chartData,ele) {

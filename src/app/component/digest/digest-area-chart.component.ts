@@ -14,18 +14,19 @@ declare var google:any;
             display: inline-block;
             height: 100%;
             width: 100%;
+            background-color: white;
         }
         .head{
             text-transform: uppercase;
             color: #4c4c4c;
-            margin: 7px 0 10px 50px;
+            margin: 10px 0 10px 50px;
             position: relative;
             z-index: 10;
         }
         .chart{
             position: absolute;
             right: 0;
-            top: 0;
+            top: 25;
         }
 
         table{
@@ -72,7 +73,7 @@ declare var google:any;
 
     `],
     template: `
-        <div class="container" [style.width]="width" [style.height]="getContainerHeight()">
+        <div class="container" [style.width]="width" [style.height]="getContainerHeight()" (window:resize)="getOption()">
             <div class="head">{{header}}</div>
             <div class="total" *ngIf="result">
                 <div>{{result[0]}}</div>
@@ -118,7 +119,7 @@ export class DigestAreaChartComponent implements OnInit, OnChanges {
         this.pie_ChartData.unshift(['', '']);
         setTimeout(() => {
             this.getOption();
-        },100);
+        },10);
 
     }
 
@@ -201,8 +202,9 @@ export class DigestAreaChartComponent implements OnInit, OnChanges {
                 left: 50,
                 top: 30,
                 width: this.getWidth('900') - 80,
-                height: this.getHeight('330') - 55
-            }
+                height: this.getHeight('330') - 95
+            },
+            colors: ['#FF7043', '#5C6BC0', '#EF5350']
         };
     }
 

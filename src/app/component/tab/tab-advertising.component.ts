@@ -80,21 +80,21 @@ import {SessionService} from "../../service/session.service";
         }
 
         .main:hover{
-            background-image: url(assets/main_offers_color.png);
+            background-image: url(res/main_offers_color.png);
         }
 
         .analitic:hover{
-            background-image: url(assets/analitic_color.png) !important;
+            background-image: url(res/analitic_color.png) !important;
         }
 
         .history:hover{
-            background-image: url(assets/history_color.png) !important;
+            background-image: url(res/history_color.png) !important;
         }
 
         .underline{
             border: 2px solid;
-            color: #9279c8;
-            background-color: #9279c8;
+            color: #AB47BC;
+            background-color: #AB47BC;
             position: relative;
             top: -2;
             width: 100vw;
@@ -107,12 +107,16 @@ import {SessionService} from "../../service/session.service";
             background: #f8f8f8;
             overflow-y: auto;
             position: absolute;
+            overflow-x: hidden;
         }
 
         .work_list > .left_panel{
-            width: calc(100% - 1071px);
+            min-width: 422px;
+            width: calc(33% - 3px);
             height: 100%;
             float: left;
+            overflow: hidden;
+            margin-right: 3px;
         }
 
         .work_list1 > .left_panel{
@@ -122,20 +126,29 @@ import {SessionService} from "../../service/session.service";
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            align-content: flex-start;
+            align-content: space-between;
             overflow: hidden;
         }
 
         .work_list > .central_panel{
-            width: 700px;
+            width: calc(47% - 3px);
+            //min-width: 600px;
+            min-height: 600px;
             height: 100%;
             float: left;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-between;
+            margin-right: 3px;
         }
 
         .work_list >.right_panel{
-            width: 370px;
+            width: calc(20% - 3px);
+            //min-width: 300px;
             height: 100%;
-            float: left;
+            display: flex;
+            flex-wrap: wrap;
         }
 
         .work_list1 >.right_panel{
@@ -145,31 +158,41 @@ import {SessionService} from "../../service/session.service";
             overflow: hidden;
         }
 
+        .map_container{
+            width: calc(100% - 3px);
+            height: calc(50% - 6px);
+            max-height: calc(100% - 306px);
+            display: flex;
+            justify-content: space-between;
+        }
+
         .map{
-            width: calc(700px - 122px);
+            width: calc(100% - 123px);
             position: relative;
             display: block;
             float: left;
-            margin-top: 10px;
         }
 
         .map_menu{
-            width: 100px;
+            width: 120px;
             float: left;
             background-color: #f7f7f7;
-            margin-left: 10px;
-            margin-top: 10px;
+            margin-left: 3px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
         }
         .map_menu >div {
-            height: 30px;
-            width: 80%;
-            text-align: left;
-            background-color: rgba(0, 140, 219, 1);
+            height: calc(10% - 2px);
+            text-align: center;
+            background-color: #BA68C8;
             color: #ffffff;
-            margin: 3px auto;
-            line-height: 30px;
-            font-size: 10pt;
-            padding-left: 20px;
+            line-height: calc(10% - 2px);
+            font-size: 9pt;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .map_menu >div:hover, .active_map_menu {
@@ -183,16 +206,21 @@ import {SessionService} from "../../service/session.service";
             font-size: 9pt;
             border-spacing: 0;
             text-align: center;
-            height: 50%;
-            min-height: 335px;
+            height: 100%;
+            //min-height: 335px;
         }
+
 
         .work_list1 table{
             text-align: center;
-            width: calc(100% - 10px);
-            padding-left: 10px;
-            height: 50%;
+            width: calc(100% - 6px);
+            padding-left: 6px;
+            height: 33%;
             font-size: 10pt;
+        }
+
+        .work_list1 .table2{
+            height: calc(67% - 3px);
         }
 
         .work_list table tr, .work_list1 table tr{
@@ -209,6 +237,10 @@ import {SessionService} from "../../service/session.service";
             color: #828282;
         }
 
+        .work_list1 .table1 tbody tr{
+            height: 30px;
+        }
+
         .work_list1 .table1 tbody tr:nth-child(odd){
             background-color: #f7faf3;
         }
@@ -219,6 +251,7 @@ import {SessionService} from "../../service/session.service";
 
         .work_list table tbody tr:nth-child(even), .work_list table thead tr, .work_list1 table tbody tr:nth-child(even), .work_list1 table thead tr{
             background-color: #ffffff;
+            height: 30px;
         }
 
         .work_list table thead, .work_list1 table thead{
@@ -226,10 +259,10 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list1 table thead {
-            height: 20px;
+            height: 30px;
             font-size: 10pt;
             color: #587731;
-            line-height: 20px;
+            line-height: 30px;
         }
 
         .work_list1 .table2 thead {
@@ -239,19 +272,33 @@ import {SessionService} from "../../service/session.service";
         .work_list table tbody{
             display: block;
             overflow: auto;
-            height: calc(100% - 135px);
+            height: calc(100% - 20px);
         }
 
         .work_list1 table tbody{
             display: block;
             overflow: auto;
-            height: calc(100% - 79px);
+            height: calc(100% - 90px);
         }
 
-        digest-pie-chart, digest-column-chart{
+        .work_list .right_panel digest-pie-chart, .work_list .right_panel digest-column-chart{
             flex: 1 1 30%;
-            height: 48%;
-            margin: 3px;
+            height: 20%;
+            margin-bottom: 3px;
+            min-height: 150px;
+        }
+
+        .work_list .central_panel digest-pie-chart, .work_list .central_panel digest-column-chart{
+            margin: 0;
+            flex: 0 0 calc(50% - 3px);
+            min-height: 150px;
+            height: calc(25% - 3px);
+        }
+
+        .work_list1 digest-pie-chart, .work_list1 digest-column-chart{
+            flex: 0 1 33%;
+            height: calc(25% - 3px);
+            min-height: 150px;
         }
 
 
@@ -260,7 +307,7 @@ import {SessionService} from "../../service/session.service";
         <div class="header-label-abs" style="margin: 2px 0 0 30px;">{{ tab.header }}</div>
         <div class = "round_menu">
             <div (click)="toggleSource('main')"     class="button main"     [style.background-image]="iconSource[0]">Главная</div>
-            <div (click)="toggleSource('analitic')" class="button analitic" [style.background-image]="iconSource[1]">Аналитика</div>
+            <div (click)="toggleSource('analitic')" class="button analitic" [style.background-image]="iconSource[1]">Отчеты</div>
             <div (click)="toggleSource('history')"  class="button history"  [style.background-image]="iconSource[2]">История</div>
         </div>
         <div class="search-form">
@@ -353,7 +400,7 @@ import {SessionService} from "../../service/session.service";
             </div>
         </div>
         <hr class="underline">
-        <div *ngIf="activeMenu == 0" class="work_list">
+        <div *ngIf="activeMenu == 0" class="work_list" [style.max-height] = "screenHeiht">
             <div class="left_panel">
                 <table>
                     <thead>
@@ -396,13 +443,14 @@ import {SessionService} from "../../service/session.service";
             </div>
             <!------------------------------------------------------------------------------------------------------------------->
             <div class="central_panel">
-                <digest-pie-chart style="float: left; margin-right: 10px;"
+                <digest-pie-chart
                     [header]="'Объекты по типу'"
                     [data]="[
                         ['Квартиры', 300],
                         ['Малосемейки', 200],
                         ['Комнаты', 170],
                         ['Дома', 90],
+                        ['Коттеджи', 90],
                         ['Коммерческая', 110]
                     ]"
                     [hard_data]="false"
@@ -411,14 +459,15 @@ import {SessionService} from "../../service/session.service";
                     [height] = "'174px'"
                 >
                 </digest-pie-chart>
-                <digest-pie-chart style="float: left; margin-right: 10px;"
+                <digest-pie-chart
                     [header]="'Объекты по районам'"
                     [data]="[
                         ['Железнодорожный', 320],
                         ['Кировский'      , 222],
                         ['Краснофлотский' , 120],
                         ['Индустриальный' , 69],
-                        ['Центральный'    , 150]
+                        ['Центральный'    , 150],
+                        ['Пригород' , 69]
                     ]"
                     [hard_data]="false"
                     [result] = "['1500']"
@@ -426,7 +475,7 @@ import {SessionService} from "../../service/session.service";
                     [height] = "'174px'"
                 >
                 </digest-pie-chart>
-                <digest-column-chart style="float: left; margin-right: 10px;  margin-top: 10px;"
+                <digest-column-chart
                     [header]="'Заявки по районам'"
                     [data]="[
                         ['Железнодорожный', 73],
@@ -438,17 +487,17 @@ import {SessionService} from "../../service/session.service";
                     [hard_data]="false"
                     [result] = "['1500', 40]"
                     [height] = "'176px'"
-                    [graph_width] = "200"
                     [width] = "'369px'"
                 >
                 </digest-column-chart>
-                <digest-pie-chart style="float: left; margin-top: 10px;"
+                <digest-pie-chart
                     [header]="'Заявки по типу'"
                     [data]="[
                         ['Квартиры', 15],
                         ['Малосемейки', 24],
                         ['Комнаты', 30],
                         ['Дома', 8],
+                        ['Коттеджи', 10],
                         ['Коммерческая', 2]
                     ]"
                     [hard_data]="false"
@@ -457,13 +506,13 @@ import {SessionService} from "../../service/session.service";
                     [height] = "'174px'"
                 >
                 </digest-pie-chart>
-                <div >
+                <div class="map_container">
                     <google-map class="map"
+                        [latitude]="48.490351" [longitude]= "135.070109" [zoom]="12"
                     >
-
                     </google-map>
                     <div class="map_menu">
-                        <div [class.active_map_menu]="selectMapMenu == 1" (click)="setMenu(1)" style="margin-top: 1px;">Фото</div>
+                        <div [class.active_map_menu]="selectMapMenu == 1" (click)="setMenu(1)">Фото</div>
                         <div [class.active_map_menu]="selectMapMenu == 2" (click)="setMenu(2)">Карта</div>
                         <div [class.active_map_menu]="selectMapMenu == 3" (click)="setMenu(3)">Понорама</div>
                         <div [class.active_map_menu]="selectMapMenu == 4" (click)="setMenu(4)">Маршруты</div>
@@ -477,7 +526,7 @@ import {SessionService} from "../../service/session.service";
                 </div>
             </div>
             <!------------------------------------------------------------------------------------------------------------------->
-            <div class="right_panel">
+            <div class="right_panel" >
                 <digest-pie-chart
                     [header]="'Реклама объектов'"
                     [data]="[
@@ -491,7 +540,8 @@ import {SessionService} from "../../service/session.service";
                     [width] = "'338px'"
                 >
                 </digest-pie-chart>
-                <ui-advertising> </ui-advertising>
+                <ui-advertising style="width: 100%;height: calc(80% - 3px); max-height: calc(100% - 160px); overflow: auto;">
+                </ui-advertising>
             </div>
         </div>
 
@@ -501,9 +551,6 @@ import {SessionService} from "../../service/session.service";
 
         <div *ngIf="activeMenu == 1" class="work_list1">
             <div class="left_panel">
-                <div style="height: 50%; min-height:335px; display: flex; flex-wrap: wrap; justify-content: space-between;
-                        align-content: space-between;"
-                >
                     <digest-pie-chart
                         [header]="'Расходы по источникам'"
                         [data]="[
@@ -515,12 +562,10 @@ import {SessionService} from "../../service/session.service";
                         ]"
                         [hard_data]="true"
                         [result] = "['14000', -20.2]"
-                        [width] = "'375px'"
-                        [height] = "calcHeight()"
                     >
                     </digest-pie-chart>
                     <digest-pie-chart
-                        [header]="'Предложения по районам'"
+                        [header]="'Объекты по районам'"
                         [data]="[
                             ['Железнодорожный', 320],
                             ['Кировский'      , 222],
@@ -530,44 +575,22 @@ import {SessionService} from "../../service/session.service";
                         ]"
                         [hard_data]="false"
                         [result] = "['1500']"
-                        [width] = "'335px'"
-                        [height] = "'180px'"
                     >
                     </digest-pie-chart>
 
                     <digest-column-chart
-                        [header]="'Предложения по типу'"
+                        [header]="'Объекты по типу'"
                         [data]="[
                             ['Комната', 48],
                             ['Квартира', 34],
                             ['Малосемейка', 18],
                             ['Гостинка', 20],
-                            ['Коттедж', 25],
-                            ['Участок', 45]
+                            ['Коттедж', 25]
                         ]"
                         [hard_data]="false"
                         [result] = "['1500', 40]"
-                        [height] = "'180px'"
-                        [graph_width] = "200"
-                        [width] = "'360px'"
                     >
                     </digest-column-chart>
-
-                    <digest-pie-chart
-                    [header]="'Заявки по типу'"
-                    [data]="[
-                        ['Квартиры', 15, 3.4],
-                        ['Малосемейки', 24, 4.8],
-                        ['Комнаты', 30, -5.3],
-                        ['Дома', 8, -3.2],
-                        ['Коммерческая', 2, 10.1]
-                    ]"
-                    [hard_data]="true"
-                    [result] = "['95', 5.6]"
-                    [width] = "'335px'"
-                    [height] = "'165px'"
-                    >
-                    </digest-pie-chart>
                     <digest-pie-chart
                         [header]="'Заявки по источникам'"
                         [data]="[
@@ -577,8 +600,6 @@ import {SessionService} from "../../service/session.service";
                         ]"
                         [hard_data]="true"
                         [result] = "['759', -45.6]"
-                        [width] = "'360px'"
-                        [height] = "'165px'"
                     >
                     </digest-pie-chart>
                     <digest-column-chart
@@ -592,14 +613,22 @@ import {SessionService} from "../../service/session.service";
                         ]"
                         [hard_data]="false"
                         [result] = "['1500', 40]"
-                        [height] = "'165px'"
-                        [graph_width] = "200"
-                        [width] = "'375px'"
                     >
                     </digest-column-chart>
-                </div>
-                <div style="width: 100%; height: 50%; min-height:335px; position: relative;">
-                    <digest-area-chart style="width: 100%;position: absolute;bottom: 0;right: 0;"
+                    <digest-pie-chart
+                        [header]="'Заявки по типу'"
+                        [data]="[
+                            ['Квартиры', 15, 3.4],
+                            ['Малосемейки', 24, 4.8],
+                            ['Комнаты', 30, -5.3],
+                            ['Дома', 8, -3.2],
+                            ['Коммерческая', 2, 10.1]
+                        ]"
+                        [hard_data]="true"
+                        [result] = "['95', 5.6]"
+                    >
+                    </digest-pie-chart>
+                    <digest-area-chart style="width: 100%; height: calc(50% - 3px); max-height: calc(100% - 306px);"
                         [header]="'Реклама в динамике'"
                         [data]="[
                             ['Интернет', 329, 13.4],
@@ -611,19 +640,18 @@ import {SessionService} from "../../service/session.service";
                         [width] = "'100%'"
                     >
                     </digest-area-chart>
-                </div>
             </div>
             <!------------------------------------------------------------------------------------------------------------------->
 
             <!------------------------------------------------------------------------------------------------------------------->
             <div class="right_panel">
                 <table class="table1">
-                <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
-                    <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
+                    <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
+                        <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
                             Конверсия рекламы
+                        </div>
+                        <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 19pt;">40%</div>
                     </div>
-                    <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 19pt;">40%</div>
-                </div>
                     <thead>
                         <tr>
                             <td style="width: calc(100% - 390px)">Источник</td>
@@ -648,7 +676,7 @@ import {SessionService} from "../../service/session.service";
                     </tbody>
                 </table>
 
-                <table class="table2" style="margin-top: 20px;height: calc(50% - 20px);">
+                <table class="table2" style="margin-top: 3px;">
                     <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
                         <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
                             Лидеры спроса
@@ -696,7 +724,7 @@ import {SessionService} from "../../service/session.service";
 
 export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     public tab: Tab;
-    iconSource: string[]=["url(assets/main_offers_color.png)", "url(assets/analitic.png)", "url(assets/history.png)"];
+    iconSource: string[]=["url(res/main_offers_color.png)", "url(res/analitic.png)", "url(res/history.png)"];
     activeMenu: number = 0;
 
     chartID: string = "Chart"+Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -717,6 +745,7 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     sort: any = {};
     searchQuery: string = "";
     searchArea: any[] = [];
+    screenHeiht = window.screen.height - 150;
 
     advArray = [
         ['Авито', 500, 400, 329, 230, 150, 50],
@@ -756,19 +785,19 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
 
     toggleSource(s: string) {
         if (s == 'main') {
-            this.iconSource[0]="url(assets/main_offers_color.png)";
-            this.iconSource[1]="url(assets/analitic.png)";
-            this.iconSource[2]="url(assets/history.png)";
+            this.iconSource[0]="url(res/main_offers_color.png)";
+            this.iconSource[1]="url(res/analitic.png)";
+            this.iconSource[2]="url(res/history.png)";
             this.activeMenu = 0;
         } else if(s == 'analitic') {
-            this.iconSource[0]="url(assets/main_offers.png)";
-            this.iconSource[1]="url(assets/analitic_color.png)";
-            this.iconSource[2]="url(assets/history.png)";
+            this.iconSource[0]="url(res/main_offers.png)";
+            this.iconSource[1]="url(res/analitic_color.png)";
+            this.iconSource[2]="url(res/history.png)";
             this.activeMenu = 1;
         }else {
-            this.iconSource[0]="url(assets/main_offers.png)";
-            this.iconSource[1]="url(assets/analitic.png)";
-            this.iconSource[2]="url(assets/history_color.png)";
+            this.iconSource[0]="url(res/main_offers.png)";
+            this.iconSource[1]="url(res/analitic.png)";
+            this.iconSource[2]="url(res/history_color.png)";
             this.activeMenu = 2;
         }
     }

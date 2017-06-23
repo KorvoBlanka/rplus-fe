@@ -2,7 +2,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # my stuff
-node_modules/
+/node_modules/
 dist/
 *.DS_Store
 

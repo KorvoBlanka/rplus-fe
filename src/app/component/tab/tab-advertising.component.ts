@@ -76,7 +76,7 @@ import {SessionService} from "../../service/session.service";
             font-size: 11px;
             line-height: 120px;
             background-size: cover;
-            color: #6b6c6d;
+            color: #807982;
         }
 
         .main:hover{
@@ -111,12 +111,17 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list > .left_panel{
-            min-width: 422px;
-            width: calc(33% - 3px);
+            min-width: 550px;
+            width: calc(31% - 3px);
             height: 100%;
             float: left;
             overflow: hidden;
             margin-right: 3px;
+            display: flex;
+        }
+
+        .work_list > .left_panel thead tr{
+            color: #807982;
         }
 
         .work_list1 > .left_panel{
@@ -131,8 +136,8 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list > .central_panel{
-            width: calc(47% - 3px);
-            //min-width: 600px;
+            width: calc(69% - 375px);
+            max-width: calc(100% - 926px);
             min-height: 600px;
             height: 100%;
             float: left;
@@ -143,12 +148,16 @@ import {SessionService} from "../../service/session.service";
             margin-right: 3px;
         }
 
+        td{
+            padding: 0;
+        }
+
         .work_list >.right_panel{
-            width: calc(20% - 3px);
-            //min-width: 300px;
+            width: 370px;
             height: 100%;
             display: flex;
             flex-wrap: wrap;
+            align-content: space-between;
         }
 
         .work_list1 >.right_panel{
@@ -186,7 +195,7 @@ import {SessionService} from "../../service/session.service";
         .map_menu >div {
             height: calc(10% - 2px);
             text-align: center;
-            background-color: #BA68C8;
+            background-color: #AB47BC;
             color: #ffffff;
             line-height: calc(10% - 2px);
             font-size: 9pt;
@@ -207,6 +216,7 @@ import {SessionService} from "../../service/session.service";
             border-spacing: 0;
             text-align: center;
             height: 100%;
+            background-color: white;
             //min-height: 335px;
         }
 
@@ -242,7 +252,7 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list1 .table1 tbody tr:nth-child(odd){
-            background-color: #f7faf3;
+            background-color: #f6f8f0;
         }
 
         .work_list1 .table2 tbody tr:nth-child(odd){
@@ -251,7 +261,6 @@ import {SessionService} from "../../service/session.service";
 
         .work_list table tbody tr:nth-child(even), .work_list table thead tr, .work_list1 table tbody tr:nth-child(even), .work_list1 table thead tr{
             background-color: #ffffff;
-            height: 30px;
         }
 
         .work_list table thead, .work_list1 table thead{
@@ -259,10 +268,10 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list1 table thead {
-            height: 30px;
-            font-size: 10pt;
+            height: 17px;
+            font-size: 12px;
             color: #587731;
-            line-height: 30px;
+            line-height: 17px;
         }
 
         .work_list1 .table2 thead {
@@ -283,7 +292,7 @@ import {SessionService} from "../../service/session.service";
 
         .work_list .right_panel digest-pie-chart, .work_list .right_panel digest-column-chart{
             flex: 1 1 30%;
-            height: 20%;
+            height: calc(25% - 3px);
             margin-bottom: 3px;
             min-height: 150px;
         }
@@ -299,6 +308,18 @@ import {SessionService} from "../../service/session.service";
             flex: 0 1 33%;
             height: calc(25% - 3px);
             min-height: 150px;
+        }
+
+        .work_list .left_panel table .text{
+            text-transform: uppercase;
+            color: #4c4c4c;
+            margin: 7px 0 0px 10px;
+            position: relative;
+            z-index: 10;
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
         }
 
 
@@ -403,40 +424,38 @@ import {SessionService} from "../../service/session.service";
         <div *ngIf="activeMenu == 0" class="work_list" [style.max-height] = "screenHeiht">
             <div class="left_panel">
                 <table>
+                    <div class="head">
+                        <span class="text">Предложения</span>
+                    </div>
                     <thead>
                         <tr>
-                            <td style="width: 15px"></td>
-                            <td style="width: 15px"><div style="width: 15px">Тэг</div></td>
-                            <td style="width: 250px">Объект</td>
-                            <td style="width: 75px">Рейтинг</td>
-                            <td style="width: 40px">Заявка</td>
-                            <td style="width: 40px">Интерес</td>
-                            <td style="width: 40px">Дельта</td>
-                            <td style="width: 40px">Показ</td>
+                            <td style="width: 30px"></td>
+                            <td style="width: 270px">Объект</td>
+                            <td style="width: 65px">Интерес</td>
+                            <td style="width: 55px">Заявка</td>
+                            <td style="width: 55px">Показ</td>
+                            <td style="width: 70px">Изменено</td>
                         </tr>
                     </thead>
                     <tbody (scroll)="scroll($event)">
-                        <tr *ngFor="let offer of offers">
-                            <td style="width: 15px">{{"  "}}</td>
-                            <td style="width: 15px">{{"  "}}</td>
+                        <tr *ngFor="let offer of offers" style="height: initial;">
+                            <td style="width: 30px">{{"NEW"}}</td>
                             <td>
-                                <digest-offer
-                                    style="width: 250px; display: block; background-color: transparent;"
+                                <digest-offer-table
+                                    style="width: 270px; display: block; background-color: transparent;"
                                     [offer]="offer"
-                                    [compact]="true"
                                     (click)="click($event, offer)"
                                     (contextmenu)="click($event, offer)"
                                     (dblclick)="dblClick(offer)"
                                     (touchstart)="tStart(offer)"
                                     (touchend)="tEnd(offer)"
                                 >
-                                </digest-offer>
+                                </digest-offer-table>
                             </td>
-                            <td style="width: 75px">4</td>
-                            <td style="width: 40px">5</td>
-                            <td style="width: 40px">6</td>
-                            <td style="width: 40px">7</td>
-                            <td style="width: 40px">8</td>
+                            <td style="width: 65px">4</td>
+                            <td style="width: 55px">5</td>
+                            <td style="width: 55px">6</td>
+                            <td style="width: 70px">{{offer.changeDate | date: 'dd.MM.yy'}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -540,7 +559,7 @@ import {SessionService} from "../../service/session.service";
                     [width] = "'338px'"
                 >
                 </digest-pie-chart>
-                <ui-advertising style="width: 100%;height: calc(80% - 3px); max-height: calc(100% - 160px); overflow: auto;">
+                <ui-advertising style="width: 100%;height: calc(75% - 3px); max-height: calc(100% - 163px); overflow: auto;">
                 </ui-advertising>
             </div>
         </div>
@@ -685,32 +704,30 @@ import {SessionService} from "../../service/session.service";
                     </div>
                     <thead>
                         <tr>
-                            <td style="width: calc(100% - 250px)">Объект</td>
-                            <td style="width: 60px">Заявка</td>
-                            <td style="width: 60px">Интерес</td>
-                            <td style="width: 60px">Дельта</td>
+                            <td style="width: 360px">Объект</td>
+                            <td style="width: 65px">Интерес</td>
+                            <td style="width: 55px">Заявка</td>
                             <td style="width: 70px">Показ</td>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let data of offers">
-                            <td style="width: calc(100% - 250px)">
-                                <digest-offer
-                                    style="width: 250px; display: block; background-color: transparent;"
+                            <td style="width: 360px">
+                                <digest-offer-table
+                                    style="width: 360px; display: block; background-color: transparent;"
                                     [offer]="data"
-                                    [compact]="true"
+                                    [withPhoto]="true"
                                     (click)="click($event, data)"
                                     (contextmenu)="click($event, data)"
                                     (dblclick)="dblClick(data)"
                                     (touchstart)="tStart(data)"
                                     (touchend)="tEnd(data)"
                                 >
-                                </digest-offer>
+                                </digest-offer-table>
                             </td>
-                            <td style="width: 60px">70</td>
-                            <td style="width: 60px">20</td>
-                            <td style="width: 60px">150</td>
-                            <td style="width: 70px">14</td>
+                            <td style="width: 65px">70</td>
+                            <td style="width: 55px">20</td>
+                            <td style="width: 70px">150</td>
                         </tr>
                     </tbody>
                 </table>

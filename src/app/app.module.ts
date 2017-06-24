@@ -34,6 +34,7 @@ import {UIViewLine} from "./component/ui/ui-view-line.component";
 import {UISlidingMenu} from "./component/ui/ui-slidingMenu.component";
 import {OfferTableComponent} from "./component/offer-table.component";
 import {DigestOfferComponent} from "./component/digest/digest-offer.component";
+import {DigestOfferTableComponent} from "./component/digest/digest-offer-table.component";
 import {GoogleMapComponent, GoogleMapMarkerComponent} from "./component/google-map.component";
 import {UITabs} from "./component/ui/ui-tabs.component";
 import {UITab} from "./component/ui/ui-tab.component";
@@ -111,11 +112,11 @@ const appRoutes: Routes = [
         TabAdvertisingComponent,
         OfferTableComponent,
         DigestOfferComponent,
+        DigestOfferTableComponent,
         GoogleMapComponent,
         GoogleMapMarkerComponent,
 
         DigestHistoryComponent,
-        DigestOfferComponent,
         DigestUserComponent,
         DigestOrganisationComponent,
         DigestRequestComponent,

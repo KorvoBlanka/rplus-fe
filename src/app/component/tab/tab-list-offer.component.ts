@@ -167,7 +167,7 @@ import {Account} from "../../class/account";
         .local:hover{
             background-image: url(assets/base_color.png) !important;
         }
-        
+
         .seen {
             background-color: #dbe2f0 !important;
         }

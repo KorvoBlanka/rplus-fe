@@ -2477,7 +2477,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </div>
                                 <div on-mouseenter='inRate($event)' on-mouseleave='outRate($event)' style="margin-right: 125px; margin-left: auto;">
                                     <div style="margin: 0px 0 0 12px; height: 7px;">{{' '}}</div>
-                                    <div style="font-size: 8pt; color: #5b5b5b; margin: 5px 0 6px 13px;">Расскажите, что вы думаете об этом районе, используя оценки категорий.</div>
+                                    <div style="font-size: 8pt; color: #5b5b5b; margin: 7px 0 5px 13px;">Расскажите, что вы думаете об этом районе, используя оценки категорий.</div>
                                     <div class="rate_line" *ngFor="let rat of rate1; let i = index">
                                         <div style="order: 2; margin-right: 0;margin-left: auto;"
                                             on-mousemove ='inRate($event, i)' on-mouseout='outRate($event, i)' on-click='estimate($event,i)'>

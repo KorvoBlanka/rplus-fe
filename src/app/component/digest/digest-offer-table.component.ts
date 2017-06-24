@@ -7,15 +7,15 @@ import {Offer} from '../../class/offer';
 
 
 @Component({
-    selector: 'digest-offer',
-    inputs: ['offer', 'compact'],
+    selector: 'digest-offer-table',
+    inputs: ['offer' , 'withPhoto'],
     styles: [`
         .billet {
-            background-color: white;
+            text-align: left;
             color: #696969;
             font-weight: 200;
             font-size: 14px;
-            height: 70px;
+            height: 50px;
             position: relative;
             margin: 3px 0;
             padding: 5px 0;
@@ -33,7 +33,6 @@ import {Offer} from '../../class/offer';
         .describe{
             color: black;
             font-size: 13px;
-            line-height: 15px;
         }
 
         .healthbar {
@@ -74,50 +73,57 @@ import {Offer} from '../../class/offer';
             height: 68px;
             background-color: inherit;
         }
+
+        .agent{
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+            display: block;
+            height: 17px;
+            font-size: 9pt;
+            color: #807982;
+            float: left;
+            margin-right: 5px;
+        }
+
+        .withPh{
+            max-width: calc(100% - 90px) !important;
+        }
     `],
     template: `
-        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}" [class.compact] = "compact">
+        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}">
             <div>
-                <div class="timestamp" *ngIf="offer.changeDate"> {{ (offer.changeDate | formatDate).toString().split(" ")[0] }} </div>
-                <div class="tag-mark">
-                    <ui-tag
-                        [value]="offer.tag"
-                    >
-                    </ui-tag>
-                </div>
-                <img *ngIf="!compact" src="{{ offer.photoUrl?offer.photoUrl[0]:'assets/no_photo.png' }}" style="height: 56px;width: 74px;float: left;margin: 0 10px;">
-                <div class="describe" style="min-height: 70px; margin-left: 10px;">
+                <img *ngIf="withPhoto" src="{{ offer.photoUrl?offer.photoUrl[0]:'assets/no_photo.png' }}" style="height: 56px;width: 74px;float: left;margin: 0 10px;">
+                <div class="describe" style=" margin-left: 10px;">
                     <span style="font-style: italic;  font-size: 9pt; color: #002E5D;"
                         *ngIf ="offer.typeCode"
                     >{{ typeCodeOptions[offer.typeCode].split(" ")[0] }}
                     </span>
                     {{ (offer.locality?.split(",")[0] || offer.city_n ) === undefined ? " " : ", "+(offer.locality?.split(",")[0] || offer.city_n) }}<br>
                     <span *ngIf="(offer.locality || ' ').split(',')[1]">{{ (offer.locality || " ").split(",")[1] }}</span >
-                    <div style="width: 220px; height: 17px; text-overflow: ellipsis;white-space: nowrap;overflow: hidden;
-                            float: left;margin-right: 30px;">
+                    <div style="width: 100%; height: 17px; text-overflow: ellipsis;white-space: nowrap;overflow: hidden;
+                            float: left; line-height: 17px;" [class.withPh]= "withPhoto">
                             {{ (offer.street_n || offer.address) === undefined ? "" : (offer.street_n || offer.address) }}
                             {{ offer.house_n === undefined ? "" : (", "+offer.house_n) }}
-                            {{ offer.roomsCount  === undefined ? "" : ", "+ offer.roomsCount+"ком."}}
                             {{ offer.squareTotal  === undefined ? "" : ", "+ offer.squareTotal+"м." }}
                             {{ offer.floor  === undefined ? "" : ", "+ offer.floor+"/"}}
-                            {{ offer.floorsCount  === undefined ? "" : ""+ offer.floorsCount}}</div><br>
+                            {{ offer.floorsCount  === undefined ? "" : ""+ offer.floorsCount}}</div>
 
-                    <div class="text-primary" style = "color: #8B0000;">Цена: {{ offer.ownerPrice }} тыс. руб.</div>
-                    <span *ngIf="!(offer.locality || ' ').split(',')[1] && !compact" style="height: 10px;display: block;"></span>
-                    <span style="font-size: 9pt; color: #a9a8a8;" [class.compact_owner]="compact">
-                        Ответственный:
+                    <div class="text-primary" style = "color: #8B0000; position: absolute; top: 5px;right: 0;">{{ offer.ownerPrice }}т.р.</div>
+                    <span class="agent" [class.withPh]= "withPhoto">
+                        Ответственный: {{offer.agent?.name}}
                     </span>
-                    <span  [class.compact_owner]="compact"> {{offer.agent?.name}} </span>
                 </div>
             </div>
         </div>
     `
 })
 
-export class DigestOfferComponent {
+export class DigestOfferTableComponent {
 
     public offer: Offer;
-    public compact: boolean = false;
+    public withPhoto: boolean = false;
 
     private to: any;
 
@@ -155,12 +161,6 @@ export class DigestOfferComponent {
     open() {
         var tabSys = this._hubService.getProperty('tab_sys');
         tabSys.addTab('offer', {offer: this.offer});
-    }
-
-    compactHeight(){
-        if(this.compact)
-            return '68px';
-        else return '85px';
     }
 
 }

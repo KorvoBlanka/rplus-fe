@@ -162,7 +162,7 @@ export class DigestPieChartComponent implements OnInit, OnChanges {
                 {color: '#AB47BC'},
                 {color: '#FF7043'},
                 //{color: '#29B6F6'},
-                {color: '#26A69A'},
+                {color: '#42A5F5'},
                 {color: '#EF5350'},
                 {color: '#5C6BC0'}
 

@@ -9,8 +9,9 @@ import {Output,Input, EventEmitter} from '@angular/core';
 
         <table cellspacing="0" style="width: 100%; display: block;">
             <div class="head">
-                <span class="text">Обновлено</span><span>Изменить</span>
-                <div class="search"></div>
+                <span class="text">Рекламные площадки</span>
+                <span class="edit">Изменить</span>
+                <!--<div class="search"></div>-->
             </div>
             <thead>
                 <tr>
@@ -48,7 +49,9 @@ import {Output,Input, EventEmitter} from '@angular/core';
   `,
   styles: [`
       .ui-advertising{
-          cursor: pointer;
+          height: 100%;
+          background-color: white;
+          overflow: hidden;
       }
       .ui-advertising>div{
           height: 30px;
@@ -66,7 +69,7 @@ import {Output,Input, EventEmitter} from '@angular/core';
       .button{
           width: 10px;
           height: 10px;
-          margin: 0 10px 0 20px;
+          margin: 5 auto;
           background-color: #d4d4d4;
           border: 1px solid #b2b2b2;
           border-radius: 2px;
@@ -81,27 +84,49 @@ import {Output,Input, EventEmitter} from '@angular/core';
           left: 1px;
       }
       .name{
-          font-size: 10pt;
+          font-size: 12px;
           color: #5f5d5d;
           text-align: left;
+          padding-left: 5px;
       }
 
       thead, tbody{
           display: block;
       }
 
+      tbody tr:nth-child(odd){
+          background-color: #f6f8f0;
+      }
+
+      tbody tr:nth-child(even){
+
+      }
+
       tr{
-         width: 100%;
-         display: flex;
+          width: calc(100% - 20px);
+          display: flex;
+          height: 24px;
+          padding: 0 10px 0 10px;
+          line-height: 24px;
+      }
+
+      thead{
+          margin-top: 7px;
+      }
+
+      tbody{
+          overflow: auto;
+          height: calc(100% - 75px);
       }
 
       thead tr{
           justify-content: center;
+          height: 22px;
       }
 
       thead tr td {
-          font-size: 10pt;
-          color: #5f5d5d;
+          font-size: 12px;
+          color: #74a14e;;
       }
 
       tr td  {
@@ -109,7 +134,7 @@ import {Output,Input, EventEmitter} from '@angular/core';
           text-align: center;
       }
       tr td:first-child {
-          flex: 0 0 40%;
+          flex: 0 0 38%;
       }
 
       .head{
@@ -119,14 +144,34 @@ import {Output,Input, EventEmitter} from '@angular/core';
       }
 
       .head > span{
-          flex: 0 0 50%;
+
       }
 
       .search{
-          width: calc(100% - 20px);
+          width: calc(100% - 40px);
           height: 20px;
-          background-color: white;
-          margin-left: 20px;
+          background-color: #f7f7f7;
+          margin: 22px 40 5 10px;
+          border: 1px solid #e3e3e3;
+      }
+
+      .text{
+          text-transform: uppercase;
+          color: #4c4c4c;
+          margin: 7px 0 0px 10px;
+          position: relative;
+          z-index: 10;
+          height: 40px;
+          display: flex;
+          justify-content: space-between;
+          font-size: 15px;
+      }
+      .edit{
+          flex: 0 0 100px;
+          font-size: 12px;
+          margin: 5px 10px 5px 0;
+          text-align: end;
+          color: #0575b5;
       }
   `]
 })
@@ -139,11 +184,32 @@ export class UIAdvertising implements OnInit{
       {select: false, select2: false, select3: false, name: 'Циан'},
       {select: false, select2: false, select3: false, name: 'ВНХ'},
       {select: false, select2: false, select3: false, name: 'Фарпост'},
+      {select: false, select2: false, select3: false, name: 'Домофонд'},
+      {select1: false, select2: false, select3: false, name: 'Из рук в руки'},
+      {select: false, select2: false, select3: false, name: 'Презент'},
+      {select: false, select2: false, select3: false, name: 'Авито'},
+      {select: false, select2: false, select3: false, name: 'Циан'},
+      {select: false, select2: false, select3: false, name: 'ВНХ'},
+      {select: false, select2: false, select3: false, name: 'Фарпост'},
+      {select: false, select2: false, select3: false, name: 'Домофонд'},
+      {select1: false, select2: false, select3: false, name: 'Из рук в руки'},
+      {select: false, select2: false, select3: false, name: 'Презент'},
+      {select: false, select2: false, select3: false, name: 'Авито'},
+      {select: false, select2: false, select3: false, name: 'Циан'},
+      {select: false, select2: false, select3: false, name: 'ВНХ'},
+      {select: false, select2: false, select3: false, name: 'Фарпост'},
+      {select: false, select2: false, select3: false, name: 'Домофонд'},
+      {select1: false, select2: false, select3: false, name: 'Из рук в руки'},
+      {select: false, select2: false, select3: false, name: 'Презент'},
+      {select: false, select2: false, select3: false, name: 'Авито'},
+      {select: false, select2: false, select3: false, name: 'Циан'},
+      {select: false, select2: false, select3: false, name: 'ВНХ'},
+      {select: false, select2: false, select3: false, name: 'Фарпост'},
       {select: false, select2: false, select3: false, name: 'Домофонд'}
   ];
   ngOnInit(){
-      this.platforms.concat(this.platforms);
-      this.platforms.concat(this.platforms);
-      this.platforms.concat(this.platforms);
+      this.platforms = [].concat(this.platforms);
+      this.platforms = [].concat(this.platforms);
+      this.platforms = [].concat(this.platforms);
   }
 }

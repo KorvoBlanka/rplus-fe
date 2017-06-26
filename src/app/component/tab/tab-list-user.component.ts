@@ -82,33 +82,28 @@ import {Observable} from "rxjs";
             font-size: 11px;
             line-height: 120px;
             background-size: cover;
-            color: #6b6c6d;
+            background-color: #bcbfc1;
+            color: #807982;
+            border: 2px solid #bcbfc1;
+        }
+
+        .button_active, .button:hover{
+            border-color: #1061c4;
+            background-color: #1061c4;
         }
 
         .plus:hover{
-            background-image: url(assets/plus_color.png);
-        }
-
-        .plus {
-            background-image: url(assets/Plus.png);
-        }
-
-        .main:hover{
-            background-image: url(assets/main_offers_color.png) !important;
-        }
-
-
-        .analitic:hover{
-            background-image: url(assets/analitic_color.png) !important;
+            border-color: #0ea122;
+            background-color: #0ea122;
         }
 
     `],
     template: `
         <div class="header-label-abs">{{ tab.header }}</div>
         <div class = "round_menu">
-            <div class="button plus"  (click) ="addUser()">Добавить</div>
-            <div (click)="toggleSource('main')"      class="button main"      [style.background-image]="iconSource[0]">Главная</div>
-            <div (click)="toggleSource('analitic')"  class="button analitic"  [style.background-image]="iconSource[1]">Аналитика</div>
+            <div class="button plus" [style.background-image]="'url(assets/plus.png)'"  (click) ="addUser()">Добавить</div>
+            <div (click)="this.main_menu = true"   class="button"  [class.button_active]="this.main_menu" [style.background-image]="'url(assets/main_offers.png)'">Главная</div>
+            <div (click)="this.main_menu = false"  class="button"  [class.button_active]="!this.main_menu" [style.background-image]="'url(assets/analitic.png)'">Аналитика</div>
         </div>
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
@@ -181,7 +176,7 @@ export class TabListUserComponent implements OnInit {
     searchQuery: string;
     superiorId: number;
     role: string;
-    iconSource: string[]=["url(assets/main_offers_color.png)", "url(assets/analitic.png)"];
+    main_menu: boolean = true;
 
     superiorOpts = [{
         value: 0,
@@ -219,16 +214,6 @@ export class TabListUserComponent implements OnInit {
             },
             err => console.log(err)
         );
-    }
-
-    toggleSource(s: string) {
-        if (s == 'main') {
-            this.iconSource[0]="url(assets/main_offers_color.png)";
-            this.iconSource[1]="url(assets/analitic.png)";
-        } else {
-            this.iconSource[0]="url(assets/main_offers.png)";
-            this.iconSource[1]="url(assets/analitic_color.png)";
-        }
     }
 
     addUser() {

@@ -134,11 +134,19 @@ import {Account} from "../../class/account";
             font-size: 11px;
             line-height: 120px;
             background-size: cover;
-            color: #6b6c6d;
+            background-color: #bcbfc1;
+            color: #807982;
+            border: 2px solid #bcbfc1;
         }
 
-        .button:active {
-          //border: 1px solid silver;
+        .button_active, .button:hover{
+            border-color: #1061c4;
+            background-color: #1061c4;
+        }
+
+        .plus:hover{
+            border-color: #0ea122;
+            background-color: #0ea122;
         }
 
         .head{
@@ -152,20 +160,6 @@ import {Account} from "../../class/account";
             display: block;
             margin: 30px 0 0 30px;
             color: #595a5a;
-        }
-        .plus:hover{
-            background-image: url(assets/plus_color.png);
-        }
-
-        .plus {
-            background-image: url(assets/Plus.png);
-        }
-        .import:hover{
-            background-image: url(assets/base_plus_color.png) !important;
-        }
-
-        .local:hover{
-            background-image: url(assets/base_color.png) !important;
         }
 
         .seen {
@@ -210,9 +204,9 @@ import {Account} from "../../class/account";
     `],
     template: `
         <div class = "round_menu">
-            <div class="button plus"  (click) ="addOffer()">Добавить</div>
-            <div (click)="toggleSource('import')" class="button import" [style.background-image]="iconSource[0]">Общая</div>
-            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="iconSource[1]">Компания</div>
+            <div class="button plus" [style.background-image]="'url(assets/plus.png)'" (click) ="addOffer()">Добавить</div>
+            <div (click)="toggleSource('import')" class="button" [class.button_active]="this.source != 1" [style.background-image]="'url(assets/base_plus.png)'">Общая</div>
+            <div (click)="toggleSource('local')"  class="button" [class.button_active]="this.source == 1" [style.background-image]="'url(assets/base.png)'">Компания</div>
         </div>
         <div class="search-form" [class.table-mode]="tableMode">
 
@@ -383,7 +377,6 @@ export class TabListOfferComponent {
     searchArea: any[] = [];
 
     sgList: string[] = [];
-    iconSource: string[]=["url(assets/base_plus.png)", "url(assets/base_color.png)"];
     filter: any = {
         stageCode: 'all',
         agentId: 'all',
@@ -839,12 +832,8 @@ export class TabListOfferComponent {
     toggleSource(s: string) {
         if (s == 'local') {
             this.source = OfferSource.LOCAL;
-            this.iconSource[0]="url(assets/base_plus.png)";
-            this.iconSource[1]="url(assets/base_color.png)";
         } else {
             this.source = OfferSource.IMPORT;
-            this.iconSource[0]="url(assets/base_plus_color.png)";
-            this.iconSource[1]="url(assets/base.png)";
         }
         this.page = 0;
         this.listOffers();

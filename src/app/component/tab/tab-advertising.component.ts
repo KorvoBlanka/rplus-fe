@@ -322,7 +322,7 @@ import {SessionService} from "../../service/session.service";
     template: `
         <div class="header-label-abs" style="margin: 2px 0 0 30px;">{{ tab.header }}</div>
         <div class = "round_menu">
-            <div (click)="toggleSource('main')"    class="button" [class.button_active]="this.activeMenu == 0" [style.background-image]="'url(assets/main_offers.png)'">Главная</div>
+            <div (click)="toggleSource('main')"    class="button"  [class.button_active]="this.activeMenu == 0" [style.background-image]="'url(assets/main_offers.png)'">Главная</div>
             <div (click)="toggleSource('analitic')" class="button" [class.button_active]="this.activeMenu == 1" [style.background-image]="'url(assets/analitic.png)'">Отчеты</div>
             <div (click)="toggleSource('history')"  class="button" [class.button_active]="this.activeMenu == 2" [style.background-image]="'url(assets/history.png)'">История</div>
         </div>

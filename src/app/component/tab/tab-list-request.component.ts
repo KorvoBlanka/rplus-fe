@@ -75,31 +75,29 @@ import {UserService} from "../../service/user.service";
             font-size: 11px;
             line-height: 120px;
             background-size: cover;
-            color: #6b6c6d;
+            background-color: #bcbfc1;
+            color: #807982;
+            border: 2px solid #bcbfc1;
+        }
+
+        .button_active, .button:hover{
+            border-color: #1061c4;
+            background-color: #1061c4;
         }
 
         .plus:hover{
-            background-image: url(assets/plus_color.png);
-        }
-
-        .plus {
-            background-image: url(assets/Plus.png);
-        }
-        .import:hover{
-            background-image: url(assets/base_plus_color.png) !important;
-        }
-
-        .local:hover{
-            background-image: url(assets/base_color.png) !important;
+            border-color: #0ea122;
+            background-color: #0ea122;
         }
     `],
     template: `
         <div class="header-label-abs">{{ tab.header }}</div>
         <div class = "round_menu">
-            <div class="button plus"  (click) ="addRequest()">Добавить</div>
-            <div (click)="toggleSource('import')" class="button import" [style.background-image]="iconSource[0]">Общая</div>
-            <div (click)="toggleSource('local')"  class="button local"  [style.background-image]="iconSource[1]">Компания</div>
+            <div class="button plus" [style.background-image]="'url(assets/plus.png)'"  (click) ="addRequest()">Добавить</div>
+            <div (click)="this.main_menu = true"   class="button"  [class.button_active]="this.main_menu" [style.background-image]="'url(assets/base_plus.png)'">Общая</div>
+            <div (click)="this.main_menu = false"  class="button" [class.button_active]="!this.main_menu" [style.background-image]="'url(assets/base.png)'">Компания</div>
         </div>
+
         <div class="search-form" [class.table-mode]="tableMode">
             <div class="search-box">
                 <input type="text" class="" placeholder="" style="height: 28px; width: 100%;
@@ -200,8 +198,7 @@ export class TabListRequestComponent implements OnInit {
     requests: Request[];
     page: number = 0;
     perPage: number = 32;
-
-    iconSource: string[]=["url(assets/base_plus.png)", "url(assets/base_color.png)"];
+    main_menu: boolean = true;
 
     filter: any = {
         agentId: 'all',
@@ -262,16 +259,6 @@ export class TabListRequestComponent implements OnInit {
             },
             err => console.log(err)
         );
-    }
-
-    toggleSource(s: string) {
-        if (s == 'local') {
-            this.iconSource[0]="url(assets/base_plus.png)";
-            this.iconSource[1]="url(assets/base_color.png)";
-        } else {
-            this.iconSource[0]="url(assets/base_plus_color.png)";
-            this.iconSource[1]="url(assets/base.png)";
-        }
     }
 
     addRequest() {

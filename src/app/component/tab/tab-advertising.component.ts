@@ -76,19 +76,14 @@ import {SessionService} from "../../service/session.service";
             font-size: 11px;
             line-height: 120px;
             background-size: cover;
+            background-color: #bcbfc1;
             color: #807982;
+            border: 2px solid #bcbfc1;
         }
 
-        .main:hover{
-            background-image: url(res/main_offers_color.png);
-        }
-
-        .analitic:hover{
-            background-image: url(res/analitic_color.png) !important;
-        }
-
-        .history:hover{
-            background-image: url(res/history_color.png) !important;
+        .button_active, .button:hover{
+            border-color: #1061c4;
+            background-color: #1061c4;
         }
 
         .underline{
@@ -327,9 +322,9 @@ import {SessionService} from "../../service/session.service";
     template: `
         <div class="header-label-abs" style="margin: 2px 0 0 30px;">{{ tab.header }}</div>
         <div class = "round_menu">
-            <div (click)="toggleSource('main')"     class="button main"     [style.background-image]="iconSource[0]">Главная</div>
-            <div (click)="toggleSource('analitic')" class="button analitic" [style.background-image]="iconSource[1]">Отчеты</div>
-            <div (click)="toggleSource('history')"  class="button history"  [style.background-image]="iconSource[2]">История</div>
+            <div (click)="toggleSource('main')"    class="button" [class.button_active]="this.activeMenu == 0" [style.background-image]="'url(assets/main_offers.png)'">Главная</div>
+            <div (click)="toggleSource('analitic')" class="button" [class.button_active]="this.activeMenu == 1" [style.background-image]="'url(assets/analitic.png)'">Отчеты</div>
+            <div (click)="toggleSource('history')"  class="button" [class.button_active]="this.activeMenu == 2" [style.background-image]="'url(assets/history.png)'">История</div>
         </div>
         <div class="search-form">
             <div class="search-box">
@@ -741,7 +736,6 @@ import {SessionService} from "../../service/session.service";
 
 export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     public tab: Tab;
-    iconSource: string[]=["url(res/main_offers_color.png)", "url(res/analitic.png)", "url(res/history.png)"];
     activeMenu: number = 0;
 
     chartID: string = "Chart"+Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -802,19 +796,10 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
 
     toggleSource(s: string) {
         if (s == 'main') {
-            this.iconSource[0]="url(res/main_offers_color.png)";
-            this.iconSource[1]="url(res/analitic.png)";
-            this.iconSource[2]="url(res/history.png)";
             this.activeMenu = 0;
         } else if(s == 'analitic') {
-            this.iconSource[0]="url(res/main_offers.png)";
-            this.iconSource[1]="url(res/analitic_color.png)";
-            this.iconSource[2]="url(res/history.png)";
             this.activeMenu = 1;
         }else {
-            this.iconSource[0]="url(res/main_offers.png)";
-            this.iconSource[1]="url(res/analitic.png)";
-            this.iconSource[2]="url(res/history_color.png)";
             this.activeMenu = 2;
         }
     }

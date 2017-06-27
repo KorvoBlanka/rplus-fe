@@ -212,7 +212,7 @@ export class TabListPersonComponent implements OnInit {
     }
 
     listPersons() {
-        this._personService.list(null, null, "").subscribe(
+        this._personService.list(this.userId, null, this.searchQuery).subscribe(
             data => {
                 this.persons = data;
             },

@@ -11,7 +11,7 @@ export class ConfigService {
 }
 
 var CONFIG: Config = {
-    version: "b17.0",
+    version: "b17.1",
     map: {
         default: {
             lat: 55.755505, lon: 37.617270, zoom: 14

@@ -418,6 +418,7 @@ import {SessionService} from "../../service/session.service";
                         <digest-offer *ngFor="let offer of offers"
                             [offer]="offer"
                             [compact]="true"
+                            (dblclick)="openOffer(offer)"
                         >
                         </digest-offer>
                     </div>
@@ -679,7 +680,6 @@ import {SessionService} from "../../service/session.service";
                 <ui-tabs
                     [headerMode]="!paneHidden"
                     [iconUrls]="['assets/main_offers.png', 'assets/request1.png', 'assets/analitic.png']"
-                    [iconUrls_active]="['assets/main_offers_color.png', 'assets/request1_color.png', 'assets/analitic_color.png']"
                 >
                     <ui-tab
                         [title]="'Главная'"
@@ -1175,5 +1175,10 @@ export class TabRequestComponent {
              parent.style.setProperty('overflow', "hidden");
               (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(0deg)')
         }
+    }
+
+    openOffer(offer: Offer) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('offer', {offer: offer});
     }
 }

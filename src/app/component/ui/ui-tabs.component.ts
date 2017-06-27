@@ -7,15 +7,14 @@ import {UITab} from './ui-tab.component';
 
 @Component({
     selector: 'ui-tabs',
-    inputs: ['headerMode', 'iconUrls', 'iconUrls_active', 'color'],
+    inputs: ['headerMode', 'iconUrls', 'active_color', 'color'],
     template: `
         <div class="head" [style.border-bottom-color] = "color">
             <div class="tabs" [class.align-left]="headerMode">
                 <div *ngFor="let tab of tabs; let i = index;" class="tab-header"
-                 (click)="selectTab(tab)" [class.active]="tab.active"
-                 [ngStyle]="{'background-image': 'url(' + selectedIcon(tab.active, i) + ')'}"
-                 (mouseover) = "setIcon(i, true, $event)"
-                 (mouseout) = "setIcon(i, false, $event)">
+                    (click)="selectTab(tab)" [class.active]="tab.active"
+                    [style.background-image]="'url(' + iconUrls[i] + ')'"
+                 >
                     {{tab.title}}
                 </div>
             </div>
@@ -63,6 +62,12 @@ import {UITab} from './ui-tab.component';
             margin-left: -15px;
             display: block;
         }
+
+        .tab-header.active {
+            background-color: {{active_color}};
+            color: #157ad3;
+        }
+
         .tab-header.active > a {
             color: #157ad3;
         }
@@ -83,14 +88,14 @@ export class UITabs implements  AfterContentInit  {
     @ContentChildren(UITab) tabs: QueryList<UITab>;
     headerMode: boolean;
     iconUrls: String[] = [];
-    iconUrls_active: String[] = [];
+    active_color: String = '#1061c4';
     currentUrl: String[] = [];
     color: String = '#3d9be9';
 
     constructor() {
         setTimeout(()=> {
             if(this.iconUrls){
-                this.currentUrl[0] = this.iconUrls_active[0];
+
                 for(var i= 1; i< this.iconUrls.length;++i){
                     this.currentUrl.push(this.iconUrls[i]);
                 }
@@ -115,9 +120,6 @@ export class UITabs implements  AfterContentInit  {
     selectTab(tab: UITab) {
 
         this._deactivateAllTabs(this.tabs.toArray());
-        this.currentUrl[0] = this.iconUrls[0];
-        this.currentUrl[1] = this.iconUrls[1];
-        this.currentUrl[2] = this.iconUrls[2];
         tab.selectTab();
     }
 
@@ -125,25 +127,4 @@ export class UITabs implements  AfterContentInit  {
         tabs.forEach((tab) => tab.active = false);
     }
 
-    selectedIcon(act: boolean, i){
-        //if(iconUrls_active && iconUrls){
-            if(act)
-                return this.iconUrls_active[i] || '';
-            else {
-                return this.currentUrl[i];
-            };
-        //}
-    }
-
-    setIcon(i:number, act: boolean, event){
-        if((<HTMLElement>event.target).classList[0] == "tab-header"){
-            if((<HTMLElement>event.target).className != "tab-header active"){
-                if(act)
-                    this.currentUrl[i] = this.iconUrls_active[i];
-                else {
-                        this.currentUrl[i] = this.iconUrls[i];
-                }
-            }
-        }
-    }
 }

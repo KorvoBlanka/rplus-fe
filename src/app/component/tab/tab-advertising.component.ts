@@ -441,7 +441,7 @@ import {SessionService} from "../../service/session.service";
                                     [offer]="offer"
                                     (click)="click($event, offer)"
                                     (contextmenu)="click($event, offer)"
-                                    (dblclick)="dblClick(offer)"
+                                    (dblclick)="openOffer(offer)"
                                     (touchstart)="tStart(offer)"
                                     (touchend)="tEnd(offer)"
                                 >
@@ -714,7 +714,7 @@ import {SessionService} from "../../service/session.service";
                                     [withPhoto]="true"
                                     (click)="click($event, data)"
                                     (contextmenu)="click($event, data)"
-                                    (dblclick)="dblClick(data)"
+                                    (dblclick)="openOffer(data)"
                                     (touchstart)="tStart(data)"
                                     (touchend)="tEnd(data)"
                                 >
@@ -836,6 +836,11 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
 
     calcHeight(){
 
+    }
+
+    openOffer(offer: Offer) {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        tab_sys.addTab('offer', {offer: offer});
     }
 
 }

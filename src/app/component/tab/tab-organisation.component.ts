@@ -734,7 +734,6 @@ import {SessionService} from "../../service/session.service";
                 <ui-tabs
                     [headerMode]="!paneHidden"
                     [iconUrls]="['assets/main_offers.png', 'assets/base.png', 'assets/base_plus.png']"
-                    [iconUrls_active]="['assets/main_offers_color.png', 'assets/base_color.png', 'assets/base_plus_color.png']"
                     [color]="'#8F5128'"
                 >
                     <ui-tab

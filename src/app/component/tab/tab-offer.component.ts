@@ -2315,7 +2315,6 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                 <ui-tabs
                     [headerMode]="!paneHidden"
                     [iconUrls]="['assets/main_offers.png', 'assets/analitic.png', 'assets/history.png']"
-                    [iconUrls_active]="['assets/main_offers_color.png', 'assets/analitic_color.png', 'assets/history_color.png']"
                 >
                     <ui-tab
                         [title]="'Главная'"

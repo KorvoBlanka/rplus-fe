@@ -1180,16 +1180,17 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     getOfferDigest(r: Offer) {
         return Offer.getDigest(r);
     }
+
     showMenu(event){
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByClassName('input_field').length * 35;
-        if(parent.offsetHeight == 30){
+        if (parent.offsetHeight == 30) {
             console.log(height);
             parent.style.setProperty('height', ""+(height+55)+'px');
             parent.style.setProperty('overflow', "visible");
              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');
         }
-        else{
+        else {
              parent.style.setProperty('height', "30px");
              parent.style.setProperty('overflow', "hidden");
               (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(0deg)')

@@ -12,7 +12,7 @@ import {UITab} from './ui-tab.component';
         <div class="head" [style.border-bottom-color] = "color">
             <div class="tabs" [class.align-left]="headerMode">
                 <div *ngFor="let tab of tabs; let i = index;" class="tab-header"
-                    (click)="selectTab(tab)" [class.active]="tab.active"
+                    (click)="selectTab(tab)" [class.active]="tab.active" [style.background-color]="getColor(tab.active)" [style.border-color]="getColor(tab.active)"
                     [style.background-image]="'url(' + iconUrls[i] + ')'"
                  >
                     {{tab.title}}
@@ -36,17 +36,19 @@ import {UITab} from './ui-tab.component';
             margin-left: 50px;
         }
         .tabs.align-left {
-            justify-content: flex-start;
+            justify-content: space-between;
         }
         .tab-header {
-            width: 70px;
             height: 50px;
+            width: 50px;
+            border-radius: 40px;
+            cursor: pointer;
             font-size: 11px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            color: #6b6c6d;
             line-height: 120px;
+            background-size: cover;
+            background-color: #bcbfc1;
+            color: #807982;
+            border: 2px solid #bcbfc1;
             text-align: center;
         }
         .tab-header:first-child {
@@ -54,6 +56,9 @@ import {UITab} from './ui-tab.component';
         }
 
         .tab-header:hover {
+            border-color: #1061c4 !important;
+            background-color: #1061c4 !important;
+            color: #1061c4 !important;
         }
 
         .tab-header > span {
@@ -64,7 +69,7 @@ import {UITab} from './ui-tab.component';
         }
 
         .tab-header.active {
-            background-color: {{active_color}};
+
             color: #157ad3;
         }
 
@@ -125,6 +130,12 @@ export class UITabs implements  AfterContentInit  {
 
     _deactivateAllTabs(tabs: UITab[]) {
         tabs.forEach((tab) => tab.active = false);
+    }
+
+    getColor(act: boolean){
+        if(act)
+            return this.active_color;
+        else return '#bcbfc1';
     }
 
 }

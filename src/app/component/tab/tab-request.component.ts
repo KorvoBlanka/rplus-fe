@@ -679,7 +679,7 @@ import {SessionService} from "../../service/session.service";
             <div class="work-area" [style.width.px]="mapWidth">
                 <ui-tabs
                     [headerMode]="!paneHidden"
-                    [iconUrls]="['assets/main_offers.png', 'assets/request1.png', 'assets/analitic.png']"
+                    [iconUrls]="['assets/main_offers.png', 'assets/analitic.png', 'assets/history.png']"
                 >
                     <ui-tab
                         [title]="'Главная'"

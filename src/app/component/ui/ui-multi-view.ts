@@ -7,7 +7,6 @@ import {Component, OnInit, OnChanges} from '@angular/core';
             <div style= "margin-top: -6px;"><div class="total" *ngFor="let val of values">
                 <span *ngIf="val.value && !options">{{ val.type }}</span>
                 <span *ngIf="val.value && options">{{ type }}</span>
-                <span [class.empty]="val.value.indexOf('Не указан') > -1">{{ val.value }}</span>
 
             </div></div>
     `,
@@ -52,6 +51,7 @@ export class UIMultiView implements OnInit {
     type: string;
     isNull: boolean;
     ngOnInit() {
+        console.log(this.values);
         let temp=[];
         for(let val of this.values){
             if(val.value)

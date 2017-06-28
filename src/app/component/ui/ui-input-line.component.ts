@@ -4,8 +4,11 @@ import {SuggestionService} from "../../service/suggestion.service";
 import {PersonService} from "../../service/person.service";
 import {SessionService} from "../../service/session.service";
 import {OrganisationService} from '../../service/organisation.service';
-
+import {HubService} from '../../service/hub.service';
 import {Offer} from '../../class/offer';
+import {Tab} from '../../class/tab';
+import {Person} from '../../class/person';
+import {Organisation} from '../../class/organisation';
 
 @Component({
     selector: 'ui-input-line',
@@ -26,6 +29,9 @@ import {Offer} from '../../class/offer';
                         <a (click)="select(item, $event)" *ngIf="this.queryTipe == 'person'">{{item.name}}</a>
                     </li>
                 </ul>
+                <div class="add_button" (click)="addPerson()" *ngIf="this.queryTipe == 'person'">Добавить контакт</div>
+                <div class="add_button" (click)="addOrganisation()" *ngIf="this.queryTipe == 'organisation'">Добавить контрагента</div>
+                <div class="add_button" (click)="show()">Инфо</div>
             </div>
         </div>
     `,
@@ -94,6 +100,17 @@ import {Offer} from '../../class/offer';
             border: 1px solid rgba(204, 204, 204, 0.47);
             font-size: 10pt;
         }
+
+        .add_button{
+            height: 30px;
+            width: 80%;
+            background-color: #008cdb;
+            color: white;
+            line-height: 30px;
+            text-align: center;
+            margin: auto;
+            margin-bottom: 10px;
+        }
     `]
 })
 
@@ -106,14 +123,16 @@ export class UIInputLine implements OnInit, OnChanges{
     public type: string = "text";
     searchQuery: string ;
     sgList: any[] = [];
-
+    person: any;
+    organisation: any;
     opacity = 1;
     @Output() onChange: EventEmitter<any> = new EventEmitter();
 
     constructor(private _suggestionService: SuggestionService,
                 private _personService: PersonService,
                 private _sessionService: SessionService,
-                private _organisationService: OrganisationService
+                private _organisationService: OrganisationService,
+                private _hubService: HubService,
     ){
 
     }
@@ -264,5 +283,22 @@ export class UIInputLine implements OnInit, OnChanges{
         }
         this.sgList = [];
     }
+
+    addPerson() {
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        this.person = new Person();
+        tab_sys.addTab('person', {person: this.person});
+    }
+
+    addOrganisation(){
+        var tab_sys = this._hubService.getProperty('tab_sys');
+        this.organisation = new Organisation();
+        tab_sys.addTab('organisation', {person: this.organisation});
+    }
+
+    show(){
+        console.log(this.person);
+    }
+
 
 }

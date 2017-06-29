@@ -21,7 +21,7 @@ import {Organisation} from '../../class/organisation';
                 (click) ="isClick1($event)" [class.short_field]="queryTipe"
             >
 
-            <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0 && queryTipe">
+            <div class="suggestions" (document:click)="docClick()" *ngIf="sgList.length > 0 && queryTipe ">
                 <ul *ngFor="let item of sgList" >
                     <li >
                         <a (click)="select(item, $event)" *ngIf="this.queryTipe == 'address'">{{item}}</a>
@@ -29,9 +29,8 @@ import {Organisation} from '../../class/organisation';
                         <a (click)="select(item, $event)" *ngIf="this.queryTipe == 'person'">{{item.name}}</a>
                     </li>
                 </ul>
-                <div class="add_button" (click)="addPerson()" *ngIf="this.queryTipe == 'person'">Добавить контакт</div>
-                <div class="add_button" (click)="addOrganisation()" *ngIf="this.queryTipe == 'organisation'">Добавить контрагента</div>
-                <div class="add_button" (click)="show()">Инфо</div>
+                <div class="add_button" (click)="addPerson()" *ngIf="this.queryTipe == 'person'">Добавить в контакты</div>
+                <div class="add_button" (click)="addOrganisation()" *ngIf="this.queryTipe == 'organisation'">Добавить в контрагенты</div>
             </div>
         </div>
     `,
@@ -103,8 +102,8 @@ import {Organisation} from '../../class/organisation';
 
         .add_button{
             height: 30px;
-            width: 80%;
-            background-color: #008cdb;
+            width: calc(100% - 30px);
+            background-color: #0b9700;
             color: white;
             line-height: 30px;
             text-align: center;
@@ -288,6 +287,10 @@ export class UIInputLine implements OnInit, OnChanges{
         var tab_sys = this._hubService.getProperty('tab_sys');
         this.person = new Person();
         tab_sys.addTab('person', {person: this.person});
+        setTimeout(() =>{
+            this.onChange.emit(this.person);
+        }, 10000)
+
     }
 
     addOrganisation(){

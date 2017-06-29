@@ -1500,12 +1500,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-label pull-left">Тип:</span>
                                 <ui-view-value
                                     [options] = "[
+                                        {value: 'NOT', label: 'Не указан'},
                                         {value: 'CLIENT', label: 'Клиент'},
                                         {value: 'KONK', label: 'Конкурент'},
                                         {value: 'OUR', label: 'Наша компания'},
                                         {value: 'PARTHER', label: 'Партнер'}
                                     ]"
-                                    [value]="'Клиент'"
+                                    [value]="offer.person?.typeCode_n"
                                 >
                                 </ui-view-value>
                             </div>
@@ -1527,32 +1528,32 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Контактное лицо:</span>
-                                    <span class="view-value">  {{ offer.organisation?.name }} </span>
+                                    <span class="view-value">{{ offer.organisation?.name }}</span>
                                 </div>
                                 <hr>
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Должность:</span>
-                                    <span class="view-value">  {{ offer.organisation?.name }} </span>
+                                    <span class="view-value">{{ offer.organisation?.name }}</span>
                                 </div>
                             </div>
                             <hr  *ngIf='offer.person || offer.organisation'>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/phone.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Телефон:</span>
-                                <span class="view-value"> +79144174361 </span>
+                                <span class="view-value">{{offer.person?.mainPhone_n || offer.person?.cellPhone_n || offer.person?.officePhone_n}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/email.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">E-mail:</span>
-                                <span class="view-value"> 123@mail.ru </span>
+                                <span class="view-value">{{offer.person?.mainEmail_n || offer.person?.workEmail_n }}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Web-сайт:</span>
-                                <span class="view-value">  </span>
+                                <span class="view-value">{{offer.person?.webSite_n }}</span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
@@ -3150,6 +3151,7 @@ export class TabOfferComponent implements OnInit {
 
         this.offer.squareLand = this.landSquare[0].value;
         this.offer.squareLandType_n =  this.ParseInt(this.landSquare[0].type);
+        this.offer.personId = this.offer.person.id;
         if(!this.offer.locality)
             this.offer.locality = this.offer.city_n;
         if(!this.offer.address)

@@ -1065,7 +1065,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this._personService.save(this.person).subscribe(
             person => {
                 setTimeout(() => {
-                    this.person = person;
+                    this.person.copyFields(person);
                     this.getAddressStr();
                 });
                 this.toggleEdit();

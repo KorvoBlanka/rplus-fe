@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
@@ -394,7 +394,7 @@ import {SessionService} from "../../service/session.service";
                                 [masks] = "['', '', '', '', '']"
                                 [values]="orgNameArray"
                                 [width]="'36%'"
-                                (onChange)="parseArray($event, orgNameArray)">
+                                (onChange)="getName($event)">
                             </ui-multiselect>
                         </div>
                         <hr>
@@ -906,7 +906,7 @@ import {SessionService} from "../../service/session.service";
     `
 })
 
-export class TabOrganisationComponent {
+export class TabOrganisationComponent implements OnInit, AfterViewInit {
     public tab: Tab;
     public organisation: Organisation;
 
@@ -983,7 +983,7 @@ export class TabOrganisationComponent {
 
     ngOnInit() {
         this.organisation = this.tab.args.organisation;
-        if (this.organisation.id == null) {
+        if (!this.organisation.id || this.organisation.id == null) {
             this.toggleEdit();
         }
 
@@ -1003,6 +1003,16 @@ export class TabOrganisationComponent {
         }
 
         this.calcSize();
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            if (this.organisation.id) {
+                this.tab.header = 'Контрагент';
+            } else {
+                this.tab.header = 'Новый контрагент';
+            }
+        });
     }
 
     onResize(e) {
@@ -1077,7 +1087,7 @@ export class TabOrganisationComponent {
 
         this._organisationService.save(this.organisation).subscribe(org => {
             setTimeout(() => {
-                this.organisation = org;
+                this.organisation.copyFields(org);
             });
         });
         this.toggleEdit();
@@ -1228,6 +1238,13 @@ export class TabOrganisationComponent {
             default: return "";
         }
     }
+
+    getName(event){
+        this.parseArray(event, this.orgNameArray);
+        this.organisation.name = this.orgNameArray[0].value;
+        this.organisation.orgName_n = this.orgNameArray[0].type;
+    }
+
 
     getAddressStr(){
             this.addressStr = this.organisation.city_n !== undefined ? ""+this.organisation.city_n : '';

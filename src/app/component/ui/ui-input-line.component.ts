@@ -296,7 +296,10 @@ export class UIInputLine implements OnInit, OnChanges{
     addOrganisation(){
         var tab_sys = this._hubService.getProperty('tab_sys');
         this.organisation = new Organisation();
-        tab_sys.addTab('organisation', {person: this.organisation});
+        tab_sys.addTab('organisation', {organisation: this.organisation});
+        setTimeout(() =>{
+            this.onChange.emit(this.organisation);
+        }, 10000)
     }
 
     show(){

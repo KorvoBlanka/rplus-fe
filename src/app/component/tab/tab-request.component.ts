@@ -581,10 +581,52 @@ import {SessionService} from "../../service/session.service";
                                 <span class="view-value"> {{ request.changeDate | formatDate }} </span>
                             </div>
                             <hr>
-                            <div class='view_icon' [style.background-image]="'url(assets/user_icon/post.png)'"></div>
+                            <div class='view_icon' [style.background-image]="'url(assets/person_icon/category.png)'"></div>
                             <div class="view-group">
-                                <span class="view-label">Контакт:</span>
-                                <span class="view-value"> {{ person.name }} </span>
+                                <span class="view-label pull-left">Тип:</span>
+                                <ui-view-value
+                                    [options] = "[
+                                        {value: 'NOT', label: 'Не указан'},
+                                        {value: 'CLIENT', label: 'Клиент'},
+                                        {value: 'KONK', label: 'Конкурент'},
+                                        {value: 'OUR', label: 'Наша компания'},
+                                        {value: 'PARTHER', label: 'Партнер'}
+                                    ]"
+                                    [value]="person?.typeCode_n"
+                                >
+                                </ui-view-value>
+                            </div>
+                            <hr>
+                            <div *ngIf='person'>
+                                <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
+                                <div class="view-group">
+                                    <span class="view-label">ФИО:</span>
+                                    <span class="view-value">  {{ person?.name }} </span>
+                                </div>
+                            </div>
+                            <hr  *ngIf='person'>
+                            <div class='view_icon' [style.background-image]="'url(assets/user_icon/phone.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Телефон:</span>
+                                <span class="view-value">{{person?.mainPhone_n || person?.cellPhone_n || person?.officePhone_n}}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(assets/user_icon/email.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">E-mail:</span>
+                                <span class="view-value">{{person?.mainEmail_n || person?.workEmail_n }}</span>
+                            </div>
+                            <hr>
+                            <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
+                            <div class="view-group">
+                                <span class="view-label">Web-сайт:</span>
+                                <span class="view-value">{{person?.webSite_n }}</span>
+                            </div>
+                            <hr *ngIf="person?.organisation_n">
+                            <div  *ngIf="person?.organisation_n" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
+                            <div  *ngIf="person?.organisation_n" class="view-group" >
+                                <span class="view-label">Организация:</span>
+                                <span class="view-value">{{person?.organisation_n.orgName_n + ' "' + person?.organisation_n.name + '"'}}</span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>

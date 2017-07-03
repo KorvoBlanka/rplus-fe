@@ -1555,6 +1555,12 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-label">Web-сайт:</span>
                                 <span class="view-value">{{offer.person?.webSite_n }}</span>
                             </div>
+                            <hr *ngIf="offer.person?.organisation_n">
+                            <div  *ngIf="offer.person?.organisation_n" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
+                            <div  *ngIf="offer.person?.organisation_n" class="view-group" >
+                                <span class="view-label">Организация:</span>
+                                <span class="view-value">{{offer.person?.organisation_n.orgName_n + ' "' + offer.person?.organisation_n.name + '"'}}</span>
+                            </div>
 
                             <div class="header_col">Сопроводительная информация</div>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>

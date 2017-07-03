@@ -95,6 +95,7 @@ import {SessionService} from "../../service/session.service";
             color: rgb(80, 80, 80);
             margin-top: 5px;
             font-size: 10pt;
+            margin-right: 5px;
         }
 
         .view-value {
@@ -106,6 +107,7 @@ import {SessionService} from "../../service/session.service";
             height: 19px; /* костыль */
             text-overflow: ellipsis;
             white-space: nowrap;
+            overflow: hidden;
         }
 
         .edit-value {
@@ -311,6 +313,11 @@ import {SessionService} from "../../service/session.service";
             margin-right: 15px;
             margin-left: 0;
             overflow: hidden;
+        }
+
+        .link{
+            color: #0575b5;
+            cursor: hand;
         }
 
     `],
@@ -630,7 +637,7 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/responsible.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Ответственный:</span>
-                                <span class="view-value"> {{ superior.name || 'Не назначен'}}</span>
+                                <span class="view-value" [class.link] = "superior.id" (click)="openUser()"> {{ superior.name || 'Не назначен'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/status.png)'"></div>
@@ -1015,7 +1022,7 @@ export class TabUserComponent implements OnInit, AfterViewInit {
 
         this.updateArrays();
 
-        this._userService.list("MANAGER", null, "").subscribe(managers => {
+        this._userService.list(null, null, "").subscribe(managers => {
             for (let m of managers) {
                 this.superiorOpts.push({
                     value: m.id,
@@ -1306,5 +1313,12 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         ];
 
         this.getAddressStr();
+    }
+
+    openUser(){
+        if(this.superior.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('user', {user: this.superior});
+        }
     }
 }

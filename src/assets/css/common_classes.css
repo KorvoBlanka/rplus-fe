@@ -131,7 +131,10 @@
 a {
   text-decoration: none;
   color: #0575b5;
-  /*color: #004f8a;*/
+}
+
+a:hover {
+ text-decoration: underline;
 }
 
 .selected a {
@@ -179,4 +182,13 @@ textarea:focus {
     height: 17px;
     display: block;
     float: left;
+}
+
+.link{
+    color: #0575b5 !important;
+    cursor: hand;
+}
+
+.link:hover{
+    text-decoration: underline;
 }

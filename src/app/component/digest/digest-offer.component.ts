@@ -21,6 +21,11 @@ import {Offer} from '../../class/offer';
             padding: 5px 0;
         }
 
+        .billet:hover {
+            background-color: #f5f3f3;
+            cursor: hand;
+        }
+
         .billet.selected {
             background-color: #157ad3;
             color: #fff !important;

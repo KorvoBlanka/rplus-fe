@@ -6,7 +6,7 @@ import {HubService} from '../../service/hub.service';
 
 @Component({
     selector: 'digest-column-chart',
-    inputs: ['data', 'header', 'hard_data' , 'height', 'result', 'graph_width', 'width'],
+    inputs: ['data', 'header', 'hard_data' , 'height', 'result', 'width'],
     styles: [`
         .container {
             background-color: white;
@@ -17,6 +17,7 @@ import {HubService} from '../../service/hub.service';
             width: 100%;
             height: 100%;
             overflow: hidden;
+            min-width: 285px;
         }
         .head{
             text-transform: uppercase;
@@ -24,36 +25,6 @@ import {HubService} from '../../service/hub.service';
             margin: 7px 0 20px 10px;
             position: relative;
             z-index: 10;
-        }
-        .chart{
-            margin: 0 10px;
-        }
-        .chart>div{
-            width: 100%;
-            height: inherit;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .chart .label{
-            font-size: 12px;
-            color: rgba(101, 101, 101, 0.81);
-        }
-
-        .chart .column{
-            height: inherit;
-            background-color: #AB47BC;
-            margin-bottom: 2px;
-            align-items: center;
-            display: flex;
-            padding: 0;
-        }
-
-        .chart .column>div{
-            background-color: #EDE7F6;
-            height: inherit;
-            line-height: 20px;
-            position: relative;
         }
 
         .total{
@@ -91,29 +62,61 @@ import {HubService} from '../../service/hub.service';
             color: green;
         }
 
+        .table{
+            height: calc(100% - 56px);
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 20px);
+            margin-left: 10px;
+            justify-content: space-between;
+        }
+
+        .row{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            margin-bottom: 3px;
+        }
+
+        .label{
+            font-size: 12px;
+            color: rgba(101, 101, 101, 0.81);
+            width: 40%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .column{
+            background-color: #AB47BC;
+            align-items: center;
+            display: flex;
+            width: 60%;
+            height: 100%;
+        }
+
+        .column>div{
+            background-color: #EDE7F6;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
     `],
     template: `
-        <div class="container" (window:resize)="resize()">
+        <div class="container">
             <div class="head">{{header}}</div>
-            <div style=" height: calc(100% - 74px);">
-                <div class="chart" id={{chartID}}>
-                    <table cellspacing = "0" width="100%">
-                    <tr *ngFor="let dt of data" style="width: calc(100% - 20px);">
-                        <td class="label"  style="padding: 0;">
-                            <div [style.height]="graphHeight" [style.width]="graph_width*0.4" style="overflow: hidden;text-overflow: ellipsis;"
-                            >{{dt[0]}}
+            <div class="table">
+                    <div *ngFor="let dt of data" class="row" [style.height]>
+                        <div class="label"> {{dt[0]}} </div>
+                        <div class="column">
+                            <span style="position: absolute;font-size: 10px;color: black;margin-left: 5px;z-index: 3;" *ngIf="dt[1] >= 13">{{dt[1] + '%'}}</span>
+                            <div  [style.width]="dt[1]+'%'">
+                                <div style="color: white;font-size: 10px;position: absolute;right: -23px;" *ngIf="dt[1] <= 87">{{(100-dt[1]) + '%'}}</div>
                             </div>
-                        </td>
-                        <td class="column" [style.width]="graph_width*0.6"  [style.height]="graphHeight" style="padding: 0;">
-                            <span style="position: absolute; font-size: 10px; color: black; margin-left: 5px;">{{dt[1]+ "%"}}</span>
-                            <div [style.width]="calcWidth(dt[1])" [style.height]="graphHeight">
-                                <span style="color: white; font-size: 10px; margin-left: 5px;position: absolute;">{{(100-dt[1])+'%'}}</span>
-                            </div>
-
-                        </td>
-                    </tr>
-                    </table>
-                </div>
+                        </div>
+                    </div>
             </div>
             <div class="total" *ngIf="result">
                 <div>{{result[0]}}</div>
@@ -122,27 +125,21 @@ import {HubService} from '../../service/hub.service';
                     [class.red]="result[1] < 0"  [class.icon_minus]="result[1] < 0" [class.icon_arrow_bottom]="result[1] < 0"
                 >{{result[1]}}</div>
             </div>
-
         </div>
     `
 })
 
 export class DigestColumnChartComponent implements OnInit, OnChanges {
-    chartID: string = "Chart"+Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
     hard_data: boolean = false;
     data: any[]= [];
     height: string = "160px";
-    width: string = "300px"
-    graph_width = 100;
-    graphHeight: number;
+    width: string = "300px";
 
     constructor(private _hubService: HubService) {
     };
 
     ngOnInit() {
-        setTimeout(() =>{
-            this.resize();
-        },10);
+
     }
 
     ngOnChanges(){
@@ -151,22 +148,6 @@ export class DigestColumnChartComponent implements OnInit, OnChanges {
 
     abs(num: number){
         return Math.abs(num);
-    }
-
-    calcWidth(num: number){
-        return ""+Math.floor(this.graph_width*num/100)+'px';
-    }
-
-    resize(){
-        let container = document.getElementById(this.chartID).parentElement;
-        if(container){
-            let containerHeight = container.parentElement.clientHeight;
-            let containerWidth = container.parentElement.clientWidth;
-            console.log(container.parentElement.clientWidth);
-            this.graphHeight = Math.floor((containerHeight - 74)/this.data.length - 2);
-            this.graph_width = Math.floor(containerWidth - 30);
-
-        }
     }
 
 }

@@ -117,6 +117,7 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             height: 19px; /* костыль */
             border: none !important;
+            overflow: visible;
         }
 
         .text-value {
@@ -315,11 +316,6 @@ import {SessionService} from "../../service/session.service";
             overflow: hidden;
         }
 
-        .link{
-            color: #0575b5;
-            cursor: hand;
-        }
-
     `],
     template: `
         <div class="tab-button fixed-button" (click)="toggleLeftPane()">
@@ -514,7 +510,7 @@ import {SessionService} from "../../service/session.service";
                                 <ui-input-line [placeholder] = "'Адрес проживания:'" [value] = "addressStr"
                                     [width] = "'225px'" (onChange)= "parseArray($event, userAddress, true)" [queryTipe]="'address'" (clicked)="showMenu($event)">
                                 </ui-input-line >
-                                <div class='arrow' (click)="showMenu($event)" *ngIf="userAddress[0] && userAddress[0].value !== undefined"></div>
+                                <div class='arrow' (click)="showMenu($event)" *ngIf="userAddress[0] && userAddress[0]?.value"></div>
                                 <ui-multiselect class="view-value edit-value" style=""
                                     [options] = "[
                                         {value: 'KRAY', label: 'Регион'},
@@ -692,7 +688,10 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/email.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">WEB-сайт:</span>
-                                <span class="view-value"> {{ user.webSite_n || "Не указан"}}</span>
+                                <span class="view-value">
+                                    <span *ngIf="!user?.webSite_n" class="view-value">Не указан</span>
+                                    <a *ngIf="user?.webSite_n" [href]="'http://'+user.webSite_n" target="_blank">{{user?.webSite_n}}</a>
+                                </span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/address.png)'"></div>
@@ -961,10 +960,6 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     ch4_data_v1: number;
     ch4_data_v2: number;
 
-    log(e) {
-        //console.log(e);
-    }
-
     getRole(val){
         switch(val){
             case 'AGENT': return null;
@@ -1001,7 +996,6 @@ export class TabUserComponent implements OnInit, AfterViewInit {
     ngOnInit() {
 
         this.user = this.tab.args.user;
-        console.log(this.user);
         var c = this._configService.getConfig();
 
         let loc = this._sessionService.getAccount().location;
@@ -1129,7 +1123,6 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.user.mainEmail_n =  tem > -1 ? this.userEmail[tem].value  : null;
         tem = this.getIndex(this.userEmail, "WORK");
         this.user.workEmail_n =  tem > -1 ? this.userEmail[tem].value  : null;
-        console.log(this.user);
         this._userService.save(this.user).subscribe(user => {
             setTimeout(() => {
                 this.user = user;

@@ -134,6 +134,7 @@ import {SessionService} from "../../service/session.service";
             color: rgb(80, 80, 80);
             margin-top: 5px;
             font-size: 10pt;
+            margin-right: 5px;
         }
 
         .view-value {
@@ -143,6 +144,9 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .edit-value {
@@ -601,7 +605,7 @@ import {SessionService} from "../../service/session.service";
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">ФИО:</span>
-                                    <span class="view-value">  {{ person?.name }} </span>
+                                    <span class="view-value" [class.link] = "person?.id" (click)="openPerson()">{{person?.name  || 'Не указано'}}</span>
                                 </div>
                             </div>
                             <hr  *ngIf='person'>
@@ -620,20 +624,25 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Web-сайт:</span>
-                                <span class="view-value">{{person?.webSite_n }}</span>
+                                <span class="view-value">
+                                    <span *ngIf="!person?.webSite_n" class="view-value">Не указан</span>
+                                    <a *ngIf="person?.webSite_n" [href]="'http://'+person.webSite_n" target="_blank">{{person?.webSite_n}}</a>
+                                </span>
                             </div>
                             <hr *ngIf="person?.organisation_n">
                             <div  *ngIf="person?.organisation_n" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
                             <div  *ngIf="person?.organisation_n" class="view-group" >
                                 <span class="view-label">Организация:</span>
-                                <span class="view-value">{{person?.organisation_n.orgName_n + ' "' + person?.organisation_n.name + '"'}}</span>
+                                <span class="view-value" [class.link] = "person?.organisation_n?.id" (click)="openOrganisation()">
+                                    {{person?.organisation_n.orgName_n}}{{ person?.organisation_n.name ? (' "' +person?.organisation_n.name+ '"') : 'Не указано'}}
+                                </span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/post.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Ответственный:</span>
-                                <span class="view-value"> {{ agent.name }} </span>
+                                <span class="view-value" [class.link] = " agent?.id" (click)="openUser()">{{ agent?.name || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
@@ -1222,5 +1231,26 @@ export class TabRequestComponent {
     openOffer(offer: Offer) {
         var tab_sys = this._hubService.getProperty('tab_sys');
         tab_sys.addTab('offer', {offer: offer});
+    }
+
+    openUser(){
+        if(this.agent.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('user', {user: this.agent});
+        }
+    }
+
+    openOrganisation(){
+        if(this.person.organisation_n.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('organisation', {organisation: this.person.organisation_n});
+        }
+    }
+
+    openPerson(){
+        if(this.person.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('person', {person: this.person});
+        }
     }
 }

@@ -17,6 +17,7 @@ import {HubService} from '../../service/hub.service';
             height: 100%;
             width: 100%;
             overflow: hidden;
+            min-width: 285px;
         }
         .head{
             text-transform: uppercase;
@@ -27,16 +28,6 @@ import {HubService} from '../../service/hub.service';
             height: 40px;
             display: flex;
             justify-content: space-between;
-        }
-        .chart{
-            margin-right: 5px;
-        }
-
-        table{
-            font-size: 12px;
-            color: rgba(101, 101, 101, 0.81);
-            flex: 1 1 calc(50% - 10px);
-            display: block;
         }
 
         .total{
@@ -65,16 +56,47 @@ import {HubService} from '../../service/hub.service';
             top: 0px;
         }
 
-        td>div{
-            height: 13px;
+        .table{
+            height: calc(100% - 56px);
+            display: flex;
+            flex-direction: row;
+            width: calc(100% - 20px);
+            margin-left: 10px;
+            justify-content: space-between;
+        }
+
+        .table > .dates{
+            width: 50%;
+            height: 100%;
+            float: right;
+        }
+
+        .dates > div {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dates > div > div{
+            font-size: 12px;
+            color: rgba(101, 101, 101, 0.81);
+            height: 17px;
             line-height: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chart{
+            width: 50%;
+            display: flex;
+            justify-content: flex-end;
         }
 
         .red{
-            color: red;
+            color: red !important;
         }
         .green{
-            color: green;
+            color: green !important;
         }
 
     `],
@@ -89,27 +111,27 @@ import {HubService} from '../../service/hub.service';
                     >{{abs(result[1])}}</div>
                 </div>
             </div>
-            <div style="margin-left: 10px; height: calc(100% - 58px); display: flex; align-items: center; justify-content: space-between;">
-                <table>
-                    <tr *ngFor="let dat of data">
-                        <td><div>{{dat[0]}}</div></td>
-                        <td><div>{{dat[1]}}</div></td>
-                        <td *ngIf="dat[2]"><div
+            <div class="table">
+                <div class="dates">
+                    <div *ngFor="let dat of data">
+                        <div style="flex: 0 2 100%;">{{dat[0]}}</div>
+                        <div [style.width]="'25%'">{{dat[1]}}</div>
+                        <div *ngIf="dat[2]" [style.width]="'35%'"
                             [class.green]="dat[2] > 0" [class.icon_plus]="dat[2] > 0" [class.icon_arrow_up]="dat[2] > 0"
                             [class.red]="dat[2] < 0"  [class.icon_minus]="dat[2] < 0" [class.icon_arrow_bottom]="dat[2] < 0"
-                        >{{abs(dat[2])}}</div></td>
-                    </tr>
-                </table>
-                <div id={{chartID}}
+                        >
+                            {{abs(dat[2])}}
+                        </div>
+                    </div>
+                </div>
+                <div class="chart"
+                    id={{chartID}}
                     [data]="pie_ChartData"
                     [chartOptions] = "pie_ChartOptions"
                     chartType="PieChart" GoogleChart
-                    class="chart"
                 >
                 </div>
             </div>
-
-
         </div>
     `
 })
@@ -156,12 +178,11 @@ export class DigestPieChartComponent implements OnInit, OnChanges {
             height: this.getSize(),
             pieHole: 0.53,
             legend: 'none',
-            chartArea: {left:7,top:7,width: this.getSize() - 14 ,height: this.getSize() - 14},
+            chartArea: {left:'auto', top: 0, width: this.getSize(), height: this.getSize()},
             pieSliceText: 'none',
             slices: [
                 {color: '#AB47BC'},
                 {color: '#FF7043'},
-                //{color: '#29B6F6'},
                 {color: '#42A5F5'},
                 {color: '#EF5350'},
                 {color: '#5C6BC0'}
@@ -172,13 +193,13 @@ export class DigestPieChartComponent implements OnInit, OnChanges {
     }
 
     getSize(){
-        let container = document.getElementById(this.chartID).parentElement;
-        if(container){
-            let containerHeight = container.clientHeight;
-            let containerWidth = container.clientWidth;
-            if(containerWidth / containerHeight  < 1.77 )
+        let chart_area = document.getElementById(this.chartID);
+        if(chart_area){
+            let containerHeight = chart_area.clientHeight;
+            let containerWidth = chart_area.clientWidth;
+            if(containerWidth > containerHeight)
                 return Math.round(containerHeight);
-            else return Math.round(containerWidth* 0.4);
+            else return Math.round(containerWidth);
         }
         else return 136;
 

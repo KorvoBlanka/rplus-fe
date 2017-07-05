@@ -133,6 +133,7 @@ import {SessionService} from "../../service/session.service";
             color: rgb(80, 80, 80);
             margin-top: 5px;
             font-size: 10pt;
+            margin-right: 5px;
         }
 
         .view-value {
@@ -142,6 +143,9 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .edit-value {
@@ -151,6 +155,7 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             height: 19px; /* костыль */
             border: none !important;
+            overflow: visible;
         }
 
         .text-value {
@@ -507,7 +512,7 @@ import {SessionService} from "../../service/session.service";
                             <span class="view-label pull-left">Ответственный:</span>
                             <ui-slidingMenu class="view-value edit-value"
                                 [options] = "agentOpts"
-                                [value]="agent?.id"
+                                [value]="organisation.agent_n?.id"
                                 (onChange)="agentChanged($event)"
                             >
                             </ui-slidingMenu>
@@ -639,7 +644,10 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">WEB-сайт:</span>
-                                <span class="view-value"> <a [href]="'http://'+organisation.webSite_n" target="_blank">{{organisation.webSite_n}}</a></span>
+                                <span class="view-value">
+                                    <span *ngIf="!organisation?.webSite_n" class="view-value">Не указан</span>
+                                    <a *ngIf="organisation?.webSite_n" [href]="'http://'+organisation.webSite_n" target="_blank">{{organisation?.webSite_n}}</a>
+                                </span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/requisites.png)'"></div>
@@ -651,20 +659,20 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Руководитель:</span>
-                                <span class="view-value">{{organisation.head_n?.name}}</span>
+                                <span class="view-value" [class.link] = "organisation.head_n?.id" (click)="openPerson(organisation.head_n)">{{organisation.head_n?.name  || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Контактное лицо:</span>
-                                <span class="view-value">{{organisation.contact_n?.name}}</span>
+                                <span class="view-value" [class.link] = "organisation.contact_n?.id" (click)="openPerson(organisation.contact_n)">{{organisation.contact_n?.name  || 'Не указано'}}</span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Ответственный:</span>
-                                <span class="view-value"> </span>
+                                <span class="view-value" [class.link] = "organisation.agent_n?.id" (click)="openUser()">{{organisation.agent_n?.name || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
@@ -1086,11 +1094,12 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
         this.organisation.other_n =  tem > -1 ? this.orgRequisit[tem].value : null;
 
         this._organisationService.save(this.organisation).subscribe(org => {
+            console.log(this.organisation);
             setTimeout(() => {
                 this.organisation.copyFields(org);
             });
+            this.toggleEdit();
         });
-        this.toggleEdit();
 
         setTimeout(()=> {
             this.updateArrays();
@@ -1171,12 +1180,11 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
     }
 
     agentChanged(e) {
-        /*this.organisation.agentId = e.selected.value;
-        if (this.organisation.agentId != null) {
-            this._userService.get(this.organisation.agentId).subscribe(agent => {
-                this.organisation.agent = agent;
+        if (e.selected.value != null) {
+            this._userService.get(e.selected.value).subscribe(agent => {
+                this.organisation.agent_n = agent;
             });
-        }*/
+        }
     }
 
     showMenu(event){
@@ -1289,5 +1297,19 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
         ];
 
         this.getAddressStr();
+    }
+
+    openUser(){
+        if(this.organisation.agent_n.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('user', {user: this.organisation.agent_n});
+        }
+    }
+
+    openPerson(pers: Person){
+        if(pers.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('person', {person: pers});
+        }
     }
 }

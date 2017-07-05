@@ -1515,7 +1515,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">ФИО:</span>
-                                    <span class="view-value">  {{ offer.person?.name }} </span>
+                                    <span class="view-value" [class.link] = "offer.person?.id" (click)="openPerson()">{{offer.person?.name  || 'Не указано'}}</span>
                                 </div>
                             </div>
                             <div *ngIf='offer.organisation'>
@@ -1553,20 +1553,25 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Web-сайт:</span>
-                                <span class="view-value">{{offer.person?.webSite_n }}</span>
+                                <span class="view-value">
+                                    <span *ngIf="!offer.person?.webSite_n" class="view-value">Не указан</span>
+                                    <a *ngIf="offer.person?.webSite_n" [href]="'http://'+offer.person.webSite_n" target="_blank">{{offer.person?.webSite_n}}</a>
+                                </span>
                             </div>
                             <hr *ngIf="offer.person?.organisation_n">
                             <div  *ngIf="offer.person?.organisation_n" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
                             <div  *ngIf="offer.person?.organisation_n" class="view-group" >
                                 <span class="view-label">Организация:</span>
-                                <span class="view-value">{{offer.person?.organisation_n.orgName_n + ' "' + offer.person?.organisation_n.name + '"'}}</span>
+                                <span class="view-value" [class.link] = "offer.person?.organisation_n?.id" (click)="openOrganisation()">
+                                    {{offer.person?.organisation_n?.orgName_n}}{{ offer.person?.organisation_n?.name ? (' "' +offer.person?.organisation_n?.name+ '"') : 'Не указана'}}
+                                </span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Ответственный:</span>
-                                <span class="view-value"> {{ offer.agent?.name }} </span>
+                                <span class="view-value" [class.link] = " offer.agent?.id" (click)="openUser()">{{ offer.agent?.name || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/offer_icon/contract.png)'"></div>
@@ -3239,14 +3244,25 @@ export class TabOfferComponent implements OnInit {
         // scroll to object ???
     }
 
-    openPerson(person: Person) {
-        var tab_sys = this._hubService.getProperty('tab_sys');
-        tab_sys.addTab('person', {person: person});
+    openPerson() {
+        if(this.offer.person.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('person', {person: this.offer.person});
+        }
     }
 
-    openUser(user: User) {
-        var tab_sys = this._hubService.getProperty('tab_sys');
-        tab_sys.addTab('user', {user: user});
+    openUser() {
+        if(this.offer.agent.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('user', {user: this.offer.agent});
+        }
+    }
+
+    openOrganisation(){
+        if(this.offer.person.organisation_n.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('organisation', {organisation: this.offer.person.organisation_n});
+        }
     }
 
     countMainRate(){

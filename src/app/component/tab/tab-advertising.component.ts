@@ -96,13 +96,16 @@ import {SessionService} from "../../service/session.service";
             margin-bottom: 0;
         }
 
-        .work_list, .work_list1{
-            width: calc(100% - 30px);
+        .prework{
+            overflow: auto;
+            width: 100%;
             height: calc(100% - 117px);
+        }
+
+        .work_list, .work_list1{
             background: #f8f8f8;
-            overflow-y: auto;
-            position: absolute;
-            overflow-x: hidden;
+            min-width: 1500px;
+            min-height: 630px;
         }
 
         .work_list > .left_panel{
@@ -240,6 +243,11 @@ import {SessionService} from "../../service/session.service";
 
         .work_list1 table tbody tr{
             color: #828282;
+        }
+
+        table tbody tr:hover{
+            background-color: #f5f3f3 !important;
+            cursor: hand;
         }
 
         .work_list1 .table1 tbody tr{
@@ -416,7 +424,7 @@ import {SessionService} from "../../service/session.service";
             </div>
         </div>
         <hr class="underline">
-        <div *ngIf="activeMenu == 0" class="work_list" [style.max-height] = "screenHeiht">
+        <div class="prework"><div *ngIf="activeMenu == 0" class="work_list" [style.max-height] = "screenHeiht">
             <div class="left_panel">
                 <table>
                     <div class="head">
@@ -464,8 +472,7 @@ import {SessionService} from "../../service/session.service";
                         ['Малосемейки', 200],
                         ['Комнаты', 170],
                         ['Дома', 90],
-                        ['Коттеджи', 90],
-                        ['Коммерческая', 110]
+                        ['Коттеджи', 90]
                     ]"
                     [hard_data]="false"
                     [result] = "['870']"
@@ -480,8 +487,7 @@ import {SessionService} from "../../service/session.service";
                         ['Кировский'      , 222],
                         ['Краснофлотский' , 120],
                         ['Индустриальный' , 69],
-                        ['Центральный'    , 150],
-                        ['Пригород' , 69]
+                        ['Центральный'    , 150]
                     ]"
                     [hard_data]="false"
                     [result] = "['1500']"
@@ -511,8 +517,7 @@ import {SessionService} from "../../service/session.service";
                         ['Малосемейки', 24],
                         ['Комнаты', 30],
                         ['Дома', 8],
-                        ['Коттеджи', 10],
-                        ['Коммерческая', 2]
+                        ['Коттеджи', 10]
                     ]"
                     [hard_data]="false"
                     [result] = "['95']"
@@ -730,6 +735,7 @@ import {SessionService} from "../../service/session.service";
         </div>
         <div *ngIf="activeMenu == 2" class="work_list1">
 
+        </div>
         </div>
     `
 })

@@ -79,6 +79,7 @@ import {SessionService} from "../../service/session.service";
             color: rgb(80, 80, 80);
             margin-top: 5px;
             font-size: 10pt;
+            margin-right: 5px;
         }
 
         .view-value {
@@ -88,6 +89,9 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             margin-top: 5px;
             height: 19px; /* костыль */
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .edit-value {
@@ -97,6 +101,7 @@ import {SessionService} from "../../service/session.service";
             font-size: 10pt;
             height: 19px; /* костыль */
             border: none !important;
+            overflow: visible;
         }
 
         .text-value {
@@ -428,7 +433,7 @@ import {SessionService} from "../../service/session.service";
                             <span class="view-label pull-left">Ответственный:</span>
                             <ui-slidingMenu class="view-value edit-value"
                                 [options] = "agentOpts"
-                                [value]="agent?.id"
+                                [value]="person.userId"
                                 (onChange)="agentChanged($event)"
                             >
                             </ui-slidingMenu>
@@ -572,14 +577,17 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">WEB-сайт:</span>
-                                <span class="view-value">{{person.webSite_n}}</span>
+                                <span class="view-value">
+                                    <span *ngIf="!person?.webSite_n" class="view-value">Не указан</span>
+                                    <a *ngIf="person?.webSite_n" [href]="'http://'+person.webSite_n" target="_blank">{{person?.webSite_n}}</a>
+                                </span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Ответственный:</span>
-                                <span class="view-value">{{ agent?.name }} </span>
+                                <span class="view-value" [class.link] = " person.agent_n?.id" (click)="openUser()">{{ person.agent_n?.name || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
@@ -627,8 +635,8 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Организация:</span>
-                                <span class="view-value">
-                                    {{getTypeName(person.organisation_n?.orgName_n)}} &laquo;{{ person.organisation_n?.name }}&raquo;
+                                <span class="view-value" [class.link] = "person.organisation_n?.id" (click)="openOrganisation()">
+                                    {{getTypeName(person.organisation_n?.orgName_n)}}{{ person?.organisation_n?.name ? (' "' +person?.organisation_n?.name+ '"') : 'Не указана'}}
                                 </span>
                             </div>
 
@@ -975,7 +983,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
         if (this.person.userId != null) {
             this._userService.get(this.person.userId).subscribe(agent => {
-                this.agent = agent;
+                this.person.agent_n = agent;
             });
         }
 
@@ -1022,7 +1030,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.person.userId = e.selected.value;
         if (this.person.userId != null) {
             this._userService.get(this.person.userId).subscribe(agent => {
-                this.agent = agent;
+                this.person.agent_n = agent;
             });
         }
     }
@@ -1246,6 +1254,20 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
             this.addressStr += this.person.house_n !== undefined ? ", " + this.person.house_n : '';
             if(this.personAddress.length == 0)
                 this.addressStr = '';
+    }
+
+    openUser(){
+        if(this.person.agent_n.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('user', {user: this.person.agent_n});
+        }
+    }
+
+    openOrganisation(){
+        if(this.person.organisation_n.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('organisation', {organisation: this.person.organisation_n});
+        }
     }
 
 }

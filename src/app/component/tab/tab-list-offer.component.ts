@@ -180,6 +180,7 @@ import {Account} from "../../class/account";
         }
 
         .suggestions {
+            left: 0px;
             min-width: 160px;
             margin-top: 27px;
             padding: 5px 0;
@@ -787,7 +788,7 @@ export class TabListOfferComponent {
             this.sgList = [];
             if (lp.length > 0) {
                 // запросить варианты
-                this._suggestionService.list(this.searchQuery).subscribe(sgs => {
+                this._suggestionService.listKeywords(this.searchQuery).subscribe(sgs => {
                     sgs.forEach(e => {
                         this.sgList.push(e);
                     })

@@ -35,7 +35,7 @@
 
 .icon-person::before {
     content: " ";
-    background-image: url("assets/context_menu/appoint.png");
+    background-image: url("/assets/context_menu/appoint.png");
     background-size: contain;
       width: 15px;
       height: 15px;
@@ -54,7 +54,7 @@
 
 .icon-task:before {
     content: " ";
-    background-image: url("assets/context_menu/task.png");
+    background-image: url("/assets/context_menu/task.png");
     background-size: contain;
       width: 15px;
       height: 15px;
@@ -65,7 +65,7 @@
 
 .icon-advert:before {
     content: " ";
-    background-image: url("assets/context_menu/adv.png");
+    background-image: url("/assets/context_menu/adv.png");
     background-size: contain;
       width: 15px;
       height: 15px;
@@ -124,7 +124,7 @@
 
 .icon-edit:before {
     content: " ";
-    background-image: url("assets/context_menu/stage.png");
+    background-image: url("/assets/context_menu/stage.png");
     background-size: contain;
       width: 15px;
       height: 15px;
@@ -147,7 +147,7 @@
 
 .icon-dcheck:before {
   content: " ";
-  background-image: url("assets/context_menu/check.png");
+  background-image: url("/assets/context_menu/check.png");
   background-size: contain;
     width: 15px;
     height: 15px;
@@ -193,7 +193,7 @@
 
 .icon-document:before {
     content: " ";
-    background-image: url("assets/context_menu/open.png");
+    background-image: url("/assets/context_menu/open.png");
     background-size: contain;
     width: 15px;
     height: 15px;
@@ -204,7 +204,7 @@
 
 .icon-trash:before {
     content: " ";
-    background-image: url("assets/context_menu/remove.png");
+    background-image: url("/assets/context_menu/remove.png");
     background-size: contain;
     width: 15px;
     height: 15px;

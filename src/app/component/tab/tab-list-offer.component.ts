@@ -180,6 +180,7 @@ import {Account} from "../../class/account";
         }
 
         .suggestions {
+            left: 0px;
             min-width: 160px;
             margin-top: 27px;
             padding: 5px 0;
@@ -468,12 +469,6 @@ export class TabListOfferComponent {
 
         this.page = 0;
         this.listOffers();
-
-        this.agentOpts.push({value: 'all', label: 'Все объекты', bold: true});
-        this.agentOpts.push({value: 'all_agents', label: 'Все агенты', bold: true});
-        this.agentOpts.push({value: 'realtor', label: 'Посредник', bold: true});
-        this.agentOpts.push({value: 'private', label: 'Собственник', bold: true});
-        this.agentOpts.push({value: 'my', label: 'Мои объекты', bold: true});
 
         this._userService.list(null, null, "").subscribe(agents => {
             for (let i = 0; i < agents.length; i++) {
@@ -787,7 +782,7 @@ export class TabListOfferComponent {
             this.sgList = [];
             if (lp.length > 0) {
                 // запросить варианты
-                this._suggestionService.list(this.searchQuery).subscribe(sgs => {
+                this._suggestionService.listKeywords(this.searchQuery).subscribe(sgs => {
                     sgs.forEach(e => {
                         this.sgList.push(e);
                     })

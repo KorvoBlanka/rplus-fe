@@ -114,8 +114,12 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
                     this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
                     break;
                 case 'draw_allowed':
+                    console.log(this.draw_allowed);
                     if (!this.draw_allowed) {
                         this.polygone.setMap(null);
+                        this.map.setOptions({draggable: true});
+                    } else {
+                        this.map.setOptions({draggable: false});
                     }
                 case 'polygone_points':
                     if (this.polygone_points) {
@@ -259,14 +263,15 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     initDrawer() {
         var _this = this;
         google.maps.event.addListener(this.map, 'mousemove', function (e) {
+            console.log("mm");
             if (_this.is_drawing == true) {
                 _this.polyline.getPath().push(e.latLng);
             }
         });
 
         google.maps.event.addListener(this.map, 'mousedown', function () {
+            console.log("md");
             if (_this.draw_allowed) {
-                _this.map.setOptions({draggable: false});
                 _this.is_drawing = true;
 
                 if (_this.polyline) {
@@ -284,12 +289,12 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
         });
 
         google.maps.event.addListener(this.map, 'mouseup', function () {
-
+            console.log("mu");
             _this.is_drawing = false;
-            _this.map.setOptions({draggable: true});
 
             if (_this.draw_allowed) {
                 _this.draw_allowed = false;
+                _this.map.setOptions({draggable: true});
 
                 var pa = [];
                 _this.polyline.getPath().forEach(function forEach(ll) {

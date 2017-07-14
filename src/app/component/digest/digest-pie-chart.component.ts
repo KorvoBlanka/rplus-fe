@@ -10,7 +10,7 @@ import {HubService} from '../../service/hub.service';
     styles: [`
         .container {
             background-color: white;
-            font-size: 15px;
+            font-size: 16px;
             position: relative;
             display: inline-block;
             min-height: 159px;
@@ -22,16 +22,16 @@ import {HubService} from '../../service/hub.service';
         .head{
             text-transform: uppercase;
             color: #4c4c4c;
-            margin: 7px 0 0px 10px;
+            margin: 12px 0 0px 15px;
             position: relative;
             z-index: 10;
-            height: 40px;
+            height: 48px;
             display: flex;
             justify-content: space-between;
         }
 
         .total{
-            font-size: 17pt;
+            font-size: 20pt;
             color: rgba(0, 0, 0, 0.67);
             display: flex;
             align-items: center;
@@ -57,7 +57,7 @@ import {HubService} from '../../service/hub.service';
         }
 
         .table{
-            height: calc(100% - 56px);
+            height: calc(100% - 72px);
             display: flex;
             flex-direction: row;
             width: calc(100% - 20px);

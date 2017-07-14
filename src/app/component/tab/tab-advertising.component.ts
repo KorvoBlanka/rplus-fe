@@ -106,6 +106,7 @@ import {SessionService} from "../../service/session.service";
             background: #f8f8f8;
             min-width: 1500px;
             min-height: 630px;
+            height: 100%;
         }
 
         .work_list > .left_panel{
@@ -131,6 +132,7 @@ import {SessionService} from "../../service/session.service";
             justify-content: space-between;
             align-content: space-between;
             overflow: hidden;
+            background-color: #f6f8f0;
         }
 
         .work_list > .central_panel{
@@ -159,7 +161,8 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list1 >.right_panel{
-            width: 35%;
+            width: calc(35% - 3px);
+            margin-left: 3px;
             height: 100%;
             float: left;
             overflow: hidden;
@@ -251,7 +254,7 @@ import {SessionService} from "../../service/session.service";
         }
 
         .work_list1 .table1 tbody tr{
-            height: 30px;
+            height: 35px;
         }
 
         .work_list1 .table1 tbody tr:nth-child(odd){
@@ -284,7 +287,7 @@ import {SessionService} from "../../service/session.service";
         .work_list table tbody{
             display: block;
             overflow: auto;
-            height: calc(100% - 20px);
+            height: calc(100% - 65px);
         }
 
         .work_list1 table tbody{
@@ -316,13 +319,13 @@ import {SessionService} from "../../service/session.service";
         .work_list .left_panel table .text{
             text-transform: uppercase;
             color: #4c4c4c;
-            margin: 7px 0 0px 10px;
+            margin: 12px 0 0px 15px;
             position: relative;
             z-index: 10;
-            height: 40px;
+            height: 46px;
             display: flex;
             justify-content: space-between;
-            font-size: 15px;
+            font-size: 16px;
         }
 
 
@@ -424,7 +427,7 @@ import {SessionService} from "../../service/session.service";
             </div>
         </div>
         <hr class="underline">
-        <div class="prework"><div *ngIf="activeMenu == 0" class="work_list" [style.max-height] = "screenHeiht">
+        <div class="prework"><div *ngIf="activeMenu == 0" class="work_list">
             <div class="left_panel">
                 <table>
                     <div class="head">
@@ -665,11 +668,11 @@ import {SessionService} from "../../service/session.service";
             <!------------------------------------------------------------------------------------------------------------------->
             <div class="right_panel">
                 <table class="table1">
-                    <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
-                        <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
+                    <div style="height: 58px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
+                        <div style="text-transform: uppercase; color: #4c4c4c; margin: 12px 0 25px 15px; font-size: 16px;">
                             Конверсия рекламы
                         </div>
-                        <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 19pt;">40%</div>
+                        <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 20pt;">40%</div>
                     </div>
                     <thead>
                         <tr>
@@ -697,10 +700,10 @@ import {SessionService} from "../../service/session.service";
 
                 <table class="table2" style="margin-top: 3px;">
                     <div style="height: 60px; display: flex; background-color: white; width: 100%; justify-content: space-between;">
-                        <div style="text-transform: uppercase; color: #4c4c4c; margin: 7px 0 20px 10px; font-size: 13pt;">
+                        <div style="text-transform: uppercase; color: #4c4c4c; margin: 12px 0 20px 15px; font-size: 16px;">
                             Лидеры спроса
                         </div>
-                        <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 19pt;"></div>
+                        <div style="text-transform: uppercase;color: #008000;margin: 2px 30 20px;font-size: 20pt;"></div>
                     </div>
                     <thead>
                         <tr>
@@ -762,7 +765,6 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     sort: any = {};
     searchQuery: string = "";
     searchArea: any[] = [];
-    screenHeiht = window.screen.height - 150;
 
     advArray = [
         ['Авито', 500, 400, 329, 230, 150, 50],
@@ -792,7 +794,7 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.tab.header="Реклама";
+        this.tab.header="РЕКЛАМА";
         this.listOffers();
     }
 
@@ -811,7 +813,6 @@ export class TabAdvertisingComponent implements OnInit, AfterViewInit {
     }
 
     listOffers() {
-
         this._offerService.list(this.page, this.perPage, this.source, this.filter, this.sort, this.searchQuery, this.searchArea).subscribe(
             data => {
 

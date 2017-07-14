@@ -22,7 +22,8 @@ import {HubService} from '../../service/hub.service';
         .head{
             text-transform: uppercase;
             color: #4c4c4c;
-            margin: 7px 0 20px 10px;
+            margin: 12px 0 0 15px;
+            height: 48px;
             position: relative;
             z-index: 10;
         }
@@ -63,7 +64,7 @@ import {HubService} from '../../service/hub.service';
         }
 
         .table{
-            height: calc(100% - 56px);
+            height: calc(100% - 72px);
             display: flex;
             flex-direction: column;
             width: calc(100% - 20px);

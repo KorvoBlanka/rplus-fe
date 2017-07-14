@@ -27,6 +27,7 @@ import {TabRequestComponent} from "./component/tab/tab-request.component";
 import {TabListUserComponent} from "./component/tab/tab-list-user.component";
 import {TabUserComponent} from "./component/tab/tab-user.component";
 import {TabAdvertisingComponent} from "./component/tab/tab-advertising.component";
+import {TabActivityComponent} from "./component/tab/tab-activity.component";
 import {UISelect} from "./component/ui/ui-select.component";
 import {UIMultiSelect} from "./component/ui/ui-multiselect.component";
 import {UIInputLine} from "./component/ui/ui-input-line.component";
@@ -35,6 +36,7 @@ import {UISlidingMenu} from "./component/ui/ui-slidingMenu.component";
 import {OfferTableComponent} from "./component/offer-table.component";
 import {DigestOfferComponent} from "./component/digest/digest-offer.component";
 import {DigestOfferTableComponent} from "./component/digest/digest-offer-table.component";
+import {DigestOfferTable2Component} from "./component/digest/digest-offer-table2.component";
 import {GoogleMapComponent, GoogleMapMarkerComponent} from "./component/google-map.component";
 import {UITabs} from "./component/ui/ui-tabs.component";
 import {UITab} from "./component/ui/ui-tab.component";
@@ -110,9 +112,11 @@ const appRoutes: Routes = [
         TabListUserComponent,
         TabUserComponent,
         TabAdvertisingComponent,
+        TabActivityComponent,
         OfferTableComponent,
         DigestOfferComponent,
         DigestOfferTableComponent,
+        DigestOfferTable2Component,
         GoogleMapComponent,
         GoogleMapMarkerComponent,
 

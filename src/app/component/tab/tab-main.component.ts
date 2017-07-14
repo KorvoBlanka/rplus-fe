@@ -17,9 +17,9 @@ import {User} from "../../class/user";
             overflow: hidden;
             background-color: #062141;
         }
-        
-        
-        
+
+
+
         .tile-group {
             margin-left: 80px;
             min-width: 80px;
@@ -116,6 +116,13 @@ import {User} from "../../class/user";
                         <span class="icon icon-adver"></span>
                     </div>
                     <span class="tile-label">Реклама</span>
+                </div>
+
+                <div class="tile bg-maroon fg-white" (click)="turnTo('activity', {})">
+                    <div class="tile-content iconic">
+                        <span class="icon icon-adver"></span>
+                    </div>
+                    <span class="tile-label">Активность</span>
                 </div>
 
             </div>

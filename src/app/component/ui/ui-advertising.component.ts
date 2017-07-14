@@ -26,18 +26,18 @@ import {Output,Input, EventEmitter} from '@angular/core';
                     <td width = '41%'>
                         <div class="name">{{platform.name}}</div>
                     </td>
-                    <td width = '18%'>
-                        <div class='button' (click)="platform.select = !platform.select">
+                    <td width = '18%' (click)="platform.select = !platform.select">
+                        <div class='button'>
                             <div *ngIf="platform.select"></div>
                         </div>
                     </td>
-                    <td width = '23%'>
-                        <div class='button' (click)="platform.select2 = !platform.select2">
+                    <td width = '23%' (click)="platform.select2 = !platform.select2">
+                        <div class='button' >
                             <div *ngIf="platform.select2"></div>
                         </div>
                     </td>
-                    <td width = '18%'>
-                        <div class='button' (click)="platform.select3 = !platform.select3">
+                    <td width = '18%' (click)="platform.select3 = !platform.select3">
+                        <div class='button' >
                             <div *ngIf="platform.select3"></div>
                         </div>
                     </td>
@@ -69,7 +69,7 @@ import {Output,Input, EventEmitter} from '@angular/core';
       .button{
           width: 10px;
           height: 10px;
-          margin: 5 auto;
+          margin: 10 auto;
           background-color: #d4d4d4;
           border: 1px solid #b2b2b2;
           border-radius: 2px;
@@ -77,7 +77,7 @@ import {Output,Input, EventEmitter} from '@angular/core';
       .button > div{
           width: 15px;
           height: 15px;
-          background-image: url(res/tick.png);
+          background-image: url(assets/tick1.png);
           background-size: cover;
           position: relative;
           top: -6px;
@@ -105,13 +105,9 @@ import {Output,Input, EventEmitter} from '@angular/core';
       tr{
           width: calc(100% - 20px);
           display: flex;
-          height: 24px;
+          height: 35px;
           padding: 0 10px 0 10px;
-          line-height: 24px;
-      }
-
-      thead{
-          margin-top: 7px;
+          line-height: 35px;
       }
 
       tbody{
@@ -122,6 +118,7 @@ import {Output,Input, EventEmitter} from '@angular/core';
       thead tr{
           justify-content: center;
           height: 22px;
+          line-height: 22px;
       }
 
       thead tr td {
@@ -158,13 +155,13 @@ import {Output,Input, EventEmitter} from '@angular/core';
       .text{
           text-transform: uppercase;
           color: #4c4c4c;
-          margin: 7px 0 0px 10px;
+          margin: 12px 0 0px 15px;
           position: relative;
           z-index: 10;
-          height: 40px;
+          height: 43px;
           display: flex;
           justify-content: space-between;
-          font-size: 15px;
+          font-size: 16px;
       }
       .edit{
           flex: 0 0 100px;

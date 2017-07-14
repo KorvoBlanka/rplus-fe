@@ -7,7 +7,7 @@ import {Offer} from '../../class/offer';
 
 
 @Component({
-    selector: 'digest-offer-table',
+    selector: 'digest-offer-table2',
     inputs: ['offer' , 'withPhoto'],
     styles: [`
         .billet {
@@ -15,10 +15,10 @@ import {Offer} from '../../class/offer';
             color: #696969;
             font-weight: 200;
             font-size: 14px;
-            height: 50px;
+            height: 80px;
             position: relative;
-            margin: 3px 0;
-            padding: 5px 0;
+            margin: 5px 0;
+            cursor: hand;
         }
 
         .billet.selected {
@@ -32,7 +32,7 @@ import {Offer} from '../../class/offer';
 
         .describe{
             color: black;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .healthbar {
@@ -53,10 +53,11 @@ import {Offer} from '../../class/offer';
         }
 
         .timestamp {
-            position: absolute;
-            top: 6px; right: 9px;
             font-size: 11px;
             color: #bbb;
+            width: 100%;
+            height: 14px;
+            text-align: end;
         }
 
         .compact_owner {
@@ -80,7 +81,7 @@ import {Offer} from '../../class/offer';
             overflow: hidden;
             width: 100%;
             display: block;
-            height: 17px;
+            height: 15px;
             font-size: 9pt;
             color: #807982;
             float: left;
@@ -92,35 +93,35 @@ import {Offer} from '../../class/offer';
         }
     `],
     template: `
-        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}">
+        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}" (dblclick)="open()">
             <div>
-                <img *ngIf="withPhoto" src="{{ offer.photoUrl?offer.photoUrl[0]:'assets/no_photo.png' }}" style="height: 50px;width: 74px;float: left;margin: 0 8px;">
                 <div class="describe" style=" margin-left: 10px;">
-                    <span style="font-style: italic;  font-size: 9pt; color: #002E5D;"
+                    <span style="font-size: 12px;"
                         *ngIf ="offer.typeCode"
-                    >{{ typeCodeOptions[offer.typeCode].split(" ")[0] }}
+                    >{{ typeCodeOptions[offer.typeCode].split(" ")[0] }},
+                    {{ offer.roomsCount  === undefined ? "" : offer.roomsCount + 'комн., ' }}
+                    {{ offer.floor  === undefined ? "?" :  offer.floor}}/{{ offer.floorsCount  === undefined ? "?" : offer.floorsCount}}
+                    {{ offer.squareTotal  === undefined ? "?" : offer.squareTotal }}/{{ offer.squareLiving  === undefined ? "?" : offer.squareLiving }}/{{ offer.squareKitchen  === undefined ? "?" : offer.squareKitchen }}
                     </span>
-                    {{ (offer.locality?.split(",")[0] || offer.city_n ) === undefined ? " " : ", "+(offer.locality?.split(",")[0] || offer.city_n) }}<br>
+                    <br>
                     <span *ngIf="(offer.locality || ' ').split(',')[1]">{{ (offer.locality || " ").split(",")[1] }}</span >
                     <div style="width: 100%; height: 17px; text-overflow: ellipsis;white-space: nowrap;overflow: hidden;
-                            float: left; line-height: 17px;" [class.withPh]= "withPhoto">
-                            {{ (offer.street_n || offer.address) === undefined ? "" : (offer.street_n || offer.address) }}
+                            float: left; line-height: 14px;" [class.withPh]= "withPhoto">
+                            {{ (offer.locality?.split(",")[0] || offer.city_n ) === undefined ? " " : ""+(offer.locality?.split(",")[0] || offer.city_n) }}
+                            {{ (offer.street_n || offer.address) === undefined ? "" : (", "+(offer.street_n || offer.address)) }}
                             {{ offer.house_n === undefined ? "" : (", "+offer.house_n) }}
-                            {{ offer.squareTotal  === undefined ? "" : ", "+ offer.squareTotal+"м." }}
-                            {{ offer.floor  === undefined ? "" : ", "+ offer.floor+"/"}}
-                            {{ offer.floorsCount  === undefined ? "" : ""+ offer.floorsCount}}</div>
+                    </div>
 
-                    <div class="text-primary" style = "color: #8B0000; position: absolute; top: 5px;right: 0;">{{ offer.ownerPrice }}т.р.</div>
-                    <span class="agent" [class.withPh]= "withPhoto">
-                        Ответственный: {{offer.agent?.name}}
-                    </span>
+                    <span class="agent" [class.withPh]= "withPhoto">Отв.: <span class="link" (click)="openUser()">{{offer.agent?.name}}</span></span>
+                    <span class="agent" [class.withPh]= "withPhoto">Задача: <span class="link">Непонятно какая задача и нужно наверное для нее отдельное поле</span></span>
+                    <div class="timestamp" *ngIf="offer.changeDate"> {{ (offer.changeDate | formatDate).toString().split(" ")[0] }} </div>
                 </div>
             </div>
         </div>
     `
 })
 
-export class DigestOfferTableComponent {
+export class DigestOfferTable2Component {
 
     public offer: Offer;
     public withPhoto: boolean = false;
@@ -161,6 +162,13 @@ export class DigestOfferTableComponent {
     open() {
         var tabSys = this._hubService.getProperty('tab_sys');
         tabSys.addTab('offer', {offer: this.offer});
+    }
+
+    openUser(){
+        if(this.offer.agent.id){
+            var tab_sys = this._hubService.getProperty('tab_sys');
+            tab_sys.addTab('user', {user: this.offer.agent});
+        }
     }
 
 }

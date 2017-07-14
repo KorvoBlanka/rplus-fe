@@ -19,6 +19,7 @@ import {Tab} from '../../class/tab';
         <tab-advertising [tab]="tab" *ngSwitchCase="'advertising'"></tab-advertising>
         <tab-list-user [tab]="tab" *ngSwitchCase="'list_users'"></tab-list-user>
         <tab-user [tab]="tab" *ngSwitchCase="'user'"></tab-user>
+        <tab-activity [tab]="tab" *ngSwitchCase="'activity'"></tab-activity>
 
         <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>
     </div>

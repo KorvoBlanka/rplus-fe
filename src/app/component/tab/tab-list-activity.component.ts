@@ -24,7 +24,7 @@ import {AnalysisService} from '../../service/analysis.service';
 import {SessionService} from "../../service/session.service";
 
 @Component({
-    selector: 'tab-activity',
+    selector: 'tab-list-activity',
     inputs: ['tab'],
     styles: [`
 
@@ -141,7 +141,7 @@ import {SessionService} from "../../service/session.service";
         }
 
         .stage > .summ{
-            width: calc(100% - 8px);
+            width: calc(100% - 6px);
             height: 60px;
             background-color: #e6e7e8;
             margin-top: 5px;
@@ -157,7 +157,7 @@ import {SessionService} from "../../service/session.service";
 
         .stage:not(:last-child):after{
             content: " ";
-            width: 19px;
+            width: 12px;
             height: 35px;
             background-image: url(assets/activity_arrow.png);
             background-size: 100% 100%;
@@ -165,7 +165,7 @@ import {SessionService} from "../../service/session.service";
             background-position: center;
             display: block;
             position: absolute;
-            right: -11px;
+            right: -6px;
             top: 0;
         }
 
@@ -276,27 +276,8 @@ import {SessionService} from "../../service/session.service";
         <div *ngIf="activeMenu == 0" class="work_list">
             <div class="central_panel">
                 <div>
-                    <div class='stage' [style.z-index]="101" *ngIf="!is_offer">
-                    <div class='label' >{{main_stage.label}}</div>
-                        <div class="summ">
-
-                        </div>
-                    </div>
-                    <div class='stage' [style.z-index]="101" *ngIf="is_offer">
-                    <div class='label' >{{main_stage.label}}</div>
-                        <div class="summ">
-                            <digest-offer-table2
-                                style="display: block; background-color: transparent;"
-                                [offer]="main_offer"
-                                [withPhoto]="false"
-                                (touchstart)="tStart(data)"
-                                (touchend)="tEnd(data)"
-                            >
-                            </digest-offer-table2>
-                        </div>
-                    </div>
-                    <div class='stage' *ngFor="let stage of main_stage.substage; let i=index" [class.active] = "stage.active" [style.z-index]="100-i">
-                        <div class='label' (click)="set_stage(i)">{{stage.label}} ({{stage.offers?.length}})</div>
+                    <div class='stage' *ngFor="let stage of stages; let i=index" [class.active] = "stage.active" [style.z-index]="100-i">
+                        <div class='label' (click)="set_stage(i)" (dblclick)="open_stage(stage)">{{stage.label}} ({{stage.offers?.length}})</div>
                         <div class="summ">
 
                         </div>
@@ -305,9 +286,8 @@ import {SessionService} from "../../service/session.service";
                                     style="display: block; background-color: transparent;"
                                     [offer]="data"
                                     [withPhoto]="false"
-                                    (click)="click($event, data)"
-                                    (contextmenu)="click($event, data)"
-                                    (dblclick)="openOffer(data)"
+
+                                    (dblclick)="open_offer(stage, data)"
                                     (touchstart)="tStart(data)"
                                     (touchend)="tEnd(data)"
                             >
@@ -325,7 +305,7 @@ import {SessionService} from "../../service/session.service";
     `
 })
 
-export class TabActivityComponent implements OnInit, AfterViewInit {
+export class TabListActivityComponent implements OnInit, AfterViewInit {
     public tab: Tab;
     activeMenu: number = 0;
     source: OfferSource = OfferSource.LOCAL;
@@ -336,9 +316,8 @@ export class TabActivityComponent implements OnInit, AfterViewInit {
         changeDate: 90,
         offerTypeCode: 'sale',
     };
-    main_offer: any
-    main_stage: any;
-    is_offer: boolean;
+
+    stages: Array<any>;
 
     constructor(private _hubService: HubService,
                 private _userService: UserService,
@@ -352,13 +331,38 @@ export class TabActivityComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.tab.header="Активность стадии";
-        console.log(this.tab);
-        this.is_offer = this.tab.args.offer ? true : false;
-        this.main_stage = this.tab.args.stage;
-        if(this.is_offer)
-            this.main_offer = this.tab.args.offer;
-        for (let i = 0; i<this.main_stage.substage.length; ++i){
+        this.tab.header="Активность";
+        this.stages = [
+            {label: "Не активно", value: "raw", summ: 1354000, conv: 0, active: false, offers: [], page: 0},
+            {label: "Активно", value: "active", summ: 980000, conv: 25, active: false, offers: [], page: 0,
+              substage: [
+                {label: "Первичный контакт", value: "first", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Выявление потребностей", value: "find", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Принятие решения", value: "choose", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Заключение договора", value: "complite", summ: 980000, conv: 25, active: false, offers: [], page: 0}
+              ]
+            },
+            {label: "Прайс", value: "price", summ: 690000, conv: 40, active: false, offers: [], page: 0,
+              substage: [
+                {label: "Определение стратегии продажи", value: "strategy", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Определение рекламной стратегии", value: "adver", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Показ объекта", value: "show", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Принятие решений", value: "decision", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Подготовка документов", value: "doc", summ: 980000, conv: 25, active: false, offers: [], page: 0}
+              ]
+            },
+            {label: "Сделка", value: "deal", summ: 350000, conv: 40, active: false, offers: [], page: 0,
+              substage: [
+                {label: "Переговоры", value: "conversation", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Заключение договора", value: "contract", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Подготовка документов", value: "doc", summ: 980000, conv: 25, active: false, offers: [], page: 0},
+                {label: "Совершение сделки", value: "deal", summ: 980000, conv: 25, active: false, offers: [], page: 0}
+              ]
+            },
+            {label: "Приостановлено", value: "suspended", summ: 1354000, conv: 0, active: false, offers: [], page: 0},
+            {label: "Архив", value: "archive", summ: 0, conv: 0, active: false, offers: [], page: 0}
+        ];
+        for (let i = 0; i<this.stages.length; ++i){
             this.listOffers(i);
         }
     }
@@ -378,18 +382,18 @@ export class TabActivityComponent implements OnInit, AfterViewInit {
     }
 
     set_stage(i:number){
-        this.main_stage.substage.forEach(stage => {
+        this.stages.forEach(stage => {
             stage.active = false;
         })
-        this.main_stage.substage[i].active = true;
+        this.stages[i].active = true;
     }
 
     listOffers(i: number) {
         this._offerService.list(
-            this.main_stage.substage[i].page,
+            this.stages[i].page,
             10,
             this.source,
-            {   stageCode: this.main_stage.substage[i].value,
+            {   stageCode: this.stages[i].value,
                 agentId: this._sessionService.getUser().id,
                 tag: 'all',
                 changeDate: 90,
@@ -400,16 +404,26 @@ export class TabActivityComponent implements OnInit, AfterViewInit {
             []
         ).subscribe(
             data => {
-                if (this.main_stage.substage[i].page == 0) {
-                    this.main_stage.substage[i].offers = data.list;
+                if (this.stages[i].page == 0) {
+                    this.stages[i].offers = data.list;
                 } else {
                     data.list.forEach(i => {
-                        this.main_stage.substage[i].offers.push(i);
+                        this.stages[i].offers.push(i);
                     })
                 }
             },
             err => console.log(err)
         );
     }
+
+    open_stage(stage: any){
+      var tabSys = this._hubService.getProperty('tab_sys');
+      tabSys.addTab('activity', {stage: stage});
+    }
+
+    open_offer(stage: any, offer: any){
+      var tabSys = this._hubService.getProperty('tab_sys');
+      tabSys.addTab('activity', {stage: stage, offer: offer});
+  }
 
 }

@@ -118,7 +118,7 @@ import {User} from "../../class/user";
                     <span class="tile-label">Реклама</span>
                 </div>
 
-                <div class="tile bg-maroon fg-white" (click)="turnTo('activity', {})">
+                <div class="tile bg-maroon fg-white" (click)="turnTo('list_activity', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-adver"></span>
                     </div>
@@ -138,7 +138,6 @@ export class TabMainComponent {
     constructor(private _sessionService: SessionService) {
         setTimeout(() => { this.tab.header = 'new tab'; });
         this.user = _sessionService.user;
-
     }
 
 

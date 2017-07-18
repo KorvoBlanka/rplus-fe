@@ -18,7 +18,7 @@ import {
             position: absolute;
             background-color: #fff;
             border: 1px solid #eee;
-            z-index: 10;
+            z-index: 999;
         }
 
         .context-menu-scrollable {

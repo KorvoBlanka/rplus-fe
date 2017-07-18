@@ -30,6 +30,7 @@
     display: block;
     margin: 0 0 0 30px;
     color: #595a5a;
+    text-transform: uppercase;
 }
 
 .tile-content:first-child {

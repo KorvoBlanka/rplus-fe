@@ -28,6 +28,7 @@ import {TabListUserComponent} from "./component/tab/tab-list-user.component";
 import {TabUserComponent} from "./component/tab/tab-user.component";
 import {TabAdvertisingComponent} from "./component/tab/tab-advertising.component";
 import {TabActivityComponent} from "./component/tab/tab-activity.component";
+import {TabListActivityComponent} from "./component/tab/tab-list-activity.component";
 import {UISelect} from "./component/ui/ui-select.component";
 import {UIMultiSelect} from "./component/ui/ui-multiselect.component";
 import {UIInputLine} from "./component/ui/ui-input-line.component";
@@ -112,6 +113,7 @@ const appRoutes: Routes = [
         TabListUserComponent,
         TabUserComponent,
         TabAdvertisingComponent,
+        TabListActivityComponent,
         TabActivityComponent,
         OfferTableComponent,
         DigestOfferComponent,

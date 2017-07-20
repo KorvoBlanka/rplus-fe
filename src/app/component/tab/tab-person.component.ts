@@ -486,9 +486,12 @@ import {SessionService} from "../../service/session.service";
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
                         <div class="view-group" style='position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Организация:'" [value] = "person.organisation_n?.name"
-                                [width] = "'225px'" (onChange)= "person.organisation_n = $event" [queryTipe]="'organisation'">
-                            </ui-input-line>
+                            <ui-slidingMenu class="view-value edit-value"
+                                [options] = "organisationsOpts"
+                                [value]="person.organisationId"
+                                (onChange)="organisationChanged($event)"
+                            >
+                            </ui-slidingMenu>
                         </div>
 
                         <div class="header_col">Тэги</div>
@@ -1031,6 +1034,15 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         if (this.person.userId != null) {
             this._userService.get(this.person.userId).subscribe(agent => {
                 this.person.agent_n = agent;
+            });
+        }
+    }
+
+    organisationChanged(e) {
+        this.person.organisationId = e.selected.value;
+        if (this.person.organisationId != null) {
+            this._organisationService.get(this.person.organisationId).subscribe(org => {
+                this.person.organisation_n = org;
             });
         }
     }

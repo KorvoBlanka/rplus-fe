@@ -258,7 +258,7 @@ import {Account} from "../../class/account";
                             [options]="agentOpts"
                                 [value]="filter.agent"
                             [config]="{icon: 'icon-person', drawArrow: true}"
-                            (onChange)="filter.agentId = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.orgType = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
@@ -380,7 +380,7 @@ export class TabListOfferComponent {
     sgList: string[] = [];
     filter: any = {
         stageCode: 'all',
-        agentId: 'all',
+        orgType: 'all',
         tag: 'all',
         changeDate: 90,
         offerTypeCode: 'sale',
@@ -391,7 +391,9 @@ export class TabListOfferComponent {
     agentOpts = [
         {value: 'all', label: 'Все объекты', bold: true},
         {value: 'realtor', label: 'Конкуренты', bold: true},
+        {value: 'partner', label: 'Партнеры', bold: true},
         {value: 'private', label: 'Собственники', bold: true},
+        {value: 'client', label: 'Клиент', bold: true},
         {value: 'company', label: 'Наша компания', bold: true},
         {value: 'my', label: 'Мои объекты', bold: true}
     ];

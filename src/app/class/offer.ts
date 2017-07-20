@@ -230,6 +230,9 @@ export class Offer {
     offerRaiting7_n: string;
     offerRaiting8_n: string;
 
+    head_id_n: number;
+    contact_id_n: number;
+
 
     constructor () {
         // set default vals

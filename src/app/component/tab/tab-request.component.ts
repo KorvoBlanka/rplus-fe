@@ -569,7 +569,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                                 <textarea class="view-value text-value"
-                                placeholder="" [(ngModel)]="request.info_n"
+                                placeholder="" [(ngModel)]="request.info"
                                 style="text-align: left;"></textarea>
                             </div>
                         </div>
@@ -596,7 +596,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'OUR', label: 'Наша компания'},
                                         {value: 'PARTHER', label: 'Партнер'}
                                     ]"
-                                    [value]="person?.typeCode_n"
+                                    [value]="person?.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -625,7 +625,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label">Web-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!person?.webSite_n" class="view-value">Не указан</span>
+                                    <span *ngIf="!person?.webSite" class="view-value">Не указан</span>
                                     <a *ngIf="person?.webSite" [href]="'http://'+person.webSite" target="_blank">{{person?.webSite}}</a>
                                 </span>
                             </div>

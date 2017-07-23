@@ -17,9 +17,7 @@ import {User} from "../../entity/user";
             overflow: hidden;
             background-color: #062141;
         }
-
-
-
+        
         .tile-group {
             margin-left: 80px;
             min-width: 80px;
@@ -68,7 +66,7 @@ import {User} from "../../entity/user";
                 </div>
             </div>
             <div class="tile-group">
-                <span class="tile-group-title">Группа1</span>
+                <span class="tile-group-title">Группа2</span>
                 <div class="tile bg-amber fg-white">
                     <div class="tile-content iconic">
                         <span class="icon icon-month"></span>

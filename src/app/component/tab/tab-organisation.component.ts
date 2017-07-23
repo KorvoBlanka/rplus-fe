@@ -587,7 +587,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'company', label: 'Наша компания'},
                                         {value: 'partner', label: 'Партнер'}
                                     ]"
-                                    [value]="organisation.typeCode_n"
+                                    [value]="organisation.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -645,7 +645,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label pull-left">WEB-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!organisation?.webSite_n" class="view-value">Не указан</span>
+                                    <span *ngIf="!organisation?.webSite" class="view-value">Не указан</span>
                                     <a *ngIf="organisation?.webSite" [href]="'http://'+organisation.webSite" target="_blank">{{organisation?.webSite}}</a>
                                 </span>
                             </div>
@@ -712,7 +712,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'excelent', label: 'Успешный опыт сотрудничества'},
                                         {value: 'cold', label: 'Холодная база'}
                                     ]"
-                                    [value]="organisation.sourceCode_n"
+                                    [value]="organisation.sourceCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -788,7 +788,6 @@ import {SessionService} from "../../service/session.service";
                             [longitude]="lon"
                             [zoom]="zoom"
                             [objects]="offers"
-                            [polygone_points]="searchArea"
                         >
                         </google-map>
                     </ui-tab>

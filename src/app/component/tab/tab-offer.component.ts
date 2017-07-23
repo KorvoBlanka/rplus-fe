@@ -1749,7 +1749,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Лоджия:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.loggia_n?.toString()"
+                                            [value]="offer.loggia?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1759,7 +1759,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Балкон:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.balcony_n?.toString()"
+                                            [value]="offer.balcony?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1769,7 +1769,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Санузел:</span>
                                         <ui-view-value
                                             [options] = "bathroomOptions"
-                                            [value]="offer.bathroom_n"
+                                            [value]="offer.bathroom"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1779,7 +1779,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Состояние:</span>
                                         <ui-view-value
                                             [options] = "conditionOptions"
-                                            [value]="offer.condition_n"
+                                            [value]="offer.condition"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1811,7 +1811,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Охрана:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.guard_n?.toString()"
+                                            [value]="offer.guard?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1869,7 +1869,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Состояние:</span>
                                         <ui-view-value
                                             [options] = "conditionOptions"
-                                            [value]="offer.condition_n"
+                                            [value]="offer.condition"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1889,7 +1889,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Лоджия:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.loggia_n?.toString()"
+                                            [value]="offer.loggia?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1899,7 +1899,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Балкон:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.balcony_n?.toString()"
+                                            [value]="offer.balcony?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1909,7 +1909,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Санузел:</span>
                                         <ui-view-value
                                             [options] = "bathroomOptions"
-                                            [value]="offer.bathroom_n"
+                                            [value]="offer.bathroom"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1919,7 +1919,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Водоснабжение:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.waterSupply_n?.toString()"
+                                            [value]="offer.waterSupply?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1929,7 +1929,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Газификация:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.gasification_n?.toString()"
+                                            [value]="offer.gasification?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1939,7 +1939,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Электроснабжение:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.electrification_n?.toString()"
+                                            [value]="offer.electrification?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1949,7 +1949,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Канализация:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.sewerage_n?.toString()"
+                                            [value]="offer.sewerage?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2189,7 +2189,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Водоснабжение:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.waterSupply_n?.toString()"
+                                            [value]="offer.waterSupply?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2199,7 +2199,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Газификация:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.gasification_n?.toString()"
+                                            [value]="offer.gasification?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2209,7 +2209,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Электроснабжение:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.electrification_n?.toString()"
+                                            [value]="offer.electrification?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2219,7 +2219,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Канализация:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.sewerage_n?.toString()"
+                                            [value]="offer.sewerage?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2229,7 +2229,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Отопление:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.centralHeating_n?.toString()"
+                                            [value]="offer.centralHeating?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2271,7 +2271,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Лифт:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.lift_n?.toString()"
+                                            [value]="offer.lift?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2281,7 +2281,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Парковка:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.parking_n?.toString()"
+                                            [value]="offer.parking?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>

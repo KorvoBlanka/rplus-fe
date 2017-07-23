@@ -505,7 +505,7 @@ import {SessionService} from "../../service/session.service";
                         <div class="header_col">Дополнительная информация</div>
                         <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                             <textarea class="view-value text-value" placeholder=""
-                            [(ngModel)]="person.info" style="text-align: left;"></textarea>
+                            [(ngModel)]="person.description" style="text-align: left;"></textarea>
                         </div>
 
                     </div>
@@ -525,7 +525,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'OUR', label: 'Наша компания'},
                                         {value: 'PARTHER', label: 'Партнер'}
                                     ]"
-                                    [value]="person.typeCode_n"
+                                    [value]="person.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -581,7 +581,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label pull-left">WEB-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!person?.webSite_n" class="view-value">Не указан</span>
+                                    <span *ngIf="!person?.webSite" class="view-value">Не указан</span>
                                     <a *ngIf="person?.webSite" [href]="'http://'+person.webSite" target="_blank">{{person?.webSite}}</a>
                                 </span>
                             </div>
@@ -609,7 +609,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'NOT_ACTIVE', label: 'Не активно'},
                                         {value: 'ARCHIVE', label: 'Архив'}
                                     ]"
-                                    [value]="person.stateCode_n"
+                                    [value]="person.stateCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -630,7 +630,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'excelent', label: 'Успешный опыт сотрудничества'},
                                         {value: 'cold', label: 'Холодная база'}
                                     ]"
-                                    [value]="person.sourceCode_n"
+                                    [value]="person.sourceCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -653,7 +653,7 @@ import {SessionService} from "../../service/session.service";
 
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ person.info }} </span>
+                                <span class="view-value" style="height: initial;"> {{ person.description }} </span>
                             </div>
                     </div>
                         <!-- РЕЖИМ ОТОБРАЖЕНИЯ: КОНЕЦ -->

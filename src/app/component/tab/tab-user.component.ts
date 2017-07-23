@@ -345,7 +345,7 @@ import {SessionService} from "../../service/session.service";
                     </div>
                     <div class="pull-container">
                         <div class="font-sz-2 pull-left"><span class="color-g1" ><a  href="" target="_blank"></a></span></div>
-                        <div class="font-sz-1 color-g2 pull-right"> {{ user.add_date | formatDate }} </div>
+                        <div class="font-sz-1 color-g2 pull-right"> {{ user.addDate | formatDate }} </div>
                     </div>
                     <div class="pull-container" style="margin: 20px 10px 0px;">
                         <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()" style="font-size: 10pt;"><a href="#" >Изменить</a></div>
@@ -500,7 +500,7 @@ import {SessionService} from "../../service/session.service";
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "user.webSite_n"
+                                <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "user.webSite"
                                     [width] = "'225px'" (onChange)= "user.webSite = $event">
                                 </ui-input-line>
                             </div>
@@ -554,7 +554,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                                 <textarea class="view-value text-value"
-                                    placeholder="" [(ngModel)]="user.info_n"
+                                    placeholder="" [(ngModel)]="user.info"
                                     style="text-align: left;">
                                 </textarea>
                             </div>
@@ -580,7 +580,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'CENTRAL', label: 'Центральный'},
                                         {value: 'MAIN', label: 'Головной'}
                                     ]"
-                                    [value]="user.office_n"
+                                    [value]="user.office"
                                 >
                                 </ui-view-value>
                             </div>
@@ -595,7 +595,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'COMMERSIAL', label: 'Коммерческая недвижимость'},
                                         {value: 'SUBURBAN', label: 'Загородная недвижимость'}
                                     ]"
-                                    [value]="user.departmentCode_n"
+                                    [value]="user.departmentCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -613,7 +613,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'TOP_MANAGER', label: 'Топ Менеджер'},
                                         {value: 'DIRECTOR', label: 'Директор'}
                                     ]"
-                                    [value]="user.positionCode_n"
+                                    [value]="user.positionCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -646,7 +646,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'NOT_ACTIVE', label: 'Не активно'},
                                         {value: 'ARCHIVE', label: 'Архив'}
                                     ]"
-                                    [value]="user.statusCode_n"
+                                    [value]="user.statusCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -689,7 +689,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label">WEB-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!user?.webSite_n" class="view-value">Не указан</span>
+                                    <span *ngIf="!user?.webSite" class="view-value">Не указан</span>
                                     <a *ngIf="user?.webSite" [href]="'http://'+user.webSite" target="_blank">{{user?.webSite}}</a>
                                 </span>
                             </div>

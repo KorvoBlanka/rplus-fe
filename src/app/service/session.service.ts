@@ -8,8 +8,8 @@ import {AsyncSubject} from "rxjs/AsyncSubject";
 
 import {ConfigService} from './config.service';
 
-import {Account} from "../class/account";
-import {User} from "../class/user";
+import {Account} from "../entity/account";
+import {User} from "../entity/user";
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 

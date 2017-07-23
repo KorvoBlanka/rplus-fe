@@ -3,11 +3,11 @@ import {Component, OnInit, AfterViewInit} from '@angular/core';
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
-import {User} from '../../class/user';
-import {Offer} from '../../class/offer';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
-import {Request} from '../../class/request';
+import {User} from '../../entity/user';
+import {Offer} from '../../entity/offer';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
+import {Request} from '../../entity/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 
@@ -343,8 +343,8 @@ import {SessionService} from "../../service/session.service";
                                     {value: 'OUR', label: 'Наша компания'},
                                     {value: 'PARTHER', label: 'Партнер'}
                                 ]"
-                                [value]="person.typeCode_n"
-                                (onChange)="person.typeCode_n = $event.selected.value">
+                                [value]="person.typeCode"
+                                (onChange)="person.typeCode = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -422,8 +422,8 @@ import {SessionService} from "../../service/session.service";
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "person.webSite_n"
-                                [width] = "'225px'" (onChange)= "person.webSite_n = $event">
+                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "person.webSite"
+                                [width] = "'225px'" (onChange)= "person.webSite = $event">
                             </ui-input-line>
                         </div>
 
@@ -441,8 +441,8 @@ import {SessionService} from "../../service/session.service";
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "person.contract_n"
-                                        [width] = "'225px'" (onChange)= "person.contract_n = $event">
+                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "person.contract"
+                                        [width] = "'225px'" (onChange)= "person.contract = $event">
                                 </ui-input-line>
                         </div>
                         <hr>
@@ -456,8 +456,8 @@ import {SessionService} from "../../service/session.service";
                                     {value: 'NOT_ACTIVE', label: 'Не активно'},
                                     {value: 'ARCHIVE', label: 'Архив'}
                                 ]"
-                                [value]="person.stateCode_n"
-                                (onChange)="person.stateCode_n = $event.selected.value">
+                                [value]="person.stateCode"
+                                (onChange)="person.stateCode = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -478,8 +478,8 @@ import {SessionService} from "../../service/session.service";
                                     {value: 'excelent', label: 'Успешный опыт сотрудничества'},
                                     {value: 'cold', label: 'Холодная база'}
                                 ]"
-                                [value]="person.sourceCode_n"
-                                (onChange)="person.sourceCode_n = $event.selected.value">
+                                [value]="person.sourceCode"
+                                (onChange)="person.sourceCode = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -582,7 +582,7 @@ import {SessionService} from "../../service/session.service";
                                 <span class="view-label pull-left">WEB-сайт:</span>
                                 <span class="view-value">
                                     <span *ngIf="!person?.webSite_n" class="view-value">Не указан</span>
-                                    <a *ngIf="person?.webSite_n" [href]="'http://'+person.webSite_n" target="_blank">{{person?.webSite_n}}</a>
+                                    <a *ngIf="person?.webSite" [href]="'http://'+person.webSite" target="_blank">{{person?.webSite}}</a>
                                 </span>
                             </div>
 
@@ -590,13 +590,13 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Ответственный:</span>
-                                <span class="view-value" [class.link] = " person.agent_n?.id" (click)="openUser()">{{ person.agent_n?.name || 'Не указан'}}</span>
+                                <span class="view-value" [class.link] = " person.agent?.id" (click)="openUser()">{{ person.agent?.name || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор:</span>
-                                <span class="view-value">{{person.contract_n}}</span>
+                                <span class="view-value">{{person.contract}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/status.png)'"></div>
@@ -638,8 +638,8 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Организация:</span>
-                                <span class="view-value" [class.link] = "person.organisation_n?.id" (click)="openOrganisation()">
-                                    {{getTypeName(person.organisation_n?.orgName_n)}}{{ person?.organisation_n?.name ? (' "' +person?.organisation_n?.name+ '"') : 'Не указана'}}
+                                <span class="view-value" [class.link] = "person.organisation?.id" (click)="openOrganisation()">
+                                    {{getTypeName(person.organisation?.type)}}{{ person?.organisation?.name ? (' "' +person?.organisation?.name+ '"') : 'Не указана'}}
                                 </span>
                             </div>
 
@@ -944,28 +944,28 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         let loc = this._sessionService.getAccount().location;
 
         this.personAddress=[
-            {type: 'KRAY', value: this.person.region_n},
-            {type: 'CITY', value: this.person.city_n},
-            {type: 'DISTRICT', value: this.person.area_n},
-            {type: 'STREET', value: this.person.street_n},
-            {type: 'HOUSE', value: this.person.house_n},
-            {type: 'HOUSING', value: this.person.housing_n},
-            {type: 'FLAT', value: this.person.apartment_n}
+            {type: 'KRAY', value: this.person.fullAddress.region},
+            {type: 'CITY', value: this.person.fullAddress.city},
+            {type: 'DISTRICT', value: this.person.fullAddress.admArea},
+            {type: 'STREET', value: this.person.fullAddress.street},
+            {type: 'HOUSE', value: this.person.fullAddress.house},
+            {type: 'HOUSING', value: this.person.fullAddress.housing},
+            {type: 'FLAT', value: this.person.fullAddress.apartment}
         ];
 
         this.getAddressStr();
 
         this.personPhone=[
-            {type: 'MOBILE', value:  this.person.cellPhone_n},
-            {type: 'HOME', value:  this.person.homePhone_n},
-            {type: 'WORK', value: this.person.officePhone_n},
-            {type: 'MAIN', value:  this.person.mainPhone_n},
-            {type: 'SAME', value:  this.person.otherPhone_n},
-            {type: 'FAX', value:  this.person.fax_n}
+            {type: 'MOBILE', value:  this.person.phoneBlock.cellphone},
+            {type: 'HOME', value:  this.person.phoneBlock.home},
+            {type: 'WORK', value: this.person.phoneBlock.office},
+            {type: 'MAIN', value:  this.person.phoneBlock.main},
+            {type: 'SAME', value:  this.person.phoneBlock.other},
+            {type: 'FAX', value:  this.person.phoneBlock.fax}
         ];
         this.personEmail=[
-            {type: 'WORK', value:  this.person.workEmail_n},
-            {type: 'MAIN', value:  this.person.mainEmail_n}
+            {type: 'WORK', value:  this.person.emailBlock.work},
+            {type: 'MAIN', value:  this.person.emailBlock.main}
         ];
 
         if (c.map[loc]) {
@@ -986,7 +986,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
 
         if (this.person.userId != null) {
             this._userService.get(this.person.userId).subscribe(agent => {
-                this.person.agent_n = agent;
+                this.person.agent = agent;
             });
         }
 
@@ -1033,7 +1033,7 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.person.userId = e.selected.value;
         if (this.person.userId != null) {
             this._userService.get(this.person.userId).subscribe(agent => {
-                this.person.agent_n = agent;
+                this.person.agent = agent;
             });
         }
     }
@@ -1042,44 +1042,44 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         this.person.organisationId = e.selected.value;
         if (this.person.organisationId != null) {
             this._organisationService.get(this.person.organisationId).subscribe(org => {
-                this.person.organisation_n = org;
+                this.person.organisation = org;
             });
         }
     }
 
     save() {
         let tem = this.getIndex(this.personPhone, "MOBILE");
-        this.person.cellPhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        this.person.phoneBlock.cellphone =  tem > -1 ? this.personPhone[tem].value : null;
         tem =  this.getIndex(this.personPhone, "HOME");
-        this.person.homePhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        this.person.phoneBlock.home =  tem > -1 ? this.personPhone[tem].value : null;
         tem = this.getIndex(this.personPhone, "WORK");
-        this.person.officePhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        this.person.phoneBlock.office =  tem > -1 ? this.personPhone[tem].value : null;
         tem = this.getIndex(this.personPhone, "MAIN");
-        this.person.mainPhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        this.person.phoneBlock.main =  tem > -1 ? this.personPhone[tem].value : null;
         tem = this.getIndex(this.personPhone, "SAME");
-        this.person.otherPhone_n =  tem > -1 ? this.personPhone[tem].value : null;
+        this.person.phoneBlock.other =  tem > -1 ? this.personPhone[tem].value : null;
         tem = this.getIndex(this.personPhone, "FAX");
-        this.person.fax_n =  tem > -1 ? this.personPhone[tem].value : null;
+        this.person.phoneBlock.fax =  tem > -1 ? this.personPhone[tem].value : null;
 
         tem = this.getIndex(this.personAddress, "KRAY");
-        this.person.region_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.region =  tem > -1 ? this.personAddress[tem].value : undefined;
         tem = this.getIndex(this.personAddress, "CITY");
-        this.person.city_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.city =  tem > -1 ? this.personAddress[tem].value : undefined;
         tem = this.getIndex(this.personAddress, "DISTRICT");
-        this.person.area_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.admArea =  tem > -1 ? this.personAddress[tem].value : undefined;
         tem = this.getIndex(this.personAddress, "STREET");
-        this.person.street_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.street =  tem > -1 ? this.personAddress[tem].value : undefined;
         tem = this.getIndex(this.personAddress, "HOUSE");
-        this.person.house_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.house =  tem > -1 ? this.personAddress[tem].value : undefined;
         tem = this.getIndex(this.personAddress, "HOUSING");
-        this.person.housing_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.housing =  tem > -1 ? this.personAddress[tem].value : undefined;
         tem = this.getIndex(this.personAddress, "FLAT");
-        this.person.apartment_n =  tem > -1 ? this.personAddress[tem].value : undefined;
+        this.person.fullAddress.apartment =  tem > -1 ? this.personAddress[tem].value : undefined;
 
         tem =  this.getIndex(this.personEmail, "MAIN");
-        this.person.mainEmail_n =  tem > -1 ? this.personEmail[tem].value : null;
+        this.person.emailBlock.main =  tem > -1 ? this.personEmail[tem].value : null;
         tem = this.getIndex(this.personEmail, "WORK");
-        this.person.workEmail_n =  tem > -1 ? this.personEmail[tem].value : null;
+        this.person.emailBlock.work =  tem > -1 ? this.personEmail[tem].value : null;
 
         console.log(this.person);
         this._personService.save(this.person).subscribe(
@@ -1161,14 +1161,6 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     markerClick(r: Offer) {
         //r.selected = !r.selected;
         // scroll to object ???
-    }
-
-    addPhone() {
-        this.person.phones.push('');
-    }
-
-    addEmail() {
-        this.person.emails.push('');
     }
 
     createRequest() {
@@ -1261,24 +1253,22 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     }
 
     getAddressStr(){
-            this.addressStr = this.person.city_n !== undefined ? ""+this.person.city_n : '';
-            this.addressStr += this.person.street_n !== undefined ? ", " + this.person.street_n : '';
-            this.addressStr += this.person.house_n !== undefined ? ", " + this.person.house_n : '';
-            if(this.personAddress.length == 0)
-                this.addressStr = '';
+        this.addressStr = this.person.fullAddress.city !== undefined ? ""+this.person.fullAddress.city : '';
+        this.addressStr += this.person.fullAddress.street !== undefined ? ", " + this.person.fullAddress.street : '';
+        this.addressStr += this.person.fullAddress.house !== undefined ? ", " + this.person.fullAddress.house : '';
     }
 
-    openUser(){
-        if(this.person.agent_n.id){
+    openUser() {
+        if(this.person.agent.id){
             var tab_sys = this._hubService.getProperty('tab_sys');
-            tab_sys.addTab('user', {user: this.person.agent_n});
+            tab_sys.addTab('user', {user: this.person.agent});
         }
     }
 
     openOrganisation(){
-        if(this.person.organisation_n.id){
+        if(this.person.organisation.id){
             var tab_sys = this._hubService.getProperty('tab_sys');
-            tab_sys.addTab('organisation', {organisation: this.person.organisation_n});
+            tab_sys.addTab('organisation', {organisation: this.person.organisation});
         }
     }
 

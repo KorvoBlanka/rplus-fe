@@ -7,10 +7,10 @@ import {ConfigService} from '../../service/config.service';
 import {PersonService} from '../../service/person.service';
 
 import {Tab} from '../../class/tab';
-import {Person} from '../../class/person';
+import {Person} from '../../entity/person';
 
 import {Observable} from 'rxjs/Observable';
-import {User} from "../../class/user";
+import {User} from "../../entity/user";
 import {UserService} from "../../service/user.service";
 
 

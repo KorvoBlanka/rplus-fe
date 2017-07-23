@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {HubService} from '../../service/hub.service'
 
-import {Offer} from '../../class/offer';
+import {Offer} from '../../entity/offer';
 
 
 
@@ -96,12 +96,11 @@ import {Offer} from '../../class/offer';
                         *ngIf ="offer.typeCode"
                     >{{ typeCodeOptions[offer.typeCode].split(" ")[0] }}
                     </span>
-                    {{ (offer.locality?.split(",")[0] || offer.city_n ) === undefined ? " " : ", "+(offer.locality?.split(",")[0] || offer.city_n) }}<br>
-                    <span *ngIf="(offer.locality || ' ').split(',')[1]">{{ (offer.locality || " ").split(",")[1] }}</span >
+                    {{ offer.fullAddress.city === undefined ? " " : ", " + offer.fullAddress.city }}<br>
                     <div style="width: 220px; height: 17px; text-overflow: ellipsis;white-space: nowrap;overflow: hidden;
                             float: left;margin-right: 30px;">
-                            {{ (offer.street_n || offer.address) === undefined ? "" : (offer.street_n || offer.address) }}
-                            {{ offer.house_n === undefined ? "" : (", "+offer.house_n) }}
+                            {{ offer.fullAddress.street === undefined ? "" : offer.fullAddress.street }}
+                            {{ offer.fullAddress.house === undefined ? "" : (", " + offer.fullAddress.house) }}
                             {{ offer.roomsCount  === undefined ? "" : ", "+ offer.roomsCount+"ком."}}
                             {{ offer.squareTotal  === undefined ? "" : ", "+ offer.squareTotal+"м." }}
                             {{ offer.floor  === undefined ? "" : ", "+ offer.floor+"/"}}

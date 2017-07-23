@@ -6,10 +6,10 @@ import {Http, Headers, Response} from '@angular/http';
 
 import {ConfigService} from './config.service';
 
-import {Offer} from '../class/offer';
+import {Offer} from '../entity/offer';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 import {GeoPoint} from "../class/geoPoint";
-import {Account} from "../class/account";
+import {Account} from "../entity/account";
 
 
 @Injectable()

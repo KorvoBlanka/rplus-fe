@@ -1,6 +1,8 @@
-import {GeoPoint} from "./geoPoint";
+import {GeoPoint} from "../class/geoPoint";
 export class Request {
-    id: String;
+
+    id: number;
+    accountId: number;
 
     agentId: number;
     personId: number;
@@ -10,13 +12,13 @@ export class Request {
     offerTypeCode: string;
 
     request: string;
-    addDate: Number;
+
+    addDate: number;
+    changeDate: number;
 
     searchArea: GeoPoint[];
 
-    accountId: number;
-
-    info_n: string;
+    info: string;
 
     constructor () {
         // set default vals

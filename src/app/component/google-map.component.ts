@@ -8,7 +8,7 @@ import {Output, EventEmitter} from '@angular/core';
 
 import {ConcaveHull} from '../class/concavehull';
 import {GeoPoint} from "../class/geoPoint";
-import {Offer} from "../class/offer";
+import {Offer} from "../entity/offer";
 
 
 @Component({

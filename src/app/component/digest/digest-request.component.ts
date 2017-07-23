@@ -4,10 +4,10 @@ import {HubService} from '../../service/hub.service'
 import {PersonService} from '../../service/person.service'
 import {TaskService} from '../../service/task.service'
 
-import {Request} from '../../class/request';
-import {Person} from '../../class/person';
+import {Request} from '../../entity/request';
+import {Person} from '../../entity/person';
 import {Task} from '../../class/task';
-import {User} from "../../class/user";
+import {User} from "../../entity/user";
 import {UserService} from "../../service/user.service";
 
 @Component({

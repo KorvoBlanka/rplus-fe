@@ -5,10 +5,10 @@ import {PersonService} from "../../service/person.service";
 import {SessionService} from "../../service/session.service";
 import {OrganisationService} from '../../service/organisation.service';
 import {HubService} from '../../service/hub.service';
-import {Offer} from '../../class/offer';
+import {Offer} from '../../entity/offer';
 import {Tab} from '../../class/tab';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
 
 @Component({
     selector: 'ui-input-line',

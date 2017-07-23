@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {HubService} from '../../service/hub.service'
 
-import {Offer} from '../../class/offer';
+import {Offer} from '../../entity/offer';
 
 
 
@@ -92,7 +92,7 @@ import {Offer} from '../../class/offer';
         }
     `],
     template: `
-        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}">
+        <div class="billet" data-id="r{{offer.id}}" id="r{{offer.id}}">
             <div>
                 <img *ngIf="withPhoto" src="{{ offer.photoUrl?offer.photoUrl[0]:'assets/no_photo.png' }}" style="height: 50px;width: 74px;float: left;margin: 0 8px;">
                 <div class="describe" style=" margin-left: 10px;">
@@ -100,12 +100,11 @@ import {Offer} from '../../class/offer';
                         *ngIf ="offer.typeCode"
                     >{{ typeCodeOptions[offer.typeCode].split(" ")[0] }}
                     </span>
-                    {{ (offer.locality?.split(",")[0] || offer.city_n ) === undefined ? " " : ", "+(offer.locality?.split(",")[0] || offer.city_n) }}<br>
-                    <span *ngIf="(offer.locality || ' ').split(',')[1]">{{ (offer.locality || " ").split(",")[1] }}</span >
+                    {{ offer.fullAddress.city === undefined ? " " : ", " + offer.fullAddress.city }}<br>
                     <div style="width: 100%; height: 17px; text-overflow: ellipsis;white-space: nowrap;overflow: hidden;
                             float: left; line-height: 17px;" [class.withPh]= "withPhoto">
-                            {{ (offer.street_n || offer.address) === undefined ? "" : (offer.street_n || offer.address) }}
-                            {{ offer.house_n === undefined ? "" : (", "+offer.house_n) }}
+                            {{ offer.fullAddress.street  === undefined ? "" : offer.fullAddress.street }}
+                            {{ offer.fullAddress.house === undefined ? "" : (", " + offer.fullAddress.house) }}
                             {{ offer.squareTotal  === undefined ? "" : ", "+ offer.squareTotal+"м." }}
                             {{ offer.floor  === undefined ? "" : ", "+ offer.floor+"/"}}
                             {{ offer.floorsCount  === undefined ? "" : ""+ offer.floorsCount}}</div>

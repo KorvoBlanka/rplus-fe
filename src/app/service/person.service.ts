@@ -3,11 +3,11 @@ import {Http} from '@angular/http';
 
 import {ConfigService} from './config.service';
 
-import {Person} from '../class/person';
+import {Person} from '../entity/person';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 
 import 'rxjs/add/operator/map';
-import {User} from "../class/user";
+import {User} from "../entity/user";
 import {SessionService} from "./session.service";
 
 

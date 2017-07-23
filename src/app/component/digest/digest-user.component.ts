@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {HubService} from '../../service/hub.service'
 import {UserService} from '../../service/user.service'
 
-import {User} from '../../class/user';
+import {User} from '../../entity/user';
 
 @Component({
     selector: 'digest-user',

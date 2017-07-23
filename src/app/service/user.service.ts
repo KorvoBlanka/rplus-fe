@@ -1,11 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
 
-import {ConfigService} from './config.service';
-
-import {User} from '../class/user';
 import {AsyncSubject} from "rxjs/AsyncSubject";
+
+import {ConfigService} from './config.service';
 import {SessionService} from "./session.service";
+
+import {User} from '../entity/user';
+
 
 
 @Injectable()

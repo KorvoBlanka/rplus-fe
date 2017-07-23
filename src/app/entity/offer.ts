@@ -1,237 +1,132 @@
 
-import {GeoPoint} from "./geoPoint";
+import {GeoPoint} from "../class/geoPoint";
+import {FullAddress} from "../class/fullAddress";
+import {User} from "./user";
+import {Person} from "./person";
+import {Rating} from "../class/rating";
+
+
 export class Offer {
 
     id: number;
+    accountId: number;
 
     stateCode: string;
-
     stageCode: string;
 
-    typeCode: string;
-
-    offerTypeCode: string;
-
-    locality: string;
-
-    address: string;
-
-    houseNum: string;
-
-    apNum: string;
+    fullAddress: FullAddress;
 
     district: string;
-
     poi: string;
 
-
-//-----------------------------
     houseTypeId: number;
-
     apSchemeId: number;
-
     roomSchemeId: number;
-
     conditionId: number;
-
     balconyId: number;
-
     bathroomId: number;
-//-----------------------------
-
-
-    roomsCount: number;
 
     roomsOfferCount: number;
 
-    floor: number;
-
-    floorsCount: number;
-
-    levelsCount: number;
-
-    squareTotal: number;
-
-    squareLiving: number;
-
-    squareKitchen: number;
-
-    squareLand: number;
-
+    price: number;
     ownerPrice: number;
-
     agencyPrice: number;
-
-    leaseDeposite: number;
+    leaseDepositL: number;
+    comission: number;
+    comissionPerc: number;
 
     workInfo: string;
-
     description: string;
-
     sourceMedia: string;
-
     sourceUrl: string;
-
     sourceMediaText: string;
-
 
     addDate: number;
     openDate: number;
     changeDate: number;
-
     deleteDate: number;
-
     lastSeenDate: number;
 
     multylisting: boolean;
-
     mlsPriceType: string;
-
     mlsPrice: number;
 
     agentId: number;
+    agent: User;
 
     personId: number;
-
+    person: Person;
 
     locationLat: number;
     locationLon: number;
 
     photoUrl: string[];
-    //photo_tumb???
-
-    person: any;
-    agent: any;
-
-    accountId: number;
 
 
-    // new stuff
-    stageCode_n: string;
+    sourceCode: string;
 
-    sourceCode_n: string;
+    offerTypeCode: string;
 
-    sourceUrl_n: string;
+    typeCode: string;
 
-    offerTypeCode_n: string;
+    settlement: string;
 
-    typeCode_n: string;;
+    newBuilding: boolean;
 
-    region_n: string;
+    objectStage: string;
 
-    city_n: string;
+    buildYear: string;
 
-    area_n: string;
+    houseType: string;
+    houseMaterial: string;
+    roomsCount: number;
 
-    admArea_n: string;
+    roomsType: string;
 
-    street_n: string;
+    floor: number;
+    floorsCount: number;
+    levelsCount: number;
 
-    house_n: string;
+    squareTotal: number;
+    squareLiving: number;
+    squareKitchen: number;
+    squareLand: number;
+    squareLandType: number;
 
-    housing_n: string;
+    balcony: boolean;
+    loggia: boolean;
 
-    apartment_n: string;
+    bathroom: string;
 
-    settlement_n: string;
+    condition: string;
 
-    newBuilding_n: boolean;
+    distance: number;
 
-    objectStage_n: string;
+    guard: boolean;
 
-    buildYear_n: string;
+    waterSupply: boolean;
 
-    houseType_n: string;
+    gasification: boolean;
+    electrification: boolean;
+    sewerage: boolean;
+    centralHeating: boolean;
+    lift: boolean;
+    parking: boolean;
 
-    houseMaterial_n: string;
+    landPurpose: string;
+    objectName: string;
+    buildingType: string;
+    buildingClass: string;
 
-    roomsCount_n: number;
+    сeilingHeight: number;
 
-    roomsType_n: string;
+    contractStr: string;
 
-    floor_n: number;
+    // ratings
+    locRating: Rating;
+    offerRaiting: Rating;
 
-    floorsCount_n: number;
-
-    levelsCount_n: number;
-
-    squareTotal_n: number;
-
-    squareLiving_n: number;
-
-    squareKitchen_n: number;
-
-    squareLand_n: number;
-
-    squareLandType_n: number;
-
-    balcony_n: boolean;
-
-    loggia_n: boolean;
-
-    bathroom_n: boolean;
-
-    condition_n: string;
-
-    price_n: number;
-
-    comission_n: number;
-
-    comissionPerc_n: number;
-
-    distance_n: number;
-
-    guard_n: boolean;
-
-    waterSupply_n: boolean;
-
-    gasification_n: boolean;
-
-    electrification_n: boolean;
-
-    sewerage_n: boolean;
-
-    centralHeating_n: boolean;
-
-    lift_n: boolean;
-
-    parking_n: boolean;
-
-    landPurpose_n: string;
-
-    objectName_n: string;
-
-    buildingType_n: string;
-
-    buildingClass_n: string;
-
-    сeilingHeight_n: number;
-
-    contractStr_n: string;
-
-    // raitings
-    locRaiting0_n: string;
-    locRaiting1_n: string;
-    locRaiting2_n: string;
-    locRaiting3_n: string;
-    locRaiting4_n: string;
-    locRaiting5_n: string;
-    locRaiting6_n: string;
-    locRaiting7_n: string;
-    locRaiting8_n: string;
-
-    offerRaiting0_n: string;
-    offerRaiting1_n: string;
-    offerRaiting2_n: string;
-    offerRaiting3_n: string;
-    offerRaiting4_n: string;
-    offerRaiting5_n: string;
-    offerRaiting6_n: string;
-    offerRaiting7_n: string;
-    offerRaiting8_n: string;
-
-    head_id_n: number;
-    contact_id_n: number;
+    tag: string;
 
 
     constructor () {
@@ -240,6 +135,8 @@ export class Offer {
         this.stageCode = 'contact';
         this.offerTypeCode = 'sale';
         this.typeCode = 'apartment';
+
+        this.fullAddress = new FullAddress();
     }
 
     public static getDigest(o: Offer) {

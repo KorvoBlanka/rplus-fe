@@ -6,11 +6,11 @@ import {Output, EventEmitter} from '@angular/core';
 
 import {HubService} from '../service/hub.service'
 import {OfferService} from '../service/offer.service';
-import {Offer} from '../class/offer';
+import {Offer} from '../entity/offer';
 
 import * as moment from 'moment/moment';
 import {UserService} from "../service/user.service";
-import {User} from "../class/user";
+import {User} from "../entity/user";
 
 
 @Component({
@@ -269,7 +269,7 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'locality', label: 'Город', visible: false, sort: 0, val: (ofr: Offer) => {
-            return ofr.locality;
+            return ofr.fullAddress.city;
         }
         },
         {
@@ -284,7 +284,7 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'address', label: 'Адрес', visible: true, sort: 0, val: (ofr: Offer) => {
-            return ofr.address;
+            return ofr.fullAddress.street;
         }
         },
         {
@@ -558,7 +558,7 @@ export class OfferTableComponent implements OnInit {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
-                        rq.push(o.person.phones.join(" "));
+                        rq.push(o.person.phoneBlock.getAsString());
                     });
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},

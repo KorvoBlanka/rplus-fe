@@ -10,11 +10,11 @@ import {UserService} from "../../service/user.service";
 import {SuggestionService} from "../../service/suggestion.service";
 
 import {Tab} from '../../class/tab';
-import {Offer} from '../../class/offer';
+import {Offer} from '../../entity/offer';
 
-import {User} from "../../class/user";
+import {User} from "../../entity/user";
 import {SessionService} from "../../service/session.service";
-import {Account} from "../../class/account";
+import {Account} from "../../entity/account";
 
 @Component({
     selector: 'tab-list-offer',
@@ -641,7 +641,9 @@ export class TabListOfferComponent {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
-                        rq.push(o.person.phones.join(" "));
+                        if (o.person.phoneBlock) {
+                            rq.push(o.person.phoneBlock.getAsString());
+                        }
                     });
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},

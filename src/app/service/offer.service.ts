@@ -3,10 +3,10 @@ import {Http, Headers, Response} from '@angular/http';
 
 import {ConfigService} from './config.service';
 
-import {Offer} from '../class/offer';
+import {Offer} from '../entity/offer';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 import {GeoPoint} from "../class/geoPoint";
-import {User} from "../class/user";
+import {User} from "../entity/user";
 import {SessionService} from "./session.service";
 import {ListResult} from "../class/listResult";
 

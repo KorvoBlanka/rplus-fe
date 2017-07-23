@@ -3,11 +3,11 @@ import {Component, OnInit, AfterViewInit, trigger, state, style, transition, ani
 import {FormatDatePipe} from '../../pipe/format-date.pipe';
 
 import {Tab} from '../../class/tab';
-import {User} from '../../class/user';
-import {Offer} from '../../class/offer';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
-import {Request} from '../../class/request';
+import {User} from '../../entity/user';
+import {Offer} from '../../entity/offer';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
+import {Request} from '../../entity/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 

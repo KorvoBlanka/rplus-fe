@@ -3,11 +3,11 @@ import {Http, Headers, Response} from '@angular/http';
 
 import {ConfigService} from './config.service';
 
-import {Request} from '../class/request';
+import {Request} from '../entity/request';
 import {AsyncSubject} from "rxjs/AsyncSubject";
-import {User} from "../class/user";
+import {User} from "../entity/user";
 import {SessionService} from "./session.service";
-import {Offer} from "../class/offer";
+import {Offer} from "../entity/offer";
 
 
 @Injectable()

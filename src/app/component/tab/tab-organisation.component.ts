@@ -2,11 +2,11 @@ import {Component, OnInit, AfterViewInit} from '@angular/core';
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
-import {Offer} from '../../class/offer';
-import {User} from '../../class/user';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
-import {Request} from '../../class/request';
+import {Offer} from '../../entity/offer';
+import {User} from '../../entity/user';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
+import {Request} from '../../entity/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 
@@ -376,8 +376,8 @@ import {SessionService} from "../../service/session.service";
                                     {value: 'company', label: 'Наша компания'},
                                     {value: 'partner', label: 'Партнер'}
                                 ]"
-                                [value]="organisation.typeCode_n"
-                                (onChange)="organisation.typeCode_n = $event.selected.value">
+                                [value]="organisation.typeCode"
+                                (onChange)="organisation.typeCode = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -469,8 +469,8 @@ import {SessionService} from "../../service/session.service";
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "organisation.webSite_n"
-                                [width] = "'225px'" (onChange)= "organisation.webSite_n = $event">
+                            <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "organisation.webSite"
+                                [width] = "'225px'" (onChange)= "organisation.webSite = $event">
                             </ui-input-line>
                         </div>
                         <hr>
@@ -494,15 +494,15 @@ import {SessionService} from "../../service/session.service";
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                         <div class="view-group" style='position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Руководитель:'" [value] = "organisation.head_n?.name"
-                                [width] = "'225px'" (onChange)= "organisation.head_n = $event" [queryTipe]="'person'">
+                            <ui-input-line [placeholder] = "'Руководитель:'" [value] = "organisation.head?.name"
+                                [width] = "'225px'" (onChange)= "organisation.head = $event" [queryTipe]="'person'">
                             </ui-input-line>
                         </div>
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                         <div class="view-group" style='position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Контактное лицо:'" [value] = "organisation.contact_n?.name"
-                                [width] = "'225px'" (onChange)= "organisation.contact_n = $event" [queryTipe]="'person'">
+                            <ui-input-line [placeholder] = "'Контактное лицо:'" [value] = "organisation.contact?.name"
+                                [width] = "'225px'" (onChange)= "organisation.contact = $event" [queryTipe]="'person'">
                             </ui-input-line>
                         </div>
 
@@ -512,7 +512,7 @@ import {SessionService} from "../../service/session.service";
                             <span class="view-label pull-left">Ответственный:</span>
                             <ui-slidingMenu class="view-value edit-value"
                                 [options] = "agentOpts"
-                                [value]="organisation.agent_n?.id"
+                                [value]="organisation.agent?.id"
                                 (onChange)="agentChanged($event)"
                             >
                             </ui-slidingMenu>
@@ -520,8 +520,8 @@ import {SessionService} from "../../service/session.service";
                         <hr>
                         <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                            <ui-input-line [placeholder] = "'Договор № от'" [value] = "organisation.contract_n"
-                                    [width] = "'225px'" (onChange)= "organisation.contract_n = $event">
+                            <ui-input-line [placeholder] = "'Договор № от'" [value] = "organisation.contract"
+                                    [width] = "'225px'" (onChange)= "organisation.contract = $event">
                             </ui-input-line>
                         </div>
                         <hr>
@@ -535,8 +535,8 @@ import {SessionService} from "../../service/session.service";
                                     {value: 'NOT_ACTIVE', label: 'Не активно'},
                                     {value: 'ARCHIVE', label: 'Архив'}
                                 ]"
-                                [value]="organisation.stateCode_n"
-                                (onChange)="organisation.stateCode_n = $event.selected.value">
+                                [value]="organisation.stateCode"
+                                (onChange)="organisation.stateCode = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -557,8 +557,8 @@ import {SessionService} from "../../service/session.service";
                                     {value: 'excelent', label: 'Успешный опыт сотрудничества'},
                                     {value: 'cold', label: 'Холодная база'}
                                 ]"
-                                [value]="organisation.sourceCode_n"
-                                (onChange)="organisation.sourceCode_n = $event.selected.value">
+                                [value]="organisation.sourceCode"
+                                (onChange)="organisation.sourceCode = $event.selected.value">
                             >
                             </ui-slidingMenu>
                         </div>
@@ -595,7 +595,7 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Название:</span>
-                                <span class="view-value"> {{getTypeName(organisation.orgName_n)}}
+                                <span class="view-value"> {{getTypeName(organisation.type)}}
                                      &laquo;{{ organisation.name }}&raquo;
                                 </span>
                             </div>
@@ -646,39 +646,39 @@ import {SessionService} from "../../service/session.service";
                                 <span class="view-label pull-left">WEB-сайт:</span>
                                 <span class="view-value">
                                     <span *ngIf="!organisation?.webSite_n" class="view-value">Не указан</span>
-                                    <a *ngIf="organisation?.webSite_n" [href]="'http://'+organisation.webSite_n" target="_blank">{{organisation?.webSite_n}}</a>
+                                    <a *ngIf="organisation?.webSite" [href]="'http://'+organisation.webSite" target="_blank">{{organisation?.webSite}}</a>
                                 </span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/requisites.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Реквизиты:</span>
-                                <span class="view-value"> {{"ИНН: "+ (organisation.inn_n === undefined ? " ": organisation.inn_n) + "; КПП: " + organisation.kpp_n}}</span>
+                                <span class="view-value"> {{"ИНН: "+ (organisation.requisites.inn === undefined ? " ": organisation.requisites.inn) + "; КПП: " + organisation.requisites.kpp}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Руководитель:</span>
-                                <span class="view-value" [class.link] = "organisation.head_n?.id" (click)="openPerson(organisation.head_n)">{{organisation.head_n?.name  || 'Не указан'}}</span>
+                                <span class="view-value" [class.link] = "organisation.head?.id" (click)="openPerson(organisation.head)">{{organisation.head?.name  || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Контактное лицо:</span>
-                                <span class="view-value" [class.link] = "organisation.contact_n?.id" (click)="openPerson(organisation.contact_n)">{{organisation.contact_n?.name  || 'Не указано'}}</span>
+                                <span class="view-value" [class.link] = "organisation.contact?.id" (click)="openPerson(organisation.contact)">{{organisation.contact?.name  || 'Не указано'}}</span>
                             </div>
 
                             <div class="header_col">Сопроводительная информация</div>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Ответственный:</span>
-                                <span class="view-value" [class.link] = "organisation.agent_n?.id" (click)="openUser()">{{organisation.agent_n?.name || 'Не указан'}}</span>
+                                <span class="view-value" [class.link] = "organisation.agent?.id" (click)="openUser()">{{organisation.agent?.name || 'Не указан'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор:</span>
-                                <span class="view-value">{{organisation.contract_n}}</span>
+                                <span class="view-value">{{organisation.contract}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/status.png)'"></div>
@@ -691,7 +691,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'NOT_ACTIVE', label: 'Не активно'},
                                         {value: 'ARCHIVE', label: 'Архив'}
                                     ]"
-                                    [value]="organisation.stateCode_n"
+                                    [value]="organisation.stateCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -751,7 +751,7 @@ import {SessionService} from "../../service/session.service";
                     >
                         <div class="" style="margin-top: 25px; max-width: 915px; overflow-y: scroll;" [style.height]="paneHeight">
                             <div class="button" (click)="addContact()">Добавить контакт</div>
-                            <digest-person *ngFor="let p of persons | async"
+                            <digest-person *ngFor="let p of persons"
                                 [person]="p"
                             >
                             </digest-person>
@@ -920,7 +920,7 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
 
     getDateUser = User.getData;
 
-    persons: Observable<Person[]>;
+    persons: Person[];
     offers: Offer[];
 
     agentOpts: any[] = [];
@@ -1048,50 +1048,52 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
 
     save() {
         this.organisation.name = this.orgNameArray[0].value;
-        this.organisation.orgName_n = this.orgNameArray[0].type;
+        this.organisation.type = this.orgNameArray[0].type;
+
         let tem = this.getIndex(this.orgPhone, "MOBILE");
-        this.organisation.cellPhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        this.organisation.phoneBlock.cellphone =  tem > -1 ? this.orgPhone[tem].value : null;
         tem =  this.getIndex(this.orgPhone, "HOME");
-        this.organisation.homePhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        this.organisation.phoneBlock.home =  tem > -1 ? this.orgPhone[tem].value : null;
         tem = this.getIndex(this.orgPhone, "WORK");
-        this.organisation.officePhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        this.organisation.phoneBlock.office =  tem > -1 ? this.orgPhone[tem].value : null;
         tem = this.getIndex(this.orgPhone, "MAIN");
-        this.organisation.mainPhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        this.organisation.phoneBlock.main =  tem > -1 ? this.orgPhone[tem].value : null;
         tem = this.getIndex(this.orgPhone, "SAME");
-        this.organisation.otherPhone_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        this.organisation.phoneBlock.other =  tem > -1 ? this.orgPhone[tem].value : null;
         tem = this.getIndex(this.orgPhone, "FAX");
-        this.organisation.fax_n =  tem > -1 ? this.orgPhone[tem].value : null;
+        this.organisation.phoneBlock.fax =  tem > -1 ? this.orgPhone[tem].value : null;
 
         tem = this.getIndex(this.orgAddress, "KRAY");
-        this.organisation.region_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.region =  tem > -1 ? this.orgAddress[tem].value : undefined;
         tem = this.getIndex(this.orgAddress, "CITY");
-        this.organisation.city_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.city =  tem > -1 ? this.orgAddress[tem].value : undefined;
         tem = this.getIndex(this.orgAddress, "DISTRICT");
-        this.organisation.area_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.admArea =  tem > -1 ? this.orgAddress[tem].value : undefined;
         tem = this.getIndex(this.orgAddress, "STREET");
-        this.organisation.street_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.street =  tem > -1 ? this.orgAddress[tem].value : undefined;
         tem = this.getIndex(this.orgAddress, "HOUSE");
-        this.organisation.house_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.house =  tem > -1 ? this.orgAddress[tem].value : undefined;
         tem = this.getIndex(this.orgAddress, "HOUSING");
-        this.organisation.housing_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.housing =  tem > -1 ? this.orgAddress[tem].value : undefined;
         tem = this.getIndex(this.orgAddress, "FLAT");
-        this.organisation.apartment_n =  tem > -1 ? this.orgAddress[tem].value : undefined;
+        this.organisation.fullAddress.apartment =  tem > -1 ? this.orgAddress[tem].value : undefined;
 
         tem =  this.getIndex(this.orgEmail, "MAIN");
-        this.organisation.mainEmail_n =  tem > -1 ? this.orgEmail[tem].value : null;
+        this.organisation.emailBlock.main =  tem > -1 ? this.orgEmail[tem].value : null;
         tem = this.getIndex(this.orgEmail, "WORK");
-        this.organisation.workEmail_n =  tem > -1 ? this.orgEmail[tem].value : null;
+        this.organisation.emailBlock.work =  tem > -1 ? this.orgEmail[tem].value : null;
 
         tem = this.getIndex(this.orgRequisit, "INN");
-        this.organisation.inn_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        this.organisation.requisites.inn =  tem > -1 ? this.orgRequisit[tem].value : null;
         tem = this.getIndex(this.orgRequisit, "KPP");
-        this.organisation.kpp_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        this.organisation.requisites.kpp =  tem > -1 ? this.orgRequisit[tem].value : null;
         tem = this.getIndex(this.orgRequisit, "KS");
-        this.organisation.cor_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        this.organisation.requisites.cor =  tem > -1 ? this.orgRequisit[tem].value : null;
         tem = this.getIndex(this.orgRequisit, "BIK");
-        this.organisation.bic_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        this.organisation.requisites.bic =  tem > -1 ? this.orgRequisit[tem].value : null;
         tem = this.getIndex(this.orgRequisit, "OTHER");
-        this.organisation.other_n =  tem > -1 ? this.orgRequisit[tem].value : null;
+        this.organisation.requisites.other =  tem > -1 ? this.orgRequisit[tem].value : null;
+
 
         this._organisationService.save(this.organisation).subscribe(org => {
             console.log(this.organisation);
@@ -1145,7 +1147,10 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
 
     getPersons(page, perPage) {
         if (this.organisation.id) {
-            this._personService.list(null, this.organisation.id, "");
+            this._personService.list(null, this.organisation.id, "").subscribe(persons => {
+                    this.persons = persons;
+                }
+            );
         }
     }
 
@@ -1182,7 +1187,7 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
     agentChanged(e) {
         if (e.selected.value != null) {
             this._userService.get(e.selected.value).subscribe(agent => {
-                this.organisation.agent_n = agent;
+                this.organisation.agent = agent;
             });
         }
     }
@@ -1250,66 +1255,64 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
     getName(event){
         this.parseArray(event, this.orgNameArray);
         this.organisation.name = this.orgNameArray[0].value;
-        this.organisation.orgName_n = this.orgNameArray[0].type;
+        this.organisation.type = this.orgNameArray[0].type;
     }
 
 
     getAddressStr(){
-            this.addressStr = this.organisation.city_n !== undefined ? ""+this.organisation.city_n : '';
-            this.addressStr += this.organisation.street_n !== undefined ? ", " + this.organisation.street_n : '';
-            this.addressStr += this.organisation.house_n !== undefined ? ", " + this.organisation.house_n : '';
-            if(this.orgAddress.length == 0)
-                this.addressStr = '';
+            this.addressStr = this.organisation.fullAddress.city !== undefined ? ""+this.organisation.fullAddress.city : '';
+            this.addressStr += this.organisation.fullAddress.street !== undefined ? ", " + this.organisation.fullAddress.street : '';
+            this.addressStr += this.organisation.fullAddress.house !== undefined ? ", " + this.organisation.fullAddress.house : '';
     }
 
     updateArrays(){
-        this.orgNameArray = [{type: this.organisation.orgName_n, value: this.organisation.name}];
+        this.orgNameArray = [{type: this.organisation.type, value: this.organisation.name}];
         this.orgRequisit =[
-            {type: "INN", value: this.organisation.inn_n},
-            {type: "KPP", value: this.organisation.kpp_n},
-            {type: "KS", value: this.organisation.cor_n},
-            {type: "BIK", value: this.organisation.bic_n},
-            {type: "OTHER", value: this.organisation.other_n}
+            {type: "INN", value: this.organisation.requisites.inn},
+            {type: "KPP", value: this.organisation.requisites.kpp},
+            {type: "KS", value: this.organisation.requisites.cor},
+            {type: "BIK", value: this.organisation.requisites.bic},
+            {type: "OTHER", value: this.organisation.requisites.other}
         ];
         this.orgAddress=[
-            {type: 'KRAY', value: this.organisation.region_n},
-            {type: 'CITY', value: this.organisation.city_n},
-            {type: 'DISTRICT', value: this.organisation.area_n},
-            {type: 'STREET', value: this.organisation.street_n},
-            {type: 'HOUSE', value: this.organisation.house_n},
-            {type: 'HOUSING', value: this.organisation.housing_n},
-            {type: 'FLAT', value: this.organisation.apartment_n}
+            {type: 'KRAY', value: this.organisation.fullAddress.region},
+            {type: 'CITY', value: this.organisation.fullAddress.city},
+            {type: 'DISTRICT', value: this.organisation.fullAddress.admArea},
+            {type: 'STREET', value: this.organisation.fullAddress.street},
+            {type: 'HOUSE', value: this.organisation.fullAddress.house},
+            {type: 'HOUSING', value: this.organisation.fullAddress.housing},
+            {type: 'FLAT', value: this.organisation.fullAddress.apartment}
         ];
 
         this.getAddressStr();
 
         this.orgPhone=[
-            {type: 'MOBILE', value:  this.organisation.cellPhone_n},
-            {type: 'HOME', value:  this.organisation.homePhone_n},
-            {type: 'WORK', value: this.organisation.officePhone_n},
-            {type: 'MAIN', value:  this.organisation.mainPhone_n},
-            {type: 'SAME', value:  this.organisation.otherPhone_n},
-            {type: 'FAX', value:  this.organisation.fax_n}
+            {type: 'MOBILE', value:  this.organisation.phoneBlock.cellphone},
+            {type: 'HOME', value:  this.organisation.phoneBlock.home},
+            {type: 'WORK', value: this.organisation.phoneBlock.office},
+            {type: 'MAIN', value:  this.organisation.phoneBlock.main},
+            {type: 'SAME', value:  this.organisation.phoneBlock.other},
+            {type: 'FAX', value:  this.organisation.phoneBlock.fax}
         ];
         this.orgEmail=[
-            {type: 'WORK', value:  this.organisation.workEmail_n},
-            {type: 'MAIN', value:  this.organisation.mainEmail_n}
+            {type: 'WORK', value:  this.organisation.emailBlock.work},
+            {type: 'MAIN', value:  this.organisation.emailBlock.main}
         ];
 
         this.getAddressStr();
     }
 
     openUser(){
-        if(this.organisation.agent_n.id){
+        if(this.organisation.agent.id){
             var tab_sys = this._hubService.getProperty('tab_sys');
-            tab_sys.addTab('user', {user: this.organisation.agent_n});
+            tab_sys.addTab('user', {user: this.organisation.agent});
         }
     }
 
-    openPerson(pers: Person){
-        if(pers.id){
+    openPerson(person: Person){
+        if(person.id){
             var tab_sys = this._hubService.getProperty('tab_sys');
-            tab_sys.addTab('person', {person: pers});
+            tab_sys.addTab('person', {person: person});
         }
     }
 }

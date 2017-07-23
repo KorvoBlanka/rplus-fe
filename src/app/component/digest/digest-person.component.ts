@@ -5,9 +5,9 @@ import {UserService} from '../../service/user.service'
 import {OrganisationService} from '../../service/organisation.service'
 import {TaskService} from '../../service/task.service'
 
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
-import {User} from '../../class/user';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
+import {User} from '../../entity/user';
 import {Task} from '../../class/task';
 
 @Component({

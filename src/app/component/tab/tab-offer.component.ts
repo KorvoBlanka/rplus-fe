@@ -11,14 +11,14 @@ import {UserService} from '../../service/user.service'
 
 import {AnalysisService} from '../../service/analysis.service'
 import {Tab} from '../../class/tab';
-import {Offer} from '../../class/offer';
-import {Request} from '../../class/request';
+import {Offer} from '../../entity/offer';
+import {Request} from '../../entity/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 import {Photo} from '../../class/photo';
-import {User} from '../../class/user';
+import {User} from '../../entity/user';
 import {PersonService} from "../../service/person.service";
-import {Person} from "../../class/person";
+import {Person} from "../../entity/person";
 import {UploadService} from "../../service/upload.service";
 import {SuggestionService} from "../../service/suggestion.service";
 
@@ -517,8 +517,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     >
                             </ui-view-value>
                         </div>
-                        <div class="street"> {{ (offer.street_n === undefined ? " " : offer.street_n) + (offer.house_n === undefined ? " " : (", "+ offer.house_n))}}</div>
-                        <div class="district"> {{ (offer.city_n === undefined ? " " : offer.city_n) +(offer.district === undefined ? " " : (", "+ offer.district))}}</div>
+                        <div class="street"> {{ (offer.fullAddress.street === undefined ? " " : offer.fullAddress.street) + (offer.fullAddress.house === undefined ? " " : (", "+ offer.fullAddress.house))}}</div>
+                        <div class="district"> {{ (offer.fullAddress.city === undefined ? " " : offer.fullAddress.city) +(offer.district === undefined ? " " : (", "+ offer.district))}}</div>
                         <div class="rooms">
                             <div [style.background-image]="'url(assets/offer_icon/rooms.png)'"></div>
                             {{ "Комнат "+ (offer.roomsCount === undefined ? " " : offer.roomsCount)}}
@@ -567,8 +567,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "offer.contractStr_n"
-                                        [width] = "'225px'" (onChange)= "offer.contractStr_n = $event">
+                                <ui-input-line [placeholder] = "'Договор № от'" [value] = "offer.contractStr"
+                                        [width] = "'225px'" (onChange)= "offer.contractStr = $event">
                                 </ui-input-line>
                             </div>
                             <hr>
@@ -586,14 +586,14 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/source.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Источник:</span>
-                                <ui-slidingMenu class="view-value edit-value" *ngIf="!offer.sourceUrl_n"
+                                <ui-slidingMenu class="view-value edit-value" *ngIf="!offer.sourceUrl"
                                     [options] = "sourceOptions"
-                                    [value]="offer.sourceCode_n"
-                                    (onChange)="offer.sourceCode_n = $event.selected.value"
+                                    [value]="offer.sourceCode"
+                                    (onChange)="offer.sourceCode = $event.selected.value"
                                 >
                                 </ui-slidingMenu>
-                                <span class="color-g1" *ngIf="offer.sourceUrl_n">
-                                    <a href="" target="_blank" class="a1">{{ offer.sourceUrl_n }}</a>
+                                <span class="color-g1" *ngIf="offer.sourceUrl">
+                                    <a href="" target="_blank" class="a1">{{ offer.sourceUrl }}</a>
                                 </span>
                             </div>
                             <hr>
@@ -674,14 +674,14 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         {value: 'true', label: 'Новостройка'},
                                         {value: 'false', label: 'Вторичка'}
                                     ]"
-                                    [value]="offer.newBuilding_n?.toString()"
-                                    (onChange)="offer.newBuilding_n = ($event.selected.value == 'true')"
+                                    [value]="offer.newBuilding?.toString()"
+                                    (onChange)="offer.newBuilding = ($event.selected.value == 'true')"
                                 >
                                 </ui-slidingMenu>
                             </div>
                             <hr>
-                            <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
-                            <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
+                            <div *ngIf="offer.newBuilding?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
+                            <div *ngIf="offer.newBuilding?.toString() == 'true'" class="view-group" >
                                 <span class="view-label">Стадия объекта:</span>
                                 <ui-slidingMenu class="view-value edit-value"
                                     [options] = "[
@@ -689,16 +689,16 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         {value: 'BUILDING', label: 'Строящийся'},
                                         {value: 'READY', label: 'Сдан'}
                                     ]"
-                                    [value]="offer.objectStage_n"
-                                    (onChange)="offer.objectStage_n = $event.selected.value"
+                                    [value]="offer.objectStage"
+                                    (onChange)="offer.objectStage = $event.selected.value"
                                 >
                                 </ui-slidingMenu>
                             </div>
-                            <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                            <hr *ngIf="offer.newBuilding?.toString() == 'true'">
                             <div class='view_icon' [style.background-image]="'url(assets/offer_icon/year.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
-                                        [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
+                                <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear"
+                                        [width] = "'225px'" (onChange)= "offer.buildYear = $event">
                                 </ui-input-line>
                             </div>
                             <hr>
@@ -783,8 +783,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-label">Лоджия:</span>
                                 <ui-slidingMenu class="view-value edit-value"
                                     [options] = "YesNoOptions"
-                                    [value]="offer.loggia_n?.toString()"
-                                    (onChange)="offer.loggia_n = ($event.selected.value == 'true')"
+                                    [value]="offer.loggia?.toString()"
+                                    (onChange)="offer.loggia = ($event.selected.value == 'true')"
                                 >
                                 </ui-slidingMenu>
                             </div>
@@ -794,8 +794,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-label">Балкон:</span>
                                 <ui-slidingMenu class="view-value edit-value"
                                     [options] = "YesNoOptions"
-                                    [value]="offer.balcony_n?.toString()"
-                                    (onChange)="offer.balcony_n =  ($event.selected.value == 'true')"
+                                    [value]="offer.balcony?.toString()"
+                                    (onChange)="offer.balcony =  ($event.selected.value == 'true')"
                                 >
                                 </ui-slidingMenu>
                             </div>
@@ -805,8 +805,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-label">Санузел:</span>
                                 <ui-slidingMenu class="view-value edit-value"
                                     [options] = "bathroomOptions"
-                                    [value]="offer.bathroom_n"
-                                    (onChange)="offer.bathroom_n = $event.selected.value"
+                                    [value]="offer.bathroom"
+                                    (onChange)="offer.bathroom = $event.selected.value"
                                 >
                                 </ui-slidingMenu>
                             </div>
@@ -816,8 +816,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <span class="view-label">Состояние:</span>
                                 <ui-slidingMenu class="view-value edit-value"
                                     [options] = "conditionOptions"
-                                    [value]="offer.condition_n"
-                                    (onChange)="offer.condition_n = $event.selected.value"
+                                    [value]="offer.condition"
+                                    (onChange)="offer.condition = $event.selected.value"
                                 >
                                 </ui-slidingMenu>
                             </div>
@@ -826,15 +826,15 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                 <div *ngIf="offer.typeCode == 'house' || offer.typeCode == 'townhouse' || offer.typeCode == 'cottage' || offer.typeCode == 'dacha' ">
                                 <div class='view_icon' [style.background-image]="'url(assets/offer_icon/distance.png)'"></div>
                                 <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                    <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
-                                        [width] = "'225px'" (onChange)= "offer.distance_n = $event">
+                                    <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance"
+                                        [width] = "'225px'" (onChange)= "offer.distance = $event">
                                     </ui-input-line>
                                 </div>
                                 <hr>
                                 <div class='view_icon' [style.background-image]="'url(assets/offer_icon/name.png)'"></div>
                                 <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                    <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement_n"
-                                        [width] = "'225px'" (onChange)= "offer.settlement_n = $event">
+                                    <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement"
+                                        [width] = "'225px'" (onChange)= "offer.settlement = $event">
                                     </ui-input-line>
                                 </div>
                                 <hr>
@@ -874,8 +874,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <hr>
                                 <div class='view_icon' [style.background-image]="'url(assets/offer_icon/year.png)'"></div>
                                 <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                    <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
-                                            [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
+                                    <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear"
+                                            [width] = "'225px'" (onChange)= "offer.buildYear = $event">
                                     </ui-input-line>
                                 </div>
                                 <hr>
@@ -927,8 +927,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Состояние:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "conditionOptions"
-                                        [value]="offer.condition_n"
-                                        (onChange)="offer.condition_n = $event.selected.value"
+                                        [value]="offer.condition"
+                                        (onChange)="offer.condition = $event.selected.value"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -949,8 +949,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Лоджия:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.loggia_n?.toString()"
-                                        (onChange)="offer.loggia_n =  ($event.selected.value == 'true')"
+                                        [value]="offer.loggia?.toString()"
+                                        (onChange)="offer.loggia =  ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -960,8 +960,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Балкон:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.balcony_n?.toString()"
-                                        (onChange)="offer.balcony_n = ($event.selected.value == 'true')"
+                                        [value]="offer.balcony?.toString()"
+                                        (onChange)="offer.balcony = ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -971,8 +971,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Санузел:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "bathroomOptions"
-                                        [value]="offer.bathroom_n"
-                                        (onChange)="offer.bathroom_n = $event.selected.value"
+                                        [value]="offer.bathroom"
+                                        (onChange)="offer.bathroom = $event.selected.value"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -982,8 +982,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Водоснабжение:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.waterSupply_n?.toString()"
-                                        (onChange)="offer.waterSupply_n = ($event.selected.value == 'true')"
+                                        [value]="offer.waterSupply?.toString()"
+                                        (onChange)="offer.waterSupply = ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -993,8 +993,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Газификация:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.gasification_n?.toString()"
-                                        (onChange)="offer.gasification_n = ($event.selected.value == 'true')"
+                                        [value]="offer.gasification?.toString()"
+                                        (onChange)="offer.gasification = ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -1004,8 +1004,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Электроснабжение:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.electrification_n?.toString()"
-                                        (onChange)="offer.electrification_n = ($event.selected.value == 'true')"
+                                        [value]="offer.electrification?.toString()"
+                                        (onChange)="offer.electrification = ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -1015,8 +1015,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Канализация:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.sewerage_n?.toString()"
-                                        (onChange)="offer.sewerage_n = ($event.selected.value == 'true')"
+                                        [value]="offer.sewerage?.toString()"
+                                        (onChange)="offer.sewerage = ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -1026,8 +1026,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Отопление:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "YesNoOptions"
-                                        [value]="offer.centralHeating_n?.toString()"
-                                        (onChange)="offer.centralHeating_n = ($event.selected.value == 'true')"
+                                        [value]="offer.centralHeating?.toString()"
+                                        (onChange)="offer.centralHeating = ($event.selected.value == 'true')"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -1054,8 +1054,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-label">Назначение земель:</span>
                                     <ui-slidingMenu class="view-value edit-value"
                                         [options] = "landOption"
-                                        [value]="offer.landPurpose_n"
-                                        (onChange)="offer.landPurpose_n = $event.selected.value"
+                                        [value]="offer.landPurpose"
+                                        (onChange)="offer.landPurpose = $event.selected.value"
                                     >
                                     </ui-slidingMenu>
                                 </div>
@@ -1064,15 +1064,15 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                         <div *ngIf="offer.typeCode == 'land' || offer.typeCode == 'land1' || offer.typeCode == 'land2'">
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/distance.png)'"></div>
                                     <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                        <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
-                                            [width] = "'225px'" (onChange)= "offer.distance_n = $event">
+                                        <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance"
+                                            [width] = "'225px'" (onChange)= "offer.distance = $event">
                                         </ui-input-line>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/name.png)'"></div>
                                     <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                        <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement_n"
-                                            [width] = "'225px'" (onChange)= "offer.settlement_n = $event">
+                                        <ui-input-line [placeholder] = "'Наименование поселения:'" [value] = "offer.settlement"
+                                            [width] = "'225px'" (onChange)= "offer.settlement = $event">
                                         </ui-input-line>
                                     </div>
                                     <hr>
@@ -1115,8 +1115,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Назначение земель:</span>
                                         <ui-slidingMenu class="view-value edit-value"
                                             [options] = "landOption"
-                                            [value]="offer.landPurpose_n"
-                                            (onChange)="offer.landPurpose_n = $event.selected.value"
+                                            [value]="offer.landPurpose"
+                                            (onChange)="offer.landPurpose = $event.selected.value"
                                         >
                                         </ui-slidingMenu>
                                     </div>
@@ -1143,8 +1143,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Водоснабжение:</span>
                                         <ui-slidingMenu class="view-value edit-value"
                                             [options] = "YesNoOptions"
-                                            [value]="offer.waterSupply_n?.toString()"
-                                            (onChange)="offer.waterSupply_n = ($event.selected.value == 'true')"
+                                            [value]="offer.waterSupply?.toString()"
+                                            (onChange)="offer.waterSupply = ($event.selected.value == 'true')"
                                         >
                                         </ui-slidingMenu>
                                     </div>
@@ -1154,8 +1154,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Газификация:</span>
                                         <ui-slidingMenu class="view-value edit-value"
                                             [options] = "YesNoOptions"
-                                            [value]="offer.gasification_n?.toString()"
-                                            (onChange)="offer.gasification_n = ($event.selected.value == 'true')"
+                                            [value]="offer.gasification?.toString()"
+                                            (onChange)="offer.gasification = ($event.selected.value == 'true')"
                                         >
                                         </ui-slidingMenu>
                                     </div>
@@ -1165,8 +1165,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Электроснабжение:</span>
                                         <ui-slidingMenu class="view-value edit-value"
                                             [options] = "YesNoOptions"
-                                            [value]="offer.electrification_n?.toString()"
-                                            (onChange)="offer.electrification_n = ($event.selected.value == 'true')"
+                                            [value]="offer.electrification?.toString()"
+                                            (onChange)="offer.electrification = ($event.selected.value == 'true')"
                                         >
                                         </ui-slidingMenu>
                                     </div>
@@ -1176,8 +1176,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Канализация:</span>
                                         <ui-slidingMenu class="view-value edit-value"
                                             [options] = "YesNoOptions"
-                                            [value]="offer.sewerage_n?.toString()"
-                                            (onChange)="offer.sewerage_n =($event.selected.value == 'true')"
+                                            [value]="offer.sewerage?.toString()"
+                                            (onChange)="offer.sewerage =($event.selected.value == 'true')"
                                         >
                                     </ui-slidingMenu>
                                     </div>
@@ -1187,8 +1187,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Отопление:</span>
                                         <ui-slidingMenu class="view-value edit-value"
                                             [options] = "YesNoOptions"
-                                            [value]="offer.centralHeating_n?.toString()"
-                                            (onChange)="offer.centralHeating_n = ($event.selected.value == 'true')"
+                                            [value]="offer.centralHeating?.toString()"
+                                            (onChange)="offer.centralHeating = ($event.selected.value == 'true')"
                                         >
                                         </ui-slidingMenu>
                                     </div>
@@ -1201,15 +1201,15 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                         >
                                         <div class='view_icon' [style.background-image]="'url(assets/offer_icon/distance.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                            <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance_n"
-                                                [width] = "'225px'" (onChange)= "offer.distance_n = $event">
+                                            <ui-input-line [placeholder] = "'Удаленность:'" [value] = "offer.distance"
+                                                [width] = "'225px'" (onChange)= "offer.distance = $event">
                                             </ui-input-line>
                                         </div>
                                         <hr>
                                         <div class='view_icon' [style.background-image]="'url(assets/offer_icon/floor.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                            <ui-input-line [placeholder] = "'Название:'" [value] = "offer.objectName_n"
-                                                [width] = "'225px'" (onChange)= "offer.objectName_n = $event">
+                                            <ui-input-line [placeholder] = "'Название:'" [value] = "offer.objectName"
+                                                [width] = "'225px'" (onChange)= "offer.objectName = $event">
                                             </ui-input-line>
                                         </div>
                                         <hr>
@@ -1244,14 +1244,14 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                     {value: 'true', label: 'Новостройка'},
                                                     {value: 'false', label: 'Вторичка'}
                                                 ]"
-                                                [value]="offer.newBuilding_n?.toString()"
-                                                (onChange)="offer.newBuilding_n = ($event.selected.value == 'true')"
+                                                [value]="offer.newBuilding?.toString()"
+                                                (onChange)="offer.newBuilding = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
                                         <hr>
-                                        <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
-                                        <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
+                                        <div *ngIf="offer.newBuilding?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
+                                        <div *ngIf="offer.newBuilding?.toString() == 'true'" class="view-group" >
                                             <span class="view-label">Стадия объекта:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "[
@@ -1259,16 +1259,16 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                     {value: 'BUILDING', label: 'Строящийся'},
                                                     {value: 'READY', label: 'Сдан'}
                                                 ]"
-                                                [value]="offer.objectStage_n"
-                                                (onChange)="offer.objectStage_n = $event.selected.value"
+                                                [value]="offer.objectStage"
+                                                (onChange)="offer.objectStage = $event.selected.value"
                                             >
                                             </ui-slidingMenu>
                                         </div>
-                                        <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                                        <hr *ngIf="offer.newBuilding?.toString() == 'true'">
                                         <div class='view_icon' [style.background-image]="'url(assets/offer_icon/year.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                            <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear_n"
-                                                    [width] = "'225px'" (onChange)= "offer.buildYear_n = $event">
+                                            <ui-input-line [placeholder] = "'Год постройки:'" [value] = "offer.buildYear"
+                                                    [width] = "'225px'" (onChange)= "offer.buildYear = $event">
                                             </ui-input-line>
                                         </div>
                                         <hr>
@@ -1277,8 +1277,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Тип здания:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "getBuldingOptionsArray()"
-                                                [value]="offer.buildingType_n"
-                                                (onChange)="offer.buildingType_n = $event.selected.value"
+                                                [value]="offer.buildingType"
+                                                (onChange)="offer.buildingType = $event.selected.value"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1295,8 +1295,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                     {value: '5', label: 'С'},
                                                     {value: '6', label: 'С+'}
                                                 ]"
-                                                [value]="offer.buildingClass_n"
-                                                (onChange)="offer.buildingClass_n = $event.selected.value"
+                                                [value]="offer.buildingClass"
+                                                (onChange)="offer.buildingClass = $event.selected.value"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1335,8 +1335,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Водоснабжение:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.waterSupply_n?.toString()"
-                                                (onChange)="offer.waterSupply_n = ($event.selected.value == 'true')"
+                                                [value]="offer.waterSupply?.toString()"
+                                                (onChange)="offer.waterSupply = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1346,8 +1346,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Газификация:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.gasification_n?.toString()"
-                                                (onChange)="offer.gasification_n = ($event.selected.value == 'true')"
+                                                [value]="offer.gasification?.toString()"
+                                                (onChange)="offer.gasification = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1357,8 +1357,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Электроснабжение:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.electrification_n?.toString()"
-                                                (onChange)="offer.electrification_n = ($event.selected.value == 'true')"
+                                                [value]="offer.electrification?.toString()"
+                                                (onChange)="offer.electrification = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1368,8 +1368,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Канализация:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.sewerage_n?.toString()"
-                                                (onChange)="offer.sewerage_n = ($event.selected.value == 'true')"
+                                                [value]="offer.sewerage?.toString()"
+                                                (onChange)="offer.sewerage = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1379,8 +1379,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Отопление:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.centralHeating_n?.toString()"
-                                                (onChange)="offer.centralHeating_n = ($event.selected.value == 'true')"
+                                                [value]="offer.centralHeating?.toString()"
+                                                (onChange)="offer.centralHeating = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1405,8 +1405,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <hr>
                                         <div class='view_icon' [style.background-image]="'url(assets/offer_icon/height.png)'"></div>
                                         <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                            <ui-input-line [placeholder] = "'Высота потолков:'" [value] = "offer.ceilingHeight_n"
-                                                [width] = "'225px'" (onChange)= "offer.ceilingHeight_n = $event">
+                                            <ui-input-line [placeholder] = "'Высота потолков:'" [value] = "offer.ceilingHeight"
+                                                [width] = "'225px'" (onChange)= "offer.ceilingHeight = $event">
                                             </ui-input-line>
                                         </div>
                                         <hr>
@@ -1415,8 +1415,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Состояние помещения:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "conditionOptions"
-                                                [value]="offer.condition_n"
-                                                (onChange)="offer.condition_n = $event.selected.value"
+                                                [value]="offer.condition"
+                                                (onChange)="offer.condition = $event.selected.value"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1426,8 +1426,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Охрана:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.guard_n?.toString()"
-                                                (onChange)="offer.guard_n = ($event.selected.value == 'true')"
+                                                [value]="offer.guard?.toString()"
+                                                (onChange)="offer.guard = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1437,8 +1437,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Лифт:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.lift_n?.toString()"
-                                                (onChange)="offer.lift_n = ($event.selected.value == 'true')"
+                                                [value]="offer.lift?.toString()"
+                                                (onChange)="offer.lift = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1448,8 +1448,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                             <span class="view-label">Парковка:</span>
                                             <ui-slidingMenu class="view-value edit-value"
                                                 [options] = "YesNoOptions"
-                                                [value]="offer.parking_n?.toString()"
-                                                (onChange)="offer.parking_n = ($event.selected.value == 'true')"
+                                                [value]="offer.parking?.toString()"
+                                                (onChange)="offer.parking = ($event.selected.value == 'true')"
                                             >
                                             </ui-slidingMenu>
                                         </div>
@@ -1506,7 +1506,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         {value: 'OUR', label: 'Наша компания'},
                                         {value: 'PARTHER', label: 'Партнер'}
                                     ]"
-                                    [value]="offer.person?.typeCode_n"
+                                    [value]="offer.person?.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -1518,52 +1518,52 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <span class="view-value" [class.link] = "offer.person?.id" (click)="openPerson()">{{offer.person?.name  || 'Не указано'}}</span>
                                 </div>
                             </div>
-                            <div *ngIf='offer.organisation'>
+                            <div *ngIf='offer.person.organisation'>
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Название:</span>
-                                    <span class="view-value">  {{ offer.organisation?.name }} </span>
+                                    <span class="view-value">  {{ offer.person.organisation?.name }} </span>
                                 </div>
                                 <hr>
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Контактное лицо:</span>
-                                    <span class="view-value">{{ offer.organisation?.name }}</span>
+                                    <span class="view-value">{{ offer.person.organisation?.name }}</span>
                                 </div>
                                 <hr>
                                 <div class='view_icon' [style.background-image]="'url(assets/user_icon/user.png)'"></div>
                                 <div class="view-group">
                                     <span class="view-label">Должность:</span>
-                                    <span class="view-value">{{ offer.organisation?.name }}</span>
+                                    <span class="view-value">{{ offer.person.organisation?.name }}</span>
                                 </div>
                             </div>
-                            <hr  *ngIf='offer.person || offer.organisation'>
+                            <hr  *ngIf='offer.person || offer.person.organisation'>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/phone.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Телефон:</span>
-                                <span class="view-value">{{offer.person?.mainPhone_n || offer.person?.cellPhone_n || offer.person?.officePhone_n}}</span>
+                                <span class="view-value">{{offer.person.phoneBlock?.main || offer.person.phoneBlock?.cellphone || offer.person.phoneBlock?.office}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/email.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">E-mail:</span>
-                                <span class="view-value">{{offer.person?.mainEmail_n || offer.person?.workEmail_n }}</span>
+                                <span class="view-value">{{offer.person.emailBlock?.main || offer.person.emailBlock?.work }}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Web-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!offer.person?.webSite_n" class="view-value">Не указан</span>
-                                    <a *ngIf="offer.person?.webSite_n" [href]="'http://'+offer.person.webSite_n" target="_blank">{{offer.person?.webSite_n}}</a>
+                                    <span *ngIf="!offer.person?.webSite" class="view-value">Не указан</span>
+                                    <a *ngIf="offer.person?.webSite" [href]="'http://'+offer.person.webSite" target="_blank">{{offer.person?.webSite}}</a>
                                 </span>
                             </div>
-                            <hr *ngIf="offer.person?.organisation_n">
-                            <div  *ngIf="offer.person?.organisation_n" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
-                            <div  *ngIf="offer.person?.organisation_n" class="view-group" >
+                            <hr *ngIf="offer.person?.organisation">
+                            <div  *ngIf="offer.person?.organisation" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
+                            <div  *ngIf="offer.person?.organisation" class="view-group" >
                                 <span class="view-label">Организация:</span>
-                                <span class="view-value" [class.link] = "offer.person?.organisation_n?.id" (click)="openOrganisation()">
-                                    {{offer.person?.organisation_n?.orgName_n}}{{ offer.person?.organisation_n?.name ? (' "' +offer.person?.organisation_n?.name+ '"') : 'Не указана'}}
+                                <span class="view-value" [class.link] = "offer.person?.organisation?.id" (click)="openOrganisation()">
+                                    {{offer.person?.organisation?.type}}{{ offer.person?.organisation?.name ? (' "' +offer.person?.organisation?.name+ '"') : 'Не указана'}}
                                 </span>
                             </div>
 
@@ -1577,7 +1577,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                             <div class='view_icon' [style.background-image]="'url(assets/offer_icon/contract.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Договор:</span>
-                                <span class="view-value"> {{offer.contractStr_n}} </span>
+                                <span class="view-value"> {{offer.contractStr}} </span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
@@ -1600,7 +1600,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 </span>
                                 <ui-view-value *ngIf="!offer.sourceUrl"
                                     [options] = "sourceOptions"
-                                    [value]="offer.sourceCode_n"
+                                    [value]="offer.sourceCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -1657,13 +1657,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                 {value: 'true', label: 'Новостройка'},
                                                 {value: 'false', label: 'Вторичка'}
                                             ]"
-                                            [value]="offer.newBuilding_n?.toString()"
+                                            [value]="offer.newBuilding?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
-                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
+                                    <div *ngIf="offer.newBuilding?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
+                                    <div *ngIf="offer.newBuilding?.toString() == 'true'" class="view-group" >
                                         <span class="view-label">Стадия объекта:</span>
                                         <ui-view-value
                                             [options] = "[
@@ -1671,15 +1671,15 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                 {value: 'BUILDING', label: 'Строящийся'},
                                                 {value: 'READY', label: 'Сдан'}
                                             ]"
-                                            [value]="offer.objectStage_n"
+                                            [value]="offer.objectStage"
                                         >
                                         </ui-view-value>
                                     </div>
-                                    <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                                    <hr *ngIf="offer.newBuilding?.toString() == 'true'">
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/year.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Год постройки:</span>
-                                        <span class="view-value"> {{ offer.buildYear_n }} </span>
+                                        <span class="view-value"> {{ offer.buildYear }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/property_type.png)'"></div>
@@ -1789,13 +1789,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/distance.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Удаленность:</span>
-                                        <span class="view-value"> {{ offer.distance_n }} </span>
+                                        <span class="view-value"> {{ offer.distance }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/name.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Наименование поселения:</span>
-                                        <span class="view-value"> {{ offer.settlement_n }} </span>
+                                        <span class="view-value"> {{ offer.settlement }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/user_icon/address.png)'"></div>
@@ -1819,7 +1819,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/year.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Год постройки:</span>
-                                        <span class="view-value"> {{ offer.buildYear_n }} </span>
+                                        <span class="view-value"> {{ offer.buildYear }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/floor.png)'"></div>
@@ -1959,7 +1959,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Отопление:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.centralHeating_n?.toString()"
+                                            [value]="offer.centralHeating?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1967,7 +1967,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/square.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Площадь участка:</span>
-                                        <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType_n == 0 ? "cот" : "га") }} </span>
+                                        <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType == 0 ? "cот" : "га") }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/land.png)'"></div>
@@ -1975,7 +1975,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Назначение земель:</span>
                                         <ui-view-value
                                             [options] = "landOption"
-                                            [value]="offer.landPurpose_n"
+                                            [value]="offer.landPurpose"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -1984,13 +1984,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/distance.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Удаленность:</span>
-                                        <span class="view-value"> {{ offer.distance_n }} </span>
+                                        <span class="view-value"> {{ offer.distance }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/name.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Наименование поселения:</span>
-                                        <span class="view-value"> {{ offer.settlement_n }} </span>
+                                        <span class="view-value"> {{ offer.settlement }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/user_icon/address.png)'"></div>
@@ -2006,7 +2006,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Охрана:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.guard_n?.toString()"
+                                            [value]="offer.guard?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2016,7 +2016,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label">Назначение:</span>
                                         <ui-view-value
                                             [options] = "landOption"
-                                            [value]="offer.landPurpose_n"
+                                            [value]="offer.landPurpose"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2024,7 +2024,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/square.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Площадь участка:</span>
-                                        <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType_n == 0 ? "cот" : "га") }} </span>
+                                        <span class="view-value"> {{ offer.squareLand + " " + (offer.squareLandType == 0 ? "cот" : "га") }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/water.png)'"></div>
@@ -2032,7 +2032,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Водоснабжение:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.waterSupply_n?.toString()"
+                                            [value]="offer.waterSupply?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2042,7 +2042,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Газификация:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.gasification_n?.toString()"
+                                            [value]="offer.gasification?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2052,7 +2052,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Электроснабжение:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.electrification_n?.toString()"
+                                            [value]="offer.electrification?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2062,7 +2062,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Канализация:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.sewerage_n?.toString()"
+                                            [value]="offer.sewerage?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2072,7 +2072,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Отопление:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.centralHeating_n?.toString()"
+                                            [value]="offer.centralHeating?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2084,13 +2084,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/distance.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Удаленность:</span>
-                                        <span class="view-value"> {{ offer.distance_n }} </span>
+                                        <span class="view-value"> {{ offer.distance }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/agent_icon/live_place.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Название:</span>
-                                        <span class="view-value"> {{ offer.objectName_n }} </span>
+                                        <span class="view-value"> {{ offer.objectName }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/user_icon/address.png)'"></div>
@@ -2109,13 +2109,13 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                 {value: 'true', label: 'Новостройка'},
                                                 {value: 'false', label: 'Вторичка'}
                                             ]"
-                                            [value]="offer.newBuilding_n?.toString()"
+                                            [value]="offer.newBuilding?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
                                     <hr>
-                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
-                                    <div *ngIf="offer.newBuilding_n?.toString() == 'true'" class="view-group" >
+                                    <div *ngIf="offer.newBuilding?.toString() == 'true'" class='view_icon' [style.background-image]="'url(assets/offer_icon/stage.png)'"></div>
+                                    <div *ngIf="offer.newBuilding?.toString() == 'true'" class="view-group" >
                                         <span class="view-label">Стадия объекта:</span>
                                         <ui-view-value
                                             [options] = "[
@@ -2123,15 +2123,15 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                                 {value: 'BUILDING', label: 'Строящийся'},
                                                 {value: 'READY', label: 'Сдан'}
                                             ]"
-                                            [value]="offer.objectStage_n"
+                                            [value]="offer.objectStage"
                                         >
                                         </ui-view-value>
                                     </div>
-                                    <hr *ngIf="offer.newBuilding_n?.toString() == 'true'">
+                                    <hr *ngIf="offer.newBuilding?.toString() == 'true'">
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/year.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Год постройки:</span>
-                                        <span class="view-value"> {{ offer.buildYear_n }} </span>
+                                        <span class="view-value"> {{ offer.buildYear }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/property_type.png)'"></div>
@@ -2139,7 +2139,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Тип здания:</span>
                                         <ui-view-value
                                             [options] = "getBuldingOptionsArray()"
-                                            [value]="offer.buildingType_n"
+                                            [value]="offer.buildingType"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2243,7 +2243,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/height.png)'"></div>
                                     <div class="view-group">
                                         <span class="view-label pull-left">Высота потолков:</span>
-                                        <span class="view-value"> {{ offer.ceilingHeight_n }} </span>
+                                        <span class="view-value"> {{ offer.ceilingHeight }} </span>
                                     </div>
                                     <hr>
                                     <div class='view_icon' [style.background-image]="'url(assets/offer_icon/condition.png)'"></div>
@@ -2251,7 +2251,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Состояние:</span>
                                         <ui-view-value
                                             [options] = "conditionOptions"
-                                            [value]="offer.condition_n"
+                                            [value]="offer.condition"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2261,7 +2261,7 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                         <span class="view-label pull-left">Охрана:</span>
                                         <ui-view-value
                                             [options] = "YesNoOptions"
-                                            [value]="offer.guard_n?.toString()"
+                                            [value]="offer.guard?.toString()"
                                         >
                                         </ui-view-value>
                                     </div>
@@ -2294,8 +2294,8 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <ui-multi-view
                                     [values] = "[
                                         {type:'Владельца' , value: offer.ownerPrice},
-                                        {type:'Коммисия(руб)' , value: offer.comission_n},
-                                        {type:'Коммисия(%)' , value: offer.comissionPerc_n}
+                                        {type:'Коммисия(руб)' , value: offer.comission},
+                                        {type:'Коммисия(%)' , value: offer.comissionPerc}
                                     ]"
                                 >
                                 </ui-multi-view>
@@ -2982,27 +2982,22 @@ export class TabOfferComponent implements OnInit {
 
         this.offerPrice=[
             {type: 'OWNER', value: this.offer.ownerPrice},
-            {type: 'RUBLES', value: this.offer.comission_n},
-            {type: 'PERSENT', value: this.offer.comissionPerc_n}
+            {type: 'RUBLES', value: this.offer.comission},
+            {type: 'PERSENT', value: this.offer.comissionPerc}
         ];
-        let needSave = false;
-        if(!this.offer.region_n && this.offer.address){
-            this.offerAddress = Offer.parseAddress(this.offer.address);
-            needSave = true;
-        } else{
-            this.offerAddress=[
-                {type: 'KRAY', value: this.offer.region_n},
-                {type: 'CITY', value: this.offer.city_n},
-                {type: 'DISTRICT', value: this.offer.area_n === undefined ? this.offer.district : this.offer.area_n},
-                {type: 'STREET', value: this.offer.street_n},
-                {type: 'HOUSE', value: this.offer.house_n},
-                {type: 'HOUSING', value: this.offer.housing_n},
-                {type: 'FLAT', value: this.offer.apartment_n}
-            ];
-        }
-        this.getAddressStr();
+
+        this.offerAddress=[
+            {type: 'KRAY', value: this.offer.fullAddress.region},
+            {type: 'CITY', value: this.offer.fullAddress.city},
+            {type: 'DISTRICT', value: this.offer.fullAddress.admArea},
+            {type: 'STREET', value: this.offer.fullAddress.street},
+            {type: 'HOUSE', value: this.offer.fullAddress.house},
+            {type: 'HOUSING', value: this.offer.fullAddress.housing},
+            {type: 'FLAT', value: this.offer.fullAddress.apartment}
+        ];
+
         this.landSquare=[
-            {type: this.offer.squareLandType_n, value: this.offer.squareLand}
+            {type: this.offer.squareLandType, value: this.offer.squareLand}
         ];
 
         if (this.offer.locationLat) {
@@ -3044,12 +3039,10 @@ export class TabOfferComponent implements OnInit {
         else
             this.categoryOffer = 'COMMERSIAL';
         this.calcSize();
-        if(needSave)
-            this.save();
     }
 
     select(itm) {
-        this.offer.address = itm;
+        this.addressStr = itm;
         this.sgList = [];
     }
 
@@ -3059,11 +3052,11 @@ export class TabOfferComponent implements OnInit {
 
     addrChanged() {
         this.sgList = [];
-        if (this.offer.address.length > 0) {
+        if (this.addressStr.length > 0) {
 
             // запросить варианты
 
-            this._suggestionService.list(this.offer.address).subscribe(sgs => {
+            this._suggestionService.list(this.addressStr).subscribe(sgs => {
                 sgs.forEach(e => {
                     this.sgList.push(e);
                 })
@@ -3131,20 +3124,20 @@ export class TabOfferComponent implements OnInit {
         this.offer.squareLiving =  tem > -1 ? parseInt(this.offerSquare[tem].value) : null;
 
         tem = this.getIndex(this.offerAddress, "KRAY");
-        this.offer.region_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        this.offer.fullAddress.region =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "CITY");
-        this.offer.city_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        this.offer.fullAddress.city =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "DISTRICT");
-        this.offer.area_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        this.offer.fullAddress.admArea =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "STREET");
-        this.offer.street_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        this.offer.fullAddress.street =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "HOUSE");
-        this.offer.house_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        this.offer.fullAddress.house =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "HOUSING");
-        this.offer.housing_n =  tem > -1 ? this.offerAddress[tem].value : null;
+        this.offer.fullAddress.housing =  tem > -1 ? this.offerAddress[tem].value : null;
         tem = this.getIndex(this.offerAddress, "FLAT");
-        this.offer.apartment_n =  tem > -1 ? this.offerAddress[tem].value : null;
-        this.offer.district = this.offer.area_n;
+        this.offer.fullAddress.apartment =  tem > -1 ? this.offerAddress[tem].value : null;
+
         tem = this.getIndex(this.offerFloor, "FLOOR");
         this.offer.floor =  tem > -1 ? parseInt(this.offerFloor[tem].value) : null;
         tem =  this.getIndex(this.offerFloor, "FLOORS");
@@ -3155,24 +3148,19 @@ export class TabOfferComponent implements OnInit {
         tem = this.getIndex(this.offerPrice, "OWNER");
         this.offer.ownerPrice =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
         tem =  this.getIndex(this.offerPrice, "RUBLES");
-        this.offer.comission_n =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
+        this.offer.comission =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
         tem = this.getIndex(this.offerPrice, "PERSENT");
-        this.offer.comissionPerc_n =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
+        this.offer.comissionPerc =  tem > -1 ? parseInt(this.offerPrice[tem].value) : null;
 
 
         this.offer.squareLand = this.landSquare[0].value;
-        this.offer.squareLandType_n =  this.ParseInt(this.landSquare[0].type);
+        this.offer.squareLandType = this.ParseInt(this.landSquare[0].type);
         this.offer.personId = this.offer.person.id;
-        if(!this.offer.locality)
-            this.offer.locality = this.offer.city_n;
-        if(!this.offer.address)
-            this.offer.address = this.offer.street_n;
-        this.offer.changeDate = Math.round((Date.now() / 1000));
+
         console.log(this.offer);
         this._offerService.save(this.offer).subscribe(offer => {
             setTimeout(() => {
                 this.offer = offer;
-                this.getAddressStr();
             });
             this.toggleEdit();
         });
@@ -3259,9 +3247,9 @@ export class TabOfferComponent implements OnInit {
     }
 
     openOrganisation(){
-        if(this.offer.person.organisation_n.id){
+        if(this.offer.person.organisation.id){
             var tab_sys = this._hubService.getProperty('tab_sys');
-            tab_sys.addTab('organisation', {organisation: this.offer.person.organisation_n});
+            tab_sys.addTab('organisation', {organisation: this.offer.person.organisation});
         }
     }
 
@@ -3452,6 +3440,12 @@ export class TabOfferComponent implements OnInit {
         }
     }
 
+    getAddressStr(){
+        this.addressStr = this.offer.fullAddress.city !== undefined ? "" + this.offer.fullAddress.city : '';
+        this.addressStr += this.offer.fullAddress.street !== undefined ? ", " + this.offer.fullAddress.street : '';
+        this.addressStr += this.offer.fullAddress.house !== undefined ? ", " + this.offer.fullAddress.house : '';
+    }
+
     getIndex(array: Array<any>, str: string){
         for(let i =0; i<array.length; ++i){
             if(array[i].type == str)
@@ -3481,13 +3475,5 @@ export class TabOfferComponent implements OnInit {
 
     estimate(sd,ad){
 
-    }
-
-    getAddressStr(){
-            this.addressStr = this.offer.city_n !== undefined ? ""+this.offer.city_n : '';
-            this.addressStr += this.offer.street_n !== undefined ? ", " + this.offer.street_n : '';
-            this.addressStr += this.offer.house_n !== undefined ? ", " + this.offer.house_n : '';
-            if(this.offerAddress.length == 0)
-                this.addressStr = '';
     }
 }

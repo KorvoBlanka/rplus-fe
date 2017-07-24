@@ -129,6 +129,6 @@ var CONFIG: Config = {
             lat: 59.925408, lon: 30.331908, zoom: 14
         }
     },
-    //RESTServer: "http://maklersoft.com:4567",
-    RESTServer: "http://localhost:4567",
+    RESTServer: "http://maklersoft.com:4567",
+    //RESTServer: "http://localhost:4567",
 }

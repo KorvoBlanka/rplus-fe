@@ -128,6 +128,8 @@ export class Offer {
 
     tag: string;
 
+    ceilingHeight: number;
+
 
     constructor () {
         // set default vals

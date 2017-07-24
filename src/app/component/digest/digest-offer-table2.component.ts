@@ -6,6 +6,7 @@ import {OfferService, OfferSource} from '../../service/offer.service';
 
 import {Offer} from '../../entity/offer';
 import {User} from "../../entity/user";
+import {PhoneBlock} from "../../class/phoneBlock";
 
 
 
@@ -264,7 +265,7 @@ export class DigestOfferTable2Component {
                 {class: "entry", disabled: false, icon: "dcheck", label: 'Проверить', callback: () => {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
-                    rq.push(this.offer.person.phoneBlock.getAsString());
+                    rq.push(PhoneBlock.getAsString(this.offer.person.phoneBlock));
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},
                 {class: "entry", disabled: false, icon: "document", label: 'Открыть', callback: () => {
@@ -300,7 +301,6 @@ export class DigestOfferTable2Component {
                 ]}
             ]
         };
-        console.log('tradam');
         this._hubService.shared_var['cm'] = menu;
         this._hubService.shared_var['cm_hidden'] = false;
     }

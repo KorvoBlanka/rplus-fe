@@ -897,9 +897,6 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
     ch4_data_v2: number;
     addressStr: string = '';
 
-    log(e) {
-        console.log(e);
-    }
 
     constructor(private _hubService: HubService,
                 private _configService: ConfigService,
@@ -1081,7 +1078,6 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         tem = this.getIndex(this.personEmail, "WORK");
         this.person.emailBlock.work =  tem > -1 ? this.personEmail[tem].value : null;
 
-        console.log(this.person);
         this._personService.save(this.person).subscribe(
             person => {
                 setTimeout(() => {
@@ -1196,7 +1192,6 @@ export class TabPersonComponent implements OnInit, AfterViewInit {
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByClassName('input_field').length * 35;
         if (parent.offsetHeight == 30) {
-            console.log(height);
             parent.style.setProperty('height', ""+(height+55)+'px');
             parent.style.setProperty('overflow', "visible");
              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');

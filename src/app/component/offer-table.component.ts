@@ -11,6 +11,7 @@ import {Offer} from '../entity/offer';
 import * as moment from 'moment/moment';
 import {UserService} from "../service/user.service";
 import {User} from "../entity/user";
+import {PhoneBlock} from "../class/phoneBlock";
 
 
 @Component({
@@ -423,10 +424,8 @@ export class OfferTableComponent implements OnInit {
         let tfStr = localStorage.getItem('tableFields');
         if (tfStr) {
             let tf = JSON.parse(tfStr);
-            console.log(tf);
 
             for (var fid in tf) {
-                console.log(fid);
                 this.fields.forEach(f => {
                     if (f.id == fid) {
                         f.visible = tf[fid];
@@ -558,7 +557,7 @@ export class OfferTableComponent implements OnInit {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
-                        rq.push(o.person.phoneBlock.getAsString());
+                        rq.push(PhoneBlock.getAsString(o.person.phoneBlock));
                     });
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},

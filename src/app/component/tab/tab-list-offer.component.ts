@@ -15,6 +15,7 @@ import {Offer} from '../../entity/offer';
 import {User} from "../../entity/user";
 import {SessionService} from "../../service/session.service";
 import {Account} from "../../entity/account";
+import {PhoneBlock} from "../../class/phoneBlock";
 
 @Component({
     selector: 'tab-list-offer',
@@ -642,7 +643,7 @@ export class TabListOfferComponent {
                     var rq = [];
                     this.selectedOffers.forEach(o => {
                         if (o.person.phoneBlock) {
-                            rq.push(o.person.phoneBlock.getAsString());
+                            rq.push(PhoneBlock.getAsString(o.person.phoneBlock));
                         }
                     });
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
@@ -790,7 +791,6 @@ export class TabListOfferComponent {
                     sgs.forEach(e => {
                         this.sgList.push(e);
                     })
-                    console.log(this.sgList);
                 })
             }
         }

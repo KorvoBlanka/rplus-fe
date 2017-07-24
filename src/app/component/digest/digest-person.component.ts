@@ -5,6 +5,7 @@ import {UserService} from '../../service/user.service'
 import {OrganisationService} from '../../service/organisation.service'
 import {TaskService} from '../../service/task.service'
 
+import {PhoneBlock} from '../../class/phoneBlock';
 import {Person} from '../../entity/person';
 import {Organisation} from '../../entity/organisation';
 import {User} from '../../entity/user';
@@ -85,7 +86,7 @@ import {Task} from '../../class/task';
                 <span>Контакт {{ person.id }}
                     <span class="billet-label">{{ person.name }}</span>
                 </span>
-                <span>{{ person.change_date | formatDate }} / {{ person.add_date | formatDate }}</span>
+                <span>{{ person.changeDate | formatDate }} / {{ person.addDate | formatDate }}</span>
             </div>
             <table style="width: 100%;">
                 <tbody style="vertical-align: top; font-size: 14px; font-weight: 200;">
@@ -121,8 +122,7 @@ import {Task} from '../../class/task';
                 </tr>
                 <tr>
                     <td>
-                        <span class="entry-header" style="width: 105px;">Телефон:</span> {{ person.phones[0]?person.phones[0]:''
-                        }}
+                        <span class="entry-header" style="width: 105px;">Телефон:</span>{{ person.phoneBlock | phoneBlockAsString }}
                     </td>
                     <td></td>
                     <td>

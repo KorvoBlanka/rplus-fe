@@ -1216,7 +1216,6 @@ export class TabRequestComponent {
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByTagName('input').length * 35;
         if(parent.offsetHeight == 30){
-            console.log(height);
             parent.style.setProperty('height', ""+(height+60)+'px');
             parent.style.setProperty('overflow', "visible");
              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');

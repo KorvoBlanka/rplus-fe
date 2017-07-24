@@ -958,9 +958,6 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
     ch4_data_v2: number;
     addressStr: string = '';
 
-    log(e) {
-        console.log(e);
-    }
 
     constructor(private _hubService: HubService,
                 private _configService: ConfigService,
@@ -1095,7 +1092,6 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
 
 
         this._organisationService.save(this.organisation).subscribe(org => {
-            console.log(this.organisation);
             setTimeout(() => {
                 this.organisation.copyFields(org);
             });
@@ -1195,7 +1191,6 @@ export class TabOrganisationComponent implements OnInit, AfterViewInit {
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByTagName('input').length * 35;
         if(parent.offsetHeight == 30){
-            console.log(height);
             parent.style.setProperty('height', ""+(height+60)+'px');
             parent.style.setProperty('overflow', "visible");
              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');

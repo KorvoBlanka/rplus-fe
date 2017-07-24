@@ -114,7 +114,6 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
                     this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
                     break;
                 case 'draw_allowed':
-                    console.log(this.draw_allowed);
                     if (!this.draw_allowed) {
                         this.polygone.setMap(null);
                         this.map.setOptions({draggable: true});
@@ -263,14 +262,12 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     initDrawer() {
         var _this = this;
         google.maps.event.addListener(this.map, 'mousemove', function (e) {
-            console.log("mm");
             if (_this.is_drawing == true) {
                 _this.polyline.getPath().push(e.latLng);
             }
         });
 
         google.maps.event.addListener(this.map, 'mousedown', function () {
-            console.log("md");
             if (_this.draw_allowed) {
                 _this.is_drawing = true;
 
@@ -289,7 +286,6 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
         });
 
         google.maps.event.addListener(this.map, 'mouseup', function () {
-            console.log("mu");
             _this.is_drawing = false;
 
             if (_this.draw_allowed) {
@@ -343,7 +339,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     selector: 'google-map-marker',
     inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
     styles: [``],
-    template: ``,
+    template: `<div></div>`,
 })
 
 export class GoogleMapMarkerComponent implements OnChanges {

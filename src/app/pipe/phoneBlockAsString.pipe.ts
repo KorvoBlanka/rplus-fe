@@ -1,19 +1,11 @@
+import {Pipe, PipeTransform} from '@angular/core';
 
-export class PhoneBlock {
+import {PhoneBlock} from "../class/phoneBlock";
 
-    office: string;
+@Pipe({name: 'phoneBlockAsString'})
+export class phoneBlockAsStringPipe implements PipeTransform {
+    transform(phoneBlock: PhoneBlock) : string {
 
-    home: string;
-
-    cellphone: string;
-
-    fax: string;
-
-    main: string;
-
-    other: string;
-
-    public static getAsString(phoneBlock: PhoneBlock) {
         let result = "";
 
         let t = [];

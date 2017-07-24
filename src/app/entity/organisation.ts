@@ -57,6 +57,7 @@ export class Organisation {
         this.fullAddress = new FullAddress();
         this.phoneBlock = new PhoneBlock();
         this.emailBlock = new EmailBlock();
+        this.requisites = new Requisites();
     }
 
     public copyFields(org: Organisation){

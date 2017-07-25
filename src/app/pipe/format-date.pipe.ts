@@ -9,7 +9,7 @@ export class FormatDatePipe implements PipeTransform {
 
     if (value) {
       var d = moment(value * 1000);
-      r = d.format('DD.MM.YY hh:mm');
+      r = d.format('DD.MM.YY HH:mm');
     }
     return r;
   }

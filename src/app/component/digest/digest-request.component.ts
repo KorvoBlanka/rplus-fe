@@ -158,8 +158,11 @@ import {UserService} from "../../service/user.service";
             <div class="billet-label" style="width: calc(100% - 32px); color: #a9a8a8 ;">
                 Ответственный: <span [style.color]="color">{{ agent.name || person.name }}</span>
             </div>
-            <div class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
-                Контакты: {{ agent.phones[0] || person.phones[0] }}
+            <div *ngIf="agent" class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
+                Контакты: {{ agent.phoneBlock | phoneBlockAsString }}
+            </div>
+            <div *ngIf="!agent" class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
+                Контакты: {{ person.phoneBlock | phoneBlockAsString }}
             </div>
         </div>
 

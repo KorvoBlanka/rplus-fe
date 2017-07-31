@@ -4,7 +4,7 @@ import {ConfigService} from "../../service/config.service";
 import {Http} from "@angular/http";
 import {SessionService} from "../../service/session.service";
 import {Observable} from "rxjs";
-import {User} from "../../class/user";
+import {User} from "../../entity/user";
 
 
 @Component({

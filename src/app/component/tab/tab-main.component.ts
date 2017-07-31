@@ -69,7 +69,7 @@ import {User} from "../../class/user";
             </div>
             <div class="tile-group">
                 <span class="tile-group-title">Группа1</span>
-                <div class="tile bg-amber fg-white">
+                <div class="tile bg-amber fg-white" (click)="turnTo('daily', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-month"></span>
                     </div>

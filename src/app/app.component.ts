@@ -21,7 +21,6 @@ import {SuggestionService} from "./service/suggestion.service";
     selector: 'rplus-app',
     styles: [``],
     template: `
-        <login-screen></login-screen>
         <router-outlet></router-outlet>
     `,
     providers: [HubService, ConfigService, SuggestionService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService, SessionService, UploadService]

@@ -3,6 +3,15 @@ export class Task {
     type: string;
     result_id: number;
     comment: string;
+    date: number;
+    priority: number;
+    discride: string;
+    title: string;
+    user: any;
+    place: string;
+    route: string;
+    new_date: number;
+    old_date: number;
 
     public static getResultText(task) {
       switch (task.result_id) {

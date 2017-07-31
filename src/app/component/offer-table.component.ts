@@ -6,11 +6,12 @@ import {Output, EventEmitter} from '@angular/core';
 
 import {HubService} from '../service/hub.service'
 import {OfferService} from '../service/offer.service';
-import {Offer} from '../class/offer';
+import {Offer} from '../entity/offer';
 
 import * as moment from 'moment/moment';
 import {UserService} from "../service/user.service";
-import {User} from "../class/user";
+import {User} from "../entity/user";
+import {PhoneBlock} from "../class/phoneBlock";
 
 
 @Component({
@@ -269,7 +270,7 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'locality', label: 'Город', visible: false, sort: 0, val: (ofr: Offer) => {
-            return ofr.locality;
+            return ofr.fullAddress.city;
         }
         },
         {
@@ -284,7 +285,7 @@ export class OfferTableComponent implements OnInit {
         },
         {
             id: 'address', label: 'Адрес', visible: true, sort: 0, val: (ofr: Offer) => {
-            return ofr.address;
+            return ofr.fullAddress.street;
         }
         },
         {
@@ -393,23 +394,26 @@ export class OfferTableComponent implements OnInit {
 
         {
             id: 'addDate', label: 'Добавлено', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.addDate * 1000).format('DD.MM.YY hh:mm');
+            if (ofr.addDate) return moment(ofr.addDate * 1000).format('DD.MM.YY HH:mm');
+            return "";
         }
         },
         {
             id: 'changeDate', label: 'Назначено', visible: false, sort: 0, val: (ofr: Offer) => {
-            //return moment(ofr.assignDate * 1000).format('DD.MM.YY hh:mm')
-            return moment(ofr.changeDate * 1000).format('DD.MM.YY hh:mm');
+            if (ofr.assignDate) return moment(ofr.assignDate * 1000).format('DD.MM.YY HH:mm');
+            return "";
         }
         },
         {
             id: 'changeDate', label: 'Изменено', visible: false, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.changeDate * 1000).format('DD.MM.YY hh:mm');
+            if (ofr.changeDate) return moment(ofr.changeDate * 1000).format('DD.MM.YY HH:mm');
+            return "";
         }
         },
         {
             id: 'lastSeenDate', label: 'Актуально', visible: true, sort: 0, val: (ofr: Offer) => {
-            return moment(ofr.lastSeenDate * 1000).format('DD.MM.YY hh:mm');
+            if (ofr.lastSeenDate) return moment(ofr.lastSeenDate * 1000).format('DD.MM.YY HH:mm');
+            return "";
         }
         }
     ];
@@ -423,10 +427,8 @@ export class OfferTableComponent implements OnInit {
         let tfStr = localStorage.getItem('tableFields');
         if (tfStr) {
             let tf = JSON.parse(tfStr);
-            console.log(tf);
 
             for (var fid in tf) {
-                console.log(fid);
                 this.fields.forEach(f => {
                     if (f.id == fid) {
                         f.visible = tf[fid];
@@ -558,7 +560,7 @@ export class OfferTableComponent implements OnInit {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
-                        rq.push(o.person.phones.join(" "));
+                        rq.push(PhoneBlock.getAsString(o.person.phoneBlock));
                     });
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},

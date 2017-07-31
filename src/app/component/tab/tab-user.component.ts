@@ -3,11 +3,11 @@ import {Component, OnInit, AfterViewInit, trigger, state, style, transition, ani
 import {FormatDatePipe} from '../../pipe/format-date.pipe';
 
 import {Tab} from '../../class/tab';
-import {User} from '../../class/user';
-import {Offer} from '../../class/offer';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
-import {Request} from '../../class/request';
+import {User} from '../../entity/user';
+import {Offer} from '../../entity/offer';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
+import {Request} from '../../entity/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
 
@@ -345,7 +345,7 @@ import {SessionService} from "../../service/session.service";
                     </div>
                     <div class="pull-container">
                         <div class="font-sz-2 pull-left"><span class="color-g1" ><a  href="" target="_blank"></a></span></div>
-                        <div class="font-sz-1 color-g2 pull-right"> {{ user.add_date | formatDate }} </div>
+                        <div class="font-sz-1 color-g2 pull-right"> {{ user.addDate | formatDate }} </div>
                     </div>
                     <div class="pull-container" style="margin: 20px 10px 0px;">
                         <div class="pull-right" [hidden]="editEnabled" (click)="toggleEdit()" style="font-size: 10pt;"><a href="#" >Изменить</a></div>
@@ -372,8 +372,8 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'CENTRAL', label: 'Центральный'},
                                         {value: 'MAIN', label: 'Головной'}
                                     ]"
-                                    [value]="user.office_n"
-                                    (onChange)="user.office_n = $event.selected.value">
+                                    [value]="user.office"
+                                    (onChange)="user.office = $event.selected.value">
                                 </ui-slidingMenu>
 
                             </div>
@@ -388,8 +388,8 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'COMMERSIAL', label: 'Коммерческая недвижимость'},
                                         {value: 'SUBURBAN', label: 'Загородная недвижимость'}
                                     ]"
-                                    [value]="user.departmentCode_n"
-                                    (onChange)="user.departmentCode_n = $event.selected.value">
+                                    [value]="user.departmentCode"
+                                    (onChange)="user.departmentCode = $event.selected.value">
                                 </ui-slidingMenu>
 
                             </div>
@@ -407,22 +407,22 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'TOP_MANAGER', label: 'Топ Менеджер'},
                                         {value: 'DIRECTOR', label: 'Директор'}
                                     ]"
-                                    [value]="user.positionCode_n"
-                                    (onChange)="user.positionCode_n = $event.selected.value">
+                                    [value]="user.positionCode"
+                                    (onChange)="user.positionCode = $event.selected.value">
                                 </ui-slidingMenu>
                             </div>
                             <hr>
 
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/date_start.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Дата приёма'" [value] = "user.recruitmentDate_n |  date:'dd.MM.yyyy'"
+                                <ui-input-line [placeholder] = "'Дата приёма'" [value] = "user.recruitmentDate |  date:'dd.MM.yyyy'"
                                     [width] = "'225px'" (onChange)= "setDate($event, true)">
                                 </ui-input-line>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/date_end.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'Дата увольнения'" [value] = "user.dismissalDate_n |  date:'dd.MM.yyyy'"
+                                <ui-input-line [placeholder] = "'Дата увольнения'" [value] = "user.dismissalDate |  date:'dd.MM.yyyy'"
                                     [width] = "'225px'" (onChange)= "setDate($event, false)">
                                 </ui-input-line>
                             </div>
@@ -449,8 +449,8 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'NOT_ACTIVE', label: 'Не активно'},
                                         {value: 'ARCHIVE', label: 'Архив'}
                                     ]"
-                                [value]="user.statusCode_n"
-                                (onChange)="user.statusCode_n = $event.selected.value">
+                                [value]="user.statusCode"
+                                (onChange)="user.statusCode = $event.selected.value">
                                 >
                                 </ui-slidingMenu>
                             </div>
@@ -500,8 +500,8 @@ import {SessionService} from "../../service/session.service";
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group" style='overflow: hidden; position: relative; display: block;'>
-                                <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "user.webSite_n"
-                                    [width] = "'225px'" (onChange)= "user.webSite_n = $event">
+                                <ui-input-line [placeholder] = "'WEB-сайт:'" [value] = "user.webSite"
+                                    [width] = "'225px'" (onChange)= "user.webSite = $event">
                                 </ui-input-line>
                             </div>
                             <hr>
@@ -554,7 +554,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                                 <textarea class="view-value text-value"
-                                    placeholder="" [(ngModel)]="user.info_n"
+                                    placeholder="" [(ngModel)]="user.info"
                                     style="text-align: left;">
                                 </textarea>
                             </div>
@@ -580,7 +580,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'CENTRAL', label: 'Центральный'},
                                         {value: 'MAIN', label: 'Головной'}
                                     ]"
-                                    [value]="user.office_n"
+                                    [value]="user.office"
                                 >
                                 </ui-view-value>
                             </div>
@@ -595,7 +595,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'COMMERSIAL', label: 'Коммерческая недвижимость'},
                                         {value: 'SUBURBAN', label: 'Загородная недвижимость'}
                                     ]"
-                                    [value]="user.departmentCode_n"
+                                    [value]="user.departmentCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -613,7 +613,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'TOP_MANAGER', label: 'Топ Менеджер'},
                                         {value: 'DIRECTOR', label: 'Директор'}
                                     ]"
-                                    [value]="user.positionCode_n"
+                                    [value]="user.positionCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -621,13 +621,13 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/date_start.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Дата приёма:</span>
-                                <span class="view-value"> {{ (user.recruitmentDate_n | date:'dd.MM.yyyy') || 'Не указанa'}}</span>
+                                <span class="view-value"> {{ (user.recruitmentDate | date:'dd.MM.yyyy') || 'Не указанa'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/date_end.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Дата увольнения:</span>
-                                <span class="view-value"> {{ (user.dismissalDate_n | date:'dd.MM.yyyy') || 'Не указанa'}}</span>
+                                <span class="view-value"> {{ (user.dismissalDate | date:'dd.MM.yyyy') || 'Не указанa'}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/responsible.png)'"></div>
@@ -646,7 +646,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'NOT_ACTIVE', label: 'Не активно'},
                                         {value: 'ARCHIVE', label: 'Архив'}
                                     ]"
-                                    [value]="user.statusCode_n"
+                                    [value]="user.statusCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -689,8 +689,8 @@ import {SessionService} from "../../service/session.service";
                             <div class="view-group">
                                 <span class="view-label">WEB-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!user?.webSite_n" class="view-value">Не указан</span>
-                                    <a *ngIf="user?.webSite_n" [href]="'http://'+user.webSite_n" target="_blank">{{user?.webSite_n}}</a>
+                                    <span *ngIf="!user?.webSite" class="view-value">Не указан</span>
+                                    <a *ngIf="user?.webSite" [href]="'http://'+user.webSite" target="_blank">{{user?.webSite}}</a>
                                 </span>
                             </div>
                             <hr>
@@ -718,7 +718,7 @@ import {SessionService} from "../../service/session.service";
 
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ user.info_n }} </span>
+                                <span class="view-value" style="height: initial;"> {{ user.info }} </span>
                             </div>
                         </div>
 
@@ -1067,20 +1067,6 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         this.editEnabled = !this.editEnabled;
     }
 
-    addPhone(event) {
-        this.user.phones.push('');
-        let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement.parentElement;
-        let height: number = this.user.phones.length * 30;
-        parent.style.setProperty('height', ""+(height+60)+'px');
-    }
-
-    addEmail() {
-        this.user.emails.push('');
-        let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement.parentElement;
-        let height: number = this.user.emails.length * 30;
-        parent.style.setProperty('height', ""+(height+60)+'px');
-    }
-
     superiorChanged(e) {
         this.user.superiorId = e.selected.value;
         if (this.user.superiorId != null) {
@@ -1092,37 +1078,37 @@ export class TabUserComponent implements OnInit, AfterViewInit {
 
     save() {
         let tem = this.getIndex(this.userPhone, "MOBILE");
-        this.user.cellPhone_n =  tem > -1 ? this.userPhone[tem].value: null;
+        this.user.phoneBlock.cellphone =  tem > -1 ? this.userPhone[tem].value: null;
         tem =  this.getIndex(this.userPhone, "HOME");
-        this.user.homePhone_n =  tem > -1 ? this.userPhone[tem].value : null;
+        this.user.phoneBlock.home =  tem > -1 ? this.userPhone[tem].value : null;
         tem = this.getIndex(this.userPhone, "WORK");
-        this.user.officePhone_n =  tem > -1 ? this.userPhone[tem].value  : null;
+        this.user.phoneBlock.office =  tem > -1 ? this.userPhone[tem].value  : null;
         tem = this.getIndex(this.userPhone, "MAIN");
-        this.user.mainPhone_n =  tem > -1 ? this.userPhone[tem].value  : null;
+        this.user.phoneBlock.main =  tem > -1 ? this.userPhone[tem].value  : null;
         tem = this.getIndex(this.userPhone, "SAME");
-        this.user.otherPhone_n =  tem > -1 ? this.userPhone[tem].value  : null;
+        this.user.phoneBlock.other =  tem > -1 ? this.userPhone[tem].value  : null;
         tem = this.getIndex(this.userPhone, "FAX");
-        this.user.fax_n =  tem > -1 ? this.userPhone[tem].value  : null;
+        this.user.phoneBlock.fax =  tem > -1 ? this.userPhone[tem].value  : null;
 
         tem = this.getIndex(this.userAddress, "KRAY");
-        this.user.region_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.region =  tem > -1 ? this.userAddress[tem].value  : undefined;
         tem = this.getIndex(this.userAddress, "CITY");
-        this.user.city_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.city =  tem > -1 ? this.userAddress[tem].value  : undefined;
         tem = this.getIndex(this.userAddress, "DISTRICT");
-        this.user.area_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.admArea =  tem > -1 ? this.userAddress[tem].value  : undefined;
         tem = this.getIndex(this.userAddress, "STREET");
-        this.user.street_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.street =  tem > -1 ? this.userAddress[tem].value  : undefined;
         tem = this.getIndex(this.userAddress, "HOUSE");
-        this.user.house_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.house =  tem > -1 ? this.userAddress[tem].value  : undefined;
         tem = this.getIndex(this.userAddress, "HOUSING");
-        this.user.housing_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.housing =  tem > -1 ? this.userAddress[tem].value  : undefined;
         tem = this.getIndex(this.userAddress, "FLAT");
-        this.user.apartment_n =  tem > -1 ? this.userAddress[tem].value  : undefined;
+        this.user.fullAddress.apartment =  tem > -1 ? this.userAddress[tem].value  : undefined;
 
         tem =  this.getIndex(this.userEmail, "MAIN");
-        this.user.mainEmail_n =  tem > -1 ? this.userEmail[tem].value  : null;
+        this.user.emailBlock.main = tem > -1 ? this.userEmail[tem].value  : null;
         tem = this.getIndex(this.userEmail, "WORK");
-        this.user.workEmail_n =  tem > -1 ? this.userEmail[tem].value  : null;
+        this.user.emailBlock.work = tem > -1 ? this.userEmail[tem].value  : null;
         this._userService.save(this.user).subscribe(user => {
             setTimeout(() => {
                 this.user = user;
@@ -1265,44 +1251,44 @@ export class TabUserComponent implements OnInit, AfterViewInit {
         if (value.split('.').length == 3  &&  value.split('.')[2]){
             if(value.split('.')[2].length > 3){
                 if(place)
-                    this.user.recruitmentDate_n = Math.round(new Date(value.split('.')[2],value.split('.')[1]-1,value.split('.')[0]).getTime());
+                    this.user.recruitmentDate = Math.round(new Date(value.split('.')[2],value.split('.')[1]-1,value.split('.')[0]).getTime());
                  else
-                    this.user.dismissalDate_n = Math.round(new Date(value.split('.')[2],value.split('.')[1]-1,value.split('.')[0]).getTime());
+                    this.user.dismissalDate = Math.round(new Date(value.split('.')[2],value.split('.')[1]-1,value.split('.')[0]).getTime());
             }
         }
     }
 
     getAddressStr(){
-            this.addressStr = this.user.city_n !== undefined ? ""+this.user.city_n : '';
-            this.addressStr += this.user.street_n !== undefined ? ", " + this.user.street_n : '';
-            this.addressStr += this.user.house_n !== undefined ? ", " + this.user.house_n : '';
+            this.addressStr = this.user.fullAddress.city !== undefined ? "" + this.user.fullAddress.city : '';
+            this.addressStr += this.user.fullAddress.street !== undefined ? ", " + this.user.fullAddress.street : '';
+            this.addressStr += this.user.fullAddress.house !== undefined ? ", " + this.user.fullAddress.house : '';
             if(this.userAddress.length == 0)
                 this.addressStr = '';
     }
 
     updateArrays(){
         this.userPhone=[
-            {type: 'MOBILE', value:  this.user.cellPhone_n},
-            {type: 'HOME', value:  this.user.homePhone_n},
-            {type: 'WORK', value: this.user.officePhone_n},
-            {type: 'MAIN', value:  this.user.mainPhone_n},
-            {type: 'SAME', value:  this.user.otherPhone_n},
-            {type: 'FAX', value:  this.user.fax_n}
+            {type: 'MOBILE', value:  this.user.phoneBlock.cellphone},
+            {type: 'HOME', value:  this.user.phoneBlock.home},
+            {type: 'WORK', value: this.user.phoneBlock.office},
+            {type: 'MAIN', value:  this.user.phoneBlock.main},
+            {type: 'SAME', value:  this.user.phoneBlock.other},
+            {type: 'FAX', value:  this.user.phoneBlock.fax}
         ];
 
         this.userEmail=[
-            {type: 'WORK', value:  this.user.workEmail_n},
-            {type: 'MAIN', value:  this.user.mainEmail_n}
+            {type: 'WORK', value:  this.user.emailBlock.work},
+            {type: 'MAIN', value:  this.user.emailBlock.main}
         ];
 
         this.userAddress=[
-            {type: 'KRAY', value: this.user.region_n},
-            {type: 'CITY', value: this.user.city_n},
-            {type: 'DISTRICT', value: this.user.area_n},
-            {type: 'STREET', value: this.user.street_n},
-            {type: 'HOUSE', value: this.user.house_n},
-            {type: 'HOUSING', value: this.user.housing_n},
-            {type: 'FLAT', value: this.user.apartment_n}
+            {type: 'KRAY', value: this.user.fullAddress.region},
+            {type: 'CITY', value: this.user.fullAddress.city},
+            {type: 'DISTRICT', value: this.user.fullAddress.admArea},
+            {type: 'STREET', value: this.user.fullAddress.street},
+            {type: 'HOUSE', value: this.user.fullAddress.house},
+            {type: 'HOUSING', value: this.user.fullAddress.housing},
+            {type: 'FLAT', value: this.user.fullAddress.apartment}
         ];
 
         this.getAddressStr();

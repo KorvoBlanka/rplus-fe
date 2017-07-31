@@ -4,7 +4,7 @@ import {ConfigService} from '../../service/config.service';
 import {RequestService} from '../../service/request.service';
 
 import {Tab} from '../../class/tab';
-import {Request} from '../../class/request';
+import {Request} from '../../entity/request';
 import {HubService} from "../../service/hub.service";
 import {Observable} from "rxjs";
 import {UserService} from "../../service/user.service";

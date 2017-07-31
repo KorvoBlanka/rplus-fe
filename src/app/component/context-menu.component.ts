@@ -199,9 +199,6 @@ export class ContextMenuComponent implements OnInit, OnChanges {
 
         var cm_element = this.elementRef.nativeElement.querySelector('.context-menu-wrapper');
 
-
-        console.log(this.hidden);
-
         if (this.menu && !this.hidden) {
             var pY = this.menu.pY;
             this.menu.pY = 1000;

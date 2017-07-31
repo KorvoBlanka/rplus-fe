@@ -51,7 +51,6 @@ export class UIMultiView implements OnInit {
     type: string;
     isNull: boolean;
     ngOnInit() {
-        console.log(this.values);
         let temp=[];
         for(let val of this.values){
             if(val.value)

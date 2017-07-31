@@ -2,13 +2,13 @@ import {Component} from '@angular/core';
 
 
 import {Tab} from '../../class/tab';
-import {Offer} from '../../class/offer';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
-import {Request} from '../../class/request';
+import {Offer} from '../../entity/offer';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
+import {Request} from '../../entity/request';
 import {Task} from '../../class/task';
 import {HistoryRecord} from '../../class/historyRecord';
-import {User} from '../../class/user';
+import {User} from '../../entity/user';
 
 import {HubService} from '../../service/hub.service';
 import {ConfigService} from '../../service/config.service';
@@ -569,7 +569,7 @@ import {SessionService} from "../../service/session.service";
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group" style="flex-wrap: wrap; height: 50px; margin-left: 20px;">
                                 <textarea class="view-value text-value"
-                                placeholder="" [(ngModel)]="request.info_n"
+                                placeholder="" [(ngModel)]="request.info"
                                 style="text-align: left;"></textarea>
                             </div>
                         </div>
@@ -596,7 +596,7 @@ import {SessionService} from "../../service/session.service";
                                         {value: 'OUR', label: 'Наша компания'},
                                         {value: 'PARTHER', label: 'Партнер'}
                                     ]"
-                                    [value]="person?.typeCode_n"
+                                    [value]="person?.typeCode"
                                 >
                                 </ui-view-value>
                             </div>
@@ -612,29 +612,29 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/phone.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Телефон:</span>
-                                <span class="view-value">{{person?.mainPhone_n || person?.cellPhone_n || person?.officePhone_n}}</span>
+                                <span class="view-value">{{person.phoneBlock?.main || person.phoneBlock?.cellphone || person.phoneBlock?.office}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/email.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">E-mail:</span>
-                                <span class="view-value">{{person?.mainEmail_n || person?.workEmail_n }}</span>
+                                <span class="view-value">{{person.emailBlock?.main || person.emailBlock?.work }}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/website.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label">Web-сайт:</span>
                                 <span class="view-value">
-                                    <span *ngIf="!person?.webSite_n" class="view-value">Не указан</span>
-                                    <a *ngIf="person?.webSite_n" [href]="'http://'+person.webSite_n" target="_blank">{{person?.webSite_n}}</a>
+                                    <span *ngIf="!person?.webSite" class="view-value">Не указан</span>
+                                    <a *ngIf="person?.webSite" [href]="'http://'+person.webSite" target="_blank">{{person?.webSite}}</a>
                                 </span>
                             </div>
-                            <hr *ngIf="person?.organisation_n">
-                            <div  *ngIf="person?.organisation_n" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
-                            <div  *ngIf="person?.organisation_n" class="view-group" >
+                            <hr *ngIf="person?.organisation">
+                            <div  *ngIf="person?.organisation" class='view_icon' [style.background-image]="'url(assets/user_icon/office.png)'"></div>
+                            <div  *ngIf="person?.organisation" class="view-group" >
                                 <span class="view-label">Организация:</span>
-                                <span class="view-value" [class.link] = "person?.organisation_n?.id" (click)="openOrganisation()">
-                                    {{person?.organisation_n.orgName_n}}{{ person?.organisation_n.name ? (' "' +person?.organisation_n.name+ '"') : 'Не указано'}}
+                                <span class="view-value" [class.link] = "person?.organisation?.id" (click)="openOrganisation()">
+                                    {{person?.organisation.type}}{{ person?.organisation.name ? (' "' +person?.organisation.name+ '"') : 'Не указано'}}
                                 </span>
                             </div>
 
@@ -648,7 +648,7 @@ import {SessionService} from "../../service/session.service";
                             <div class='view_icon' [style.background-image]="'url(assets/person_icon/contract.png)'"></div>
                             <div class="view-group">
                                 <span class="view-label pull-left">Договор:</span>
-                                <span class="view-value">{{person.contract_n}}</span>
+                                <span class="view-value">{{person.contract}}</span>
                             </div>
                             <hr>
                             <div class='view_icon' [style.background-image]="'url(assets/user_icon/status.png)'"></div>
@@ -714,7 +714,7 @@ import {SessionService} from "../../service/session.service";
 
                             <div class="header_col">Дополнительная информация</div>
                             <div class="view-group">
-                                <span class="view-value" style="height: initial;"> {{ request.info_n }} </span>
+                                <span class="view-value" style="height: initial;"> {{ request.info }} </span>
                             </div>
                         </div>
 
@@ -1216,7 +1216,6 @@ export class TabRequestComponent {
         let parent: HTMLElement = (<HTMLElement>event.currentTarget).parentElement;
         let height: number = parent.getElementsByTagName('input').length * 35;
         if(parent.offsetHeight == 30){
-            console.log(height);
             parent.style.setProperty('height', ""+(height+60)+'px');
             parent.style.setProperty('overflow', "visible");
              (<HTMLElement>event.currentTarget).style.setProperty('transform', 'rotate(180deg)');
@@ -1241,9 +1240,9 @@ export class TabRequestComponent {
     }
 
     openOrganisation(){
-        if(this.person.organisation_n.id){
+        if(this.person.organisation.id){
             var tab_sys = this._hubService.getProperty('tab_sys');
-            tab_sys.addTab('organisation', {organisation: this.person.organisation_n});
+            tab_sys.addTab('organisation', {organisation: this.person.organisation});
         }
     }
 

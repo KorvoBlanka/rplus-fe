@@ -72,6 +72,7 @@ import {FormatDatePipe} from "./pipe/format-date.pipe";
 import {StrNnPipe} from "./pipe/str-nn.pipe";
 
 import {GoogleChartComponent} from "./component/ui/chart/google-chart.component";
+import {phoneBlockAsStringPipe} from "./pipe/phone-block-as-string.pipe";
 
 const appRoutes: Routes = [
     { path: 'admin', component: AdminPageComponent },
@@ -90,6 +91,7 @@ const appRoutes: Routes = [
     declarations: [
         FormatDatePipe,
         StrNnPipe,
+        phoneBlockAsStringPipe,
 
         LoginScreenComponent,
         AdminPageComponent,

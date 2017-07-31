@@ -5,10 +5,10 @@ import {PersonService} from "../../service/person.service";
 import {SessionService} from "../../service/session.service";
 import {OrganisationService} from '../../service/organisation.service';
 import {HubService} from '../../service/hub.service';
-import {Offer} from '../../class/offer';
+import {Offer} from '../../entity/offer';
 import {Tab} from '../../class/tab';
-import {Person} from '../../class/person';
-import {Organisation} from '../../class/organisation';
+import {Person} from '../../entity/person';
+import {Organisation} from '../../entity/organisation';
 
 @Component({
     selector: 'ui-input-line',
@@ -93,7 +93,7 @@ import {Organisation} from '../../class/organisation';
         .finder{
             height: 28px;
             position: relative;
-            left: -45;
+            left: -45px;
             width: 125%;
             background-color: rgb(247, 247, 247);
             border: 1px solid rgba(204, 204, 204, 0.47);
@@ -300,10 +300,6 @@ export class UIInputLine implements OnInit, OnChanges{
         setTimeout(() =>{
             this.onChange.emit(this.organisation);
         }, 10000)
-    }
-
-    show(){
-        console.log(this.person);
     }
 
 

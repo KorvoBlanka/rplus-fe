@@ -5,7 +5,7 @@ import {ConfigService} from '../../service/config.service';
 import {OrganisationService} from '../../service/organisation.service';
 
 import {Tab} from '../../class/tab';
-import {Organisation} from '../../class/organisation';
+import {Organisation} from '../../entity/organisation';
 import {Observable} from "rxjs";
 
 

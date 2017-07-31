@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
 
-import {ConfigService} from './config.service';
-
-import {Organisation} from '../class/organisation';
 import {AsyncSubject} from "rxjs/AsyncSubject";
 
-import 'rxjs/add/operator/map';
+import {ConfigService} from './config.service';
+import {SessionService} from "./session.service";
+
+import {User} from "../entity/user";
+import {Organisation} from '../entity/organisation';
+
 
 
 @Injectable()
@@ -15,7 +17,7 @@ export class OrganisationService {
     RS: String = "";
 
 
-    constructor(private _configService: ConfigService, private _http: Http) {
+    constructor(private _configService: ConfigService, private _http: Http, private _sessionService: SessionService) {
         this.RS = this._configService.getConfig().RESTServer + '/api/v1/organisation/';
     };
 
@@ -23,11 +25,18 @@ export class OrganisationService {
     list(searchQuery: string) {
         console.log('org list');
 
-
-        var _resourceUrl = this.RS + 'list?'
-            + '&search_query=' + searchQuery;
-
+        var user: User = this._sessionService.getUser();
         var ret_subj = <AsyncSubject<Organisation[]>>new AsyncSubject();
+
+        var query = [];
+
+        query.push("accountId=" + user.accountId);
+
+        if (searchQuery) {
+            query.push("searchQuery=" + searchQuery);
+        }
+
+        var _resourceUrl = this.RS + 'list?' + query.join("&");
 
         this._http.get(_resourceUrl, { withCredentials: true })
             .map(res => res.json()).subscribe(
@@ -72,6 +81,8 @@ export class OrganisationService {
     save(org: Organisation) {
         console.log('org save');
 
+        var _user: User = this._sessionService.getUser();
+        org.accountId = _user.accountId;
 
         var _resourceUrl = this.RS + 'save'
 
@@ -85,7 +96,6 @@ export class OrganisationService {
 
                     var o: Organisation = data.result;
 
-                    // TODO: pass copy????
                     ret_subj.next(o);
                     ret_subj.complete();
 

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {HubService} from '../../service/hub.service';
 
-import {Organisation} from '../../class/organisation';
+import {Organisation} from '../../entity/organisation';
 
 
 @Component({

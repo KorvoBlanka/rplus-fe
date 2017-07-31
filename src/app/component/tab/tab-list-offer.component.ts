@@ -10,11 +10,12 @@ import {UserService} from "../../service/user.service";
 import {SuggestionService} from "../../service/suggestion.service";
 
 import {Tab} from '../../class/tab';
-import {Offer} from '../../class/offer';
+import {Offer} from '../../entity/offer';
 
-import {User} from "../../class/user";
+import {User} from "../../entity/user";
 import {SessionService} from "../../service/session.service";
-import {Account} from "../../class/account";
+import {Account} from "../../entity/account";
+import {PhoneBlock} from "../../class/phoneBlock";
 
 @Component({
     selector: 'tab-list-offer',
@@ -258,7 +259,7 @@ import {Account} from "../../class/account";
                             [options]="agentOpts"
                                 [value]="filter.agent"
                             [config]="{icon: 'icon-person', drawArrow: true}"
-                            (onChange)="filter.agentId = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.orgType = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
@@ -380,7 +381,7 @@ export class TabListOfferComponent {
     sgList: string[] = [];
     filter: any = {
         stageCode: 'all',
-        agentId: 'all',
+        orgType: 'all',
         tag: 'all',
         changeDate: 90,
         offerTypeCode: 'sale',
@@ -391,7 +392,9 @@ export class TabListOfferComponent {
     agentOpts = [
         {value: 'all', label: 'Все объекты', bold: true},
         {value: 'realtor', label: 'Конкуренты', bold: true},
+        {value: 'partner', label: 'Партнеры', bold: true},
         {value: 'private', label: 'Собственники', bold: true},
+        {value: 'client', label: 'Клиент', bold: true},
         {value: 'company', label: 'Наша компания', bold: true},
         {value: 'my', label: 'Мои объекты', bold: true}
     ];
@@ -639,7 +642,9 @@ export class TabListOfferComponent {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
                     this.selectedOffers.forEach(o => {
-                        rq.push(o.person.phones.join(" "));
+                        if (o.person.phoneBlock) {
+                            rq.push(PhoneBlock.getAsString(o.person.phoneBlock));
+                        }
                     });
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},
@@ -786,7 +791,6 @@ export class TabListOfferComponent {
                     sgs.forEach(e => {
                         this.sgList.push(e);
                     })
-                    console.log(this.sgList);
                 })
             }
         }

@@ -4,10 +4,10 @@ import {HubService} from '../../service/hub.service'
 import {PersonService} from '../../service/person.service'
 import {TaskService} from '../../service/task.service'
 
-import {Request} from '../../class/request';
-import {Person} from '../../class/person';
+import {Request} from '../../entity/request';
+import {Person} from '../../entity/person';
 import {Task} from '../../class/task';
-import {User} from "../../class/user";
+import {User} from "../../entity/user";
 import {UserService} from "../../service/user.service";
 
 @Component({
@@ -158,8 +158,11 @@ import {UserService} from "../../service/user.service";
             <div class="billet-label" style="width: calc(100% - 32px); color: #a9a8a8 ;">
                 Ответственный: <span [style.color]="color">{{ agent.name || person.name }}</span>
             </div>
-            <div class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
-                Контакты: {{ agent.phones[0] || person.phones[0] }}
+            <div *ngIf="agent" class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
+                Контакты: {{ agent.phoneBlock | phoneBlockAsString }}
+            </div>
+            <div *ngIf="!agent" class="billet-label" style="width: calc(100% - 32px);   color: #a9a8a8 !important;">
+                Контакты: {{ person.phoneBlock | phoneBlockAsString }}
             </div>
         </div>
 

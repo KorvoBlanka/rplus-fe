@@ -299,7 +299,6 @@ export class UIUploadFile implements OnInit{
     }
 
     clk(e){
-        console.log((<HTMLElement>e.target).className);
         if( (<HTMLElement>e.target).className == "load_buttom" ||  (<HTMLElement>e.target).className == "image")
             e.preventDefault();
     }

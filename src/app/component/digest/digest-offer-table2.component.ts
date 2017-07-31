@@ -4,8 +4,9 @@ import {HubService} from '../../service/hub.service';
 import {UserService} from "../../service/user.service";
 import {OfferService, OfferSource} from '../../service/offer.service';
 
-import {Offer} from '../../class/offer';
-import {User} from "../../class/user";
+import {Offer} from '../../entity/offer';
+import {User} from "../../entity/user";
+import {PhoneBlock} from "../../class/phoneBlock";
 
 
 
@@ -127,12 +128,11 @@ import {User} from "../../class/user";
                         {{ offer.squareTotal  === undefined ? "?" : offer.squareTotal }}/{{ offer.squareLiving  === undefined ? "?" : offer.squareLiving }}/{{ offer.squareKitchen  === undefined ? "?" : offer.squareKitchen }}
                     </span>
                     <br>
-                    <span *ngIf="(offer.locality || ' ').split(',')[1]">{{ (offer.locality || " ").split(",")[1] }}</span >
                     <div style="width: 100%; height: 17px; text-overflow: ellipsis;white-space: nowrap;overflow: hidden;
                             float: left; line-height: 14px;" [class.withPh]= "withPhoto">
-                            {{ (offer.locality?.split(",")[0] || offer.city_n ) === undefined ? " " : ""+(offer.locality?.split(",")[0] || offer.city_n) }}
-                            {{ (offer.street_n || offer.address) === undefined ? "" : (", "+(offer.street_n || offer.address)) }}
-                            {{ offer.house_n === undefined ? "" : (", "+offer.house_n) }}
+                            {{ offer.fullAddress.city === undefined ? " " : "" + offer.fullAddress.city }}
+                            {{ offer.fullAddress.street === undefined ? "" : (", " + offer.fullAddress.street) }}
+                            {{ offer.fullAddress.house === undefined ? "" : (", " + offer.fullAddress.house) }}
                     </div>
                     <span class="agent" [class.withPh]= "withPhoto">Задача: Непонятно какая задача и нужно наверное для нее отдельное поле</span>
                     <span class="agent" [class.withPh]= "withPhoto">Отв.: {{offer.agent?.name}}</span>
@@ -265,7 +265,7 @@ export class DigestOfferTable2Component {
                 {class: "entry", disabled: false, icon: "dcheck", label: 'Проверить', callback: () => {
                     var tab_sys = this._hubService.getProperty('tab_sys');
                     var rq = [];
-                    rq.push(this.offer.person.phones.join(" "));
+                    rq.push(PhoneBlock.getAsString(this.offer.person.phoneBlock));
                     tab_sys.addTab('list_offer', {query: rq.join(" ")});
                 }},
                 {class: "entry", disabled: false, icon: "document", label: 'Открыть', callback: () => {
@@ -301,7 +301,6 @@ export class DigestOfferTable2Component {
                 ]}
             ]
         };
-        console.log('tradam');
         this._hubService.shared_var['cm'] = menu;
         this._hubService.shared_var['cm_hidden'] = false;
     }

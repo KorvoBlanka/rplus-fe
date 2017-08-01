@@ -24,6 +24,7 @@ import {PersonService} from '../../service/person.service';
 import {OrganisationService} from '../../service/organisation.service';
 import {AnalysisService} from '../../service/analysis.service';
 import {SessionService} from "../../service/session.service";
+import {NotebookService} from "../../service/notebook.service";
 
 @Component({
     selector: 'tab-daily',
@@ -161,8 +162,8 @@ import {SessionService} from "../../service/session.service";
         thead{
             overflow: hidden;
             display: block;
-            width: calc(100% - 50px);
-            margin-left: 50px;
+            width: calc(100% - 10px);
+            margin-left: 10px;
         }
 
         thead tr{
@@ -173,10 +174,10 @@ import {SessionService} from "../../service/session.service";
         }
 
         thead td{
-            width: 220px;
+            width: 221px;
             text-align: center;
-            flex: 0 0 220px;
-            border-right: 1px solid #e3e3e3;
+            flex: 0 0 221px;
+            //border-right: 1px solid #e3e3e3;
             border-bottom: 1px solid #aba3a3;
             font-size: 14px;
             color: #797474;
@@ -199,8 +200,8 @@ import {SessionService} from "../../service/session.service";
         }
 
         thead td:first-child{
-            width: 0px;
-            flex: 0 0 0px;
+            width: 45px;
+            flex: 0 0 45px;
             border-right: 0;
         }
 
@@ -208,7 +209,7 @@ import {SessionService} from "../../service/session.service";
             float: left;
             display: block;
             height: calc(100% - 29px);
-            width: 50px;
+            width: 55px;
             overflow: hidden;
             position: relative;
         }
@@ -221,17 +222,19 @@ import {SessionService} from "../../service/session.service";
         .first-column td{
             float: left;
             display: block;
-            height: 56px;
-            text-align: center;
+            height: 55px;
+            text-align: left;
             padding: 0;
             line-height: 56px;
             font-size: 10pt;
             color: rgba(204, 204, 204, 0.94);
             margin-left: 15px;
+            border-bottom: 1px solid #e3e3e3;
+            width: 100%;
         }
 
         .data{
-            width: calc(100% - 50px);
+            width: calc(100% - 55px);
             height: calc(100% - 29px);
             display: flex;
             flex-wrap: wrap;
@@ -252,6 +255,10 @@ import {SessionService} from "../../service/session.service";
             border-right: 1px solid #e3e3e3;
             border-bottom: 1px solid #e3e3e3;
             flex: 0 0 220px;
+        }
+
+        .data td:hover{
+            background-color: #f6f6f6 !important;
         }
 
 
@@ -295,9 +302,9 @@ import {SessionService} from "../../service/session.service";
         div.now_time{
             position: absolute;
             color: red;
-            font-size: 9px;
+            font-size: 13px;
             line-height: 1px;
-            margin-left: 13px;
+            margin-left: 15px;
         }
 
     `],
@@ -432,7 +439,7 @@ import {SessionService} from "../../service/session.service";
                             <hr class="now_time"  [style.top] = "now_time_top" [style.width] = "now_time_width">
                             <tr *ngFor="let hour of daily">
 
-                                <td *ngFor="let day of days"
+                                <td *ngFor="let day of days" (click)="add_task(day, hour)"
                                     [class.weekend] = "day.day_number.format('ddd') == 'сб' || day.day_number.format('ddd') == 'вс'"
                                 >
 
@@ -457,7 +464,7 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     selected_date = this.now_Date;
     header_date = this.now_Date;
     now_time_top = 30;
-    now_time_width = "200%";
+    now_time_width = "100%";
     filter: any = {
         stageCode: 'all',
         agentId: 'all',
@@ -505,14 +512,15 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
         {day_number: moment().add(5, 'days')}
     ]
     stages: Array<any>;
-
+    tasks: Array<Task>=[];
     constructor(private _hubService: HubService,
                 private _userService: UserService,
                 private _configService: ConfigService,
                 private _offerService: OfferService,
                 private _analysisService: AnalysisService,
                 private _historyService: HistoryService,
-                private _sessionService: SessionService
+                private _sessionService: SessionService,
+                private _notebookService: NotebookService
     ) {
         moment.locale("ru");
     }
@@ -555,10 +563,11 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
             } else if(target.scrollLeft + this.scroll_start_x - e.pageX <= 0){
                 this.add_days(false);
                 this.add_days(false);
-                target.scrollLeft = 300;
-                this.scroll_start_x = (<HTMLElement>e.currentTarget).scrollLeft + e.pageX;
+                target.scrollLeft = 440;
+                this.scroll_start_x = target.scrollLeft + e.pageX;
                 return;
             }
+
             let first_column = target.previousElementSibling;
             let header = <HTMLElement>first_column.previousElementSibling;
             target.scrollTop = this.scroll_start_y - e.pageY;
@@ -595,6 +604,8 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
             body.scrollLeft = header.scrollLeft;
             body.scrollTop = left_header.scrollTop;
             this.now_time_top =  header_hour.offsetTop + 55/60*parseFloat(moment().format("mm"));
+            this.header_date = this.now_Date;
+            this.now_time_width = "" + body.scrollWidth;
         }, 10);
 
     }
@@ -612,7 +623,7 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
                             this.add_days(true);
                         header.scrollLeft = header.scrollLeft + 10;
                         body.scrollLeft = header.scrollLeft;
-                        this.now_time_width = "" + body.scrollWidth + 100;
+                        this.now_time_width = "" + body.scrollWidth;
                     } else {
                         clearInterval(timer);
                     }
@@ -627,7 +638,7 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
                         }
                         header.scrollLeft = header.scrollLeft - 10;
                         body.scrollLeft = header.scrollLeft;
-                        this.now_time_width = "" + body.scrollWidth + 100;
+                        this.now_time_width = "" + body.scrollWidth;
                     } else {
                         clearInterval(timer);
                     }
@@ -636,11 +647,17 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     }
 
     scroolTable(ev: WheelEvent){
-        console.log(ev.deltaY);
         (<HTMLElement>ev.currentTarget).scrollTop += ev.deltaY;
         let body = <HTMLElement>ev.currentTarget;
         let left_header  = body.previousElementSibling;
         body.scrollTop += ev.deltaY / 2;
         left_header.scrollTop = body.scrollTop;
+    }
+
+    add_task(day: any, hour: any){
+        /*let task = new Task();
+        task.date = moment();
+        this.tasks.push(task);
+        this._notebookService.set({show: 1, state: 'new', data: task});*/
     }
 }

@@ -66,13 +66,8 @@ import {User} from "../../entity/user";
                 </div>
             </div>
             <div class="tile-group">
-<<<<<<< HEAD
-                <span class="tile-group-title">Группа1</span>
-                <div class="tile bg-amber fg-white" (click)="turnTo('daily', {})">
-=======
                 <span class="tile-group-title">Группа2</span>
-                <div class="tile bg-amber fg-white">
->>>>>>> 1cf184e467cfda8d0c7c5b52de5f8762c7d4cba4
+                <div class="tile bg-amber fg-white" (click)="turnTo('daily', {})">
                     <div class="tile-content iconic">
                         <span class="icon icon-month"></span>
                     </div>

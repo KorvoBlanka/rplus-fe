@@ -3,7 +3,7 @@ export class Task {
     type: string;
     result_id: number;
     comment: string;
-    date: number;
+    date: any;
     priority: number;
     discride: string;
     title: string;

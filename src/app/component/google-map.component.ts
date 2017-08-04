@@ -80,7 +80,7 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
             disableDefaultUI: true
         };
 
-        this.map = new google.maps.Map(this.container, opts);
+        //this.map = new google.maps.Map(this.container, opts);
 
         this.service =  new google.maps.places.PlacesService(this.map);
         if (this.polygone_points) {

@@ -17,7 +17,7 @@ import {HubService} from "../service/hub.service";
       </div>
 
       <div class="tab" *ngFor="let tab of tabs"
-        [class.selected]="tab === selectedTab"
+        [class.selected]="tab.active"
         (click)="selectTab(tab)">
         <div class="tab-button close-button" (click)="closeTab(tab)"><span class="icon-cancel"></span></div>
         <div class="vertical-text-container" [style.height]="vtHeight">
@@ -31,7 +31,7 @@ import {HubService} from "../service/hub.service";
     </div>
     <div class="tab-content">
       <tab-root *ngFor="let tab of tabs"
-        [hidden]="tab !== selectedTab"
+        [hidden]="!tab.active"
         [tab]="tab">
       </tab-root>
     </div>
@@ -39,7 +39,6 @@ import {HubService} from "../service/hub.service";
 })
 
 export class TabSystemComponent implements AfterContentInit{
-    public selectedTab: Tab;
     public tabs: Tab[] = [];
     public tabHeight = 0;
     public vtHeight = 0;
@@ -66,8 +65,9 @@ export class TabSystemComponent implements AfterContentInit{
     }
 
     selectTab(tab: Tab) {
-        this.selectedTab = tab;
-        this.selectedTab.refresh("tabSys");
+        this.clearActive();
+        tab.active = true;
+        tab.refresh("tabSys");
     }
 
     addTab(type, args) {
@@ -76,8 +76,15 @@ export class TabSystemComponent implements AfterContentInit{
             this.tabs.push(newTab);
 
             this.calcTabHeight();
-            this.selectedTab = newTab;
+            this.clearActive();
+            newTab.active = true;
         }
+    }
+
+    clearActive() {
+        this.tabs.forEach(t => {
+            t.active = false;
+        });
     }
 
     closeTab(tab: Tab) {
@@ -87,9 +94,10 @@ export class TabSystemComponent implements AfterContentInit{
         if (this.tabs.length == 0) {
             this.addTab('main', {});
         } else {
-            if(this.selectedTab == tab) {
-                this.selectedTab = this.tabs[idx ? (idx - 1) : 0];
-                this.selectedTab.refresh("tabSys");
+            if(tab.active) {
+                let t = this.tabs[idx ? (idx - 1) : 0];
+                t.active = true;
+                t.refresh("tabSys");
             }
         }
 

@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     ElementRef
 } from '@angular/core';
@@ -26,13 +28,13 @@ import {PhoneBlock} from "../../class/phoneBlock";
             color: rgb(61, 155, 233);
             position: absolute;
             top: 91px;
-            left: 30;
+            left: 30px;
             width: 100vw;
         }
         .search-form {
             position: absolute;
             width: 38%;
-            margin-left: 610;
+            margin-left: 610px;
             margin-top: 15px;
             z-index: 1;
         }
@@ -45,7 +47,7 @@ import {PhoneBlock} from "../../class/phoneBlock";
             width: 170px;
             height: 50px;
             position: absolute;
-            left: 450;
+            left: 450px;
             top: 15px;
             text-align: center;
             z-index: 10;
@@ -203,9 +205,14 @@ import {PhoneBlock} from "../../class/phoneBlock";
             background: #bbbbbb;
             cursor: default;
         }
+        
+        .no-mouse-events {
+            pointer-events: none;
+        }
     `],
     template: `
         <div class = "round_menu">
+            <div class="button plus" (click)="toggleView()">выкл</div>
             <div class="button plus" [style.background-image]="'url(assets/plus.png)'" (click) ="addOffer()">Добавить</div>
             <div (click)="toggleSource('import')" class="button" [class.button_active]="this.source != 1" [style.background-image]="'url(assets/base_plus.png)'">Общая</div>
             <div (click)="toggleSource('local')"  class="button" [class.button_active]="this.source == 1" [style.background-image]="'url(assets/base.png)'">Компания</div>
@@ -239,7 +246,7 @@ import {PhoneBlock} from "../../class/phoneBlock";
                                 {value: 'sale', label: 'Продажа'},
                                 {value: 'rent', label: 'Аренда'}
                             ]"
-                            [value]="sale"
+                            [value]="filter.offerTypeCode"
                             [config]="{icon: 'icon-square', drawArrow: true}"
                             (onChange)="filter.offerTypeCode = $event.selected.value; searchParamChanged($event);"
                         >
@@ -259,7 +266,7 @@ import {PhoneBlock} from "../../class/phoneBlock";
                             [options]="agentOpts"
                                 [value]="filter.agent"
                             [config]="{icon: 'icon-person', drawArrow: true}"
-                            (onChange)="filter.orgType = $event.selected.value; searchParamChanged($event);"
+                            (onChange)="filter.contactType = $event.selected.value; searchParamChanged($event);"
                         >
                         </ui-select>
                     </div>
@@ -356,8 +363,8 @@ import {PhoneBlock} from "../../class/phoneBlock";
                     </digest-offer>
                 </div>
             </div>
-            <div class="work-area" [style.width.px]="mapWidth">
-                <google-map
+            <div class="work-area" [style.width.px]="mapWidth" [class.no-mouse-events]="!tab.active">
+                <google-map *ngIf="tab.active"
                     [latitude]="lat"
                     [longitude]="lon"
                     [zoom]="zoom"
@@ -381,7 +388,7 @@ export class TabListOfferComponent {
     sgList: string[] = [];
     filter: any = {
         stageCode: 'all',
-        orgType: 'all',
+        contactType: 'all',
         tag: 'all',
         changeDate: 90,
         offerTypeCode: 'sale',
@@ -443,13 +450,15 @@ export class TabListOfferComponent {
 
     timestamp: number = (Date.now() / 1000) - 1000;
 
+
     constructor(private _elem: ElementRef,
+                private _changeDetectorRef: ChangeDetectorRef,
                 private _hubService: HubService,
                 private _offerService: OfferService,
                 private _userService: UserService,
                 private _configService: ConfigService,
                 private _suggestionService: SuggestionService,
-                private _sessionService: SessionService
+                private _sessionService: SessionService,
             ) {
         setTimeout(() => {
             this.tab.header = 'Предложения';
@@ -499,6 +508,10 @@ export class TabListOfferComponent {
         }
 
         this.calcSize();
+    }
+
+    toggleView() {
+        this._changeDetectorRef.detach();
     }
 
     listOffers() {

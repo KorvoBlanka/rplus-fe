@@ -87,7 +87,6 @@ const appRoutes: Routes = [
         BrowserModule,
         FormsModule,
         HttpModule
-        //AppRoutingModule
     ],
     declarations: [
         FormatDatePipe,

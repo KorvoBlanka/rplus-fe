@@ -1,7 +1,9 @@
-import {Component, Output, EventEmitter} from '@angular/core';
+import {Component, Output, OnInit, EventEmitter} from '@angular/core';
 
 import {HubService} from '../service/hub.service';
 import {NotebookTask} from './notebook/notebook-task.component';
+import {NotebookService} from '../service/notebook.service';
+import { Subscription }   from 'rxjs/Subscription';
 
 @Component({
     selector: 'notebook',
@@ -12,7 +14,7 @@ import {NotebookTask} from './notebook/notebook-task.component';
           right: 0px;
           height: 100%;
           background-color: rgba(247, 247, 247, 1);;
-          z-index: 3;
+          z-index: 1000;
         }
         .head {
             width: 100%;
@@ -111,7 +113,7 @@ import {NotebookTask} from './notebook/notebook-task.component';
         }
     `],
     template: `
-        <div class='forever_menu' (click)="toggleNotebook()"    >
+        <!--<div class='forever_menu' (click)="toggleNotebook()"    >
             <div (click) = "selectMenu(0)" style="background-image: url(assets/task.png);"></div>
              <hr>
             <div (click) = "selectMenu(1)" style="background-image: url(assets/notes.png);"></div>
@@ -119,17 +121,17 @@ import {NotebookTask} from './notebook/notebook-task.component';
             <div (click) = "selectMenu(2)" style="background-image: url(assets/phone.png);"></div>
              <hr>
             <div (click) = "selectMenu(3)" style="background-image: url(assets/chat.png);"></div>
-        </div>
+        </div>-->
         <div class="notebook">
             <div class="head">
                 <div class="tab-button" (click)="toggleNotebook()">
                     <span [ngClass]="{'icon-arrow-left': hidden, 'icon-arrow-right': !hidden}"></span>
                 </div>
             </div>
-            <div class="event-tab" [hidden]="hidden || eventHidden">
+            <div class="event-tab" *ngIf="show==1 || show==2">
                 <div class="head"></div>
             </div>
-            <div class="main-tab" [hidden]="hidden" (click)="toggleEvent()">
+            <div class="main-tab" (click)="toggleEvent()" *ngIf="show==0 || show==2">
                 <ul class = "main_menu">
                   <li (click) = "selectMenu(0)" [class.menu_active] = "menuNumber == 0">Задачи</li>
                   <li (click) = "selectMenu(1)" [class.menu_active] = "menuNumber == 1">Заметки</li>
@@ -142,17 +144,29 @@ import {NotebookTask} from './notebook/notebook-task.component';
     `
 })
 
-export class NotebookComponent {
+export class NotebookComponent implements OnInit{
     hidden = true;
     eventHidden = true;
     menuNumber: number = 0;
+    subscription: Subscription;
+    show: number = null;
+    type: string;
     @Output() widthChange: EventEmitter<any> = new EventEmitter();
 
-    constructor(private _hubService: HubService) {
+    constructor(private _hubService: HubService, private _notebookService: NotebookService) {
         this._hubService.shared_var['nb_width'] = 1;
+        this.subscription = _notebookService.get().subscribe(message => {
+            this.show = message.show;
+            console.log('fdfdf');
+        });
+    }
+
+    ngOnInit(){
+
     }
 
     toggleNotebook() {
+        this.show = null;
         this.hidden = !this.hidden;
         this.emitWidth();
     }

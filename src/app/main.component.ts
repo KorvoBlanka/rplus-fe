@@ -31,7 +31,7 @@ import {SessionService} from "./service/session.service";
                 [hidden]="_hubService.shared_var['cm_hidden']"
             >
             </context-menu>
-            <tab-system></tab-system>
+            <tab-system onmousedown="return false" onselectstart="return false"></tab-system>
             <notebook></notebook>
         </div>
     `

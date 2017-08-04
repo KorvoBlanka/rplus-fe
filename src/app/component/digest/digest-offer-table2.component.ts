@@ -117,7 +117,7 @@ import {PhoneBlock} from "../../class/phoneBlock";
         }
     `],
     template: `
-        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}" (dblclick)="open()">
+        <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}">
             <div>
                 <div class="describe" style=" margin-left: 10px;">
                     <span style="font-size: 12px;"

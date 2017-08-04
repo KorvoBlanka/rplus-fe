@@ -118,7 +118,7 @@ import {SessionService} from "../../service/session.service";
 
         .work_list .central_panel > div{
             height: 100%;
-            background-color: f8f8f8;
+            background-color: #f8f8f8;
             display: flex;
         }
 
@@ -141,13 +141,26 @@ import {SessionService} from "../../service/session.service";
         }
 
         .stage > .summ{
-            width: calc(100% - 8px);
+            width: calc(100% - 6px);
             height: 60px;
             background-color: #e6e7e8;
             margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .stage > .label:hover, .active .label{
+        .stage > .summ > div:first-child{
+            color: #4dad15;
+            margin-right: 15px;
+            font-size: 29px;
+        }
+
+        .stage > .summ > div:last-child:not(:first-child){
+            font-size: 20px;
+        }
+
+        .stage > .label:hover, .active .label, .stage:first-child > .label{
             background-color: #008cdb !important;
         }
 
@@ -155,7 +168,7 @@ import {SessionService} from "../../service/session.service";
             background: #d6543f;
         }
 
-        .stage:not(:last-child):after{
+        .stage:not(:last-child):not(:first-child):after{
             content: " ";
             width: 19px;
             height: 35px;
@@ -166,6 +179,17 @@ import {SessionService} from "../../service/session.service";
             display: block;
             position: absolute;
             right: -11px;
+            top: 0;
+        }
+
+        .stage:first-child:after{
+            content: " ";
+            width: 8px;
+            height: 35px;
+            background-color: #f8f8f8;
+            display: block;
+            position: absolute;
+            right: 0px;
             top: 0;
         }
 
@@ -277,23 +301,32 @@ import {SessionService} from "../../service/session.service";
             <div class="central_panel">
                 <div>
                     <div class='stage' [style.z-index]="101" *ngIf="!is_offer">
-                    <div class='label' >{{main_stage.label}}</div>
+                        <div class='label' >{{main_stage.label}}</div>
+                        <div class="summ">
+                            <div *ngIf="main_stage.summ && main_stage.summ > 0">{{split_number(main_stage.summ)}}&#8381;</div>
+                        </div>
+                        <digest-offer-table2 *ngFor="let data of main_stage.offers"
+                            style="display: block; background-color: transparent;"
+                            [offer]="data"
+                            [withPhoto]="false"
+                            (touchstart)="tStart(data)"
+                            (touchend)="tEnd(data)"
+                        >
+                        </digest-offer-table2>
+                    </div>
+                    <div class='stage' [style.z-index]="101" *ngIf="is_offer">
+                        <div class='label' >{{main_stage.label}}</div>
                         <div class="summ">
 
                         </div>
-                    </div>
-                    <div class='stage' [style.z-index]="101" *ngIf="is_offer">
-                    <div class='label' >{{main_stage.label}}</div>
-                        <div class="summ">
-                            <digest-offer-table2
-                                style="display: block; background-color: transparent;"
-                                [offer]="main_offer"
-                                [withPhoto]="false"
-                                (touchstart)="tStart(data)"
-                                (touchend)="tEnd(data)"
-                            >
-                            </digest-offer-table2>
-                        </div>
+                        <digest-offer-table2
+                            style="display: block; background-color: transparent;"
+                            [offer]="main_offer"
+                            [withPhoto]="false"
+                            (touchstart)="tStart(data)"
+                            (touchend)="tEnd(data)"
+                        >
+                        </digest-offer-table2>
                     </div>
                     <div class='stage' *ngFor="let stage of main_stage.substage; let i=index" [class.active] = "stage.active" [style.z-index]="100-i">
                         <div class='label' (click)="set_stage(i)">{{stage.label}} ({{stage.offers?.length}})</div>
@@ -410,6 +443,12 @@ export class TabActivityComponent implements OnInit, AfterViewInit {
             },
             err => console.log(err)
         );
+    }
+
+    split_number(n): string {
+        n += "";
+        n = new Array(4 - n.length % 3).join("U") + n;
+        return n.replace(/([0-9U]{3})/g, "$1 ").replace(/U/g, "");
     }
 
 }

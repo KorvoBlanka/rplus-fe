@@ -1,6 +1,8 @@
 import {Component, OnInit, AfterViewInit, trigger, state, style, transition, animate } from '@angular/core';
 
 import {FormatDatePipe} from '../../pipe/format-date.pipe';
+import * as moment from 'moment/moment';
+import 'moment/locale/ru.js';
 
 import {Tab} from '../../class/tab';
 import {User} from '../../entity/user';
@@ -102,7 +104,7 @@ import {SessionService} from "../../service/session.service";
             overflow: hidden;
         }
 
-        .work_list .left_panel{
+        .work_list .right_panel{
             width: 370px;
             height: 100%;
             float: right;
@@ -145,6 +147,19 @@ import {SessionService} from "../../service/session.service";
             height: 60px;
             background-color: #e6e7e8;
             margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stage > .summ > div:first-child{
+            color: #4dad15;
+            margin-right: 15px;
+            font-size: 29px;
+        }
+
+        .stage > .summ > div:last-child:not(:first-child){
+            font-size: 20px;
         }
 
         .stage > .label:hover, .active .label{
@@ -175,6 +190,22 @@ import {SessionService} from "../../service/session.service";
             width: calc(100% - 7px);
         }
 
+        .work_list1 > .left_panel{
+            width: 370px;
+            float: left;
+            height: 100%;
+        }
+
+        .work_list1 > .central_panel{
+            float: right;
+            width: calc(100% - 370px);
+            height: 100%;
+        }
+
+        .work_list1 > .central_panel > .head{
+            width: 100%;
+            height: 90px;
+        }
     `],
     template: `
         <div class="header-label-abs" style="margin: 2px 0 0 30px;">{{ tab.header }}</div>
@@ -279,7 +310,7 @@ import {SessionService} from "../../service/session.service";
                     <div class='stage' *ngFor="let stage of stages; let i=index" [class.active] = "stage.active" [style.z-index]="100-i">
                         <div class='label' (click)="set_stage(i)" (dblclick)="open_stage(stage)">{{stage.label}} ({{stage.offers?.length}})</div>
                         <div class="summ">
-
+                            <div *ngIf="stage.summ && stage.summ > 0">{{split_number(stage.summ)}}&#8381;</div>
                         </div>
                         <div class='stage_body'>
                             <digest-offer-table2 *ngFor="let data of stage.offers"
@@ -296,12 +327,10 @@ import {SessionService} from "../../service/session.service";
                     </div>
                 </div>
             </div>
-            <div class="left_panel">
+            <div class="right_panel">
 
             </div>
         </div>
-
-
     `
 })
 
@@ -309,6 +338,11 @@ export class TabListActivityComponent implements OnInit, AfterViewInit {
     public tab: Tab;
     activeMenu: number = 0;
     source: OfferSource = OfferSource.LOCAL;
+    can_scroll_table: boolean = false;
+    scroll_start_x: number;
+    scroll_start_y: number;
+    now_Date = Date.now();
+    selected_date = moment(this.now_Date);
     filter: any = {
         stageCode: 'all',
         agentId: 'all',
@@ -316,7 +350,45 @@ export class TabListActivityComponent implements OnInit, AfterViewInit {
         changeDate: 90,
         offerTypeCode: 'sale',
     };
-
+    daily: any=[
+        {hour_name: '0:00'},
+        {hour_name: '1:00'},
+        {hour_name: '2:00'},
+        {hour_name: '3:00'},
+        {hour_name: '4:00'},
+        {hour_name: '5:00'},
+        {hour_name: '6:00'},
+        {hour_name: '7:00'},
+        {hour_name: '8:00'},
+        {hour_name: '9:00'},
+        {hour_name: '10:00'},
+        {hour_name: '11:00'},
+        {hour_name: '12:00'},
+        {hour_name: '13:00'},
+        {hour_name: '14:00'},
+        {hour_name: '15:00'},
+        {hour_name: '16:00'},
+        {hour_name: '17:00'},
+        {hour_name: '18:00'},
+        {hour_name: '19:00'},
+        {hour_name: '20:00'},
+        {hour_name: '21:00'},
+        {hour_name: '22:00'},
+        {hour_name: '23:00'}
+    ];
+    days: Array<any> = [
+        {day_number: this.now_Date - 5*24*60*60*1000},
+        {day_number: this.now_Date - 4*24*60*60*1000},
+        {day_number: this.now_Date - 3*24*60*60*1000},
+        {day_number: this.now_Date - 2*24*60*60*1000},
+        {day_number: this.now_Date - 24*60*60*1000},
+        {day_number: this.now_Date },
+        {day_number: this.now_Date + 24*60*60*1000},
+        {day_number: this.now_Date + 48*60*60*1000},
+        {day_number: this.now_Date + 72*60*60*1000},
+        {day_number: this.now_Date + 98*60*60*1000},
+        {day_number: this.now_Date + 5*24*60*60*1000}
+    ]
     stages: Array<any>;
 
     constructor(private _hubService: HubService,
@@ -327,48 +399,50 @@ export class TabListActivityComponent implements OnInit, AfterViewInit {
                 private _historyService: HistoryService,
                 private _sessionService: SessionService
     ) {
-
+        moment.locale("ru");
     }
 
     ngOnInit() {
         this.tab.header="Активность";
         this.stages = [
-            {label: "Не активно", value: "raw", summ: 1354000, conv: 0, active: false, offers: [], page: 0},
+            {label: "Не активно", value: "raw", summ: 1354000, conv: 0, active: false, offers: [], page: 0, substage: []},
             {label: "Активно", value: "active", summ: 980000, conv: 25, active: false, offers: [], page: 0,
               substage: [
-                {label: "Первичный контакт", value: "first", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Выявление потребностей", value: "find", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Принятие решения", value: "choose", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Заключение договора", value: "complite", summ: 980000, conv: 25, active: false, offers: [], page: 0}
+                {label: "Первичный контакт", value: "first", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Выявление потребностей", value: "find", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Принятие решения", value: "choose", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Заключение договора", value: "complite", summ: 0, conv: 0, active: false, offers: [], page: 0}
               ]
             },
             {label: "Прайс", value: "price", summ: 690000, conv: 40, active: false, offers: [], page: 0,
               substage: [
-                {label: "Определение стратегии продажи", value: "strategy", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Определение рекламной стратегии", value: "adver", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Показ объекта", value: "show", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Принятие решений", value: "decision", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Подготовка документов", value: "doc", summ: 980000, conv: 25, active: false, offers: [], page: 0}
+                {label: "Определение стратегии продажи", value: "strategy", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Определение рекламной стратегии", value: "adver", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Показ объекта", value: "show", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Принятие решений", value: "decision", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Подготовка документов", value: "doc", summ: 0, conv: 0, active: false, offers: [], page: 0}
               ]
             },
             {label: "Сделка", value: "deal", summ: 350000, conv: 40, active: false, offers: [], page: 0,
               substage: [
-                {label: "Переговоры", value: "conversation", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Заключение договора", value: "contract", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Подготовка документов", value: "doc", summ: 980000, conv: 25, active: false, offers: [], page: 0},
-                {label: "Совершение сделки", value: "deal", summ: 980000, conv: 25, active: false, offers: [], page: 0}
+                {label: "Переговоры", value: "conversation", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Заключение договора", value: "contract", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Подготовка документов", value: "doc", summ: 0, conv: 0, active: false, offers: [], page: 0},
+                {label: "Совершение сделки", value: "end_deal", summ: 0, conv: 0, active: false, offers: [], page: 0}
               ]
             },
-            {label: "Приостановлено", value: "suspended", summ: 1354000, conv: 0, active: false, offers: [], page: 0},
-            {label: "Архив", value: "archive", summ: 0, conv: 0, active: false, offers: [], page: 0}
+            {label: "Приостановлено", value: "suspended", summ: 1354000, conv: 0, active: false, offers: [], page: 0, substage: []},
+            {label: "Архив", value: "archive", summ: 0, conv: 0, active: false, offers: [], page: 0, substage: []}
         ];
         for (let i = 0; i<this.stages.length; ++i){
             this.listOffers(i);
         }
+
+
+
     }
 
     ngAfterViewInit() {
-
     }
 
     toggleSource(s: string) {
@@ -424,6 +498,12 @@ export class TabListActivityComponent implements OnInit, AfterViewInit {
     open_offer(stage: any, offer: any){
       var tabSys = this._hubService.getProperty('tab_sys');
       tabSys.addTab('activity', {stage: stage, offer: offer});
-  }
+    }
+
+    split_number(n): string {
+        n += "";
+        n = new Array(4 - n.length % 3).join("U") + n;
+        return n.replace(/([0-9U]{3})/g, "$1 ").replace(/U/g, "");
+    }
 
 }

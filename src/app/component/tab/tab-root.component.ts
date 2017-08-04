@@ -21,7 +21,7 @@ import {Tab} from '../../class/tab';
         <tab-user [tab]="tab" *ngSwitchCase="'user'"></tab-user>
         <tab-list-activity [tab]="tab" *ngSwitchCase="'list_activity'"></tab-list-activity>
         <tab-activity [tab]="tab" *ngSwitchCase="'activity'"></tab-activity>
-
+        <tab-daily [tab]="tab" *ngSwitchCase="'daily'"></tab-daily>
         <div *ngSwitchDefault>tab.type == {{ tab.type }}</div>
     </div>
     `

@@ -130,6 +130,7 @@ import { Subscription }   from 'rxjs/Subscription';
             </div>
             <div class="event-tab" *ngIf="show==1 || show==2">
                 <div class="head"></div>
+                <notebook-task-describe [task] = "data" [mode]="state"></notebook-task-describe>
             </div>
             <div class="main-tab" (click)="toggleEvent()" *ngIf="show==0 || show==2">
                 <ul class = "main_menu">
@@ -151,13 +152,16 @@ export class NotebookComponent implements OnInit{
     subscription: Subscription;
     show: number = null;
     type: string;
+    data: any;
+    state: string;
     @Output() widthChange: EventEmitter<any> = new EventEmitter();
 
     constructor(private _hubService: HubService, private _notebookService: NotebookService) {
         this._hubService.shared_var['nb_width'] = 1;
         this.subscription = _notebookService.get().subscribe(message => {
             this.show = message.show;
-            console.log('fdfdf');
+            this.data = message.data;
+            this.state = message.state;
         });
     }
 

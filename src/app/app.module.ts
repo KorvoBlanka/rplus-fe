@@ -13,6 +13,7 @@ import {ContextMenuComponent} from "./component/context-menu.component";
 import {NotebookComponent} from "./component/notebook.component";
 import {NotebookTask} from "./component/notebook/notebook-task.component";
 import {Almanac} from "./component/notebook/almanac.component";
+import {NotebookTaskDescribe} from "./component/notebook/notebook-task-describe.component";
 import {TabSystemComponent} from "./component/tab-system.component";
 import {TabRootComponent} from "./component/tab/tab-root.component";
 import {TabMainComponent} from "./component/tab/tab-main.component";
@@ -102,6 +103,7 @@ const appRoutes: Routes = [
         NotebookComponent,
         NotebookTask,
         Almanac,
+        NotebookTaskDescribe,
         TabSystemComponent,
         TabRootComponent,
         TabMainComponent,

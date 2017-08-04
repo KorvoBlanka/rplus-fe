@@ -307,6 +307,12 @@ import {NotebookService} from "../../service/notebook.service";
             margin-left: 15px;
         }
 
+        .task{
+            position: absolute;
+            background-color: green;
+            z-index: 99;
+        }
+
     `],
     template: `
         <div class="header-label-abs" style="margin: 2px 0 0 30px;">{{ tab.header }}</div>
@@ -437,9 +443,14 @@ import {NotebookService} from "../../service/notebook.service";
                             (mouseleave)="disable_scroll()" class="data" (wheel) = "scroolTable($event)"
                         >
                             <hr class="now_time"  [style.top] = "now_time_top" [style.width] = "now_time_width">
+                            <div *ngFor="let task of tasks" class="task" [style.width] = "220"
+                                [style.height] = "56/60*task.end_date.diff(task.date, 'minute')"
+                                [style.top] = "task.scr_top" [style.left] = "task.scr_left" (dblclick)="open_task(task)"
+                                (mousedown)="drag_task_on($event, task)" (mouseup)="drag_task_off($event)" (mousemove)="drag_task($event)"
+                            ></div>
                             <tr *ngFor="let hour of daily">
 
-                                <td *ngFor="let day of days" (click)="add_task(day, hour)"
+                                <td *ngFor="let day of days" (dblclick)="add_task(day, hour, $event)" (mousemove)="drag_task($event)"
                                     [class.weekend] = "day.day_number.format('ddd') == 'сб' || day.day_number.format('ddd') == 'вс'"
                                 >
 
@@ -472,6 +483,9 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
         changeDate: 90,
         offerTypeCode: 'sale',
     };
+    dragTask: Task;
+    dragTask_start_x: number;
+    dragTask_start_y: number;
     daily: any=[
         {hour_name: '00:00'},
         {hour_name: '01:00'},
@@ -513,6 +527,8 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     ]
     stages: Array<any>;
     tasks: Array<Task>=[];
+    td_temp: HTMLElement;
+    task_div: HTMLElement;
     constructor(private _hubService: HubService,
                 private _userService: UserService,
                 private _configService: ConfigService,
@@ -545,14 +561,17 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
         }
     }
 
-    enable_scroll(e){
-        this.can_scroll_table = true;
-        this.scroll_start_x = (<HTMLElement>e.currentTarget).scrollLeft + e.pageX;
-        this.scroll_start_y = (<HTMLElement>e.currentTarget).scrollTop  + e.pageY;
+    enable_scroll(e: MouseEvent){
+        if((<HTMLElement>e.target).tagName != 'DIV'){
+            this.can_scroll_table = true;
+            this.scroll_start_x = (<HTMLElement>e.currentTarget).scrollLeft + e.pageX;
+            this.scroll_start_y = (<HTMLElement>e.currentTarget).scrollTop  + e.pageY;
+        }
     }
 
     disable_scroll(){
         this.can_scroll_table = false;
+        this.dragTask = null;
     }
 
     move_table(e){
@@ -588,8 +607,14 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     }
 
     add_days(yes: boolean){
-        if(yes) this.days.push({day_number: moment(this.days[this.days.length -1].day_number).add(1, 'days')});
-        else    this.days.unshift({day_number: moment(this.days[0].day_number).subtract(1, 'days')});
+        if(yes){
+            this.days.push({day_number: moment(this.days[this.days.length -1].day_number).add(1, 'days')});
+        } else {
+            this.days.unshift({day_number: moment(this.days[0].day_number).subtract(1, 'days')});
+            this.tasks.forEach(task =>{
+                task.scr_left +=221;
+            });
+        }
     }
 
     setCenter(){
@@ -607,7 +632,6 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
             this.header_date = this.now_Date;
             this.now_time_width = "" + body.scrollWidth;
         }, 10);
-
     }
 
     move_to(event, day){
@@ -654,10 +678,94 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
         left_header.scrollTop = body.scrollTop;
     }
 
-    add_task(day: any, hour: any){
-        /*let task = new Task();
-        task.date = moment();
+    add_task(day: any, hour: any, event: MouseEvent){
+        let task = new Task();
+        task.scr_left = (<HTMLElement>event.currentTarget).offsetLeft;
+        task.scr_top = (<HTMLElement>event.currentTarget).parentElement.offsetTop;
+        task.date = moment(day.day_number.format('YYYY-MM-DD') + hour.hour_name, 'YYYY-MM-DD kk:mm');
+        task.end_date = moment(task.date).add(1, 'hours');
         this.tasks.push(task);
-        this._notebookService.set({show: 1, state: 'new', data: task});*/
+        this._notebookService.set({show: 1, state: 'new', data: task});
+    }
+
+    open_task(task: any){
+        this._notebookService.set({show: 1, state: 'new', data: task});
+    }
+
+    drag_task_on(event: MouseEvent, task: Task){
+        this.dragTask = task;
+        this.task_div = <HTMLElement>event.currentTarget;
+        this.task_div.style.display = "none";
+        this.td_temp = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+        this.task_div.style.display = "";
+        this.task_div.style.zIndex = "199";
+        this.task_div.style.width = "222";
+        this.task_div.style.left = ""+(parseInt(this.task_div.style.left)-1);
+        this.dragTask_start_y = event.pageY;
+        this.dragTask_start_x = event.pageX;
+        this.task_div.style.backgroundColor = "red";
+    }
+
+    drag_task_off(event: MouseEvent){
+        this.dragTask = null;
+        this.task_div.style.zIndex = "";
+        this.task_div.style.backgroundColor = "";
+        this.task_div.style.left = ""+(parseInt(this.task_div.style.left)+1);
+        this.task_div.style.width = ""+(parseInt(this.task_div.style.width)-2);
+        this.task_div = null;
+    }
+
+    drag_task(event: MouseEvent){
+        if(this.dragTask){
+            let elem = <HTMLElement>event.currentTarget;
+            if(elem.tagName == "TD"){
+                if(this.td_temp != <HTMLElement>document.elementFromPoint(event.pageX,event.pageY)){
+                    this.td_temp = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+                    if(this.dragTask.scr_left < this.td_temp.offsetLeft){
+                        this.dragTask.date.add(1, 'days');
+                        this.dragTask.end_date.add(1, 'days');
+                    }
+                    else{
+                        this.dragTask.date.subtract(1, 'days');
+                        this.dragTask.end_date.subtract(1, 'days');
+                    }
+                    this.dragTask.scr_left =  this.td_temp.offsetLeft-1;
+                }
+            } else if(elem.tagName == "DIV"){
+                if(event.pageY - this.dragTask_start_y >= 14 && event.movementY <= 10){
+                    this.dragTask.scr_top += 14;
+                    this.dragTask_start_y += 14;
+                    this.dragTask.date.add(15, 'minutes');
+                    this.dragTask.end_date.add(15, 'minutes');
+                } else if(event.pageY - this.dragTask_start_y <= -14 && event.movementY >= -10) {
+                    this.dragTask.scr_top -= 14;
+                    this.dragTask_start_y -= 14;
+                    this.dragTask.date.subtract(15, 'minutes');
+                    this.dragTask.end_date.subtract(15, 'minutes');
+                } else if(event.movementY >= 10){
+                    this.dragTask.scr_top += 28;
+                    this.dragTask_start_y += 28;
+                    this.dragTask.date.add(30, 'minutes');
+                    this.dragTask.end_date.add(30, 'minutes');
+                } else if(event.movementY <= -10){
+                    this.dragTask.scr_top -= 28;
+                    this.dragTask_start_y -= 28;
+                    this.dragTask.date.subtract(30, 'minutes');
+                    this.dragTask.end_date.subtract(30, 'minutes');
+                }
+                if(this.dragTask.scr_left != elem.offsetLeft ){
+                    if(this.dragTask.scr_left < elem.offsetLeft){
+                        this.dragTask.date.add(1, 'days');
+                        this.dragTask.end_date.add(1, 'days');
+                    }
+                    else{
+                        this.dragTask.date.subtract(1, 'days');
+                        this.dragTask.end_date.subtract(1, 'days');
+                    }
+                    this.dragTask.scr_left = elem.offsetLeft - 1;
+                    this.td_temp = null;
+                }
+            }
+        }
     }
 }

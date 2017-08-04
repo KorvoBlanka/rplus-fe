@@ -10,8 +10,10 @@ export class Task {
     user: any;
     place: string;
     route: string;
-    new_date: number;
+    end_date: any;
     old_date: number;
+    scr_left: number;
+    scr_top: number;
 
     public static getResultText(task) {
       switch (task.result_id) {

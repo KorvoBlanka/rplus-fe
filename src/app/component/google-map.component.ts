@@ -2,7 +2,7 @@ import {
     Component,
     ChangeDetectionStrategy,
     ElementRef,
-    SimpleChange, OnChanges, AfterViewChecked, OnInit
+    SimpleChange, OnChanges, /*AfterViewChecked,*/ OnInit, ChangeDetectorRef, NgZone
 } from '@angular/core';
 import {Output, EventEmitter} from '@angular/core';
 
@@ -12,6 +12,7 @@ import {Offer} from "../entity/offer";
 
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map',
     inputs: [
         'latitude',
@@ -35,7 +36,7 @@ import {Offer} from "../entity/offer";
     `
 })
 
-export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
+export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked*/ {
     container: HTMLElement;
     map: google.maps.Map;
 
@@ -61,10 +62,13 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     polygone_points: GeoPoint[];
     polygone: google.maps.Polygon;
 
+    cnt: number = 0;
+
     @Output() drawFinished: EventEmitter<any> = new EventEmitter();
 
 
-    constructor(private _elem: ElementRef) {
+    constructor(private _elem: ElementRef, private ref: ChangeDetectorRef) {
+        ref.detach();
     }
 
     ngOnInit() {
@@ -75,7 +79,9 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
             zoom: this.zoom,
             disableDefaultUI: true
         };
+
         this.map = new google.maps.Map(this.container, opts);
+
         this.service =  new google.maps.places.PlacesService(this.map);
         if (this.polygone_points) {
             this.polygone = new google.maps.Polygon({
@@ -99,6 +105,10 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
+
+        console.log("oc");
+        console.log(this.cnt ++);
+
         if (!this.map) return;
         for (let p_name in changes) {
             let prop = changes[p_name];
@@ -141,8 +151,12 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
         }
     }
 
+
+
     ngAfterViewChecked() {
+        console.log(this.cnt++);
         if (this.container.clientWidth != this.p_w) {
+            console.log("!");
             this.p_w = this.container.clientWidth;
             google.maps.event.trigger(this.map, 'resize');
         }
@@ -261,6 +275,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
 
     initDrawer() {
         var _this = this;
+
         google.maps.event.addListener(this.map, 'mousemove', function (e) {
             if (_this.is_drawing == true) {
                 _this.polyline.getPath().push(e.latLng);
@@ -336,6 +351,7 @@ export class GoogleMapComponent implements OnInit, OnChanges, AfterViewChecked {
 
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map-marker',
     inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
     styles: [``],
@@ -355,8 +371,9 @@ export class GoogleMapMarkerComponent implements OnChanges {
 
     @Output() click: EventEmitter<any> = new EventEmitter();
 
-    constructor(parent: GoogleMapComponent) {
+    constructor(parent: GoogleMapComponent, private ref: ChangeDetectorRef) {
         this.map = parent.map;
+        ref.detach();
     }
 
     ngOnInit() {

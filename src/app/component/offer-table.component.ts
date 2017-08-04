@@ -253,8 +253,8 @@ export class OfferTableComponent implements OnInit {
 
     private fields = [
         {
-            id: 'stateCode', label: '#', visible: true, sort: 0, val: (ofr: Offer) => {
-            return ofr.stateCode;
+            id: 'stageCode', label: '#', visible: true, sort: 0, val: (ofr: Offer) => {
+            return ofr.stageCode;
         }
         },
         {

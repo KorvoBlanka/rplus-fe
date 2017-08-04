@@ -35,7 +35,6 @@ import {SessionService} from "./service/session.service";
             <notebook></notebook>
         </div>
     `
-    //providers: [HubService, ConfigService, UserService, OrganisationService, PersonService, RequestService, OfferService, TaskService, AnalysisService, HistoryService, PhotoService, AccountService, SessionService]
 })
 
 export class MainComponent {

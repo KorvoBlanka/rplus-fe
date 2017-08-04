@@ -6,6 +6,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule}   from '@angular/forms';
 import {HttpModule} from "@angular/http";
 import {RouterModule, Routes } from '@angular/router';
+import {AgmCoreModule} from '@agm/core';
 
 import {AppComponent} from "./app.component";
 
@@ -84,8 +85,10 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes),
         BrowserModule,
         FormsModule,
-        HttpModule
-        //AppRoutingModule
+        HttpModule,
+        AgmCoreModule.forRoot({
+            apiKey: "AIzaSyAi9zTbzWtEhLVZ8syBV6l7d3QMNLRokVY"
+        })
     ],
     declarations: [
         FormatDatePipe,

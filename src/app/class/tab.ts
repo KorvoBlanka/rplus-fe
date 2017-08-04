@@ -1,31 +1,34 @@
 import {Subject} from "rxjs/Subject";
 
 export class Tab {
-  id: number;
-  key: string;
-  header: string;
-  type: string;
-  args: any;
-  tabSys: any;
+    id: number;
+    key: string;
+    header: string;
+    type: string;
+    args: any;
+    tabSys: any;
+    public active: boolean;
 
-  refreshRq: any;
+    refreshRq: any;
 
-  constructor(tabSys, type, args) {
-      this.header = 'Loading...';
-      this.type = type;
-      this.tabSys = tabSys;
-      this.args = args;
+    constructor(tabSys, type, args) {
+        this.header = 'Loading...';
+        this.type = type;
+        this.tabSys = tabSys;
+        this.args = args;
 
-      this.refreshRq = new Subject();
-  }
+        this.refreshRq = new Subject();
 
-  reborn(type, args) {
-      this.header = 'Loading...';
-      this.type = type;
-      this.args = args;
-  }
+        this.active = false;
+    }
 
-  refresh(sender: string) {
-      this.refreshRq.next(sender);
-  }
+    reborn(type, args) {
+        this.header = 'Loading...';
+        this.type = type;
+        this.args = args;
+    }
+
+    refresh(sender: string) {
+        this.refreshRq.next(sender);
+    }
 }

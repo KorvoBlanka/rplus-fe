@@ -1,18 +1,16 @@
 import {
     Component,
-    ChangeDetectionStrategy,
-    ElementRef,
-    SimpleChange, OnChanges, /*AfterViewChecked,*/ OnInit, ChangeDetectorRef, NgZone
+    SimpleChange, OnChanges, AfterViewInit, OnInit, ChangeDetectorRef, NgZone, ElementRef
 } from '@angular/core';
 import {Output, EventEmitter} from '@angular/core';
 
 import {ConcaveHull} from '../class/concavehull';
 import {GeoPoint} from "../class/geoPoint";
 import {Offer} from "../entity/offer";
+import {HubService} from "../service/hub.service";
 
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map',
     inputs: [
         'latitude',
@@ -24,14 +22,13 @@ import {Offer} from "../entity/offer";
         'polygone_points'
     ],
     styles: [`
-        .map-wrapper {
+        .map-container-wrapper {
             height: 100%;
             width: 100%;
         }
     `],
     template: `
-        <div class="map-wrapper">
-            <ng-content></ng-content>
+        <div class="map-container-wrapper">
         </div>
     `
 })
@@ -52,7 +49,6 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
     objects: Offer[] = [];
     place: string;
 
-    id: number = Math.round(Math.random() * 1000);
     p_w: number;
     p_h: number;
 
@@ -62,296 +58,98 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
     polygone_points: GeoPoint[];
     polygone: google.maps.Polygon;
 
-    cnt: number = 0;
 
     @Output() drawFinished: EventEmitter<any> = new EventEmitter();
 
 
-    constructor(private _elem: ElementRef, private ref: ChangeDetectorRef) {
-        ref.detach();
+    constructor(private _elem: ElementRef, private _hubService: HubService) {
+
     }
 
     ngOnInit() {
-        this.container = this._elem.nativeElement.querySelector('.map-wrapper');
 
-        var opts: google.maps.MapOptions = {
-            center: new google.maps.LatLng(this.latitude, this.longitude),
-            zoom: this.zoom,
-            disableDefaultUI: true
+        console.log(this._elem);
+        let mv = this._elem.nativeElement.lastElementChild;
+
+        console.log(this._elem.nativeElement.lastElementChild.width);
+        console.log(this._elem.nativeElement.lastElementChild.height);
+
+        this._hubService.shared_var['map_container'] = {
+            pX: mv.offsetLeft,
+            pY: mv.offsetTop,
+            width: 700,
+            height: mv.clientHeight
         };
+        this._hubService.shared_var['map_hidden'] = false;
 
-        //this.map = new google.maps.Map(this.container, opts);
+        this._hubService.shared_var['map_longitude'] = this.longitude;
+        this._hubService.shared_var['map_latitude'] = this.latitude;
+        this._hubService.shared_var['map_zoom'] = this.zoom;
 
-        this.service =  new google.maps.places.PlacesService(this.map);
-        if (this.polygone_points) {
-            this.polygone = new google.maps.Polygon({
-                paths: this.toGooglePoints(this.polygone_points),
-                strokeColor: "#062141",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: "#062141",
-                fillOpacity: 0.35,
-                editable: false,
-                geodesic: false,
-                map: this.map,
-            });
-        } else {
-            this.polygone = new google.maps.Polygon();
-        }
+        this._hubService.shared_var['map_objects'] = [];
+        this._hubService.shared_var['map_place'] = "";
+        this._hubService.shared_var['map_da'] = false;
+        this._hubService.shared_var['map_pp'] = [];
+    }
 
-        this.refreshMarkers();
-        this.refreshPlacesMarkers();
-        this.initDrawer();
+    ngAfterViewInit() {
+        let mv = this._elem.nativeElement.lastElementChild;
+
+        console.log(this._elem.nativeElement.lastElementChild.width);
+        console.log(this._elem.nativeElement.lastElementChild.height);
+
+        /*
+        this._hubService.shared_var['map_container'] = {
+            pX: mv.offsetLeft + 30,
+            pY: mv.offsetTop,
+            width: mv.offsetWidth,
+            height: mv.clientHeight
+        };
+        */
     }
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
 
-        console.log("oc");
-        console.log(this.cnt ++);
 
         if (!this.map) return;
         for (let p_name in changes) {
             let prop = changes[p_name];
             switch (p_name) {
                 case 'objects':
-                    this.refreshMarkers();
+
                     break;
                 case 'place':
-                    this.refreshPlacesMarkers();
+
                     break;
                 case 'latitude':
                 case 'longitude':
-                    this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+
                     break;
                 case 'draw_allowed':
-                    if (!this.draw_allowed) {
-                        this.polygone.setMap(null);
-                        this.map.setOptions({draggable: true});
-                    } else {
-                        this.map.setOptions({draggable: false});
-                    }
+
+                    break;
                 case 'polygone_points':
-                    if (this.polygone_points) {
-                        this.polygone = new google.maps.Polygon({
-                            paths: this.toGooglePoints(this.polygone_points),
-                            strokeColor: "#062141",
-                            strokeOpacity: 0.8,
-                            strokeWeight: 2,
-                            fillColor: "#062141",
-                            fillOpacity: 0.35,
-                            editable: false,
-                            geodesic: false,
-                            map: this.map,
-                        });
-                    } else {
-                        this.polygone = new google.maps.Polygon();
-                    }
+
                     break;
             }
         }
     }
 
-
-
     ngAfterViewChecked() {
+        /*
         console.log(this.cnt++);
         if (this.container.clientWidth != this.p_w) {
             console.log("!");
             this.p_w = this.container.clientWidth;
             google.maps.event.trigger(this.map, 'resize');
         }
+        */
     }
 
-    refreshMarkers() {
-        if (this.objects == null) return;
-        this.markers.forEach(m => {
-            m.setMap(null);
-        });
-        this.markers = [];
-
-        var c = this;
-
-        let minLat = 100000;
-        let minLon = 100000;
-        let maxLat = 0;
-        let maxLon = 0;
-        let mark = 0;
-
-        this.objects.forEach(obj => {
-            if(obj.locationLat) {
-
-                if (obj.locationLat > maxLat) {
-                    maxLat = obj.locationLat;
-                    mark ++;
-                }
-                if (obj.locationLon > maxLon) {
-                    maxLon = obj.locationLon;
-                    mark ++;
-                }
-                if (obj.locationLat < minLat) {
-                    minLat = obj.locationLat;
-                    mark ++;
-                }
-                if (obj.locationLon < minLon) {
-                    minLon = obj.locationLon;
-                    mark ++;
-                }
-
-                var m = new google.maps.Marker({
-                    map: this.map,
-                    position: new google.maps.LatLng(obj.locationLat, obj.locationLon),
-                    title: '',
-                    //icon: ico,
-                    animation: google.maps.Animation.DROP
-                });
-
-                this.markers.push(m);
-
-                var iw = new google.maps.InfoWindow({
-                    content: '<div>' + Offer.getDigest(obj) + '</div>'
-                });
-
-                this.infoWindows.push(iw);
-
-                m.addListener('click', function () {
-                    iw.open(this.map, m);
-                    //c.click.emit(_this);
-                });
-
-            }
-        });
-
-
-        if (mark > 3) {
-            var bounds = new google.maps.LatLngBounds();
-            //sw
-            bounds.extend(new google.maps.LatLng(minLat, minLon));
-            //ne
-            bounds.extend(new google.maps.LatLng(maxLat, maxLon));
-
-            this.map.fitBounds(bounds);
-        }
-    }
-
-    refreshPlacesMarkers() {
-        this.placesMarkers = [];
-
-        if (this.place == null) return;
-        this.placesMarkers.forEach(m => {
-            m.setMap(null);
-        });
-
-        var request = {
-            bounds: this.map.getBounds(),
-            keyword: this.place
-        };
-
-        this.service.radarSearch(request,  (results, status) => {
-            for (var i = 0; i < results.length; i++) {
-                this.addMark(new google.maps.Marker({
-                    map: this.map,
-                    position: results[i].geometry.location,
-                    animation: google.maps.Animation.DROP
-                    //icon: 'src/icons/googleTarget.png'
-                }), results[i], this.service);
-            }
-        });
-    }
-
-    addMark(elem: any, rez: any,  serv: any) {
-            this.placesMarkers.push(elem);
-            google.maps.event.addListener(elem, 'mouseover', () => {
-                serv.getDetails(rez, (result, status) => {
-                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                        console.error(status);
-                        return;
-                    }
-                    this.placesWindows.setContent(result.name);
-                    this.placesWindows.open(this.map, elem);
-                });
-             });
-
-    }
-
-    initDrawer() {
-        var _this = this;
-
-        google.maps.event.addListener(this.map, 'mousemove', function (e) {
-            if (_this.is_drawing == true) {
-                _this.polyline.getPath().push(e.latLng);
-            }
-        });
-
-        google.maps.event.addListener(this.map, 'mousedown', function () {
-            if (_this.draw_allowed) {
-                _this.is_drawing = true;
-
-                if (_this.polyline) {
-                    _this.polyline.setMap(null);
-                }
-
-                _this.polyline = new google.maps.Polyline({
-                    clickable: false,
-                    strokeColor: "#062141",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    map: _this.map
-                });
-            }
-        });
-
-        google.maps.event.addListener(this.map, 'mouseup', function () {
-            _this.is_drawing = false;
-
-            if (_this.draw_allowed) {
-                _this.draw_allowed = false;
-                _this.map.setOptions({draggable: true});
-
-                var pa = [];
-                _this.polyline.getPath().forEach(function forEach(ll) {
-                    pa.push({lat: ll.lat(), lng: ll.lng()});
-                });
-
-                var ch = new ConcaveHull(pa, 2000).getLatLngs();
-
-                _this.polygone = new google.maps.Polygon({
-                    paths: ch,
-                    strokeColor: "#062141",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: "#062141",
-                    fillOpacity: 0.35,
-                    editable: true,
-                    geodesic: false,
-                    map: _this.map,
-                });
-
-                _this.drawFinished.emit(_this.toRplusPoints(ch));
-                _this.polyline.setMap(null);
-            }
-        });
-    }
-
-    toGooglePoints(pList: GeoPoint[]) {
-        var result: any[] = [];
-        pList.forEach(p => {
-            result.push({lat: p.lat, lng: p.lon});
-        });
-        return result;
-    }
-
-    toRplusPoints(pList: any[]) {
-        var result: GeoPoint[] = [];
-        pList.forEach(p => {
-            result.push({lat: p.lat, lon: p.lng});
-        });
-        return result;
-    }
 }
 
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'google-map-marker',
     inputs: ['latitude', 'longitude', 'info_str', 'icon_id', 'is_selected'],
     styles: [``],
@@ -371,9 +169,8 @@ export class GoogleMapMarkerComponent implements OnChanges {
 
     @Output() click: EventEmitter<any> = new EventEmitter();
 
-    constructor(parent: GoogleMapComponent, private ref: ChangeDetectorRef) {
+    constructor(parent: GoogleMapComponent) {
         this.map = parent.map;
-        ref.detach();
     }
 
     ngOnInit() {

@@ -12,7 +12,7 @@ import {
     inputs: ['menu', 'hidden'],
     styles: [`
         .context-menu-wrapper {
-            padding: 5 0;
+            padding: 5px 0;
             max-height: 450px;
             font-size: 12px;
             position: absolute;

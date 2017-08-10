@@ -74,6 +74,7 @@ import {StrNnPipe} from "./pipe/str-nn.pipe";
 
 import {GoogleChartComponent} from "./component/ui/chart/google-chart.component";
 import {phoneBlockAsStringPipe} from "./pipe/phone-block-as-string.pipe";
+import {ContextMapComponent} from "./component/context-map.component";
 
 const appRoutes: Routes = [
     { path: 'admin', component: AdminPageComponent },
@@ -124,6 +125,9 @@ const appRoutes: Routes = [
         DigestOfferComponent,
         DigestOfferTableComponent,
         DigestOfferTable2Component,
+
+        ContextMapComponent,
+
         GoogleMapComponent,
         GoogleMapMarkerComponent,
 

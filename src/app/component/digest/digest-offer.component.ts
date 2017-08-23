@@ -10,6 +10,7 @@ import {Offer} from '../../entity/offer';
     selector: 'digest-offer',
     inputs: ['offer', 'compact'],
     styles: [`
+        
         .billet {
             background-color: white;
             color: #696969;
@@ -25,12 +26,7 @@ import {Offer} from '../../entity/offer';
             background-color: #f5f3f3;
             cursor: hand;
         }
-
-        .billet.selected {
-            background-color: #157ad3;
-            color: #fff !important;
-        }
-
+        
         .billet > div {
             width: 100%;
         }
@@ -79,6 +75,7 @@ import {Offer} from '../../entity/offer';
             height: 68px;
             background-color: inherit;
         }
+        
     `],
     template: `
         <div class="billet" data-id="r{{offer._id}}" id="r{{offer.id}}" [class.compact] = "compact">

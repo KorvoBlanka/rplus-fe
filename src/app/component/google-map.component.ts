@@ -19,6 +19,7 @@ import {Offer} from "../entity/offer";
         'longitude',
         'zoom',
         'objects',
+        'selected_objects',
         'place',
         'draw_allowed',
         'polygone_points'
@@ -40,7 +41,7 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
     container: HTMLElement;
     map: google.maps.Map;
 
-    markers: google.maps.Marker[] = [];
+    markers: Map<number, google.maps.Marker> = new Map();
     placesMarkers: google.maps.Marker[] = [];
     infoWindows: google.maps.InfoWindow[] = [];
     placesWindows: google.maps.InfoWindow = new google.maps.InfoWindow();
@@ -50,6 +51,7 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
     zoom: number = 8;
 
     objects: Offer[] = [];
+    selected_objects: Offer[] = [];
     place: string;
 
     id: number = Math.round(Math.random() * 1000);
@@ -62,9 +64,9 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
     polygone_points: GeoPoint[];
     polygone: google.maps.Polygon;
 
-    cnt: number = 0;
 
     @Output() drawFinished: EventEmitter<any> = new EventEmitter();
+    @Output() markerClicked: EventEmitter<any> = new EventEmitter();
 
 
     constructor(private _elem: ElementRef, private ref: ChangeDetectorRef) {
@@ -80,7 +82,7 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
             disableDefaultUI: true
         };
 
-        //this.map = new google.maps.Map(this.container, opts);
+        this.map = new google.maps.Map(this.container, opts);
 
         this.service =  new google.maps.places.PlacesService(this.map);
         if (this.polygone_points) {
@@ -106,15 +108,15 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
 
     ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
 
-        console.log("oc");
-        console.log(this.cnt ++);
-
         if (!this.map) return;
         for (let p_name in changes) {
             let prop = changes[p_name];
             switch (p_name) {
                 case 'objects':
                     this.refreshMarkers();
+                    break;
+                case 'selected_objects':
+                    this.refreshSelected();
                     break;
                 case 'place':
                     this.refreshPlacesMarkers();
@@ -154,20 +156,33 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
 
 
     ngAfterViewChecked() {
-        console.log(this.cnt++);
         if (this.container.clientWidth != this.p_w) {
-            console.log("!");
             this.p_w = this.container.clientWidth;
             google.maps.event.trigger(this.map, 'resize');
         }
     }
 
+    refreshSelected() {
+        this.selected_objects.forEach(o => {
+            var iw = new google.maps.InfoWindow({
+                content: '<div>' + Offer.getDigest(o) + '</div>'
+            });
+
+            iw.open(this.map, this.markers[o.id]);
+        });
+        if (this.selected_objects && this.selected_objects.length > 0) {
+            this.latitude = this.selected_objects[this.selected_objects.length - 1].locationLat;
+            this.longitude = this.selected_objects[this.selected_objects.length - 1].locationLon;
+            this.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+        }
+    }
+
     refreshMarkers() {
         if (this.objects == null) return;
-        this.markers.forEach(m => {
-            m.setMap(null);
+        this.markers.forEach((marker: google.maps.Marker, id: number) => {
+            marker.setMap(null);
         });
-        this.markers = [];
+        this.markers = new Map();
 
         var c = this;
 
@@ -205,7 +220,7 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
                     animation: google.maps.Animation.DROP
                 });
 
-                this.markers.push(m);
+                this.markers[obj.id] = m;
 
                 var iw = new google.maps.InfoWindow({
                     content: '<div>' + Offer.getDigest(obj) + '</div>'
@@ -216,6 +231,7 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
                 m.addListener('click', function () {
                     iw.open(this.map, m);
                     //c.click.emit(_this);
+                    c.markerClicked.emit(obj);
                 });
 
             }

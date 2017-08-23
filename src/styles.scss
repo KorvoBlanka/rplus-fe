@@ -6,3 +6,8 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
+.selected > .billet {
+  background-color: #157ad3 !important;
+  color: #fff !important;
+}

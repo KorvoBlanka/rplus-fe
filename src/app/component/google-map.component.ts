@@ -163,12 +163,18 @@ export class GoogleMapComponent implements OnInit, OnChanges/*, AfterViewChecked
     }
 
     refreshSelected() {
+        this.infoWindows.forEach( iw => {
+            iw.close();
+        });
+        this.infoWindows = [];
         this.selected_objects.forEach(o => {
             var iw = new google.maps.InfoWindow({
                 content: '<div>' + Offer.getDigest(o) + '</div>'
             });
 
+
             iw.open(this.map, this.markers[o.id]);
+            this.infoWindows.push(iw);
         });
         if (this.selected_objects && this.selected_objects.length > 0) {
             this.latitude = this.selected_objects[this.selected_objects.length - 1].locationLat;

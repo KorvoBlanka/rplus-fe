@@ -12,7 +12,7 @@ import {Organisation} from '../../entity/organisation';
 
 @Component({
     selector: 'ui-input-line',
-    inputs: ['placeholder', 'width' , 'queryTipe', 'type'],
+    inputs: ['placeholder', 'width' , 'queryTipe', 'type', 'on_enter_save'],
     template: `
         <div class="ui-input-line">
             <span class="label" [style.opacity]="getOpacity()">{{placeholder}}</span>
@@ -118,6 +118,7 @@ export class UIInputLine implements OnInit, OnChanges{
     public placeholder: string;
     @Input() value: string;
     public width: string;
+    public on_enter_save: boolean;
     public queryTipe: string;
     public type: string = "text";
     searchQuery: string ;
@@ -208,7 +209,8 @@ export class UIInputLine implements OnInit, OnChanges{
         if(event.target.value == "")
             this.opacity = 0;
         else if(!this.queryTipe){
-            this.onChange.emit(event.target.value);
+            if((<KeyboardEvent>event).keyCode == 13 && this.on_enter_save || !this.on_enter_save)
+                this.onChange.emit(event.target.value);
         }
     }
 

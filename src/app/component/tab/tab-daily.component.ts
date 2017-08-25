@@ -25,6 +25,7 @@ import {OrganisationService} from '../../service/organisation.service';
 import {AnalysisService} from '../../service/analysis.service';
 import {SessionService} from "../../service/session.service";
 import {NotebookService} from "../../service/notebook.service";
+import { Subscription }   from 'rxjs/Subscription';
 
 @Component({
     selector: 'tab-daily',
@@ -307,10 +308,62 @@ import {NotebookService} from "../../service/notebook.service";
             margin-left: 15px;
         }
 
-        .task{
+        .task, .avatar{
             position: absolute;
-            background-color: green;
+            background-color: #e0f2f1;
             z-index: 99;
+        }
+
+        .avatar{
+              opacity: 0.5;
+        }
+
+        .vertical{
+            height: 100%;
+            display: block;
+            width: 5px;
+            background-color: #009688;
+            float: left;
+        }
+
+        .text{
+            display: block;
+            width: calc(100% - 10px);
+            height: 26px;
+            font-size: 12px;
+            margin-left: 10px;
+            line-height: 26px;
+            color: #149e91;
+        }
+
+        .text:nth-child(3){
+            color: #16675f;
+            line-height: 15px;
+            height: calc(100% - 29px);
+        }
+
+        .selected_task{
+            z-index: 199;
+            background-color: #009688;
+        }
+
+        .selected_task .text{
+            color: #b4d1d3;
+        }
+
+        .selected_task .text:nth-child(3){
+            color: #fbfdfd;
+
+        }
+
+        .scale{
+            display: block;
+            width: calc(100% - 5px);
+            height: 3px;
+        }
+
+        .selected_task .scale{
+            cursor: row-resize;
         }
 
     `],
@@ -440,17 +493,32 @@ import {NotebookService} from "../../service/notebook.service";
                             </tr>
                         </tbody>
                         <tbody (mousedown)="enable_scroll($event)" (mousemove)="move_table($event)" (mouseup)="disable_scroll()"
-                            (mouseleave)="disable_scroll()" class="data" (wheel) = "scroolTable($event)"
+                            (mouseleave)="disable_scroll()" class="data" (wheel) = "scroolTable($event)" (mousemove)="drag_task($event)" (mouseup)="drag_task_off($event)"
+                            (mouseup)="drag_task_off($event)"
                         >
                             <hr class="now_time"  [style.top] = "now_time_top" [style.width] = "now_time_width">
-                            <div *ngFor="let task of tasks" class="task" [style.width] = "220"
-                                [style.height] = "56/60*task.end_date.diff(task.date, 'minute')"
-                                [style.top] = "task.scr_top" [style.left] = "task.scr_left" (dblclick)="open_task(task)"
-                                (mousedown)="drag_task_on($event, task)" (mouseup)="drag_task_off($event)" (mousemove)="drag_task($event)"
-                            ></div>
+                            <div class="avatar" *ngIf = "avatar" [style.width] = "avatar.width"
+                                [style.height] = "55/60*avatar.duration"
+                                [style.top] = "avatar.scr_top" [style.left] = "avatar.scr_left"
+                            >
+                                <span class="vertical"></span>
+                                <span class= "text">{{avatar.date.format('HH:mm')}}</span>
+                                <span class= "text">{{'Задачная задача'}}</span>
+                                <span class= "scale"></span>
+                            </div>
+                            <div *ngFor="let task of tasks" class="task" [style.width] = "task.width"
+                                [style.height] = "55/60*task.duration + task.duration/60 - 1"
+                                [style.top] = "task.scr_top" [style.left] = "task.scr_left" (dblclick)="open_task($event,task)"
+                                (mousedown)="drag_task_on($event, task)"
+                            >
+                                <span class="vertical"></span>
+                                <span class= "text">{{task.date.format('HH:mm')}}</span>
+                                <span class= "text">{{'Задачная задача'}}</span>
+                                <span class= "scale"></span>
+                            </div>
                             <tr *ngFor="let hour of daily">
 
-                                <td *ngFor="let day of days" (dblclick)="add_task(day, hour, $event)" (mousemove)="drag_task($event)"
+                                <td *ngFor="let day of days" (dblclick)="add_task(day, hour, $event)"
                                     [class.weekend] = "day.day_number.format('ddd') == 'сб' || day.day_number.format('ddd') == 'вс'"
                                 >
 
@@ -468,6 +536,7 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     public tab: Tab;
     activeMenu: number = 0;
     source: OfferSource = OfferSource.LOCAL;
+    subscription: Subscription;
     can_scroll_table: boolean = false;
     scroll_start_x: number;
     scroll_start_y: number;
@@ -486,6 +555,7 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     dragTask: Task;
     dragTask_start_x: number;
     dragTask_start_y: number;
+    scale_mode: boolean = false;
     daily: any=[
         {hour_name: '00:00'},
         {hour_name: '01:00'},
@@ -529,6 +599,8 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     tasks: Array<Task>=[];
     td_temp: HTMLElement;
     task_div: HTMLElement;
+    avatar: Task;
+    old_td: HTMLElement;
     constructor(private _hubService: HubService,
                 private _userService: UserService,
                 private _configService: ConfigService,
@@ -539,15 +611,21 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
                 private _notebookService: NotebookService
     ) {
         moment.locale("ru");
+        this.subscription = _notebookService.is_update().subscribe(message => {
+                                console.log("message", message.old.format("DD.MM.YYYY"));
+                                this.recalc_width(message.task, message.old);
+                            });
     }
 
     ngOnInit() {
         this.tab.header="Ежедневник";
         this.setCenter();
 
+
     }
 
     ngAfterViewInit() {
+
     }
 
     toggleSource(s: string) {
@@ -562,7 +640,7 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
     }
 
     enable_scroll(e: MouseEvent){
-        if((<HTMLElement>e.target).tagName != 'DIV'){
+        if((<HTMLElement>e.target).className != 'task selected_task' && (<HTMLElement>e.target).parentElement.className != 'task selected_task'){
             this.can_scroll_table = true;
             this.scroll_start_x = (<HTMLElement>e.currentTarget).scrollLeft + e.pageX;
             this.scroll_start_y = (<HTMLElement>e.currentTarget).scrollTop  + e.pageY;
@@ -571,11 +649,11 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
 
     disable_scroll(){
         this.can_scroll_table = false;
-        this.dragTask = null;
+        this.scale_mode = false;
     }
 
     move_table(e){
-        if(this.can_scroll_table && (<HTMLElement>e.currentTarget).className == "data"){
+        if(this.can_scroll_table && (<HTMLElement>e.currentTarget).className != "task selected_task"){
             let target=(<HTMLElement>e.currentTarget);
             if(target.scrollLeft + target.clientWidth  >= target.scrollWidth){
                 this.add_days(true);
@@ -683,89 +761,267 @@ export class TabDailyComponent implements OnInit, AfterViewInit {
         task.scr_left = (<HTMLElement>event.currentTarget).offsetLeft;
         task.scr_top = (<HTMLElement>event.currentTarget).parentElement.offsetTop;
         task.date = moment(day.day_number.format('YYYY-MM-DD') + hour.hour_name, 'YYYY-MM-DD kk:mm');
-        task.end_date = moment(task.date).add(1, 'hours');
+        task.duration = 60;
         this.tasks.push(task);
         this._notebookService.set({show: 1, state: 'new', data: task});
     }
 
-    open_task(task: any){
-        this._notebookService.set({show: 1, state: 'new', data: task});
+    open_task(event: MouseEvent,task: Task){
+        if((!this.task_div || (<HTMLElement>event.currentTarget).className == "task") && !this.can_scroll_table){
+            this._notebookService.set({show: 1, state: 'new', data: task});
+            this.task_div ? this.task_div.className = 'task' : null;
+            this.task_div = (<HTMLElement>event.currentTarget).tagName == 'DIV' ? (<HTMLElement>event.currentTarget) : (<HTMLElement>event.currentTarget).parentElement;
+            this.task_div.style.display = "none";
+            this.td_temp = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+            if(this.td_temp.tagName == "HR"){
+                this.td_temp.style.display = "none";
+                let back_back = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+                this.td_temp.style.display = "";
+                this.td_temp = back_back;
+            }
+            if(this.td_temp.tagName == "SPAN")
+                this.td_temp = this.td_temp.parentElement;
+            this.task_div.className = 'task selected_task';
+            this.task_div.style.display = "";
+        } else{
+            this.task_div.className = 'task';
+            this.task_div = null;
+        }
+
     }
 
     drag_task_on(event: MouseEvent, task: Task){
-        this.dragTask = task;
-        this.task_div = <HTMLElement>event.currentTarget;
-        this.task_div.style.display = "none";
-        this.td_temp = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
-        this.task_div.style.display = "";
-        this.task_div.style.zIndex = "199";
-        this.task_div.style.width = "222";
-        this.task_div.style.left = ""+(parseInt(this.task_div.style.left)-1);
-        this.dragTask_start_y = event.pageY;
-        this.dragTask_start_x = event.pageX;
-        this.task_div.style.backgroundColor = "red";
+        if((<HTMLElement>event.target).className == "task selected_task" ||
+            (<HTMLElement>event.target).parentElement.className == "task selected_task" && (<HTMLElement>event.target).className != "scale"
+             && this.task_div
+        ){
+            this.dragTask = task;
+            this.avatar = new Task();
+            this.avatar.scr_top = this.dragTask.scr_top;
+            this.avatar.scr_left = this.dragTask.scr_left;
+            this.avatar.date = moment(this.dragTask.date);
+            this.avatar.duration = this.dragTask.duration;
+            this.avatar.width = this.dragTask.width;
+            let tasks = document.getElementsByClassName('data').item(0).getElementsByTagName("DIV");
+            for(let i = 0 ; i < tasks.length; ++i)
+                (<HTMLElement>tasks.item(i)).style.display = "none";
+            this.old_td = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+            if(this.old_td.tagName == "HR"){
+                this.old_td.style.display = "none";
+                let back_back = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+                this.old_td.style.display = "";
+                this.old_td = back_back;
+            }
+            this.dragTask.width = 220;
+            this.dragTask.scr_left = this.old_td.offsetLeft;
+            for(let i = 0 ; i < tasks.length; ++i)
+                (<HTMLElement>tasks.item(i)).style.display = "";
+            this.dragTask_start_y = event.pageY;
+            this.dragTask_start_x = event.pageX;
+        } else if((<HTMLElement>event.target).className == "scale" &&  this.task_div){
+            this.dragTask = task;
+            this.scale_mode = true;
+            this.dragTask_start_y = event.pageY;
+        } else {
+            this.dragTask = null;
+            let act_task = document.getElementsByClassName("task selected_task");
+            for(let i = 0; i < act_task.length; i++){
+                act_task.item(i).className = "task";
+            }
+            (<HTMLElement>event.target).tagName == "SPAN" ? (<HTMLElement>event.target).parentElement.className = "task selected_task" : (<HTMLElement>event.target).className = "task selected_task";
+        }
     }
 
     drag_task_off(event: MouseEvent){
-        this.dragTask = null;
-        this.task_div.style.zIndex = "";
-        this.task_div.style.backgroundColor = "";
-        this.task_div.style.left = ""+(parseInt(this.task_div.style.left)+1);
-        this.task_div.style.width = ""+(parseInt(this.task_div.style.width)-2);
-        this.task_div = null;
+        if(this.dragTask && this.task_div){
+            this.dragTask.scr_left += 1;
+            this.dragTask.width -= 2;
+            let tasks = document.getElementsByClassName('data').item(0).getElementsByTagName("DIV");
+            for(let i = 0 ; i < tasks.length; ++i)
+                (<HTMLElement>tasks.item(i)).style.display = "none";
+            this.td_temp = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+
+            if(this.td_temp.tagName == "HR"){
+                this.td_temp.style.display = "none";
+                let back_back = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+                this.td_temp.style.display = "";
+                this.td_temp = back_back;
+            }
+            for(let i = 0 ; i < tasks.length; ++i)
+                (<HTMLElement>tasks.item(i)).style.display = "";
+            this.recalc_width(this.dragTask, this.avatar.date);
+            this.avatar = null;
+            this.dragTask = null;
+        }
+
+        this.scale_mode = false;
     }
 
     drag_task(event: MouseEvent){
-        if(this.dragTask){
-            let elem = <HTMLElement>event.currentTarget;
-            if(elem.tagName == "TD"){
-                if(this.td_temp != <HTMLElement>document.elementFromPoint(event.pageX,event.pageY)){
-                    this.td_temp = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
-                    if(this.dragTask.scr_left < this.td_temp.offsetLeft){
-                        this.dragTask.date.add(1, 'days');
-                        this.dragTask.end_date.add(1, 'days');
+        if(this.dragTask && !this.scale_mode && this.task_div){
+            this.task_div.style.display = "none";
+            let background_obj = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+            if(background_obj.tagName == "HR"){
+                background_obj.style.display = "none";
+                let back_back = <HTMLElement>document.elementFromPoint(event.pageX,event.pageY);
+                background_obj.style.display = "";
+                background_obj = back_back;
+            }
+            if(background_obj.tagName == "SPAN")
+                background_obj = background_obj.parentElement
+            if (background_obj.offsetLeft != this.td_temp.offsetLeft){
+                this.td_temp = background_obj;
+                if(this.td_temp.tagName != "TD"){
+                    if(this.td_temp != this.task_div){
+                        if(this.td_temp.className != "avatar"){
+                            let tmp = <HTMLElement>document.elementFromPoint(event.pageX,222);
+                            if(tmp.tagName == "TD"){
+                                this.dragTask.scr_left = tmp.offsetLeft - 56;
+                                let index = Array.prototype.indexOf.call(tmp.parentElement.children, tmp) - 1;
+                                this.dragTask.date.set({'year': this.days[index].day_number.year(), 'month': this.days[index].day_number.month(), 'day': this.days[index].day_number.day()});
+                            } else if(tmp.tagName == "DIV"){
+                                this.dragTask.scr_left = tmp.parentElement.offsetLeft - 56;
+                                let index = Array.prototype.indexOf.call(tmp.parentElement.parentElement.children, tmp.parentElement) - 1;
+                                this.dragTask.date.set({'year': this.days[index].day_number.year(), 'month': this.days[index].day_number.month(), 'day': this.days[index].day_number.day()});
+                            }
+                        } else{
+                            this.dragTask.date = moment(this.avatar.date);
+                            this.dragTask.duration = this.avatar.duration;
+                            this.td_temp.style.display = "none";
+                            this.dragTask.scr_left = (<HTMLElement>document.elementFromPoint(event.pageX,event.pageY)).offsetLeft;
+                            this.td_temp.style.display = "";
+                        }
+                    } else{
+                        this.dragTask.scr_left = this.td_temp.offsetLeft - 1;
                     }
-                    else{
-                        this.dragTask.date.subtract(1, 'days');
-                        this.dragTask.end_date.subtract(1, 'days');
+                } else{
+                    let tmp = <HTMLElement>document.elementFromPoint(event.pageX,222);
+                    if(tmp.tagName == "TD"){
+                        let index = Array.prototype.indexOf.call(tmp.parentElement.children, tmp) - 1;
+                        this.dragTask.date.set({'year': this.days[index].day_number.year(), 'month': this.days[index].day_number.month(), 'date': this.days[index].day_number.date()});
+                    } else if(tmp.tagName == "DIV"){
+                        let index = Array.prototype.indexOf.call(tmp.parentElement.parentElement.children, tmp.parentElement) - 1;
+                        this.dragTask.date.set({'year': this.days[index].day_number.year(), 'month': this.days[index].day_number.month(), 'date': this.days[index].day_number.date()});
                     }
-                    this.dragTask.scr_left =  this.td_temp.offsetLeft-1;
+                    this.dragTask.scr_left = this.td_temp.offsetLeft;
                 }
-            } else if(elem.tagName == "DIV"){
-                if(event.pageY - this.dragTask_start_y >= 14 && event.movementY <= 10){
-                    this.dragTask.scr_top += 14;
-                    this.dragTask_start_y += 14;
-                    this.dragTask.date.add(15, 'minutes');
-                    this.dragTask.end_date.add(15, 'minutes');
-                } else if(event.pageY - this.dragTask_start_y <= -14 && event.movementY >= -10) {
-                    this.dragTask.scr_top -= 14;
-                    this.dragTask_start_y -= 14;
-                    this.dragTask.date.subtract(15, 'minutes');
-                    this.dragTask.end_date.subtract(15, 'minutes');
-                } else if(event.movementY >= 10){
-                    this.dragTask.scr_top += 28;
-                    this.dragTask_start_y += 28;
-                    this.dragTask.date.add(30, 'minutes');
-                    this.dragTask.end_date.add(30, 'minutes');
-                } else if(event.movementY <= -10){
-                    this.dragTask.scr_top -= 28;
-                    this.dragTask_start_y -= 28;
-                    this.dragTask.date.subtract(30, 'minutes');
-                    this.dragTask.end_date.subtract(30, 'minutes');
+            } else{
+                let td_elem = <HTMLElement>event.target;
+                if(td_elem.tagName == "SPAN"){
+                    td_elem = td_elem.parentElement;
                 }
-                if(this.dragTask.scr_left != elem.offsetLeft ){
-                    if(this.dragTask.scr_left < elem.offsetLeft){
-                        this.dragTask.date.add(1, 'days');
-                        this.dragTask.end_date.add(1, 'days');
+
+                if(td_elem.tagName == "TD"){
+                    this.dragTask.date.add((td_elem.parentElement.offsetTop - this.dragTask.scr_top) / 14 *15, 'minutes');
+                    this.dragTask.scr_top = td_elem.parentElement.offsetTop;
+                    this.dragTask_start_y = event.pageY;
+                } else if(td_elem.className == "avatar"){
+                    this.dragTask.date.add((td_elem.offsetTop - this.dragTask.scr_top) / 14 * 15, 'minutes');
+                    this.dragTask.scr_top = td_elem.offsetTop;
+                    this.dragTask_start_y = event.pageY;
+                }  else {
+                    if(Math.abs(this.dragTask_start_y - event.pageY) > 14){
+                        this.dragTask.scr_top += (this.dragTask_start_y - event.pageY) < 0 ? 14 : -14;
+                        (this.dragTask_start_y - event.pageY) < 0 ? this.dragTask.date.add(15, 'minutes') : this.dragTask.date.subtract(15, 'minutes');
+                        this.dragTask_start_y = event.pageY;
                     }
-                    else{
-                        this.dragTask.date.subtract(1, 'days');
-                        this.dragTask.end_date.subtract(1, 'days');
+                }
+                let tr = document.getElementsByClassName("first-column").item(0).getElementsByTagName("TR");
+                let i = 0;
+                for(; i < tr.length; ++i){
+                    if(this.dragTask.scr_top >= (<HTMLElement>tr.item(i)).offsetTop && this.dragTask.scr_top < (<HTMLElement>tr.item(i+1)).offsetTop){
+                        break;
                     }
-                    this.dragTask.scr_left = elem.offsetLeft - 1;
-                    this.td_temp = null;
+                }
+                if(this.daily[i].hour_name.split(":")[0] != this.dragTask.date.hour()){
+                    this.dragTask.date.hour(parseInt(this.daily[i].hour_name.split(":")[0]));
+                }
+                if( Math.abs((<HTMLElement>tr.item(i)).offsetTop - this.dragTask.scr_top) == 14)
+                    this.dragTask.date.minute(15);
+                if( Math.abs((<HTMLElement>tr.item(i)).offsetTop - this.dragTask.scr_top) == 28)
+                    this.dragTask.date.minute(30);
+                if( Math.abs((<HTMLElement>tr.item(i)).offsetTop - this.dragTask.scr_top) == 42)
+                    this.dragTask.date.minute(45);
+            }
+            this.task_div.style.display = "";
+        } else if(this.dragTask && this.scale_mode && this.task_div){
+            this.dragTask.duration += event.pageY - this.dragTask_start_y;
+            this.dragTask_start_y = event.pageY;
+        }
+    }
+
+    recalc_width(dragTask: Task, date_old: any){
+        let elements = document.getElementsByTagName("THEAD").item(0).getElementsByTagName('TD');
+        let new_td, old_td;
+        for(let i = 0; i < this.days.length; ++i){
+            if(this.days[i].day_number.format("DD.MM.YYYY") == dragTask.date.format("DD.MM.YYYY"))
+                new_td = elements.item(i+1);
+            else if(this.days[i].day_number.format("DD.MM.YYYY") == date_old.format("DD.MM.YYYY"))
+                old_td = elements.item(i+1);
+        }
+
+        function sort_function(a: Task, b: Task) {
+            if (a.date < b.date) return -1;
+            if (a.date > b.date) return 1;
+        };
+
+        let finale_day_arr : Array<Task> = [];
+        let old_day_arr : Array<Task> = [];
+
+        this.tasks.forEach(task => {
+            if(dragTask.date.format("DD.MM.YYYY") == task.date.format("DD.MM.YYYY"))
+                finale_day_arr.push(task);
+            else if(date_old.format("DD.MM.YYYY") == task.date.format("DD.MM.YYYY") && date_old.format("DD.MM.YYYY") != dragTask.date.format("DD.MM.YYYY"))
+                old_day_arr.push(task);
+        });
+
+        finale_day_arr.sort(sort_function);
+        old_day_arr.sort(sort_function);
+        let DayArray: Array<Array<Task>>=[];
+        DayArray.push([finale_day_arr[0]]);
+        for(let i = 0,  j = 0; i < finale_day_arr.length; ++i){
+            let end_time = moment(finale_day_arr[i].date).add(finale_day_arr[i].duration, "minutes");
+            if(finale_day_arr.length != i+1 && finale_day_arr[i+1].date < end_time){
+                DayArray[j].push(finale_day_arr[i+1]);
+            } else if(finale_day_arr.length != i+1){
+                DayArray.push([finale_day_arr[i+1]]);
+                j++;
+            }
+        }
+
+        DayArray.forEach(grArr => {
+            let width = (220 - grArr.length + 1) / grArr.length ;
+            for(let i=0; i< grArr.length ; i++){
+                grArr[i].width = width;
+                if(i == 0)
+                    grArr[i].scr_left = new_td.offsetLeft - 55;
+                else
+                    grArr[i].scr_left = grArr[i-1].scr_left + width + 1;
+            }
+        });
+
+        if(old_day_arr.length != 0){
+            DayArray = [[old_day_arr[0]]];
+            for(let i = 0,  j = 0; i < old_day_arr.length; ++i){
+                let end_time = moment(old_day_arr[i].date).add(old_day_arr[i].duration, "minutes");
+                if(old_day_arr.length != i+1 && old_day_arr[i+1].date < end_time){
+                    DayArray[j].push(old_day_arr[i+1]);
+                } else if(old_day_arr.length != i+1){
+                    DayArray.push([old_day_arr[i+1]]);
+                    j++;
                 }
             }
+
+            DayArray.forEach(grArr => {
+                let width = (220 - grArr.length + 1) / grArr.length ;
+                for(let i=0; i< grArr.length ; i++){
+                    grArr[i].width = width;
+                    if(i == 0)
+                        grArr[i].scr_left = old_td.offsetLeft - 55;
+                    else
+                        grArr[i].scr_left = grArr[i-1].scr_left + width + 1;
+                }
+            });
         }
     }
 }

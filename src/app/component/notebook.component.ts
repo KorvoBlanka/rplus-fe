@@ -130,7 +130,7 @@ import { Subscription }   from 'rxjs/Subscription';
             </div>
             <div class="event-tab" *ngIf="show==1 || show==2">
                 <div class="head"></div>
-                <notebook-task-describe [task] = "data" [mode]="state"></notebook-task-describe>
+                <notebook-task-describe [task] = "data" [mode]="state" (update) = "update_tab_daily($event)"></notebook-task-describe>
             </div>
             <div class="main-tab" (click)="toggleEvent()" *ngIf="show==0 || show==2">
                 <ul class = "main_menu">
@@ -195,5 +195,9 @@ export class NotebookComponent implements OnInit{
 
     selectMenu(num: number){
        this.menuNumber = num;
+    }
+
+    update_tab_daily(event){
+        this._notebookService.update_field(event);
     }
 }

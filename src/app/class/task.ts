@@ -11,9 +11,12 @@ export class Task {
     place: string;
     route: string;
     end_date: any;
+    duration: number;
     old_date: number;
     scr_left: number;
     scr_top: number;
+    width: number = 220;
+
 
     public static getResultText(task) {
       switch (task.result_id) {

@@ -177,7 +177,7 @@ import {SessionService} from "../../service/session.service";
         }
 
         .map{
-            width: calc(100% - 123px);
+            width: 99%;
             position: relative;
             display: block;
             float: left;
@@ -533,18 +533,6 @@ import {SessionService} from "../../service/session.service";
                         [latitude]="48.490351" [longitude]= "135.070109" [zoom]="12"
                     >
                     </google-map>
-                    <div class="map_menu">
-                        <div [class.active_map_menu]="selectMapMenu == 1" (click)="setMenu(1)">Фото</div>
-                        <div [class.active_map_menu]="selectMapMenu == 2" (click)="setMenu(2)">Карта</div>
-                        <div [class.active_map_menu]="selectMapMenu == 3" (click)="setMenu(3)">Понорама</div>
-                        <div [class.active_map_menu]="selectMapMenu == 4" (click)="setMenu(4)">Маршруты</div>
-                        <div [class.active_map_menu]="selectMapMenu == 5" (click)="similarObjSelected()">Похожие</div>
-                        <div [class.active_map_menu]="selectMapMenu == 6" (click)="requestsSelected()">Заявки</div>
-                        <div [class.active_map_menu]="selectMapMenu == 7" (click)="setMenu(7)">Реклама</div>
-                        <div [class.active_map_menu]="selectMapMenu == 8" (click)="setMenu(8)">Документы</div>
-                        <div [class.active_map_menu]="selectMapMenu == 9" (click)="setMapQuery('Образование', 9)">Образование</div>
-                        <div [class.active_map_menu]="selectMapMenu == 10" (click)="setMapQuery('магазины', 10)">Продукты</div>
-                    </div>
                 </div>
             </div>
             <!------------------------------------------------------------------------------------------------------------------->

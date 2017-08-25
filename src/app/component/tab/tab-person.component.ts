@@ -338,10 +338,10 @@ import {SessionService} from "../../service/session.service";
                             <ui-slidingMenu class="view-value edit-value"
                                 [options] = "[
                                     {value: 'NOT', label: 'Не указан'},
-                                    {value: 'CLIENT', label: 'Клиент'},
-                                    {value: 'KONK', label: 'Конкурент'},
-                                    {value: 'OUR', label: 'Наша компания'},
-                                    {value: 'PARTHER', label: 'Партнер'}
+                                    {value: 'client', label: 'Клиент'},
+                                    {value: 'realtor', label: 'Конкурент'},
+                                    {value: 'company', label: 'Наша компания'},
+                                    {value: 'partner', label: 'Партнер'}
                                 ]"
                                 [value]="person.typeCode"
                                 (onChange)="person.typeCode = $event.selected.value">
@@ -520,10 +520,10 @@ import {SessionService} from "../../service/session.service";
                                 <ui-view-value
                                     [options] = "[
                                         {value: 'NOT', label: 'Не указан'},
-                                        {value: 'CLIENT', label: 'Клиент'},
-                                        {value: 'KONK', label: 'Конкурент'},
-                                        {value: 'OUR', label: 'Наша компания'},
-                                        {value: 'PARTHER', label: 'Партнер'}
+                                        {value: 'client', label: 'Клиент'},
+                                        {value: 'realtor', label: 'Конкурент'},
+                                        {value: 'company', label: 'Наша компания'},
+                                        {value: 'partner', label: 'Партнер'}
                                     ]"
                                     [value]="person.typeCode"
                                 >

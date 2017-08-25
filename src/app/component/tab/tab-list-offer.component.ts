@@ -44,10 +44,10 @@ import {PhoneBlock} from "../../class/phoneBlock";
         }
 
         .round_menu{
-            width: 170px;
+            width: 230px;
             height: 50px;
             position: absolute;
-            left: 450px;
+            left: 400px;
             top: 15px;
             text-align: center;
             z-index: 10;

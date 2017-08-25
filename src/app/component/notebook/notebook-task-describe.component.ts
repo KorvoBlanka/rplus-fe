@@ -80,10 +80,10 @@ import 'moment/locale/ru.js';
                     <ui-slidingMenu class="view-value edit-value"
                         [options] = "[
                             {value: 'NOT', label: 'Предложения'},
-                            {value: 'CLIENT', label: 'Контакт'},
-                            {value: 'KONK', label: 'Контрагент'},
-                            {value: 'OUR', label: 'Заявка'},
-                            {value: 'PARTHER', label: 'Прочее'}
+                            {value: 'client', label: 'Клиент'},
+                            {value: 'realtor', label: 'Конкурент'},
+                            {value: 'company', label: 'Наша компания'},
+                            {value: 'partner', label: 'Партнер'}
                         ]"
                         [value]="task.type"
                         (onChange)="task.type = $event.selected.value">

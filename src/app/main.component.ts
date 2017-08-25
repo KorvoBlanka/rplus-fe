@@ -26,6 +26,20 @@ import {SessionService} from "./service/session.service";
             (contextmenu)="contextMenu($event)"
             (click)="click($event)"
         >
+            <context-map
+                [mapContainer]="_hubService.shared_var['map_container']"
+                [hidden]="_hubService.shared_var['map_hidden']"
+                
+                [latitude]="_hubService.shared_var['map_latitude']"
+                [longitude]="_hubService.shared_var['map_longitude']"
+                [zoom]="_hubService.shared_var['map_zoom']"
+
+                [objects]="_hubService.shared_var['map_objects']"
+                [place]="_hubService.shared_var['map_place']"
+                [draw_allowed]="_hubService.shared_var['map_da']"
+                [polygone_points]="_hubService.shared_var['map_pp']"
+            >
+            </context-map>
             <context-menu
                 [menu]="_hubService.shared_var['cm']"
                 [hidden]="_hubService.shared_var['cm_hidden']"

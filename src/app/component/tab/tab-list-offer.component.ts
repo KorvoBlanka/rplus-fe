@@ -44,10 +44,10 @@ import {PhoneBlock} from "../../class/phoneBlock";
         }
 
         .round_menu{
-            width: 170px;
+            width: 230px;
             height: 50px;
             position: absolute;
-            left: 450px;
+            left: 400px;
             top: 15px;
             text-align: center;
             z-index: 10;
@@ -172,12 +172,7 @@ import {PhoneBlock} from "../../class/phoneBlock";
         .modified {
             background-color: #dff0d8 !important;
         }
-
-        .selected {
-            color: #fff !important;
-            background-color: #3366cc !important;
-        }
-
+        
         .src-sel {
             background-color: #3366cc !important;
         }
@@ -368,9 +363,11 @@ import {PhoneBlock} from "../../class/phoneBlock";
                     [latitude]="lat"
                     [longitude]="lon"
                     [zoom]="zoom"
-                    [objects]="offers"
+                    [objects]="offers" 
+                    [selected_objects]="selectedOffers"
                     [draw_allowed]="mapDrawAllowed"
-                    (drawFinished)="finishDraw($event)"
+                    (drawFinished)="finishDraw($event)" 
+                    (markerClicked)="markerClick($event)"
                 >
                 </google-map>
             </div>
@@ -722,6 +719,7 @@ export class TabListOfferComponent {
                 // add to selection
                 this.lastClckIdx = cIdx;
                 this.selectedOffers.push(offer);
+                this.offerSelected(offer);
             } else if (event.shiftKey) {
                 this.selectedOffers = [];
                 var idx = cIdx;
@@ -739,6 +737,10 @@ export class TabListOfferComponent {
                 this.selectedOffers = [offer];
             }
         }
+    }
+
+    offerSelected(offer: Offer) {
+
     }
 
     dblClick(offer: Offer) {
@@ -829,9 +831,11 @@ export class TabListOfferComponent {
     markerClick(o: Offer) {
         //r.selected = !r.selected;
         // scroll to object !?
-        // let get dirty!
+        // lets get dirty!
         //if (r.selected) {
-        var e: HTMLElement = <HTMLElement>this.list.querySelector('#r' + o.id);
+        console.log(o);
+        let e: HTMLElement = <HTMLElement>this.list.querySelector('#r' + o.id);
+        this.selectedOffers = [o];
         this.list.scrollTop = e.offsetTop - e.clientHeight;
         //}
     }

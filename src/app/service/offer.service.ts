@@ -58,7 +58,7 @@ export class OfferService {
             .map(res => res.json()).subscribe(
                 data => {
                     var obj: ListResult = new ListResult();
-                    if(data.result){
+                    if(data.result) {
                         obj.hitsCount = data.result.hitsCount;
                         obj.list = data.result.list;
 

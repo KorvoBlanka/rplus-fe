@@ -1501,10 +1501,10 @@ import {GoogleChartComponent} from '../ui/chart/google-chart.component';
                                 <ui-view-value
                                     [options] = "[
                                         {value: 'NOT', label: 'Не указан'},
-                                        {value: 'CLIENT', label: 'Клиент'},
-                                        {value: 'KONK', label: 'Конкурент'},
-                                        {value: 'OUR', label: 'Наша компания'},
-                                        {value: 'PARTHER', label: 'Партнер'}
+                                        {value: 'client', label: 'Клиент'},
+                                        {value: 'realtor', label: 'Конкурент'},
+                                        {value: 'company', label: 'Наша компания'},
+                                        {value: 'partner', label: 'Партнер'}
                                     ]"
                                     [value]="offer.person?.typeCode"
                                 >

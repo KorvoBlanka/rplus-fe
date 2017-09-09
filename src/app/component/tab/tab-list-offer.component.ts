@@ -207,7 +207,7 @@ import {PhoneBlock} from "../../class/phoneBlock";
     `],
     template: `
         <div class = "round_menu">
-            <div class="button plus" (click)="toggleView()">выкл</div>
+            <!--<div class="button plus" (click)="toggleView()">выкл</div>-->
             <div class="button plus" [style.background-image]="'url(assets/plus.png)'" (click) ="addOffer()">Добавить</div>
             <div (click)="toggleSource('import')" class="button" [class.button_active]="this.source != 1" [style.background-image]="'url(assets/base_plus.png)'">Общая</div>
             <div (click)="toggleSource('local')"  class="button" [class.button_active]="this.source == 1" [style.background-image]="'url(assets/base.png)'">Компания</div>

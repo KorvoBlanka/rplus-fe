@@ -6,6 +6,8 @@ node_modules/
 **/*.js
 **/*.js.map
 !/systemjs.config.js
+dist/
+*.DS_Store
 
 # User-specific stuff:
 .idea/workspace.xml
